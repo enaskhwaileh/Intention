@@ -1,0 +1,11 @@
+country,brand,side_effect_type,mild_rate,severe_rate
+Italy,Pfizer,Fatigue,0.18,0.012
+Italy,Moderna,Fever,0.22,0.018
+France,Pfizer,Headache,0.16,0.010
+France,AstraZeneca,Fatigue,0.21,0.020
+Germany,Moderna,Fever,0.19,0.014
+Germany,Pfizer,Injection site pain,0.24,0.009
+Spain,AstraZeneca,Headache,0.17,0.017
+Spain,Moderna,Fatigue,0.20,0.013
+Netherlands,Pfizer,Fever,0.15,0.008
+Netherlands,Moderna,Headache,0.18,0.011
