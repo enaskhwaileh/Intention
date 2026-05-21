@@ -1,0 +1,20 @@
+nodes:
+  - id: analyze_sales
+    label: Analyze sales
+    keywords: [sales, revenue, orders]
+    profile_type: analytical
+  - id: inspect_customers
+    label: Inspect customers
+    keywords: [customer, customers, segment]
+    profile_type: analytical
+  - id: monitor_inventory
+    label: Monitor inventory
+    keywords: [inventory, stock, sku]
+    profile_type: operational
+edges:
+  - source: analyze_sales
+    target: inspect_customers
+    relation: related_to
+  - source: analyze_sales
+    target: monitor_inventory
+    relation: may_require

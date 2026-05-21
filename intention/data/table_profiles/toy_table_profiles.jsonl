@@ -1,0 +1,3 @@
+{"table": "sales_orders", "columns": ["order_id", "customer_id", "revenue", "order_date"], "tags": ["sales", "revenue", "orders"]}
+{"table": "customers", "columns": ["customer_id", "segment", "region"], "tags": ["customer", "customers", "segment"]}
+{"table": "inventory", "columns": ["sku", "stock", "warehouse"], "tags": ["inventory", "stock", "sku"]}
