@@ -1,0 +1,9 @@
+required_fields:
+  - input_id
+  - intention_id
+  - profile_type
+  - entities
+min_confidence: 0.25
+allowed_profile_types:
+  - analytical
+  - operational
