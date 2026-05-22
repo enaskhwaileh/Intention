@@ -1,0 +1,9 @@
+paths:
+  inputs: data/inputs/example_inputs.jsonl
+  table_profiles: data/table_profiles/toy_table_profiles.jsonl
+  input_pipeline_outputs: data/outputs/input_pipeline_outputs.jsonl
+  iekl_graph: resources/iekl/intention_graph.yaml
+  validation_rules: resources/iekl/validation_rules.yaml
+
+ranking:
+  top_k: 3

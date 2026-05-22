@@ -1,0 +1,8 @@
+allowed_axes:
+  - semantic
+  - structural
+  - coverage
+  - quality
+  - behavioral
+required_priority: required
+optional_priority: optional

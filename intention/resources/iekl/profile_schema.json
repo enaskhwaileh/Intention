@@ -1,0 +1,26 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "OperationalIntentionProfile",
+  "type": "object",
+  "required": [
+    "input_id",
+    "intention_type",
+    "goal",
+    "required_evidence",
+    "optional_evidence",
+    "negative_evidence",
+    "validation_status",
+    "validation_errors"
+  ],
+  "properties": {
+    "input_id": {"type": "string"},
+    "intention_type": {"type": "string"},
+    "goal": {"type": "string"},
+    "unit_of_analysis": {"type": ["string", "null"]},
+    "required_evidence": {"type": "array"},
+    "optional_evidence": {"type": "array"},
+    "negative_evidence": {"type": "array"},
+    "validation_status": {"type": "string"},
+    "validation_errors": {"type": "array", "items": {"type": "string"}}
+  }
+}
