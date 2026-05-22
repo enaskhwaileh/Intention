@@ -3,6 +3,8 @@ from dataclasses import asdict, is_dataclass
 from pathlib import Path
 from typing import Iterable
 
+from pydantic import BaseModel
+
 
 def read_jsonl(path: str | Path) -> list[dict]:
     with Path(path).open("r", encoding="utf-8") as handle:
@@ -14,5 +16,12 @@ def write_jsonl(path: str | Path, rows: Iterable[object]) -> None:
     path.parent.mkdir(parents=True, exist_ok=True)
     with path.open("w", encoding="utf-8") as handle:
         for row in rows:
-            payload = asdict(row) if is_dataclass(row) else row
-            handle.write(json.dumps(payload) + "\n")
+            handle.write(json.dumps(_to_jsonable(row)) + "\n")
+
+
+def _to_jsonable(row: object) -> object:
+    if isinstance(row, BaseModel):
+        return row.model_dump()
+    if is_dataclass(row):
+        return asdict(row)
+    return row

@@ -1,14 +1,9 @@
-from dataclasses import dataclass
+from pydantic import BaseModel, Field
 
 
-@dataclass(frozen=True)
-class QueryInput:
-    id: str
-    text: str
-
-
-@dataclass(frozen=True)
-class QueryProfile:
-    input_id: str
-    text: str
-    tokens: list[str]
+class QueryProfile(BaseModel):
+    topic: str
+    entities: list[str] = Field(default_factory=list)
+    attributes: list[str] = Field(default_factory=list)
+    constraints: dict[str, str] = Field(default_factory=dict)
+    retrieval_query: str

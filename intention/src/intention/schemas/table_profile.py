@@ -1,8 +1,11 @@
-from dataclasses import dataclass
+from pydantic import BaseModel, Field
 
 
-@dataclass(frozen=True)
-class TableProfile:
-    table: str
-    columns: list[str]
-    tags: list[str]
+class TableProfile(BaseModel):
+    table_id: str
+    title: str
+    semantic: dict[str, object] = Field(default_factory=dict)
+    structural: dict[str, object] = Field(default_factory=dict)
+    coverage: dict[str, object] = Field(default_factory=dict)
+    quality: dict[str, object] = Field(default_factory=dict)
+    behavioral: dict[str, object] = Field(default_factory=dict)

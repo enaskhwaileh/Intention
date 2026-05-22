@@ -1,2 +1,5 @@
 {"id": "q1", "text": "Show revenue by customer segment for last quarter"}
-{"id": "q2", "text": "Which SKUs are low in stock this week?"}
+{"id": "q2", "text": "Compare COVID-19 vaccine side effects between Pfizer and Moderna across European countries."}
+{"id": "q3", "text": "Predict hospital readmission risk using patient records."}
+{"id": "q4", "text": "Explain why unemployment differs across European regions."}
+{"id": "q5", "text": "Integrate hospital records with regional demographic data."}

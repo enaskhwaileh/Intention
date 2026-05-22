@@ -1,11 +1,15 @@
-import re
-
-from intention.schemas.query import QueryInput, QueryProfile
-
-
-TOKEN_PATTERN = re.compile(r"[a-z0-9]+")
+from intention.llm.base import LLMClient
+from intention.schemas.intention import RawIntention
+from intention.schemas.query import QueryProfile
 
 
-def separate_query(query: QueryInput) -> QueryProfile:
-    tokens = TOKEN_PATTERN.findall(query.text.lower())
-    return QueryProfile(input_id=query.id, text=query.text, tokens=tokens)
+class QueryIntentionSeparator:
+    def __init__(self, llm_client: LLMClient) -> None:
+        self.llm_client = llm_client
+
+    def separate(self, user_input: str) -> tuple[QueryProfile, RawIntention]:
+        payload = self.llm_client.separate_query_and_intention(user_input)
+        return (
+            QueryProfile(**payload["query_profile"]),
+            RawIntention(**payload["raw_intention"]),
+        )

@@ -5,9 +5,10 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "intention"
 version = "0.1.0"
-description = "Toy intention profiling pipeline"
+description = "Input-side intention interpretation pipeline"
 requires-python = ">=3.10"
 dependencies = [
+  "pydantic>=2.0",
   "PyYAML>=6.0",
 ]
 

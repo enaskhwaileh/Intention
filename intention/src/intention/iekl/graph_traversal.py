@@ -1,7 +1,9 @@
 from intention.iekl.graph_store import IEKLGraph
-from intention.schemas.iekl import IEKLNode
 
 
-def neighbors(graph: IEKLGraph, node_id: str) -> list[IEKLNode]:
-    target_ids = [edge.target for edge in graph.edges if edge.source == node_id]
-    return [graph.node_by_id(target_id) for target_id in target_ids]
+def expanded_predicates(graph: IEKLGraph, intention_type: str) -> dict[str, list[str]]:
+    return {
+        "required": graph.get_required_predicates(intention_type),
+        "optional": graph.get_optional_predicates(intention_type),
+        "negative": graph.get_negative_predicates(intention_type),
+    }

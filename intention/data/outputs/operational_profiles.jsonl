@@ -1,2 +1,0 @@
-{"input_id": "q1", "intention_id": "analyze_sales", "profile_type": "analytical", "entities": ["revenue", "customer", "segment"], "confidence": 0.4}
-{"input_id": "q2", "intention_id": "monitor_inventory", "profile_type": "operational", "entities": ["stock"], "confidence": 0.4}

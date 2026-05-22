@@ -1,3 +1,2 @@
-{"table": "sales_orders", "columns": ["order_id", "customer_id", "revenue", "order_date"], "tags": ["sales", "revenue", "orders"]}
-{"table": "customers", "columns": ["customer_id", "segment", "region"], "tags": ["customer", "customers", "segment"]}
-{"table": "inventory", "columns": ["sku", "stock", "warehouse"], "tags": ["inventory", "stock", "sku"]}
+{"table_id": "vaccine_side_effects_by_country", "title": "COVID-19 vaccine side effects by country", "semantic": {"has_compared_entities": true, "has_grouping_variable": true, "has_comparable_measure": true}, "structural": {"has_compatible_granularity": true}, "coverage": {"has_geographic_coverage": true, "has_temporal_coverage": true}, "quality": {}, "behavioral": {}}
+{"table_id": "vaccine_notes", "title": "Narrative vaccine notes", "semantic": {"has_compared_entities": true}, "structural": {}, "coverage": {}, "quality": {}, "behavioral": {}}

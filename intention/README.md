@@ -1,10 +1,11 @@
 # Intention
 
-Toy implementation of an intention profiling pipeline.
+Input-side implementation of an intention interpretation pipeline.
 
-The project separates user inputs into query profiles, grounds them against a
-small IEKL graph, instantiates operational profiles, validates them, and ranks
-candidate table profiles.
+The project separates user inputs into query profiles and raw intentions,
+grounds raw intentions against a lightweight IEKL graph, instantiates
+operational intention profiles, validates them, and exposes the intermediate
+artifacts needed by downstream ranking.
 
 ## Layout
 
@@ -19,8 +20,13 @@ candidate table profiles.
 
 ```bash
 pip install -e .[dev]
-pytest
 python scripts/run_input_pipeline.py
-python scripts/run_profile_validation.py
-python scripts/run_toy_ranking.py
+pytest
+```
+
+Without editable install, run:
+
+```bash
+PYTHONPATH=src python3 scripts/run_input_pipeline.py
+PYTHONPATH=src pytest
 ```

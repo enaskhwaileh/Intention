@@ -1,23 +1,21 @@
 from intention.iekl.graph_store import IEKLGraph
-from intention.schemas.intention import RawIntention
-from intention.schemas.query import QueryProfile
+from intention.schemas.intention import GroundedIntention, RawIntention
 
 
-def ground_intention(profile: QueryProfile, graph: IEKLGraph) -> RawIntention:
-    best_node = graph.nodes[0]
-    best_overlap = -1
-    token_set = set(profile.tokens)
+class IntentionGrounder:
+    def __init__(self, graph: IEKLGraph) -> None:
+        self.graph = graph
 
-    for node in graph.nodes:
-        overlap = len(token_set.intersection(node.keywords))
-        if overlap > best_overlap:
-            best_node = node
-            best_overlap = overlap
+    def ground(self, raw_intention: RawIntention) -> GroundedIntention:
+        intention_type = raw_intention.candidate_intention_type
+        if not self.graph.has_intention(intention_type):
+            raise ValueError(f"unsupported intention type: {intention_type}")
 
-    confidence = min(1.0, max(0.1, best_overlap / max(1, len(best_node.keywords))))
-    return RawIntention(
-        input_id=profile.input_id,
-        intention_id=best_node.id,
-        label=best_node.label,
-        confidence=confidence,
-    )
+        return GroundedIntention(
+            intention_type=intention_type,
+            goal=self.graph.get_goal(intention_type),
+            slots=raw_intention.slots,
+            required_predicates=self.graph.get_required_predicates(intention_type),
+            optional_predicates=self.graph.get_optional_predicates(intention_type),
+            negative_predicates=self.graph.get_negative_predicates(intention_type),
+        )

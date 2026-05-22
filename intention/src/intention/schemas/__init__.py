@@ -1,11 +1,17 @@
-from intention.schemas.intention import RawIntention
-from intention.schemas.profile import OperationalProfile
-from intention.schemas.query import QueryInput, QueryProfile
+from intention.schemas.intention import GroundedIntention, RawIntention
+from intention.schemas.profile import (
+    EvidenceRequirement,
+    NegativeEvidence,
+    OperationalIntentionProfile,
+)
+from intention.schemas.query import QueryProfile
 from intention.schemas.table_profile import TableProfile
 
 __all__ = [
-    "OperationalProfile",
-    "QueryInput",
+    "EvidenceRequirement",
+    "GroundedIntention",
+    "NegativeEvidence",
+    "OperationalIntentionProfile",
     "QueryProfile",
     "RawIntention",
     "TableProfile",
