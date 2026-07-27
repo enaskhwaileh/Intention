@@ -1,3 +1,0 @@
-provider: mock
-model: deterministic-intention-mock
-temperature: 0.0
