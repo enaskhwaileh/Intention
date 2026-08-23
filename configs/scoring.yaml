@@ -1,0 +1,16 @@
+config_version: "1.0.0"
+status: provisional
+notes: These defaults are uncalibrated architecture parameters, not paper results.
+feasibility_policy: soft
+missing_required_evidence: demote
+contradicted_required_evidence: demote
+components:
+  topical_relevance: 0.40
+  action_alignment: 0.60
+alignment:
+  required: 0.85
+  optional: 0.15
+  negative_penalty: 1.0
+soft_feasibility:
+  missing_multiplier: 0.95
+  contradiction_multiplier: 0.90

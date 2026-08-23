@@ -1,0 +1,83 @@
+registry_version: "1.0.0"
+axes:
+  - content
+  - structure
+  - analysis
+  - scope
+  - relation
+  - quality
+inactive_axes:
+  - relation
+predicates:
+  content.comparable_measure.v1:
+    axis: content
+    description: A measure is observable and can be compared across observations.
+    value_kind: text
+  content.aggregatable_measure.v1:
+    axis: content
+    description: A measure is observable at a granularity that permits aggregation.
+    value_kind: text
+  content.observed_outcome.v1:
+    axis: content
+    description: An outcome or event is recorded as an observation.
+    value_kind: text
+  content.monitored_measure.v1:
+    axis: content
+    description: A measure or event to be monitored is recorded.
+    value_kind: text
+  structure.grouping_dimension.v1:
+    axis: structure
+    description: A column can partition observations into requested groups.
+    value_kind: text
+  structure.observation_granularity.v1:
+    axis: structure
+    description: The observational unit or row granularity of the table.
+    value_kind: text
+  structure.usable_attributes.v1:
+    axis: structure
+    description: Non-identifier attributes are available for analysis.
+    value_kind: text_set
+  structure.repeated_observations.v1:
+    axis: structure
+    description: Multiple observations exist for relevant entities or groups.
+    value_kind: boolean
+  analysis.explanatory_variables.v1:
+    axis: analysis
+    description: Observable variables are available for exploratory association analysis.
+    value_kind: text_set
+  analysis.identifier_only_attributes.v1:
+    axis: analysis
+    description: Candidate analytical attributes consist only of identifiers.
+    value_kind: boolean
+  scope.geographic_coverage.v1:
+    axis: scope
+    description: The table has observable geographic coverage.
+    value_kind: text_set
+  scope.temporal_coverage.v1:
+    axis: scope
+    description: The table has observable temporal coverage.
+    value_kind: interval
+  scope.temporal_granularity.v1:
+    axis: scope
+    description: Observations have an identifiable time interval or cadence.
+    value_kind: text
+  quality.population_denominator.v1:
+    axis: quality
+    description: A population denominator is recorded for normalized measures.
+    value_kind: boolean
+  quality.normalized_units.v1:
+    axis: quality
+    description: Measure units are present and mutually comparable.
+    value_kind: boolean
+  quality.outcome_variation.v1:
+    axis: quality
+    description: The observed outcome contains more than one value.
+    value_kind: boolean
+  quality.record_count.v1:
+    axis: quality
+    description: The number of observed records is known.
+    value_kind: number
+  quality.missingness.v1:
+    axis: quality
+    description: Missingness is measured for relevant fields.
+    value_kind: number
