@@ -1,0 +1,67 @@
+{
+  "query": {
+    "original_input": "COVID-19 vaccine side effects in Europe.",
+    "topic": "COVID-19 vaccine side effects",
+    "entities": ["COVID-19 vaccines", "Europe"],
+    "attributes": ["side effects"],
+    "constraints": {"geography": "Europe"},
+    "retrieval_query": "COVID-19 vaccine side effects Europe"
+  },
+  "tables": {
+    "A": {
+      "title": "Brand Summary",
+      "relevance": 0.95,
+      "columns": ["region", "vaccine_brand", "mild_side_effect_rate", "severe_side_effect_rate", "observation_period"],
+      "capabilities": [
+        {"axis": "content", "predicate": "provides_measure", "value": "side-effect rate", "source_element": "mild_side_effect_rate, severe_side_effect_rate", "confidence": 1.0, "provenance": "manual profile from rate columns"},
+        {"axis": "scope", "predicate": "covers_geographic_scope", "value": "Europe", "source_element": "region", "confidence": 1.0, "provenance": "manual profile: region covers Europe"},
+        {"axis": "scope", "predicate": "has_compatible_granularity", "value": "regional-level", "source_element": "row grain metadata", "confidence": 1.0, "provenance": "manual row-granularity declaration"},
+        {"axis": "analysis", "predicate": "has_prediction_target", "value": "side-effect rate", "source_element": "rate columns", "confidence": 0.5, "provenance": "aggregate rates are weak prediction targets"},
+        {"axis": "analysis", "predicate": "has_candidate_predictors", "value": ["vaccine brand"], "source_element": "vaccine_brand", "confidence": 0.6, "provenance": "one aggregate predictor is available"},
+        {"axis": "content", "predicate": "contains_observed_outcomes", "value": "side-effect rates", "source_element": "rate columns", "confidence": 0.8, "provenance": "aggregate outcomes, not patient observations"},
+        {"axis": "quality", "predicate": "has_sufficient_variation", "value": true, "source_element": "manual profile", "confidence": 0.3, "provenance": "limited regional aggregate variation"}
+      ]
+    },
+    "B": {
+      "title": "Country Rates",
+      "relevance": 0.90,
+      "columns": ["country", "vaccine_brand", "mild_side_effect_rate", "severe_side_effect_rate", "vaccinated_population"],
+      "capabilities": [
+        {"axis": "content", "predicate": "provides_measure", "value": "side-effect rate", "source_element": "mild_side_effect_rate, severe_side_effect_rate", "confidence": 1.0, "provenance": "manual profile from rate columns"},
+        {"axis": "structure", "predicate": "has_grouping_variable", "value": "country", "source_element": "country", "confidence": 1.0, "provenance": "country grouping column"},
+        {"axis": "scope", "predicate": "has_compatible_granularity", "value": "country-level", "source_element": "row grain metadata", "confidence": 1.0, "provenance": "one row per country and brand"},
+        {"axis": "scope", "predicate": "covers_geographic_scope", "value": "Europe", "source_element": "country", "confidence": 1.0, "provenance": "manual scope declaration for European countries"},
+        {"axis": "quality", "predicate": "provides_population_size", "value": true, "source_element": "vaccinated_population", "confidence": 1.0, "provenance": "population denominator column"},
+        {"axis": "analysis", "predicate": "has_prediction_target", "value": "observed side-effect rate", "source_element": "rate columns", "confidence": 0.5, "provenance": "aggregate target has limited individual predictive value"},
+        {"axis": "analysis", "predicate": "has_candidate_predictors", "value": ["vaccine brand"], "source_element": "vaccine_brand", "confidence": 0.7, "provenance": "only vaccine brand is a candidate predictor"},
+        {"axis": "content", "predicate": "contains_observed_outcomes", "value": "side-effect rates", "source_element": "rate columns", "confidence": 0.8, "provenance": "observed aggregate rates"},
+        {"axis": "quality", "predicate": "has_sufficient_variation", "value": true, "source_element": "country", "confidence": 0.5, "provenance": "country-level variation only"}
+      ]
+    },
+    "C": {
+      "title": "Patient Records",
+      "relevance": 0.85,
+      "columns": ["patient_id", "country", "age", "vaccine_brand", "dose_number", "prior_condition", "observed_side_effect"],
+      "capabilities": [
+        {"axis": "content", "predicate": "provides_measure", "value": "side-effect observations aggregatable to side-effect rate", "source_element": "observed_side_effect", "confidence": 0.9, "provenance": "patient outcomes can be aggregated into rates"},
+        {"axis": "structure", "predicate": "has_grouping_variable", "value": "country", "source_element": "country", "confidence": 1.0, "provenance": "country grouping column"},
+        {"axis": "scope", "predicate": "has_compatible_granularity", "value": "patient-level aggregatable to country-level", "source_element": "patient_id, country", "confidence": 0.9, "provenance": "patient rows can be grouped by country"},
+        {"axis": "scope", "predicate": "covers_geographic_scope", "value": "Europe", "source_element": "country", "confidence": 1.0, "provenance": "manual scope declaration for European patient records"},
+        {"axis": "analysis", "predicate": "has_prediction_target", "value": "observed side effect", "source_element": "observed_side_effect", "confidence": 1.0, "provenance": "explicit observed outcome column"},
+        {"axis": "analysis", "predicate": "has_candidate_predictors", "value": ["age", "dose number", "prior condition", "vaccine brand"], "source_element": "age, dose_number, prior_condition, vaccine_brand", "confidence": 1.0, "provenance": "manual predictor-column profile"},
+        {"axis": "structure", "predicate": "has_instance_level_rows", "value": "patient-level", "source_element": "patient_id", "confidence": 1.0, "provenance": "unique patient identifier defines row grain"},
+        {"axis": "content", "predicate": "contains_observed_outcomes", "value": "side effects", "source_element": "observed_side_effect", "confidence": 1.0, "provenance": "observed patient outcome column"},
+        {"axis": "quality", "predicate": "has_sufficient_variation", "value": true, "source_element": "manual fixture metadata", "confidence": 1.0, "provenance": "fixture declares variation across predictors and outcomes"}
+      ]
+    },
+    "D": {
+      "title": "Vaccine Logistics",
+      "relevance": 0.35,
+      "columns": ["shipment_id", "vaccine_brand", "doses_delivered", "storage_temperature", "delivery_date"],
+      "capabilities": [
+        {"axis": "content", "predicate": "logistics_measure", "value": "doses delivered", "source_element": "doses_delivered", "confidence": 1.0, "provenance": "logistics count column"},
+        {"axis": "structure", "predicate": "shipment_records", "value": "shipment-level", "source_element": "shipment_id", "confidence": 1.0, "provenance": "shipment identifier defines row grain"}
+      ]
+    }
+  }
+}

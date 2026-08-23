@@ -1,0 +1,36 @@
+{
+  "axes": ["content", "structure", "analysis", "scope", "relation", "quality"],
+  "inactive_axes": ["relation"],
+  "predicates": {
+    "provides_measure": {"axis": "content"},
+    "has_grouping_variable": {"axis": "structure"},
+    "has_compatible_granularity": {"axis": "scope"},
+    "covers_geographic_scope": {"axis": "scope"},
+    "provides_population_size": {"axis": "quality"},
+    "has_prediction_target": {"axis": "analysis"},
+    "has_candidate_predictors": {"axis": "analysis"},
+    "has_instance_level_rows": {"axis": "structure"},
+    "contains_observed_outcomes": {"axis": "content"},
+    "has_sufficient_variation": {"axis": "quality"}
+  },
+  "actions": {
+    "compare": {
+      "requirements": [
+        {"predicate": "provides_measure", "axis": "content", "expected_value": "side-effect rate", "priority": "required", "weight": 1.0, "threshold": 0.6},
+        {"predicate": "has_grouping_variable", "axis": "structure", "expected_value": "country", "priority": "required", "weight": 1.0, "threshold": 0.6},
+        {"predicate": "has_compatible_granularity", "axis": "scope", "expected_value": "country-level", "priority": "required", "weight": 1.0, "threshold": 0.6},
+        {"predicate": "covers_geographic_scope", "axis": "scope", "expected_value": "Europe", "priority": "required", "weight": 1.0, "threshold": 0.6},
+        {"predicate": "provides_population_size", "axis": "quality", "expected_value": true, "priority": "optional", "weight": 1.0, "threshold": 0.6}
+      ]
+    },
+    "predict": {
+      "requirements": [
+        {"predicate": "has_prediction_target", "axis": "analysis", "expected_value": "observed side effect", "priority": "required", "weight": 1.0, "threshold": 0.6},
+        {"predicate": "has_candidate_predictors", "axis": "analysis", "expected_value": ["age", "dose number", "prior condition", "vaccine brand"], "priority": "required", "weight": 1.0, "threshold": 0.6},
+        {"predicate": "has_instance_level_rows", "axis": "structure", "expected_value": "patient-level", "priority": "required", "weight": 1.0, "threshold": 0.6},
+        {"predicate": "contains_observed_outcomes", "axis": "content", "expected_value": "side effects", "priority": "required", "weight": 1.0, "threshold": 0.6},
+        {"predicate": "has_sufficient_variation", "axis": "quality", "expected_value": true, "priority": "optional", "weight": 1.0, "threshold": 0.6}
+      ]
+    }
+  }
+}
