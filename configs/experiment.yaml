@@ -1,0 +1,5 @@
+config_version: "1.0.0"
+random_seed: 2026
+offline_fixture_only: true
+results_directory: results
+status: protocol_only
