@@ -10,6 +10,8 @@
   alignment/ranking equations, and bottom fallback.
 - Leakage-safe splits, pooling/annotation validation, core metrics, paired
   statistics, fail-closed baseline registry, run writer, and LaTeX generation.
+- Supervisor-facing method report with a reproduced score derivation for the
+  controlled COMPARE example.
 
 ## Current milestone
 
@@ -21,6 +23,7 @@ Git state/history, complete inventory, and source/config/test/document inspectio
 `pytest -q`: 50 passed in 0.51s.
 `PYTHONPATH=src python3 -m intention smoke`: completed with knowledge hash
 `06d14d1...539a`; COMPARE ranks `country_rates` above `patient_records`.
+The report verification reproduced final scores 0.6037896 and 0.4800000.
 `ruff` and `mypy` are not installed; dependencies are declared. This shell has
 no default `python` shim, so verification used `python3`.
 
