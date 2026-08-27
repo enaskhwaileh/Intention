@@ -12,18 +12,23 @@
   statistics, fail-closed baseline registry, run writer, and LaTeX generation.
 - Supervisor-facing method report with a reproduced score derivation for the
   controlled COMPARE example.
+- Milestone 1 contract audit: all seven knowledge-layer components are exposed,
+  nested configuration is fail-closed, matching operators are explicit,
+  scoring inputs are cross-validated, and the contract-to-code matrix is
+  recorded in `docs/contract_traceability.md`.
 
 ## Current milestone
 
-External integrations and full experimental execution (blocked on resources).
+Milestone 2 planning: stronger multi-topic synthetic benchmark.
 
 ## Commands and tests
 
 Git state/history, complete inventory, and source/config/test/document inspection.
-`pytest -q`: 50 passed in 0.51s.
+`pytest -q`: 195 passed in 2.87s.
 `PYTHONPATH=src python3 -m intention smoke`: completed with knowledge hash
-`06d14d1...539a`; COMPARE ranks `country_rates` above `patient_records`.
+`fed97189...2c43c`; COMPARE ranks `country_rates` above `patient_records`.
 The report verification reproduced final scores 0.6037896 and 0.4800000.
+`python3 -m compileall -q src tests`: passed.
 `ruff` and `mypy` are not installed; dependencies are declared. This shell has
 no default `python` shim, so verification used `python3`.
 
@@ -42,5 +47,5 @@ agreement, throughput, and full orchestration remain pending.
 
 ## Next action
 
-Freeze external resources on development topics, complete remaining diagnostics
-and orchestration, install evaluation dependencies, then run real-data smoke.
+Agree on the topic/action coverage and gold-ranking construction policy for the
+stronger synthetic benchmark before adding new fixtures.

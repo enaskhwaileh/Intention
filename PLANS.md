@@ -20,3 +20,11 @@ Each milestone requires tests and a focused commit. Synthetic acceptance is `pyt
 ## Risks and open decisions
 
 Exact TABERTA-Hybrid, Birdie, EDBT25, and Qwen revisions require authoritative artifacts and hardware; unavailable systems are blocked, never substituted. Human annotators, WikiTables path/license, semantic model revision, and development-selected hyperparameters are experiment inputs. Heuristic profiler evidence remains `inferred`/`estimated` until evaluated.
+
+## Milestone record
+
+- Milestone 1, contract audit: completed and verified. See
+  `docs/contract_traceability.md`. The audit made numerical/interval rule
+  parameters explicit, strengthened fail-closed validation and score bounds,
+  and expanded the suite from 50 to 195 passing tests without changing the
+  controlled example's ranking or scores.

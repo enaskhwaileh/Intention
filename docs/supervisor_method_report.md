@@ -97,7 +97,11 @@ The operational axes are:
 All actions, arguments, predicates, matching rules, templates, and weights are
 defined in a strict versioned knowledge file. The interpreter cannot invent new
 vocabulary. The current knowledge configuration has SHA-256 hash
-`06d14d1e00f138d58ce25e32a7790edfbaf890eadfc172474b93e5593fdb539a`.
+`fed971899a1d7d7961c79ae1999c19fe79ab7912d5588631a8420fbc8bd2c43c`.
+
+This hash changed during the contract audit because numerical comparison
+direction and interval behavior were made explicit in predicate configuration;
+the demonstrated scores did not change.
 
 ## 3. Offline table profiling
 
@@ -399,4 +403,3 @@ PYTHONPATH=src python3 -m intention smoke \
 > action-conditioned usefulness. The result is currently synthetic and should
 > be presented as an implementation achievement and proof of mechanism, not yet
 > as benchmark evidence of general effectiveness.
-
