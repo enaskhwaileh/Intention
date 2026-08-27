@@ -7,6 +7,7 @@ python3 -m pip install -e ".[dev]"
 pytest -q
 python -m intention smoke
 python -m intention synthetic-benchmark
+python -m intention evaluate-profiler
 ```
 
 The core suite stays offline. CLI commands are `smoke`, `profile`, `interpret`,

@@ -44,6 +44,12 @@ Run all three controlled topic/action pairs:
 PYTHONPATH=src python3 -m intention synthetic-benchmark
 ```
 
+Evaluate profiling against controlled gold annotations:
+
+```bash
+PYTHONPATH=src python3 -m intention evaluate-profiler
+```
+
 ## Authoritative documents
 
 - `docs/method_contract.md` — mathematics and scientific boundaries.
@@ -53,3 +59,5 @@ PYTHONPATH=src python3 -m intention synthetic-benchmark
 - `PLANS.md` and `STATUS.md` — milestones and verified state.
 - `docs/supervisor_method_report.md` — detailed controlled example.
 - `docs/synthetic_benchmark.md` — multi-topic action-switch benchmark.
+- `docs/capability_annotation_protocol.md` and `docs/profiler_validation.md` —
+  gold policy, structured granularity, and controlled diagnostics.

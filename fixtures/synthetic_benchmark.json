@@ -86,8 +86,8 @@
           "metadata": {"row_granularity": "route-day"},
           "rows": [
             {"service_id": "s1", "delay": 7.0, "date": "2026-01-01"},
-            {"service_id": "s2", "delay": 2.0, "date": "2026-01-01"},
-            {"service_id": "s3", "delay": 6.0, "date": "2026-01-02"}
+            {"service_id": "s1", "delay": 2.0, "date": "2026-01-02"},
+            {"service_id": "s2", "delay": 6.0, "date": "2026-01-01"}
           ]
         }
       ],

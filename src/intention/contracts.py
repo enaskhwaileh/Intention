@@ -1,5 +1,5 @@
 """Normative five-axis pipeline records."""
-from dataclasses import dataclass
+from dataclasses import asdict, dataclass
 from typing import Any
 
 @dataclass(frozen=True)
@@ -24,6 +24,20 @@ class Capability:
             raise ValueError("capability predicate, axis, and value are required")
         if self.state not in {"observed", "estimated", "inferred"} or not 0 <= self.confidence <= 1:
             raise ValueError("invalid capability state or confidence")
+
+@dataclass(frozen=True)
+class CapabilityProfile:
+    table_id: str
+    profiler_version: str
+    knowledge_hash: str
+    table_checksum: str
+    complete_table: bool
+    capabilities: tuple[Capability, ...]
+    def __post_init__(self):
+        if not all((self.table_id.strip(),self.profiler_version.strip(),self.knowledge_hash.strip(),self.table_checksum.strip())):
+            raise ValueError("capability profile identity fields are required")
+    def to_dict(self):
+        return asdict(self)
 
 @dataclass(frozen=True)
 class Table:

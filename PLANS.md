@@ -40,3 +40,7 @@ Exact TABERTA-Hybrid, Birdie, EDBT25, and Qwen revisions require authoritative a
   reference analysis. The versioned benchmark covers all five actions in six
   cases across three paired topics, with three relevance-to-usefulness ranking
   corrections.
+- Milestone 3, capability-profiler validation: completed and verified. It adds
+  the four-state gold protocol, three predicate tiers, structured granularity,
+  strict annotations for six tables, immutable versioned profile storage,
+  complete/sample provenance, and controlled profiler diagnostics.
