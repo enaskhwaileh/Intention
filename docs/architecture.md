@@ -1,5 +1,24 @@
 # Architecture contract
 
+> The normative architecture below supersedes the legacy phase notes later in
+> this file. Those notes document history only; see `docs/method_contract.md`.
+
+```text
+knowledge YAML -> strict K_G loader
+                        |
+user text -> provider -> grounding -> requirements
+     |                                   |
+     +-> topical query -> retriever -> candidates
+tables -> profiler -> capabilities       |
+             requirements + capabilities -> alignment -> ranking
+benchmark -> human labels -> evaluation -> immutable run -> LaTeX
+```
+
+Package boundaries are `knowledge`, `profiling`, `interpretation`, `retrieval`,
+`alignment`, `ranking`, `benchmarks`, `baselines`, `evaluation`, and `reporting`.
+`intention_mvp` and the older six-axis registry are regression-only and are not
+imported by normative scoring.
+
 The research system operates on one table at a time. It does not silently turn
 dataset discovery into multi-table integration.
 
