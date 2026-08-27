@@ -1,0 +1,2 @@
+interpreter: {provider: deterministic, revision: synthetic-v1}
+retriever: {name: BM25, serialization: title_description_schema}
