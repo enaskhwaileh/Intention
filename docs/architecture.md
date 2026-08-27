@@ -1,60 +1,34 @@
-# Architecture contract
-
-> The normative architecture below supersedes the legacy phase notes later in
-> this file. Those notes document history only; see `docs/method_contract.md`.
+# Normative architecture
 
 ```text
-knowledge YAML -> strict K_G loader
-                        |
-user text -> provider -> grounding -> requirements
-     |                                   |
-     +-> topical query -> retriever -> candidates
-tables -> profiler -> capabilities       |
-             requirements + capabilities -> alignment -> ranking
-benchmark -> human labels -> evaluation -> immutable run -> LaTeX
+configs/knowledge/knowledge.yaml -> strict K_G loader
+                                      |
+user text -> provider -> validation -> grounding -> requirements
+     |                                               |
+     +-> topical query -> retriever -> candidates    |
+tables -> profiler -> capability profiles            |
+                 requirements + capabilities -> alignment
+                                                   -> usefulness ranking
+benchmark -> human labels -> evaluation -> immutable runs -> LaTeX
 ```
 
-Package boundaries are `knowledge`, `profiling`, `interpretation`, `retrieval`,
-`alignment`, `ranking`, `benchmarks`, `baselines`, `evaluation`, and `reporting`.
-`intention_mvp` and the older six-axis registry are regression-only and are not
-imported by normative scoring.
-
-The research system operates on one table at a time. It does not silently turn
-dataset discovery into multi-table integration.
-
-## Canonical notation
+The system discovers one table at a time. Candidate generation receives only
+the topical query. Action-bearing input is used by interpretation and grounding,
+not by the default first-stage retriever.
 
 ```text
-Interpret(u) -> (q_u, I_u)
-Ground(I_u) -> Psi*(I_u)
-Profile(T) -> Phi*(T)
-Retrieve(q_u) -> candidates and topical relevance
-Align(Psi*(I_u), Phi*(T)) -> alignment and evidence trace
-Rank(relevance, alignment, feasibility) -> usefulness ranking
+src/intention/
+  knowledge/       # K_G schema, validation, and hashing
+  profiling/       # offline capability evidence
+  interpretation/  # providers, normalization, grounding, requirements
+  retrieval/       # common first-stage interface
+  alignment/       # matching and exact axis equations
+  ranking/         # usefulness combination
+  benchmarks/      # construction, annotation, leakage controls
+  baselines/       # reproducibility-gated adapters
+  evaluation/      # metrics and statistics
+  reporting/       # immutable runs and generated tables
 ```
 
-`Psi*(I)` is always the intended-action requirement profile. `Phi*(T)` is
-always the table capability profile.
-
-## Implemented in Phases 0–2
-
-- Serializable validated domain contracts for every planned stage boundary.
-- Canonical action, axis, evidence-state, feasibility-policy, and status enums.
-- Versioned YAML registries for observable predicates and five actions.
-- Registry validation covering predicate references, action coverage, version
-  compatibility, and normalized category weights.
-- Cross-profile validation against the registries.
-
-The contracts do not imply that later profiling, interpretation, retrieval,
-alignment, ranking, benchmark, evaluation, or notebook stages are implemented.
-
-## Scientific boundaries
-
-The axes organize predicates; they are not asserted to be statistically or
-mathematically independent. A later aggregation implementation must prevent the
-same evidence from being rewarded repeatedly.
-
-The system estimates operational suitability. `predict` does not promise model
-accuracy. `explain` means support for exploratory or associational analysis and
-does not establish causal identification. The `relation` axis is canonical but
-inactive for the primary single-table system.
+The exact equations live in `docs/method_contract.md`; their code and tests are
+indexed in `docs/contract_traceability.md`.

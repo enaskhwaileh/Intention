@@ -4,7 +4,7 @@
 
 **Implementation status:** verified synthetic proof of concept  
 **Branch:** `codex/experimental-evaluation`  
-**Test status:** 50 automated tests passing  
+**Test status:** see `STATUS.md` for the current verified count
 **Scope of claims:** controlled synthetic example; no real-dataset effectiveness claim yet
 
 ## Executive summary

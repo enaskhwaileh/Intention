@@ -1,9 +1,9 @@
 # Contract-to-code traceability
 
-This matrix records the normative method implementation. Legacy files under
-`src/intention/domain`, `src/intention/knowledge/registry.py`, root-level legacy
-configs, and `src/intention_mvp` are regression history and are excluded from
-the normative import graph by an automated test.
+This matrix records the normative method implementation. The superseded MVP,
+six-axis registry, duplicate configurations, and their tests were removed after
+reference analysis established that they formed a self-contained unused cluster.
+They remain recoverable from Git history.
 
 | Contract element | Configuration | Implementation | Verification |
 |---|---|---|---|

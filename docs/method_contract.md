@@ -1,6 +1,7 @@
 # Normative method contract
 
-This supersedes conflicting definitions for the new implementation. `src/intention_mvp` is regression-only.
+This is the sole executable method definition. Superseded implementations are
+available only through Git history.
 
 Actions are `COMPARE`, `AGGREGATE`, `PREDICT`, `EXPLAIN`, and `MONITOR`. `EXPLAIN` is associational, never causal. `PREDICT` tests evidence availability, not performance. The only axes are `sem`, `str`, `cov`, `qual`, and `aff`. `K_G=(A,X,P,G,M,B,V)` is strict versioned configuration; providers cannot extend its vocabularies.
 
