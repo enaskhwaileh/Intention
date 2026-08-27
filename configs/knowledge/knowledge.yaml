@@ -1,0 +1,64 @@
+version: 2.0.0
+axes: [sem, str, cov, qual, aff]
+predicates:
+  has_field: {axis: sem, matcher: normalized}
+  numeric_measure: {axis: sem, matcher: normalized}
+  grouping_field: {axis: str, matcher: normalized}
+  row_granularity: {axis: str, matcher: granularity}
+  temporal_coverage: {axis: cov, matcher: interval}
+  geographic_coverage: {axis: cov, matcher: set_containment}
+  missingness_at_most: {axis: qual, matcher: numerical}
+  adequate_variation: {axis: qual, matcher: exact}
+  repeated_observations: {axis: aff, matcher: exact}
+  non_identifier_features: {axis: aff, matcher: existential}
+  identifier_only: {axis: aff, matcher: exact}
+actions:
+  COMPARE:
+    required_arguments: [measure, comparison_dimension]
+    optional_arguments: [geographic_scope]
+    existential_arguments: []
+    weights: {sem: 0.35, str: 0.30, cov: 0.10, qual: 0.10, aff: 0.15}
+    requirements:
+      - {predicate: numeric_measure, value_from: measure, polarity: req}
+      - {predicate: grouping_field, value_from: comparison_dimension, polarity: req}
+      - {predicate: geographic_coverage, value_from: geographic_scope, polarity: opt, conditional: true}
+      - {predicate: missingness_at_most, value: 0.2, polarity: opt}
+  AGGREGATE:
+    required_arguments: [measure]
+    optional_arguments: [grouping_dimension]
+    existential_arguments: []
+    weights: {sem: 0.35, str: 0.30, cov: 0.05, qual: 0.15, aff: 0.15}
+    requirements:
+      - {predicate: numeric_measure, value_from: measure, polarity: req}
+      - {predicate: grouping_field, value_from: grouping_dimension, polarity: opt, conditional: true}
+      - {predicate: missingness_at_most, value: 0.2, polarity: opt}
+  PREDICT:
+    required_arguments: [outcome]
+    optional_arguments: [observational_unit]
+    existential_arguments: [observational_unit]
+    weights: {sem: 0.30, str: 0.20, cov: 0.05, qual: 0.20, aff: 0.25}
+    requirements:
+      - {predicate: has_field, value_from: outcome, polarity: req}
+      - {predicate: non_identifier_features, value: '*', polarity: req}
+      - {predicate: adequate_variation, value: true, polarity: req}
+      - {predicate: identifier_only, value: true, polarity: neg}
+  EXPLAIN:
+    description: Exploratory association only; no causal identification.
+    required_arguments: [outcome]
+    optional_arguments: []
+    existential_arguments: []
+    weights: {sem: 0.35, str: 0.10, cov: 0.05, qual: 0.20, aff: 0.30}
+    requirements:
+      - {predicate: has_field, value_from: outcome, polarity: req}
+      - {predicate: non_identifier_features, value: '*', polarity: req}
+      - {predicate: adequate_variation, value: true, polarity: req}
+  MONITOR:
+    required_arguments: [measure]
+    optional_arguments: [temporal_scope]
+    existential_arguments: []
+    weights: {sem: 0.25, str: 0.15, cov: 0.25, qual: 0.10, aff: 0.25}
+    requirements:
+      - {predicate: numeric_measure, value_from: measure, polarity: req}
+      - {predicate: repeated_observations, value: true, polarity: req}
+      - {predicate: temporal_coverage, value_from: temporal_scope, polarity: opt, conditional: true}
+validation: {weights_sum_to_one: true, reject_unknown_fields: true}

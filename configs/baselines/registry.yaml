@@ -1,0 +1,8 @@
+BM25: {status: available, implementation: intention.retrieval.BM25Retriever}
+EDBT25-Semantic: {status: blocked, reason: exact revision and corpus adapter required}
+TABERTA-Hybrid: {status: blocked, reason: exact checkpoint and serialization required}
+TABERTA-FullInput: {status: blocked, reason: exact checkpoint and serialization required}
+Birdie: {status: blocked, reason: reproducible corpus checkpoint required}
+Qwen3-Embedding-8B: {status: blocked, reason: pinned model access and accelerator required}
+Qwen3-Reranker-8B: {status: blocked, reason: pinned model access and accelerator required}
+Ours: {status: available, implementation: intention.pipeline.run}
