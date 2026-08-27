@@ -1,19 +1,22 @@
 # Reproducibility
 
-## Current deterministic checkpoint
+## Synthetic checkpoint
 
 ```bash
 python3 -m pip install -e ".[dev]"
 pytest -q
-python3 scripts/run_vaccine_mvp.py
+python -m intention smoke
 ```
 
-The core test suite must remain offline. YAML registry configuration is loaded
-from the repository and validated before use.
+The core suite stays offline. CLI commands are `smoke`, `profile`, `interpret`,
+`retrieve`, `build-benchmark`, `run-baselines`, `run-main`, `run-ablations`,
+`run-sensitivity`, `evaluate`, and `generate-paper-tables`. Use `ruff check .`
+and `mypy src` for lint and type checks.
 
-## Not yet reproducible
+## Run provenance
 
-No external benchmark, model checkpoint, baseline run, ablation, statistical
-test, paper figure, or result table has been produced. Future runs must record
-the Git commit, configuration version, benchmark version, seed, commands, and
-raw measured outputs.
+Every run is a new `artifacts/runs/<run_id>/` with configuration/hash, Git commit,
+environment, dataset manifest, knowledge version, metrics, per-query metrics,
+predictions, timings, and logs. Runners refuse overwrite; reporting fails on
+missing fields. Full experiments require explicit data, pinned models, and
+compute. No external result is claimed unless `STATUS.md` lists its verified ID.
