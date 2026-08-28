@@ -40,16 +40,21 @@
 - `MONITOR` is frozen as the fifth single-table action; `INTEGRATE` is a
   future multi-table contract, not a substitution. The canonical 12-milestone
   roadmap and credential-free deterministic GitHub Actions workflow are added.
+- A small credential-free Milestone Demonstrator exposes every implemented
+  pipeline boundary as structured JSON. Immutable reconstructed archives cover
+  Milestones 1–3 at their source commits; Milestone 4 has a regenerable current
+  snapshot and executable notebook. All artifacts are labeled synthetic and
+  explicitly excluded from paper-result claims.
 
 ## Current milestone
 
-Milestone 4 hardening complete on its review branch. Work is stopped before
-Milestone 5.
+Milestone 4 hardening is merged. The observability/archive layer requested
+before Milestone 5 is implemented; substantial Milestone 5 work has not begun.
 
 ## Commands and tests
 
 Git state/history, complete inventory, and source/config/test/document inspection.
-`pytest -q`: 199 passed. The normative suite includes contract,
+`pytest -q`: 203 passed. The normative suite includes contract,
 multi-topic benchmark, strict annotation, profile repository, profiler boundary,
 and metric regression tests.
 `PYTHONPATH=src python3 -m intention smoke`: completed with knowledge hash
@@ -67,8 +72,9 @@ judgments are excluded as unknown.
 cases; action accuracy/macro-F1, argument precision/recall/F1, joint-frame
 accuracy, provenance-span accuracy, and grounding-decision accuracy are 1.000.
 This is deterministic contract evidence, not an external LLM result.
-GitHub Actions repeats the offline suite and four deterministic CLI checks on
-Python 3.10 and 3.11 without credentials.
+GitHub Actions repeats the offline suite and five deterministic CLI checks on
+Python 3.10 and 3.11 without credentials, and verifies the current demo
+snapshot.
 
 ## Artifacts
 
@@ -85,5 +91,5 @@ agreement, throughput, and full orchestration remain pending.
 
 ## Next action
 
-Review and merge the Milestone 4 hardening PR. Only then begin Milestone 5 by
-freezing table serialization and candidate-depth contracts.
+Review the small Milestone Demonstrator diff. Then begin Milestone 5 by freezing
+table serialization and candidate-depth contracts.

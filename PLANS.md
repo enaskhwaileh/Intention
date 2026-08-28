@@ -43,6 +43,6 @@ new annotations, and new evaluation—not a retrieval or benchmark substitution.
 
 ## Current gate
 
-Stop after Milestone 4 hardening for diff review. Do not begin retrieval,
-serialization, baseline integration, or real-benchmark work until that review
-is merged.
+Milestone 4 hardening is merged. Review the small credential-free Milestone
+Demonstrator archive before beginning retrieval, serialization, baseline
+integration, or real-benchmark work in Milestone 5.
