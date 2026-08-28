@@ -1,2 +1,2 @@
-interpreter: {provider: deterministic, revision: synthetic-v1}
+interpreter: {config: configs/models/interpreter.yaml}
 retriever: {name: BM25, serialization: title_description_schema}

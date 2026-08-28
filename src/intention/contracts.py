@@ -60,7 +60,10 @@ class Interpretation:
     topical_query: str
     grounding: Grounding | None
     provenance: tuple[tuple[int, int], ...]
-    raw_output: dict[str, Any]
+    validated_output: dict[str, Any]
+    status: str = "valid"
+    ambiguity: str = "unambiguous"
+    topical_fields: dict[str, Any] | None = None
     def __post_init__(self):
         if not self.topical_query.strip():
             raise ValueError("topical query must be non-empty")

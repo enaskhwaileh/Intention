@@ -26,15 +26,19 @@
   structured row-granularity ontology, versioned immutable capability-profile
   storage, complete/sample evidence distinction, improved identifier/grouping/
   temporal/repetition extraction, and profiler diagnostics.
+- Milestone 4 strict structured interpretation schema, exact provenance spans,
+  raw/validated provider artifact separation, versioned alias normalization,
+  ambiguity and missing-argument policies, configured external-provider
+  boundary, and controlled action/argument evaluation.
 
 ## Current milestone
 
-Milestone 4 planning: online interpretation and grounding.
+Milestone 5 planning: retrieval interfaces, serialization, and pinned baselines.
 
 ## Commands and tests
 
 Git state/history, complete inventory, and source/config/test/document inspection.
-`pytest -q`: 180 passed in 3.03s. The normative suite includes contract,
+`pytest -q`: 191 passed in 3.52s. The normative suite includes contract,
 multi-topic benchmark, strict annotation, profile repository, profiler boundary,
 and metric regression tests.
 `PYTHONPATH=src python3 -m intention smoke`: completed with knowledge hash
@@ -48,6 +52,10 @@ value score, provenance validity, and structured granularity diagnostics are
 1.000 on six developer-authored tables. Macro-F1 covers nine predicates with
 positive support; `identifier_only` has no positive case and four geographic
 judgments are excluded as unknown.
+`PYTHONPATH=src python3 -m intention evaluate-interpreter`: 12/12 controlled
+cases; action accuracy/macro-F1, argument precision/recall/F1, and grounding
+decision accuracy are 1.000. This is deterministic contract evidence, not an
+external LLM result.
 `ruff` and `mypy` are not installed; dependencies are declared. This shell has
 no default `python` shim, so verification used `python3`.
 
@@ -66,5 +74,5 @@ agreement, throughput, and full orchestration remain pending.
 
 ## Next action
 
-Freeze the online interpreter structured-output schema, ambiguity policy,
-normalization catalogue, and provider artifact boundary before adding an LLM.
+Freeze table serialization and candidate-depth contracts, then integrate
+retrievers one by one without substituting unavailable external systems.

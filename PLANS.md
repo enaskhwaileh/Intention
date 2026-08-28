@@ -44,3 +44,7 @@ Exact TABERTA-Hybrid, Birdie, EDBT25, and Qwen revisions require authoritative a
   the four-state gold protocol, three predicate tiers, structured granularity,
   strict annotations for six tables, immutable versioned profile storage,
   complete/sample provenance, and controlled profiler diagnostics.
+- Milestone 4, online interpretation and grounding: completed and verified. It
+  adds a provider-independent JSON Schema, raw/validated artifact separation,
+  versioned normalization, explicit ambiguity states, fail-closed external
+  provider boundary, and twelve-case action/argument evaluation.
