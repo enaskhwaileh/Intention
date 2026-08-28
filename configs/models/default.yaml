@@ -1,2 +1,2 @@
 interpreter: {config: configs/models/interpreter.yaml}
-retriever: {name: BM25, serialization: title_description_schema}
+retriever: {name: BM25, serialization: title_description_schema_v1, input_scope: topical_only}

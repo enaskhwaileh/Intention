@@ -13,6 +13,9 @@ relevance and alignment into a usefulness ranking.
 - Exact requirement–capability alignment and usefulness equations.
 - Leakage-safe benchmark utilities, metrics, run provenance, and reporting.
 - Controlled synthetic action-switch demonstrations.
+- Frozen provider-independent retrieval results, topical-only routing,
+  versioned table serialization, candidate-depth policy, and fail-closed
+  external retriever registry.
 
 No real-data effectiveness or external-model result is currently claimed. See
 `STATUS.md` for verified work and blockers.
@@ -78,5 +81,7 @@ synthetic artifacts are under `demo_snapshots/` and are not paper results.
   gold policy, structured granularity, and controlled diagnostics.
 - `docs/interpretation_protocol.md` and `docs/interpreter_validation.md` —
   structured provider boundary, ambiguity rules, and controlled diagnostics.
+- `docs/retrieval_contract.md` — Milestone 5 first-stage input, serialization,
+  result, depth, timing, and availability contracts.
 - `notebooks/system_demo.ipynb` and `demo_snapshots/` — executable pipeline
   observability and immutable milestone archives.

@@ -17,7 +17,7 @@ They remain recoverable from Git history.
 | \(\gamma=(p,x,v,s,c,prov)\) | predicate catalogue | `contracts.Capability`, `profile_table()` | gold predicate/value/provenance tests |
 | \(u\to(q_u,\iota_u)\to g_u\) | output schema + normalization catalogue | `ProviderArtifact`, `ground()` | action/argument/span/ambiguity/fallback tests |
 | \(\Psi(g_u)\to\Psi^*(g_u)\) | action templates | `requirements()` | conditional and existential tests |
-| topical-only \(\mathcal C_{q_u}\) | model config | `BM25Retriever`, `pipeline.run()` | action-switch/retrieval tests |
+| topical-only \(\mathcal C_{q_u}\) | retrieval contract + registry | `RetrievalRequest`, `BM25Retriever`, `pipeline.run()` | `test_pipeline_passes_only_topical_query_to_first_stage_retriever` |
 | \(m(\rho,T)=\max M_pc\) | predicate matcher | `alignment/scoring.py` | maximum/confidence/missing tests |
 | \(R_x,O_x,N_x\) conventions | experiment etas | `align()` | empty-set and min/mean-ablation tests |
 | \(S_x\), active weight normalization, \(A\) | action weights | `align()` | component trace and bounded grid tests |

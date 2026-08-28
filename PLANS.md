@@ -10,10 +10,10 @@ Unavailable external systems must fail explicitly rather than be approximated.
    assets and establish multi-topic, all-action ranking-reversal fixtures.
 3. **Capability-profiler validation — complete.** Freeze gold annotations,
    predicate scope, row granularity, immutable profiles, and diagnostics.
-4. **Online interpretation and grounding — hardening in review.** Enforce the
+4. **Online interpretation and grounding — complete.** Enforce the
    provider schema, normalization-backed provenance, independent topical and
    grounding failures, frame/span metrics, and action semantics.
-5. **Retrieval contracts and serialization.** Freeze table serialization,
+5. **Retrieval contracts and serialization — contract stage in review.** Freeze table serialization,
    candidate depth, retriever interfaces, and pinned lexical/semantic baseline
    identities. Entry gate: Milestone 4 hardening reviewed and merged.
 6. **Evaluation library.** Finalize graded ranking metrics, action-switch

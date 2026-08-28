@@ -12,7 +12,11 @@
     "milestone_03": {
       "implementation_commit": "42531a4",
       "sha256": "9c5a46078d08a19de67a288f9c5f7d1fb98ba39d84f525581d919d2306f5eb9a"
+    },
+    "milestone_04": {
+      "implementation_commit": "6d9109c7e76a70e0fd005a43f7b7c9a859c525e6",
+      "sha256": "6a4fc7ff08af782a55add1b13d6d1dec9a8bc722efeb9fc016027412785b53a3"
     }
   },
-  "current_snapshot": "milestone_04"
+  "current_snapshot": "milestone_05"
 }

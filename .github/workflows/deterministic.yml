@@ -25,6 +25,8 @@ jobs:
         run: pytest -q
       - name: Compile
         run: python -m compileall -q src tests
+      - name: Validate retrieval result schema
+        run: python -m json.tool configs/retrieval/result_schema.json > /dev/null
       - name: Deterministic command verification
         run: |
           python -m intention smoke

@@ -1,0 +1,21 @@
+version: "1.0.0"
+candidate_depth:
+  primary: 20
+  development: [5, 10, 20, 50]
+  sensitivity: [5, 10, 20, 50, 100]
+serializations:
+  title_description_schema_v1:
+    version: "1.0.0"
+    visible_components: [title, description, column_names]
+    excluded_components:
+      [rows, cell_values, metadata, capability_profiles, grounded_action,
+       action_arguments, full_user_input]
+    column_policy: first_row_insertion_order
+    format: ordered_space_join
+input_scopes:
+  topical_only:
+    query_field: topical_query
+    permits_full_user_input: false
+  full_input_baseline:
+    query_field: full_user_input
+    permits_full_user_input: true
