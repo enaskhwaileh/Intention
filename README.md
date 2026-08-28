@@ -1,42 +1,63 @@
 # Intended-Action Grounding for Dataset Discovery
 
-This repository contains the first executable vertical slice for
-intended-action-aware dataset ranking.
+This repository implements action-aware table discovery. It separates topical
+relevance from the analytical action a user intends to perform, profiles table
+capabilities, aligns grounded requirements with that evidence, and combines
+relevance and alignment into a usefulness ranking.
 
-The `full-pipeline-architecture` branch is building a scientifically explicit
-research system in reviewed phases. Phases 0–2 add validated domain contracts
-and versioned registries for five canonical actions while preserving this
-deterministic vertical slice as a regression implementation. See
-`docs/implementation_status.md`; planned modules are not described as working.
+## Current verified scope
 
-For the unchanged query **“COVID-19 vaccine side effects in Europe.”** and the
-same four candidate tables, the prototype deterministically produces:
+- Strict versioned five-action/five-axis knowledge layer.
+- Deterministic profiling and interpretation for synthetic evaluation.
+- Topical-only BM25 candidate retrieval.
+- Exact requirement–capability alignment and usefulness equations.
+- Leakage-safe benchmark utilities, metrics, run provenance, and reporting.
+- Controlled synthetic action-switch demonstrations.
 
-```text
-Relevance: A > B > C > D
-Compare:   B > C > A > D
-Predict:   C > B > A > D
-```
+No real-data effectiveness or external-model result is currently claimed. See
+`STATUS.md` for verified work and blockers.
 
-Run it:
-
-```bash
-python scripts/run_vaccine_mvp.py
-```
-
-Run the offline test suite:
+## Setup and verification
 
 ```bash
-pytest
+python3 -m pip install -e '.[dev]'
+pytest -q
+python3 -m intention smoke
 ```
 
-Validate the environment and registries:
+Without an editable install:
 
 ```bash
-python3 scripts/verify_environment.py
+PYTHONPATH=src python3 -m intention smoke
 ```
 
-See [docs/mvp_vertical_slice.md](docs/mvp_vertical_slice.md) for architecture,
-installation, scoring, limitations, and deliberately postponed work. Repository
-inspection and implementation assumptions are recorded in
-[docs/mvp_implementation_status.md](docs/mvp_implementation_status.md).
+Controlled comparison example:
+
+```bash
+PYTHONPATH=src python3 -m intention smoke \
+  --input "vaccine side effects compare measure=rate, comparison dimension=country"
+```
+
+Run all three controlled topic/action pairs:
+
+```bash
+PYTHONPATH=src python3 -m intention synthetic-benchmark
+```
+
+Evaluate profiling against controlled gold annotations:
+
+```bash
+PYTHONPATH=src python3 -m intention evaluate-profiler
+```
+
+## Authoritative documents
+
+- `docs/method_contract.md` — mathematics and scientific boundaries.
+- `docs/contract_traceability.md` — contract-to-code-and-test mapping.
+- `docs/experiment_protocol.md` — leakage-safe evaluation protocol.
+- `docs/reproducibility.md` — commands and run artifacts.
+- `PLANS.md` and `STATUS.md` — milestones and verified state.
+- `docs/supervisor_method_report.md` — detailed controlled example.
+- `docs/synthetic_benchmark.md` — multi-topic action-switch benchmark.
+- `docs/capability_annotation_protocol.md` and `docs/profiler_validation.md` —
+  gold policy, structured granularity, and controlled diagnostics.

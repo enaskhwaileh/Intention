@@ -1,0 +1,101 @@
+{
+  "version":"1.0.0","knowledge_hash":"fed971899a1d7d7961c79ae1999c19fe79ab7912d5588631a8420fbc8bd2c43c","annotation_status":"adjudicated_synthetic","annotators":["developer_fixture"],
+  "tables":[
+    {
+      "table_id":"health_country_rates",
+      "row_granularity":{"predicate":"row_granularity","judgment":"supported","value":{"kind":"group_time","entity_fields":[],"entity_type":"country","time_fields":["year"],"time_unit":"year","grouping_fields":["country"],"aggregation_status":"aggregated","description":"One row is an aggregated country-year rate."},"evidence":{"source_type":"multiple_sources","source_locator":["country","year","rate"],"inspection_scope":"complete_table"},"certainty":"clear","ambiguity_reason":null},
+      "capabilities":[
+        {"predicate":"has_field","judgment":"supported","value":["country","rate","year"],"evidence":{"source_type":"column","source_locator":["country","rate","year"],"inspection_scope":"complete_table"},"certainty":"clear","ambiguity_reason":null},
+        {"predicate":"numeric_measure","judgment":"supported","value":["rate"],"evidence":{"source_type":"column","source_locator":["rate"],"inspection_scope":"complete_table"},"certainty":"clear","ambiguity_reason":null},
+        {"predicate":"grouping_field","judgment":"supported","value":["country"],"evidence":{"source_type":"column","source_locator":["country"],"inspection_scope":"complete_table"},"certainty":"clear","ambiguity_reason":null},
+        {"predicate":"temporal_coverage","judgment":"supported","value":["2020","2020"],"evidence":{"source_type":"table_statistic","source_locator":"year:min,max","inspection_scope":"complete_table"},"certainty":"clear","ambiguity_reason":null},
+        {"predicate":"geographic_coverage","judgment":"supported","value":["italy","france"],"evidence":{"source_type":"metadata","source_locator":"geographic_coverage","inspection_scope":"declared_metadata"},"certainty":"clear","ambiguity_reason":null},
+        {"predicate":"missingness_at_most","judgment":"supported","value":{"country":0.0,"rate":0.0,"year":0.0},"evidence":{"source_type":"table_statistic","source_locator":"all_columns:missingness","inspection_scope":"complete_table"},"certainty":"clear","ambiguity_reason":null},
+        {"predicate":"adequate_variation","judgment":"supported","value":true,"evidence":{"source_type":"table_statistic","source_locator":"rate:distinct_count","inspection_scope":"complete_table"},"certainty":"clear","ambiguity_reason":null},
+        {"predicate":"repeated_observations","judgment":"not_supported","value":false,"evidence":{"source_type":"table_statistic","source_locator":"country,year","inspection_scope":"complete_table"},"certainty":"clear","ambiguity_reason":null},
+        {"predicate":"non_identifier_features","judgment":"supported","value":["country","rate"],"evidence":{"source_type":"column","source_locator":["country","rate"],"inspection_scope":"complete_table"},"certainty":"clear","ambiguity_reason":null},
+        {"predicate":"identifier_only","judgment":"not_supported","value":false,"evidence":{"source_type":"column","source_locator":["country","rate"],"inspection_scope":"complete_table"},"certainty":"clear","ambiguity_reason":null}
+      ]
+    },
+    {
+      "table_id":"health_patient_outcomes",
+      "row_granularity":{"predicate":"row_granularity","judgment":"supported","value":{"kind":"entity_time","entity_fields":["patient id"],"entity_type":"patient","time_fields":["year"],"time_unit":"year","grouping_fields":[],"aggregation_status":"observed","description":"One row is one patient observation in a year."},"evidence":{"source_type":"multiple_sources","source_locator":["patient_id","year"],"inspection_scope":"complete_table"},"certainty":"clear","ambiguity_reason":null},
+      "capabilities":[
+        {"predicate":"has_field","judgment":"supported","value":["patient id","outcome","age","year"],"evidence":{"source_type":"column","source_locator":"schema","inspection_scope":"complete_table"},"certainty":"clear","ambiguity_reason":null},
+        {"predicate":"numeric_measure","judgment":"supported","value":["outcome","age"],"evidence":{"source_type":"column","source_locator":["outcome","age"],"inspection_scope":"complete_table"},"certainty":"clear","ambiguity_reason":null},
+        {"predicate":"grouping_field","judgment":"not_supported","value":[],"evidence":{"source_type":"column","source_locator":"schema","inspection_scope":"complete_table"},"certainty":"clear","ambiguity_reason":null},
+        {"predicate":"temporal_coverage","judgment":"supported","value":["2020","2021"],"evidence":{"source_type":"table_statistic","source_locator":"year:min,max","inspection_scope":"complete_table"},"certainty":"clear","ambiguity_reason":null},
+        {"predicate":"geographic_coverage","judgment":"supported","value":["italy","france"],"evidence":{"source_type":"metadata","source_locator":"geographic_coverage","inspection_scope":"declared_metadata"},"certainty":"clear","ambiguity_reason":null},
+        {"predicate":"missingness_at_most","judgment":"supported","value":{"patient id":0.0,"outcome":0.0,"age":0.0,"year":0.0},"evidence":{"source_type":"table_statistic","source_locator":"all_columns:missingness","inspection_scope":"complete_table"},"certainty":"clear","ambiguity_reason":null},
+        {"predicate":"adequate_variation","judgment":"supported","value":true,"evidence":{"source_type":"table_statistic","source_locator":"outcome:distinct_count","inspection_scope":"complete_table"},"certainty":"clear","ambiguity_reason":null},
+        {"predicate":"repeated_observations","judgment":"not_supported","value":false,"evidence":{"source_type":"table_statistic","source_locator":"patient_id,year","inspection_scope":"complete_table"},"certainty":"clear","ambiguity_reason":null},
+        {"predicate":"non_identifier_features","judgment":"supported","value":["outcome","age"],"evidence":{"source_type":"column","source_locator":["outcome","age"],"inspection_scope":"complete_table"},"certainty":"clear","ambiguity_reason":null},
+        {"predicate":"identifier_only","judgment":"not_supported","value":false,"evidence":{"source_type":"column","source_locator":["outcome","age"],"inspection_scope":"complete_table"},"certainty":"clear","ambiguity_reason":null}
+      ]
+    },
+    {
+      "table_id":"employment_department_salary",
+      "row_granularity":{"predicate":"row_granularity","judgment":"supported","value":{"kind":"entity","entity_fields":["employee id"],"entity_type":"employee","time_fields":[],"time_unit":"unknown","grouping_fields":["department"],"aggregation_status":"observed","description":"One row is one employee."},"evidence":{"source_type":"multiple_sources","source_locator":["employee_id","department"],"inspection_scope":"complete_table"},"certainty":"clear","ambiguity_reason":null},
+      "capabilities":[
+        {"predicate":"has_field","judgment":"supported","value":["employee id","department","salary"],"evidence":{"source_type":"column","source_locator":"schema","inspection_scope":"complete_table"},"certainty":"clear","ambiguity_reason":null},
+        {"predicate":"numeric_measure","judgment":"supported","value":["salary"],"evidence":{"source_type":"column","source_locator":["salary"],"inspection_scope":"complete_table"},"certainty":"clear","ambiguity_reason":null},
+        {"predicate":"grouping_field","judgment":"supported","value":["department"],"evidence":{"source_type":"column","source_locator":["department"],"inspection_scope":"complete_table"},"certainty":"clear","ambiguity_reason":null},
+        {"predicate":"temporal_coverage","judgment":"not_supported","value":[],"evidence":{"source_type":"column","source_locator":"schema","inspection_scope":"complete_table"},"certainty":"clear","ambiguity_reason":null},
+        {"predicate":"geographic_coverage","judgment":"unknown","value":null,"evidence":{"source_type":"metadata","source_locator":null,"inspection_scope":"complete_table"},"certainty":"clear","ambiguity_reason":null},
+        {"predicate":"missingness_at_most","judgment":"supported","value":{"employee id":0.0,"department":0.0,"salary":0.0},"evidence":{"source_type":"table_statistic","source_locator":"all_columns:missingness","inspection_scope":"complete_table"},"certainty":"clear","ambiguity_reason":null},
+        {"predicate":"adequate_variation","judgment":"supported","value":true,"evidence":{"source_type":"table_statistic","source_locator":"salary:distinct_count","inspection_scope":"complete_table"},"certainty":"clear","ambiguity_reason":null},
+        {"predicate":"repeated_observations","judgment":"not_supported","value":false,"evidence":{"source_type":"column","source_locator":"schema","inspection_scope":"complete_table"},"certainty":"clear","ambiguity_reason":null},
+        {"predicate":"non_identifier_features","judgment":"supported","value":["department","salary"],"evidence":{"source_type":"column","source_locator":["department","salary"],"inspection_scope":"complete_table"},"certainty":"clear","ambiguity_reason":null},
+        {"predicate":"identifier_only","judgment":"not_supported","value":false,"evidence":{"source_type":"column","source_locator":["department","salary"],"inspection_scope":"complete_table"},"certainty":"clear","ambiguity_reason":null}
+      ]
+    },
+    {
+      "table_id":"employment_turnover_outcomes",
+      "row_granularity":{"predicate":"row_granularity","judgment":"supported","value":{"kind":"entity","entity_fields":["employee id"],"entity_type":"employee","time_fields":[],"time_unit":"unknown","grouping_fields":[],"aggregation_status":"observed","description":"One row is one employee."},"evidence":{"source_type":"column","source_locator":"employee_id","inspection_scope":"complete_table"},"certainty":"clear","ambiguity_reason":null},
+      "capabilities":[
+        {"predicate":"has_field","judgment":"supported","value":["employee id","turnover","age","satisfaction"],"evidence":{"source_type":"column","source_locator":"schema","inspection_scope":"complete_table"},"certainty":"clear","ambiguity_reason":null},
+        {"predicate":"numeric_measure","judgment":"supported","value":["turnover","age","satisfaction"],"evidence":{"source_type":"column","source_locator":["turnover","age","satisfaction"],"inspection_scope":"complete_table"},"certainty":"clear","ambiguity_reason":null},
+        {"predicate":"grouping_field","judgment":"not_supported","value":[],"evidence":{"source_type":"column","source_locator":"schema","inspection_scope":"complete_table"},"certainty":"clear","ambiguity_reason":null},
+        {"predicate":"temporal_coverage","judgment":"not_supported","value":[],"evidence":{"source_type":"column","source_locator":"schema","inspection_scope":"complete_table"},"certainty":"clear","ambiguity_reason":null},
+        {"predicate":"geographic_coverage","judgment":"unknown","value":null,"evidence":{"source_type":"metadata","source_locator":null,"inspection_scope":"complete_table"},"certainty":"clear","ambiguity_reason":null},
+        {"predicate":"missingness_at_most","judgment":"supported","value":{"employee id":0.0,"turnover":0.0,"age":0.0,"satisfaction":0.0},"evidence":{"source_type":"table_statistic","source_locator":"all_columns:missingness","inspection_scope":"complete_table"},"certainty":"clear","ambiguity_reason":null},
+        {"predicate":"adequate_variation","judgment":"supported","value":true,"evidence":{"source_type":"table_statistic","source_locator":"turnover:distinct_count","inspection_scope":"complete_table"},"certainty":"clear","ambiguity_reason":null},
+        {"predicate":"repeated_observations","judgment":"not_supported","value":false,"evidence":{"source_type":"column","source_locator":"schema","inspection_scope":"complete_table"},"certainty":"clear","ambiguity_reason":null},
+        {"predicate":"non_identifier_features","judgment":"supported","value":["turnover","age","satisfaction"],"evidence":{"source_type":"column","source_locator":["turnover","age","satisfaction"],"inspection_scope":"complete_table"},"certainty":"clear","ambiguity_reason":null},
+        {"predicate":"identifier_only","judgment":"not_supported","value":false,"evidence":{"source_type":"column","source_locator":["turnover","age","satisfaction"],"inspection_scope":"complete_table"},"certainty":"clear","ambiguity_reason":null}
+      ]
+    },
+    {
+      "table_id":"transport_route_summary",
+      "row_granularity":{"predicate":"row_granularity","judgment":"supported","value":{"kind":"group","entity_fields":[],"entity_type":"route","time_fields":[],"time_unit":"unknown","grouping_fields":["route"],"aggregation_status":"aggregated","description":"One row is an aggregated route summary."},"evidence":{"source_type":"multiple_sources","source_locator":["route","delay"],"inspection_scope":"complete_table"},"certainty":"clear","ambiguity_reason":null},
+      "capabilities":[
+        {"predicate":"has_field","judgment":"supported","value":["route","delay"],"evidence":{"source_type":"column","source_locator":"schema","inspection_scope":"complete_table"},"certainty":"clear","ambiguity_reason":null},
+        {"predicate":"numeric_measure","judgment":"supported","value":["delay"],"evidence":{"source_type":"column","source_locator":"delay","inspection_scope":"complete_table"},"certainty":"clear","ambiguity_reason":null},
+        {"predicate":"grouping_field","judgment":"supported","value":["route"],"evidence":{"source_type":"column","source_locator":"route","inspection_scope":"complete_table"},"certainty":"clear","ambiguity_reason":null},
+        {"predicate":"temporal_coverage","judgment":"not_supported","value":[],"evidence":{"source_type":"column","source_locator":"schema","inspection_scope":"complete_table"},"certainty":"clear","ambiguity_reason":null},
+        {"predicate":"geographic_coverage","judgment":"unknown","value":null,"evidence":{"source_type":"metadata","source_locator":null,"inspection_scope":"complete_table"},"certainty":"clear","ambiguity_reason":null},
+        {"predicate":"missingness_at_most","judgment":"supported","value":{"route":0.0,"delay":0.0},"evidence":{"source_type":"table_statistic","source_locator":"all_columns:missingness","inspection_scope":"complete_table"},"certainty":"clear","ambiguity_reason":null},
+        {"predicate":"adequate_variation","judgment":"supported","value":true,"evidence":{"source_type":"table_statistic","source_locator":"delay:distinct_count","inspection_scope":"complete_table"},"certainty":"clear","ambiguity_reason":null},
+        {"predicate":"repeated_observations","judgment":"not_supported","value":false,"evidence":{"source_type":"column","source_locator":"schema","inspection_scope":"complete_table"},"certainty":"clear","ambiguity_reason":null},
+        {"predicate":"non_identifier_features","judgment":"supported","value":["route","delay"],"evidence":{"source_type":"column","source_locator":["route","delay"],"inspection_scope":"complete_table"},"certainty":"clear","ambiguity_reason":null},
+        {"predicate":"identifier_only","judgment":"not_supported","value":false,"evidence":{"source_type":"column","source_locator":["route","delay"],"inspection_scope":"complete_table"},"certainty":"clear","ambiguity_reason":null}
+      ]
+    },
+    {
+      "table_id":"transport_delay_series",
+      "row_granularity":{"predicate":"row_granularity","judgment":"supported","value":{"kind":"entity_time","entity_fields":["service id"],"entity_type":"service","time_fields":["date"],"time_unit":"date","grouping_fields":[],"aggregation_status":"observed","description":"One row is one service observation on a date."},"evidence":{"source_type":"multiple_sources","source_locator":["service_id","date"],"inspection_scope":"complete_table"},"certainty":"clear","ambiguity_reason":null},
+      "capabilities":[
+        {"predicate":"has_field","judgment":"supported","value":["service id","delay","date"],"evidence":{"source_type":"column","source_locator":"schema","inspection_scope":"complete_table"},"certainty":"clear","ambiguity_reason":null},
+        {"predicate":"numeric_measure","judgment":"supported","value":["delay"],"evidence":{"source_type":"column","source_locator":"delay","inspection_scope":"complete_table"},"certainty":"clear","ambiguity_reason":null},
+        {"predicate":"grouping_field","judgment":"not_supported","value":[],"evidence":{"source_type":"column","source_locator":"schema","inspection_scope":"complete_table"},"certainty":"clear","ambiguity_reason":null},
+        {"predicate":"temporal_coverage","judgment":"supported","value":["2026-01-01","2026-01-02"],"evidence":{"source_type":"table_statistic","source_locator":"date:min,max","inspection_scope":"complete_table"},"certainty":"clear","ambiguity_reason":null},
+        {"predicate":"geographic_coverage","judgment":"unknown","value":null,"evidence":{"source_type":"metadata","source_locator":null,"inspection_scope":"complete_table"},"certainty":"clear","ambiguity_reason":null},
+        {"predicate":"missingness_at_most","judgment":"supported","value":{"service id":0.0,"delay":0.0,"date":0.0},"evidence":{"source_type":"table_statistic","source_locator":"all_columns:missingness","inspection_scope":"complete_table"},"certainty":"clear","ambiguity_reason":null},
+        {"predicate":"adequate_variation","judgment":"supported","value":true,"evidence":{"source_type":"table_statistic","source_locator":"delay:distinct_count","inspection_scope":"complete_table"},"certainty":"clear","ambiguity_reason":null},
+        {"predicate":"repeated_observations","judgment":"supported","value":true,"evidence":{"source_type":"table_statistic","source_locator":"service_id,date","inspection_scope":"complete_table"},"certainty":"clear","ambiguity_reason":null},
+        {"predicate":"non_identifier_features","judgment":"supported","value":["delay"],"evidence":{"source_type":"column","source_locator":"delay","inspection_scope":"complete_table"},"certainty":"clear","ambiguity_reason":null},
+        {"predicate":"identifier_only","judgment":"not_supported","value":false,"evidence":{"source_type":"column","source_locator":"delay","inspection_scope":"complete_table"},"certainty":"clear","ambiguity_reason":null}
+      ]
+    }
+  ]
+}

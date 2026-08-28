@@ -2,9 +2,16 @@
 
 ## Audit
 
-The repository began as a clean deterministic vaccine MVP on `full-pipeline-architecture`. It has legacy `src/intention_mvp` code and partial domain/registry scaffolding. There are no notebooks, downloaded datasets, data manifests, CI workflows, or real experiment artifacts. Tests cover the MVP and early registries. The tree was clean when this branch was created.
+The repository began this work as a deterministic vaccine MVP on
+`full-pipeline-architecture`. That superseded implementation was removed in
+Milestone 2 after equivalent normative coverage and reference analysis. There
+are no notebooks, downloaded datasets, data manifests, CI workflows, or real
+experiment artifacts. The tree was clean when this branch was created.
 
-Reusable: packaging, YAML loading patterns, immutable dataclasses, fixture, and offline pytest setup. Obsolete: six legacy axes, category-local weights, `Psi*(I)`, soft feasibility multipliers, and MVP scoring. These remain regression history only.
+Reusable foundations were packaging, YAML loading patterns, immutable
+dataclasses, fixtures, and offline pytest setup. Obsolete six-axis definitions,
+category-local weights, old notation, feasibility multipliers, and MVP scoring
+remain available only through Git history.
 
 ## Milestones
 
@@ -20,3 +27,20 @@ Each milestone requires tests and a focused commit. Synthetic acceptance is `pyt
 ## Risks and open decisions
 
 Exact TABERTA-Hybrid, Birdie, EDBT25, and Qwen revisions require authoritative artifacts and hardware; unavailable systems are blocked, never substituted. Human annotators, WikiTables path/license, semantic model revision, and development-selected hyperparameters are experiment inputs. Heuristic profiler evidence remains `inferred`/`estimated` until evaluated.
+
+## Milestone record
+
+- Milestone 1, contract audit: completed and verified. See
+  `docs/contract_traceability.md`. The audit made numerical/interval rule
+  parameters explicit, strengthened fail-closed validation and score bounds,
+  and expanded the suite from 50 to 195 passing tests without changing the
+  controlled example's ranking or scores.
+- Milestone 2, repository cleanup and multi-topic synthetic benchmark:
+  completed and verified. Superseded conflicting assets were removed after
+  reference analysis. The versioned benchmark covers all five actions in six
+  cases across three paired topics, with three relevance-to-usefulness ranking
+  corrections.
+- Milestone 3, capability-profiler validation: completed and verified. It adds
+  the four-state gold protocol, three predicate tiers, structured granularity,
+  strict annotations for six tables, immutable versioned profile storage,
+  complete/sample provenance, and controlled profiler diagnostics.

@@ -1,0 +1,100 @@
+{
+  "version": "1.0.0",
+  "topics": [
+    {
+      "topic_id": "health_vaccine_effects",
+      "topical_query": "vaccine side effects",
+      "tables": [
+        {
+          "table_id": "health_country_rates",
+          "title": "vaccine adverse effect rates by country",
+          "description": "European vaccine event rates",
+          "metadata": {"geographic_coverage": ["italy", "france"], "row_granularity": "country"},
+          "rows": [
+            {"country": "italy", "rate": 2.1, "year": 2020},
+            {"country": "france", "rate": 2.8, "year": 2020}
+          ]
+        },
+        {
+          "table_id": "health_patient_outcomes",
+          "title": "vaccine side effects patient outcomes",
+          "description": "Individual vaccine side effects and outcomes",
+          "metadata": {"geographic_coverage": ["italy", "france"], "row_granularity": "patient"},
+          "rows": [
+            {"patient_id": "a", "outcome": 0, "age": 34, "year": 2020},
+            {"patient_id": "b", "outcome": 1, "age": 57, "year": 2021},
+            {"patient_id": "c", "outcome": 0, "age": 45, "year": 2021}
+          ]
+        }
+      ],
+      "cases": [
+        {"variant_id": "health_compare", "input": "vaccine side effects compare measure=rate, comparison dimension=country", "gold_action": "COMPARE", "expected_relevance_top": "health_patient_outcomes", "expected_top": "health_country_rates"},
+        {"variant_id": "health_predict", "input": "vaccine side effects predict outcome=outcome", "gold_action": "PREDICT", "expected_relevance_top": "health_patient_outcomes", "expected_top": "health_patient_outcomes"}
+      ]
+    },
+    {
+      "topic_id": "employment_workforce",
+      "topical_query": "employment workforce outcomes",
+      "tables": [
+        {
+          "table_id": "employment_department_salary",
+          "title": "employment workforce outcomes salary by department",
+          "description": "Employment workforce department salary records",
+          "metadata": {"row_granularity": "employee"},
+          "rows": [
+            {"employee_id": "e1", "department": "sales", "salary": 52000},
+            {"employee_id": "e2", "department": "research", "salary": 68000},
+            {"employee_id": "e3", "department": "sales", "salary": 57000}
+          ]
+        },
+        {
+          "table_id": "employment_turnover_outcomes",
+          "title": "employment workforce outcomes and turnover",
+          "description": "Employment outcomes for individual workers",
+          "metadata": {"row_granularity": "employee"},
+          "rows": [
+            {"employee_id": "e1", "turnover": 0, "age": 29, "satisfaction": 4.1},
+            {"employee_id": "e2", "turnover": 1, "age": 44, "satisfaction": 2.0},
+            {"employee_id": "e3", "turnover": 0, "age": 36, "satisfaction": 3.5}
+          ]
+        }
+      ],
+      "cases": [
+        {"variant_id": "employment_aggregate", "input": "employment workforce outcomes aggregate measure=salary, grouping dimension=department", "gold_action": "AGGREGATE", "expected_relevance_top": "employment_department_salary", "expected_top": "employment_department_salary"},
+        {"variant_id": "employment_explain", "input": "employment workforce outcomes explain outcome=turnover", "gold_action": "EXPLAIN", "expected_relevance_top": "employment_department_salary", "expected_top": "employment_turnover_outcomes"}
+      ]
+    },
+    {
+      "topic_id": "transport_delays",
+      "topical_query": "public transport delays",
+      "tables": [
+        {
+          "table_id": "transport_route_summary",
+          "title": "public transport delays by route",
+          "description": "Public transport delays route summary",
+          "metadata": {"row_granularity": "route"},
+          "rows": [
+            {"route": "red", "delay": 8.0},
+            {"route": "blue", "delay": 3.0},
+            {"route": "green", "delay": 5.0}
+          ]
+        },
+        {
+          "table_id": "transport_delay_series",
+          "title": "public transport delays monitoring records",
+          "description": "Repeated transport delay observations over time",
+          "metadata": {"row_granularity": "route-day"},
+          "rows": [
+            {"service_id": "s1", "delay": 7.0, "date": "2026-01-01"},
+            {"service_id": "s1", "delay": 2.0, "date": "2026-01-02"},
+            {"service_id": "s2", "delay": 6.0, "date": "2026-01-01"}
+          ]
+        }
+      ],
+      "cases": [
+        {"variant_id": "transport_compare", "input": "public transport delays compare measure=delay, comparison dimension=route", "gold_action": "COMPARE", "expected_relevance_top": "transport_route_summary", "expected_top": "transport_route_summary"},
+        {"variant_id": "transport_monitor", "input": "public transport delays monitor measure=delay", "gold_action": "MONITOR", "expected_relevance_top": "transport_route_summary", "expected_top": "transport_delay_series"}
+      ]
+    }
+  ]
+}

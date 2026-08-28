@@ -4,5 +4,5 @@ Only small, redistributable fixtures, annotations, and manifests may be tracked.
 Raw corpora, private data, downloaded benchmark tables, model weights, and
 generated processed datasets must not be committed.
 
-The preserved vaccine scenario remains in `fixtures/vaccine_mvp.json` until a
-later migration provides equivalent regression coverage.
+Controlled, redistributable examples live under `fixtures/`. Real benchmark
+data must be addressed through a recorded manifest and an external path.

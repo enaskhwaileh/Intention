@@ -45,14 +45,13 @@ Intended-Action Grounding for Dataset Discovery
 - Provenance-grounded explanation generation.
 - Clearly identify which components are manual in the evaluated system.
 
-## 5. Current deterministic instantiation
+## 5. Controlled deterministic instantiation
 
-- Vaccine-side-effects scenario and four candidate tables.
-- Compare and predict action templates.
+- Health, employment, and transport paired-action topics.
+- Six variants covering all five supported actions.
 - Transparent matching rules and configuration.
 - Demonstration rankings and explanation traces.
-- State that provisional axes and fixed weights are MVP choices, not settled
-  theory or calibrated parameters.
+- State that fixed weights are controlled defaults, not calibrated parameters.
 
 ## 6. Evaluation
 

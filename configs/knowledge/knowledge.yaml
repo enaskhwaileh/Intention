@@ -5,9 +5,13 @@ predicates:
   numeric_measure: {axis: sem, matcher: normalized}
   grouping_field: {axis: str, matcher: normalized}
   row_granularity: {axis: str, matcher: granularity}
-  temporal_coverage: {axis: cov, matcher: interval}
+  temporal_coverage:
+    axis: cov
+    matcher: {type: interval, mode: containment_or_overlap}
   geographic_coverage: {axis: cov, matcher: set_containment}
-  missingness_at_most: {axis: qual, matcher: numerical}
+  missingness_at_most:
+    axis: qual
+    matcher: {type: numerical, operator: at_most}
   adequate_variation: {axis: qual, matcher: exact}
   repeated_observations: {axis: aff, matcher: exact}
   non_identifier_features: {axis: aff, matcher: existential}

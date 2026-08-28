@@ -10,7 +10,6 @@ from intention.pipeline import run
 
 @pytest.mark.parametrize("kind,expected,observed,score",[
  ("exact",True,True,1),("normalized","Side_Effect","side effect",1),
- ("semantic","vaccine adverse events","adverse events",2/3),
  ("numerical",.2,.1,1),("set_containment",["italy"],["italy","france"],1),
  ("interval",("2020","2022"),("2019","2023"),1),
  ("interval",("2020","2022"),("2021","2024"),.5),
@@ -19,6 +18,12 @@ def test_matching_rules(kind,expected,observed,score): assert match_value(kind,e
 
 def test_unknown_rule_rejected():
     with pytest.raises(ValueError): match_value("invented",1,1)
+
+def test_semantic_matching_requires_an_explicit_scorer():
+    with pytest.raises(RuntimeError,match="explicitly configured scorer"):
+        match_value("semantic","vaccine adverse events","adverse events")
+    scorer=lambda expected,observed: 2/3
+    assert match_value("semantic","vaccine adverse events","adverse events",{"scorer":scorer}) == pytest.approx(2/3)
 
 def test_knowledge_exact_vocabulary_and_hash():
     kg=load_knowledge(); assert set(kg.actions)=={"COMPARE","AGGREGATE","PREDICT","EXPLAIN","MONITOR"}; assert len(kg.digest)==64
