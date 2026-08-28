@@ -9,6 +9,7 @@ python -m intention smoke
 python -m intention synthetic-benchmark
 python -m intention evaluate-profiler
 python -m intention evaluate-interpreter
+python -m intention evaluate-controlled
 python -m intention demo-snapshot --check
 ```
 

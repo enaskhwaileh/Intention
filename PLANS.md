@@ -13,10 +13,10 @@ Unavailable external systems must fail explicitly rather than be approximated.
 4. **Online interpretation and grounding — complete.** Enforce the
    provider schema, normalization-backed provenance, independent topical and
    grounding failures, frame/span metrics, and action semantics.
-5. **Retrieval contracts and serialization — contract merged; hardening in review.** Freeze table serialization,
+5. **Retrieval contracts and serialization — complete.** Freeze table serialization,
    candidate depth, retriever interfaces, and pinned lexical/semantic baseline
    identities. Entry gate: Milestone 4 hardening reviewed and merged.
-6. **Evaluation library.** Finalize graded ranking metrics, action-switch
+6. **Evaluation library — in review.** Finalize graded ranking metrics, action-switch
    diagnostics, paired statistics, confidence intervals, and leakage guards.
 7. **IA-WikiTables benchmark construction.** Acquire licensed source data,
    create topic/action splits and pools, run human annotation, and adjudicate
@@ -43,7 +43,6 @@ new annotations, and new evaluation—not a retrieval or benchmark substitution.
 
 ## Current gate
 
-Milestone 5 retrieval contracts are merged; the focused provenance/numeric
-hardening follow-up is awaiting review. Merge it before creating the Milestone
-6 evaluation-library branch. Do not integrate external retrievers, annotate
-IA-WikiTables, or run real benchmarks before their later milestone gates.
+Milestone 5 is complete. Review and merge the Milestone 6 evaluation-library
+contract before starting IA-WikiTables annotation, external model runs, or
+real-benchmark execution.

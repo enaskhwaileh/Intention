@@ -71,16 +71,27 @@
   be finite. The tracked Milestone 5 snapshot records its merged
   `base_implementation_commit`; actual checkout SHAs belong in runtime/CI
   artifacts and are not hard-coded self-referentially.
+- Milestone 5 hardening PR #11 is merged. Milestone 6 freezes a versioned,
+  hashed evaluation protocol with separate interpretation, retrieval,
+  usefulness-ranking, annotation/agreement, and statistical-comparison layers.
+- Controlled tests cover nDCG@5/10, MRR at y>=2, Useful-Recall, candidate
+  recall/upper bounds, per-action and action-switch diagnostics, action-aware
+  deltas, quadratic weighted kappa, topic-first aggregation, paired bootstrap,
+  paired sign permutation with a Holm family, deterministic ties, complete
+  judgments, and fail-closed test-label tuning guards.
+- The Milestone 6 demonstrator adds only a deterministic evaluation summary;
+  Milestones 1–5 remain checksum-protected and all fixture outputs are labeled
+  non-paper results.
 
 ## Current milestone
 
-Milestone 5 retrieval contract PR is merged; its small hardening pass is on a
-review branch. No external model integration, download, or benchmark run began.
+Milestone 6 evaluation-library contract is complete on its review branch. No
+IA-WikiTables annotation, external model integration, or real run began.
 
 ## Commands and tests
 
 Git state/history, complete inventory, and source/config/test/document inspection.
-`pytest -q`: 216 passed. The normative suite includes contract,
+`pytest -q`: 226 passed. The normative suite includes contract,
 multi-topic benchmark, strict annotation, profile repository, profiler boundary,
 and metric regression tests.
 `PYTHONPATH=src python3 -m intention smoke`: completed with knowledge hash
@@ -117,5 +128,5 @@ agreement, throughput, and full orchestration remain pending.
 
 ## Next action
 
-Review and merge the Milestone 5 retrieval-hardening PR. Stop before pinning or
-adding external retrievers.
+Review and merge the Milestone 6 evaluation-library PR. Stop before
+IA-WikiTables annotation or real benchmark execution.

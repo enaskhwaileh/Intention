@@ -8,6 +8,7 @@ from pathlib import Path
 
 from intention.__main__ import fixture
 from intention.alignment import align
+from intention.evaluation import controlled_evaluation_summary
 from intention.interpretation import DeterministicInterpreter,ground,requirements
 from intention.knowledge import load_knowledge
 from intention.profiling import profile_table
@@ -15,8 +16,8 @@ from intention.ranking import rank
 from intention.retrieval import BM25Retriever,RetrievalRequest,load_retrieval_policy
 
 SNAPSHOT_SCHEMA_VERSION="1.0.0"
-CURRENT_MILESTONE=5
-BASE_IMPLEMENTATION_COMMIT="7c2adeb8b7dc55ecf52bfee61979685862d2bbea"
+CURRENT_MILESTONE=6
+BASE_IMPLEMENTATION_COMMIT="889254b5a4cc76fc0e7ae3b32bc1f15d212f5bc5"
 DEFAULT_INPUT="vaccine side effects compare measure=rate, comparison dimension=country"
 
 def create_snapshot(text: str=DEFAULT_INPUT,root: Path|None=None,base_implementation_commit: str|None=None,milestone: int=CURRENT_MILESTONE) -> dict:
@@ -46,6 +47,7 @@ def create_snapshot(text: str=DEFAULT_INPUT,root: Path|None=None,base_implementa
         "capability_profiles":{key:[asdict(capability) for capability in value] for key,value in sorted(profiles.items())},
         "alignment":alignments,
         "final_ranking":[asdict(item) for item in ranking],
+        "evaluation_summary":controlled_evaluation_summary(),
     }
     stage_digest=sha256(json.dumps(stages,sort_keys=True,separators=(",",":")).encode()).hexdigest()
     return {

@@ -1,0 +1,26 @@
+version: "1.0.0"
+labels:
+  usefulness: [0, 1, 2, 3]
+  useful_threshold: 2
+ranking:
+  ndcg_cutoffs: [5, 10]
+  mrr_threshold: 2
+  useful_recall_cutoffs: [5, 10, 20]
+  tie_break: score_desc_table_id_asc
+aggregation:
+  unit: topic
+  corpus_operation: arithmetic_mean_of_topic_metrics
+retrieval:
+  candidate_recall_cutoffs: [5, 10, 20]
+  upper_bound: useful_items_present_in_candidates
+annotation:
+  agreement: quadratic_weighted_kappa
+  missing_judgments: fail
+statistics:
+  bootstrap: {iterations: 2000, seed: 2026, confidence: 0.95, unit: topic}
+  paired_test: {method: paired_sign_permutation, iterations: 10000, seed: 2026}
+  correction: {method: holm, alpha: 0.05, family: all_predeclared_primary_system_comparisons}
+tuning_guard:
+  permitted_splits: [train, development]
+  forbidden_split: test
+  protected_parameters: [usefulness_threshold, candidate_depth, fusion_weights, score_calibration, prompts]
