@@ -13,7 +13,10 @@ from intention.pipeline import run
  ("numerical",.2,.1,1),("set_containment",["italy"],["italy","france"],1),
  ("interval",("2020","2022"),("2019","2023"),1),
  ("interval",("2020","2022"),("2021","2024"),.5),
- ("granularity","month","week",.5),("existential","*",["age"],1)])
+ ("granularity","month","week",.5),
+ ("granularity","*",{"kind":"entity","entity_type":"patient"},1),
+ ("granularity","patient",{"kind":"entity","entity_type":"patient"},1),
+ ("existential","*",["age"],1)])
 def test_matching_rules(kind,expected,observed,score): assert match_value(kind,expected,observed)==pytest.approx(score)
 
 def test_unknown_rule_rejected():

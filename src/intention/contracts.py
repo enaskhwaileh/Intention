@@ -57,16 +57,24 @@ class Grounding:
 
 @dataclass(frozen=True)
 class Interpretation:
-    topical_query: str
+    topical_query: str | None
     grounding: Grounding | None
     provenance: tuple[tuple[int, int], ...]
     validated_output: dict[str, Any]
     status: str = "valid"
     ambiguity: str = "unambiguous"
     topical_fields: dict[str, Any] | None = None
+    topical_status: str = "validated"
+    grounding_status: str = "grounded"
     def __post_init__(self):
-        if not self.topical_query.strip():
-            raise ValueError("topical query must be non-empty")
+        if self.topical_status not in {"validated", "deterministic_fallback", "failed"}:
+            raise ValueError("invalid topical extraction status")
+        if self.grounding_status not in {"grounded", "ambiguous", "insufficient", "invalid_provider", "invalid_arguments", "missing_required"}:
+            raise ValueError("invalid grounding status")
+        if self.topical_status == "failed":
+            if self.topical_query is not None: raise ValueError("failed topical extraction cannot expose a query")
+        elif not isinstance(self.topical_query,str) or not self.topical_query.strip():
+            raise ValueError("successful topical extraction requires a non-empty query")
 
 @dataclass(frozen=True)
 class Requirement:

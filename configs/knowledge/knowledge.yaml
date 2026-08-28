@@ -1,4 +1,4 @@
-version: 2.0.0
+version: 2.1.0
 axes: [sem, str, cov, qual, aff]
 predicates:
   has_field: {axis: sem, matcher: normalized}
@@ -37,12 +37,13 @@ actions:
       - {predicate: grouping_field, value_from: grouping_dimension, polarity: opt, conditional: true}
       - {predicate: missingness_at_most, value: 0.2, polarity: opt}
   PREDICT:
-    required_arguments: [outcome]
-    optional_arguments: [observational_unit]
+    required_arguments: [outcome, observational_unit]
+    optional_arguments: []
     existential_arguments: [observational_unit]
     weights: {sem: 0.30, str: 0.20, cov: 0.05, qual: 0.20, aff: 0.25}
     requirements:
       - {predicate: has_field, value_from: outcome, polarity: req}
+      - {predicate: row_granularity, value_from: observational_unit, polarity: req}
       - {predicate: non_identifier_features, value: '*', polarity: req}
       - {predicate: adequate_variation, value: true, polarity: req}
       - {predicate: identifier_only, value: true, polarity: neg}

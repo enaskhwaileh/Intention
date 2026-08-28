@@ -3,10 +3,13 @@ from dataclasses import dataclass
 import json
 from pathlib import Path
 from typing import Any
+from jsonschema import Draft202012Validator
 from intention.knowledge.layer import KnowledgeLayer
 
 SCHEMA_VERSION="1.0.0"; AMBIGUITY={"unambiguous","ambiguous","insufficient"}
 STRUCTURED_OUTPUT_SCHEMA=json.loads((Path(__file__).resolve().parents[3]/"configs/interpretation/output_schema.json").read_text())
+Draft202012Validator.check_schema(STRUCTURED_OUTPUT_SCHEMA)
+STRUCTURED_OUTPUT_VALIDATOR=Draft202012Validator(STRUCTURED_OUTPUT_SCHEMA)
 
 @dataclass(frozen=True)
 class ProviderArtifact:
@@ -25,7 +28,11 @@ def validate_span(span,text):
     if not isinstance(start,int) or not isinstance(end,int) or not 0<=start<=end<=len(text) or span["text"]!=text[start:end]: raise ValueError("provenance span does not match source input")
     return (start,end)
 
-def validate_content(text,content,kg: KnowledgeLayer):
+def validate_content(text,content,kg: KnowledgeLayer,normalize=lambda value: str(value).strip().lower()):
+    errors=sorted(STRUCTURED_OUTPUT_VALIDATOR.iter_errors(content),key=lambda error:tuple(map(str,error.absolute_path)))
+    if errors:
+        error=errors[0]; location=".".join(map(str,error.absolute_path)) or "root"
+        raise ValueError(f"structured output violates JSON Schema at {location}: {error.message}")
     if not isinstance(content,dict) or set(content)!={"schema_version","action","arguments","topical","provenance","ambiguity"}: raise ValueError("invalid structured interpretation fields")
     if content["schema_version"]!=SCHEMA_VERSION: raise ValueError("unsupported interpretation schema version")
     if content["action"] not in set(kg.actions)|{"unknown"} or not isinstance(content["arguments"],dict): raise ValueError("invalid action or arguments")
@@ -42,5 +49,9 @@ def validate_content(text,content,kg: KnowledgeLayer):
         spans.extend(validate_span(span,text) for span in group)
     for key,group in provenance["argument_spans"].items():
         if key not in content["arguments"] or not isinstance(group,list) or not group: raise ValueError("invalid argument provenance")
-        spans.extend(validate_span(span,text) for span in group)
+        validated=[validate_span(span,text) for span in group]; spans.extend(validated)
+        cited=[normalize(text[start:end]) for start,end in validated]
+        expected=normalize(content["arguments"][key])
+        if expected not in cited and expected != normalize(" ".join(text[start:end] for start,end in validated)):
+            raise ValueError(f"argument {key} is not supported by its cited source spans")
     return tuple(spans)

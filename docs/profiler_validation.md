@@ -8,7 +8,7 @@ and controlled behavior. It is not an estimate of real-corpus accuracy.
 
 Gold file: `fixtures/synthetic_capability_gold.json`  
 SHA-256: `675062af966b9817a175f75a1628ae2ece42f3bdd614cc754a49ffcd37451cda`  
-Knowledge hash: `fed971899a1d7d7961c79ae1999c19fe79ab7912d5588631a8420fbc8bd2c43c`
+Knowledge hash: `1ddf47f9f4de2bf508c57ea7dbd5b8af266003b57767ad1d3e414d923cd6ec2c`
 
 ## Recorded controlled metrics
 

@@ -97,7 +97,7 @@ The operational axes are:
 All actions, arguments, predicates, matching rules, templates, and weights are
 defined in a strict versioned knowledge file. The interpreter cannot invent new
 vocabulary. The current knowledge configuration has SHA-256 hash
-`fed971899a1d7d7961c79ae1999c19fe79ab7912d5588631a8420fbc8bd2c43c`.
+`1ddf47f9f4de2bf508c57ea7dbd5b8af266003b57767ad1d3e414d923cd6ec2c`.
 
 This hash changed during the contract audit because numerical comparison
 direction and interval behavior were made explicit in predicate configuration;

@@ -39,6 +39,10 @@ def match_value(kind: str, expected: Any, observed: Any, parameters: dict[str, A
         if mode == "containment_or_overlap": return 1.0 if contained else .5 if overlap else 0.0
         raise ValueError(f"unknown interval mode: {mode}")
     if kind == "granularity":
+        if expected == "*": return float(observed not in (None,"",(),[],{}))
+        if isinstance(observed,dict):
+            labels=[observed.get(key) for key in ("kind","entity_type","description") if observed.get(key)]
+            return float(norm(expected) in {norm(label) for label in labels})
         order={"event":0,"day":1,"week":2,"month":3,"quarter":4,"year":5}; a,b=norm(expected),norm(observed)
         return 1.0 if a==b else .5 if a in order and b in order and abs(order[a]-order[b])==1 else 0.0
     raise ValueError(f"unknown matching rule: {kind}")
