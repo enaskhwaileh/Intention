@@ -1,4 +1,4 @@
-version: "2.0.0"
+version: "2.1.0"
 latency_fields: [serialization_ms, inference_ms, total_ms]
 retrievers:
   BM25:
@@ -7,8 +7,10 @@ retrievers:
     availability: available
     implementation: intention.retrieval.BM25Retriever
     model: bm25
-    checkpoint: null
-    revision: "1.0.0"
+    checkpoint: not_applicable
+    checkpoint_revision: not_applicable
+    adapter_revision: "1.0.0"
+    evidence_policy: retrieval_table_evidence_v1
     serialization: title_description_schema_v1
     input_scope: topical_only
     prompt_instruction: null
@@ -23,8 +25,10 @@ retrievers:
     implementation: null
     model: null
     checkpoint: null
-    revision: null
-    serialization: title_description_schema_v1
+    checkpoint_revision: null
+    adapter_revision: null
+    evidence_policy: retrieval_table_evidence_v1
+    serialization: null
     input_scope: topical_only
     prompt_instruction: null
     embedding_dimension: null
@@ -38,8 +42,10 @@ retrievers:
     implementation: null
     model: null
     checkpoint: null
-    revision: null
-    serialization: title_description_schema_v1
+    checkpoint_revision: null
+    adapter_revision: null
+    evidence_policy: retrieval_table_evidence_v1
+    serialization: null
     input_scope: topical_only
     prompt_instruction: null
     embedding_dimension: null
@@ -53,8 +59,10 @@ retrievers:
     implementation: null
     model: null
     checkpoint: null
-    revision: null
-    serialization: title_description_schema_v1
+    checkpoint_revision: null
+    adapter_revision: null
+    evidence_policy: retrieval_table_evidence_v1
+    serialization: null
     input_scope: full_input_baseline
     prompt_instruction: null
     embedding_dimension: null
@@ -68,8 +76,10 @@ retrievers:
     implementation: null
     model: null
     checkpoint: null
-    revision: null
-    serialization: title_description_schema_v1
+    checkpoint_revision: null
+    adapter_revision: null
+    evidence_policy: retrieval_table_evidence_v1
+    serialization: null
     input_scope: topical_only
     prompt_instruction: null
     embedding_dimension: null
@@ -83,8 +93,10 @@ retrievers:
     implementation: null
     model: Qwen3-Embedding-8B
     checkpoint: null
-    revision: null
-    serialization: title_description_schema_v1
+    checkpoint_revision: null
+    adapter_revision: null
+    evidence_policy: retrieval_table_evidence_v1
+    serialization: null
     input_scope: topical_only
     prompt_instruction: null
     embedding_dimension: null
@@ -98,8 +110,10 @@ retrievers:
     implementation: null
     model: Qwen3-Reranker-8B
     checkpoint: null
-    revision: null
-    serialization: title_description_schema_v1
+    checkpoint_revision: null
+    adapter_revision: null
+    evidence_policy: retrieval_table_evidence_v1
+    serialization: null
     input_scope: topical_only
     prompt_instruction: null
     embedding_dimension: null

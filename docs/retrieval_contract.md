@@ -22,9 +22,9 @@ topical-only TABERTA-Hybrid condition. The main pipeline always constructs a
 `RetrievalResult`, validated by the Draft 2020-12 schema at
 `configs/retrieval/result_schema.json`. A successful result contains:
 
-- normalized relevance in `[0,1]` and contiguous one-based rank;
-- retriever name and exact adapter revision;
-- serialization identity and input scope;
+- native `raw_score`, normalized relevance in `[0,1]`, and contiguous rank;
+- normalization method/version, fit scope, and retrieval-config hash;
+- model/checkpoint, adapter, serialization, registry, and config provenance;
 - serialization, inference, and total milliseconds plus clock identity;
 - an explicit `success` state and no failure object.
 
@@ -33,9 +33,14 @@ message, and retryability. Provider absence, serialization errors, invalid
 requests, and provider errors are distinct. No adapter may substitute BM25 or
 another available system after failure.
 
-## Table serialization
+## Evidence access and model serialization
 
-`title_description_schema_v1` is the primary frozen serialization. It exposes:
+`retrieval_table_evidence_v1` is the shared access boundary. It permits title,
+description, column names, row structure, and cell values, while forbidding metadata,
+capability/action artifacts, full user input, and gold/usefulness labels.
+Permitted evidence is not a universal serialization.
+
+`title_description_schema_v1` is the BM25 serialization. It exposes:
 
 1. table title;
 2. table description;
@@ -44,21 +49,28 @@ another available system after failure.
 It excludes rows, cell values, metadata, capability profiles, grounded action,
 action arguments, and full user input. The ordered space-joined representation and its
 SHA-256 checksum are produced by `TableSerializer`. Any future serialization
-gets a new identifier and version; it does not mutate this contract.
+gets a new identifier and version; it does not mutate this contract. External
+retrievers currently have `serialization: null` and remain blocked until their
+exact published/model-required serialization is independently registered and
+shown to be a subset of the common evidence-access policy.
 
 ## Candidate depth
 
-The frozen primary depth is `K=20`. Development diagnostics may use
+The current deterministic default is `K=20`, not a final paper choice.
+Development diagnostics may use
 `K ∈ {5,10,20,50}`; sensitivity analysis may use
-`K ∈ {5,10,20,50,100}`. These values were fixed before real evaluation.
+`K ∈ {5,10,20,50,100}`. Before test evaluation, choose the smallest K whose
+development useful-candidate recall is at least 0.95 and whose gain at the next
+frozen depth is at most 0.01. Test labels are forbidden for this selection.
 
 ## Registry and availability gate
 
 `configs/baselines/registry.yaml` records, for every retriever, model,
-checkpoint, revision, serialization, input scope, prompt/instruction,
+checkpoint and revision, adapter revision, serialization, input scope, prompt/instruction,
 embedding dimension, hardware, dependencies, latency fields, availability, and
 failure reason. Unknown external identities remain null and blocked. An
 external adapter can become available only when its implementation, model, and
-exact revision are present and the remaining model-specific fields are pinned.
+exact revisions are present and the remaining model-specific fields are pinned.
+Each result carries the registry hash and retrieval-config hash.
 
 No large model was downloaded and no real benchmark was run in this stage.

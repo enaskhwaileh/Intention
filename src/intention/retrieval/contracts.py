@@ -1,6 +1,7 @@
 """Provider-independent retrieval request and result records."""
 from dataclasses import asdict,dataclass
 import json
+import math
 from pathlib import Path
 from jsonschema import Draft202012Validator
 
@@ -24,11 +25,18 @@ class RetrievalRequest:
 @dataclass(frozen=True)
 class RetrieverIdentity:
     name: str
-    revision: str
+    model: str
+    checkpoint_revision: str
+    adapter_revision: str
     serialization_id: str
+    serialization_version: str
     input_scope: str
+    registry_version: str
+    registry_hash: str
+    config_hash: str
     def __post_init__(self):
-        if not all(isinstance(value,str) and value for value in (self.name,self.revision,self.serialization_id)):
+        fields=(self.name,self.model,self.checkpoint_revision,self.adapter_revision,self.serialization_id,self.serialization_version,self.registry_version,self.registry_hash,self.config_hash)
+        if not all(isinstance(value,str) and value for value in fields) or any(len(value)!=64 for value in (self.registry_hash,self.config_hash)):
             raise ValueError("retriever identity fields are required")
         if self.input_scope not in INPUT_SCOPES:
             raise ValueError("invalid retriever input scope")
@@ -36,13 +44,25 @@ class RetrieverIdentity:
 @dataclass(frozen=True)
 class RetrievalCandidate:
     table_id: str
+    raw_score: float
     relevance: float
     rank: int
     def __post_init__(self):
         if not self.table_id.strip() or not isinstance(self.rank,int) or isinstance(self.rank,bool) or self.rank<=0:
             raise ValueError("invalid retrieval candidate identity or rank")
-        if not isinstance(self.relevance,(int,float)) or isinstance(self.relevance,bool) or not 0<=self.relevance<=1:
+        if not isinstance(self.raw_score,(int,float)) or isinstance(self.raw_score,bool) or not math.isfinite(self.raw_score) or not isinstance(self.relevance,(int,float)) or isinstance(self.relevance,bool) or not math.isfinite(self.relevance) or not 0<=self.relevance<=1:
             raise ValueError("retrieval relevance must be normalized to [0,1]")
+
+@dataclass(frozen=True)
+class ScoreNormalization:
+    normalization_id: str
+    method: str
+    version: str
+    fit_scope: str
+    config_hash: str
+    def __post_init__(self):
+        if not all(isinstance(value,str) and value for value in (self.normalization_id,self.method,self.version,self.fit_scope)) or len(self.config_hash)!=64:
+            raise ValueError("invalid score normalization provenance")
 
 @dataclass(frozen=True)
 class RetrievalTiming:
@@ -51,7 +71,7 @@ class RetrievalTiming:
     total_ms: float
     clock: str
     def __post_init__(self):
-        if not self.clock.strip() or any(not isinstance(value,(int,float)) or isinstance(value,bool) or value<0 for value in (self.serialization_ms,self.inference_ms,self.total_ms)):
+        if not self.clock.strip() or any(not isinstance(value,(int,float)) or isinstance(value,bool) or not math.isfinite(value) or value<0 for value in (self.serialization_ms,self.inference_ms,self.total_ms)):
             raise ValueError("invalid retrieval timing")
         if self.total_ms+1e-9 < self.serialization_ms+self.inference_ms:
             raise ValueError("total retrieval time cannot be smaller than its components")
@@ -70,6 +90,7 @@ class RetrievalResult:
     status: str
     identity: RetrieverIdentity
     timing: RetrievalTiming
+    normalization: ScoreNormalization
     candidates: tuple[RetrievalCandidate,...] = ()
     failure: RetrievalFailure|None = None
     def __post_init__(self):

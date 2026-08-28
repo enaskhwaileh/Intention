@@ -49,24 +49,38 @@
   and Draft 2020-12 result schema, normalized candidates and ranks, identity,
   revision, serialization, timing, and explicit failure states. BM25 implements
   the common interface as the deterministic reference adapter.
-- `title_description_schema_v1` exposes only title, description, and ordered
-  column names. The primary depth is K=20; development depths are 5/10/20/50
-  and sensitivity depths are 5/10/20/50/100, fixed before real evaluation.
+- BM25's `title_description_schema_v1` exposes only title, description, and
+  ordered column names. K=20 is the current deterministic default; development
+  depths are 5/10/20/50 and sensitivity depths are 5/10/20/50/100.
 - The pipeline enforces topical-only first-stage input. `TABERTA-Hybrid` is
   topical-only, while `TABERTA-FullInput` is explicitly a separate baseline.
   The versioned external registry remains fail-closed with no substitutions.
 - Milestone 5 demonstrator output adds retriever identity, serialization,
   candidate ranks/scores, timing, and status without modifying Milestones 1–4.
+- Milestone 5 contract PR #10 is merged. Retrieval hardening separates the
+  common evidence-access policy from model-specific serialization; external
+  adapters remain blocked with null serialization until their exact published
+  format is registered.
+- Candidate artifacts preserve native raw scores and normalized relevance.
+  Normalization identity/version and model, checkpoint, adapter, serialization,
+  registry, and configuration hashes make fusion inputs reproducible.
+- K=20 is the deterministic default, not a paper-level choice. Final K will be
+  selected on development data only using the frozen recall-saturation rule;
+  the existing sensitivity depths remain unchanged.
+- Retrieval raw scores, normalized relevance, and all latency components must
+  be finite. The tracked Milestone 5 snapshot records its merged
+  `base_implementation_commit`; actual checkout SHAs belong in runtime/CI
+  artifacts and are not hard-coded self-referentially.
 
 ## Current milestone
 
-Milestone 5 retrieval contract/interface stage is complete on its review
-branch. No external model integration, download, or real benchmark run began.
+Milestone 5 retrieval contract PR is merged; its small hardening pass is on a
+review branch. No external model integration, download, or benchmark run began.
 
 ## Commands and tests
 
 Git state/history, complete inventory, and source/config/test/document inspection.
-`pytest -q`: 211 passed. The normative suite includes contract,
+`pytest -q`: 216 passed. The normative suite includes contract,
 multi-topic benchmark, strict annotation, profile repository, profiler boundary,
 and metric regression tests.
 `PYTHONPATH=src python3 -m intention smoke`: completed with knowledge hash
@@ -103,5 +117,5 @@ agreement, throughput, and full orchestration remain pending.
 
 ## Next action
 
-Review and merge the Milestone 5 retrieval-contract PR. Only afterward pin and
-add expensive external retrievers one at a time.
+Review and merge the Milestone 5 retrieval-hardening PR. Stop before pinning or
+adding external retrievers.
