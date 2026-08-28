@@ -1,5 +1,5 @@
 {
-  "version":"1.0.0","knowledge_hash":"fed971899a1d7d7961c79ae1999c19fe79ab7912d5588631a8420fbc8bd2c43c","annotation_status":"adjudicated_synthetic","annotators":["developer_fixture"],
+  "version":"1.0.0","knowledge_hash":"1ddf47f9f4de2bf508c57ea7dbd5b8af266003b57767ad1d3e414d923cd6ec2c","annotation_status":"adjudicated_synthetic","annotators":["developer_fixture"],
   "tables":[
     {
       "table_id":"health_country_rates",

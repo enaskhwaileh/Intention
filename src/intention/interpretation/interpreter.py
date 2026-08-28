@@ -54,6 +54,16 @@ def _legacy_artifact(raw):
     spans=[{"start":s[0],"end":s[1],"text":""} for s in raw.get("spans",[])]
     return raw,spans
 
+def _safe_topical_fallback(text,catalogue):
+    cues=[]
+    for aliases in catalogue.action_aliases.values():
+        for alias in aliases:
+            match=re.search(rf"\b{re.escape(alias)}\b",text,re.I)
+            if match: cues.append(match.start())
+    if not cues: return None
+    topical=text[:min(cues)].strip(" ,:;")
+    return topical or None
+
 def ground(text: str,raw: ProviderArtifact|dict,kg: KnowledgeLayer,catalogue: NormalizationCatalogue|None=None) -> Interpretation:
     catalogue=catalogue or load_normalization()
     if isinstance(raw,ProviderArtifact): content=raw.content
@@ -65,16 +75,20 @@ def ground(text: str,raw: ProviderArtifact|dict,kg: KnowledgeLayer,catalogue: No
         for key,value in old.get("arguments",{}).items():
             start=text.lower().find(str(value).lower()); argument_spans[key]=[] if start<0 else [_span(text,start,start+len(str(value)))]
         content={"schema_version":SCHEMA_VERSION,"action":old.get("action","unknown"),"arguments":old.get("arguments",{}),"topical":{"query":topic,"entities":[],"attributes":[],"constraints":{}},"provenance":{"topic_spans":[] if topic_start<0 else [_span(text,topic_start,topic_start+len(topic))],"action_spans":[],"argument_spans":argument_spans},"ambiguity":{"status":"unambiguous" if old.get("action") in kg.actions else "insufficient","candidates":[old["action"]] if old.get("action") in kg.actions else [],"reason":None}}
-    try: spans=validate_content(text,content,kg)
-    except (TypeError,ValueError): return Interpretation(text,None,(),{},"invalid_output","insufficient",{"query":text,"entities":[],"attributes":[],"constraints":{}})
+    normalize=lambda value: catalogue.value_aliases.get(str(value).strip().lower(),str(value).strip().lower())
+    try: spans=validate_content(text,content,kg,normalize)
+    except (TypeError,ValueError):
+        topical=_safe_topical_fallback(text,catalogue)
+        fields=None if topical is None else {"query":topical,"entities":[],"attributes":[],"constraints":{}}
+        return Interpretation(topical,None,(),{},"invalid_output","insufficient",fields,"failed" if topical is None else "deterministic_fallback","invalid_provider")
     topical=content["topical"]; action=content["action"]; ambiguity=content["ambiguity"]["status"]
-    if action not in kg.actions or ambiguity!="unambiguous": return Interpretation(topical["query"],None,spans,content,"fallback",ambiguity,topical)
+    if action not in kg.actions or ambiguity!="unambiguous": return Interpretation(topical["query"],None,spans,content,"fallback",ambiguity,topical,"validated",ambiguity)
     definition=kg.actions[action]; declared=set(definition.required_arguments+definition.optional_arguments)
-    if set(content["arguments"])-declared: return Interpretation(topical["query"],None,spans,content,"invalid_arguments",ambiguity,topical)
+    if set(content["arguments"])-declared: return Interpretation(topical["query"],None,spans,content,"invalid_arguments",ambiguity,topical,"validated","invalid_arguments")
     args={key:catalogue.value_aliases.get(str(value).strip().lower(),str(value).strip().lower()) for key,value in content["arguments"].items() if str(value).strip()}
     for key in definition.existential_arguments: args.setdefault(key,"*")
-    if any(key not in args for key in definition.required_arguments): return Interpretation(topical["query"],None,spans,content,"missing_required",ambiguity,topical)
-    return Interpretation(topical["query"],Grounding(action,args),spans,content,"valid",ambiguity,topical)
+    if any(key not in args for key in definition.required_arguments): return Interpretation(topical["query"],None,spans,content,"missing_required",ambiguity,topical,"validated","missing_required")
+    return Interpretation(topical["query"],Grounding(action,args),spans,content,"valid",ambiguity,topical,"validated","grounded")
 
 def requirements(interp: Interpretation,kg: KnowledgeLayer) -> RequirementProfile|None:
     if interp.grounding is None: return None

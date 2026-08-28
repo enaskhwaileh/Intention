@@ -1,50 +1,48 @@
-# Experimental evaluation plan
+# Canonical 12-milestone roadmap
 
-## Audit
+This roadmap is the single planning authority. Every milestone ends with a
+reviewable commit, deterministic verification, and an updated `STATUS.md`.
+Unavailable external systems must fail explicitly rather than be approximated.
 
-The repository began this work as a deterministic vaccine MVP on
-`full-pipeline-architecture`. That superseded implementation was removed in
-Milestone 2 after equivalent normative coverage and reference analysis. There
-are no notebooks, downloaded datasets, data manifests, CI workflows, or real
-experiment artifacts. The tree was clean when this branch was created.
+1. **Contract audit — complete.** Freeze the five-axis mathematical contract,
+   validation boundaries, matcher semantics, and traceability matrix.
+2. **Synthetic benchmark and cleanup — complete.** Remove superseded six-axis
+   assets and establish multi-topic, all-action ranking-reversal fixtures.
+3. **Capability-profiler validation — complete.** Freeze gold annotations,
+   predicate scope, row granularity, immutable profiles, and diagnostics.
+4. **Online interpretation and grounding — hardening in review.** Enforce the
+   provider schema, normalization-backed provenance, independent topical and
+   grounding failures, frame/span metrics, and action semantics.
+5. **Retrieval contracts and serialization.** Freeze table serialization,
+   candidate depth, retriever interfaces, and pinned lexical/semantic baseline
+   identities. Entry gate: Milestone 4 hardening reviewed and merged.
+6. **Evaluation library.** Finalize graded ranking metrics, action-switch
+   diagnostics, paired statistics, confidence intervals, and leakage guards.
+7. **IA-WikiTables benchmark construction.** Acquire licensed source data,
+   create topic/action splits and pools, run human annotation, and adjudicate
+   usefulness labels. No synthetic labels may be reported as real evidence.
+8. **End-to-end experiment orchestration.** Produce immutable run bundles with
+   configs, hashes, manifests, predictions, timings, and environment metadata.
+9. **Ablations, oracles, and sensitivity.** Measure action removal, grounding
+   errors, capability axes, fusion weights, candidate depth, and oracle bounds.
+10. **Real-data smoke.** Run a small frozen subset on available pinned systems
+    and stop on missing credentials, checkpoints, hardware, or licenses.
+11. **Full evaluation.** Execute baselines and the proposed method on frozen
+    splits, then compute corrected paired tests, intervals, and efficiency.
+12. **Reporting and release.** Generate paper tables from immutable bundles,
+    document limitations and reproducibility, and archive exact artifacts.
 
-Reusable foundations were packaging, YAML loading patterns, immutable
-dataclasses, fixtures, and offline pytest setup. Obsolete six-axis definitions,
-category-local weights, old notation, feasibility multipliers, and MVP scoring
-remain available only through Git history.
+## Frozen scope decision before Milestone 5
 
-## Milestones
+`MONITOR` is permanently the fifth supported action for this research
+contract. It expresses a single-table requirement for repeated observations
+and optional temporal coverage. `INTEGRATE` is not an alias or replacement:
+it would require a separate multi-table compatibility, join-key, and
+composition contract. Adding it therefore requires a future contract revision,
+new annotations, and new evaluation—not a retrieval or benchmark substitution.
 
-1. Governance and exact contract.
-2. Strict versioned knowledge layer with five actions/axes and hash.
-3. Synthetic profiling, interpretation, topical retrieval, alignment, ranking, fallback, and reversal tests.
-4. Benchmark validation, topic splitting, metrics, statistics, timings, ablations and sensitivity.
-5. Immutable run bundles and fail-closed LaTeX reporting.
-6. Pinned external integrations and real-data smoke when resources exist.
+## Current gate
 
-Each milestone requires tests and a focused commit. Synthetic acceptance is `python -m intention smoke` without credentials.
-
-## Risks and open decisions
-
-Exact TABERTA-Hybrid, Birdie, EDBT25, and Qwen revisions require authoritative artifacts and hardware; unavailable systems are blocked, never substituted. Human annotators, WikiTables path/license, semantic model revision, and development-selected hyperparameters are experiment inputs. Heuristic profiler evidence remains `inferred`/`estimated` until evaluated.
-
-## Milestone record
-
-- Milestone 1, contract audit: completed and verified. See
-  `docs/contract_traceability.md`. The audit made numerical/interval rule
-  parameters explicit, strengthened fail-closed validation and score bounds,
-  and expanded the suite from 50 to 195 passing tests without changing the
-  controlled example's ranking or scores.
-- Milestone 2, repository cleanup and multi-topic synthetic benchmark:
-  completed and verified. Superseded conflicting assets were removed after
-  reference analysis. The versioned benchmark covers all five actions in six
-  cases across three paired topics, with three relevance-to-usefulness ranking
-  corrections.
-- Milestone 3, capability-profiler validation: completed and verified. It adds
-  the four-state gold protocol, three predicate tiers, structured granularity,
-  strict annotations for six tables, immutable versioned profile storage,
-  complete/sample provenance, and controlled profiler diagnostics.
-- Milestone 4, online interpretation and grounding: completed and verified. It
-  adds a provider-independent JSON Schema, raw/validated artifact separation,
-  versioned normalization, explicit ambiguity states, fail-closed external
-  provider boundary, and twelve-case action/argument evaluation.
+Stop after Milestone 4 hardening for diff review. Do not begin retrieval,
+serialization, baseline integration, or real-benchmark work until that review
+is merged.

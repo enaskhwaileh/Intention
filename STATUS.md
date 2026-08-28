@@ -30,19 +30,30 @@
   raw/validated provider artifact separation, versioned alias normalization,
   ambiguity and missing-argument policies, configured external-provider
   boundary, and controlled action/argument evaluation.
+- Milestone 4 hardening separates topical-extraction and grounding failures,
+  prevents action-bearing provider failures from becoming topical queries,
+  validates the complete Draft 2020-12 schema, checks argument/span support
+  after normalization, and reports joint-frame and provenance-span accuracy.
+- `PREDICT.observational_unit` now creates an operational required
+  `row_granularity` requirement (including explicit structured-unit and
+  existential matching). Knowledge contract version 2.1.0 is bound by hash.
+- `MONITOR` is frozen as the fifth single-table action; `INTEGRATE` is a
+  future multi-table contract, not a substitution. The canonical 12-milestone
+  roadmap and credential-free deterministic GitHub Actions workflow are added.
 
 ## Current milestone
 
-Milestone 5 planning: retrieval interfaces, serialization, and pinned baselines.
+Milestone 4 hardening complete on its review branch. Work is stopped before
+Milestone 5.
 
 ## Commands and tests
 
 Git state/history, complete inventory, and source/config/test/document inspection.
-`pytest -q`: 191 passed in 3.52s. The normative suite includes contract,
+`pytest -q`: 199 passed. The normative suite includes contract,
 multi-topic benchmark, strict annotation, profile repository, profiler boundary,
 and metric regression tests.
 `PYTHONPATH=src python3 -m intention smoke`: completed with knowledge hash
-`fed97189...2c43c`; COMPARE ranks `country_rates` above `patient_records`.
+`1ddf47f9...6ec2c`; COMPARE ranks `country_rates` above `patient_records`.
 The report verification reproduced final scores 0.6037896 and 0.4800000.
 `python3 -m compileall -q src tests`: passed.
 `PYTHONPATH=src python3 -m intention synthetic-benchmark`: six of six cases
@@ -53,11 +64,11 @@ value score, provenance validity, and structured granularity diagnostics are
 positive support; `identifier_only` has no positive case and four geographic
 judgments are excluded as unknown.
 `PYTHONPATH=src python3 -m intention evaluate-interpreter`: 12/12 controlled
-cases; action accuracy/macro-F1, argument precision/recall/F1, and grounding
-decision accuracy are 1.000. This is deterministic contract evidence, not an
-external LLM result.
-`ruff` and `mypy` are not installed; dependencies are declared. This shell has
-no default `python` shim, so verification used `python3`.
+cases; action accuracy/macro-F1, argument precision/recall/F1, joint-frame
+accuracy, provenance-span accuracy, and grounding-decision accuracy are 1.000.
+This is deterministic contract evidence, not an external LLM result.
+GitHub Actions repeats the offline suite and four deterministic CLI checks on
+Python 3.10 and 3.11 without credentials.
 
 ## Artifacts
 
@@ -74,5 +85,5 @@ agreement, throughput, and full orchestration remain pending.
 
 ## Next action
 
-Freeze table serialization and candidate-depth contracts, then integrate
-retrievers one by one without substituting unavailable external systems.
+Review and merge the Milestone 4 hardening PR. Only then begin Milestone 5 by
+freezing table serialization and candidate-depth contracts.
