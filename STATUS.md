@@ -45,16 +45,28 @@
   Milestones 1–3 at their source commits; Milestone 4 has a regenerable current
   snapshot and executable notebook. All artifacts are labeled synthetic and
   explicitly excluded from paper-result claims.
+- Milestone 5 contract stage freezes the provider-independent retrieval request
+  and Draft 2020-12 result schema, normalized candidates and ranks, identity,
+  revision, serialization, timing, and explicit failure states. BM25 implements
+  the common interface as the deterministic reference adapter.
+- `title_description_schema_v1` exposes only title, description, and ordered
+  column names. The primary depth is K=20; development depths are 5/10/20/50
+  and sensitivity depths are 5/10/20/50/100, fixed before real evaluation.
+- The pipeline enforces topical-only first-stage input. `TABERTA-Hybrid` is
+  topical-only, while `TABERTA-FullInput` is explicitly a separate baseline.
+  The versioned external registry remains fail-closed with no substitutions.
+- Milestone 5 demonstrator output adds retriever identity, serialization,
+  candidate ranks/scores, timing, and status without modifying Milestones 1–4.
 
 ## Current milestone
 
-Milestone 4 hardening is merged. The observability/archive layer requested
-before Milestone 5 is implemented; substantial Milestone 5 work has not begun.
+Milestone 5 retrieval contract/interface stage is complete on its review
+branch. No external model integration, download, or real benchmark run began.
 
 ## Commands and tests
 
 Git state/history, complete inventory, and source/config/test/document inspection.
-`pytest -q`: 203 passed. The normative suite includes contract,
+`pytest -q`: 211 passed. The normative suite includes contract,
 multi-topic benchmark, strict annotation, profile repository, profiler boundary,
 and metric regression tests.
 `PYTHONPATH=src python3 -m intention smoke`: completed with knowledge hash
@@ -91,5 +103,5 @@ agreement, throughput, and full orchestration remain pending.
 
 ## Next action
 
-Review the small Milestone Demonstrator diff. Then begin Milestone 5 by freezing
-table serialization and candidate-depth contracts.
+Review and merge the Milestone 5 retrieval-contract PR. Only afterward pin and
+add expensive external retrievers one at a time.

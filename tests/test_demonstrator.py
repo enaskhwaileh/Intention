@@ -18,7 +18,7 @@ def test_demo_snapshot_exposes_complete_ordered_pipeline():
     assert len(snapshot["stage_digest"])==64
 
 def test_current_snapshot_is_reproducible_and_historical_snapshots_are_present():
-    assert CURRENT_MILESTONE==4
+    assert CURRENT_MILESTONE==5
     write_current_snapshot(root=ROOT,check=True)
     for number in range(1,CURRENT_MILESTONE+1):
         path=ROOT/"demo_snapshots"/f"milestone_{number:02d}"/"snapshot.json"
@@ -32,7 +32,7 @@ def test_historical_snapshot_manifest_enforces_immutability():
         assert json.loads(path.read_text())["provenance"]["implementation_commit"]==record["implementation_commit"]
 
 def test_check_rejects_a_stale_snapshot(tmp_path,monkeypatch):
-    target=tmp_path/"demo_snapshots"/"milestone_04"/"snapshot.json"
+    target=tmp_path/"demo_snapshots"/f"milestone_{CURRENT_MILESTONE:02d}"/"snapshot.json"
     target.parent.mkdir(parents=True); target.write_text("{}\n")
     monkeypatch.setattr("intention.demonstrator.create_snapshot",lambda root: {"different":True})
     with pytest.raises(RuntimeError,match="stale"): write_current_snapshot(root=tmp_path,check=True)

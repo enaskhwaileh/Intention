@@ -12,18 +12,19 @@ from intention.interpretation import DeterministicInterpreter,ground,requirement
 from intention.knowledge import load_knowledge
 from intention.profiling import profile_table
 from intention.ranking import rank
-from intention.retrieval import BM25Retriever
+from intention.retrieval import BM25Retriever,RetrievalRequest,load_retrieval_policy
 
 SNAPSHOT_SCHEMA_VERSION="1.0.0"
-CURRENT_MILESTONE=4
-CURRENT_PIPELINE_COMMIT="6d9109c7e76a70e0fd005a43f7b7c9a859c525e6"
+CURRENT_MILESTONE=5
+CURRENT_PIPELINE_COMMIT="5bae8ed"
 DEFAULT_INPUT="vaccine side effects compare measure=rate, comparison dimension=country"
 
 def create_snapshot(text: str=DEFAULT_INPUT,root: Path|None=None,implementation_commit: str|None=None,milestone: int=CURRENT_MILESTONE) -> dict:
     root=root or Path(__file__).resolve().parents[2]
     kg=load_knowledge(); tables=fixture(); artifact=DeterministicInterpreter().interpret(text)
-    interpretation=ground(text,artifact,kg); requirement_profile=requirements(interpretation,kg)
-    candidates=[] if interpretation.topical_query is None else BM25Retriever().retrieve(interpretation.topical_query,tables,20)
+    interpretation=ground(text,artifact,kg); requirement_profile=requirements(interpretation,kg); policy=load_retrieval_policy(); retriever=BM25Retriever(clock=lambda:0,clock_name="deterministic_demo")
+    retrieval=retriever.retrieve(RetrievalRequest(interpretation.topical_query,policy.primary_k,"topical_only"),tables) if interpretation.topical_query else None
+    by_id={table.table_id:table for table in tables}; candidates=[] if retrieval is None else [(by_id[item.table_id],item.relevance) for item in retrieval.candidates]
     profiles={table.table_id:profile_table(table) for table in tables}
     alignments={}
     if requirement_profile is not None:
@@ -41,7 +42,7 @@ def create_snapshot(text: str=DEFAULT_INPUT,root: Path|None=None,implementation_
         },
         "grounded_action":None if interpretation.grounding is None else asdict(interpretation.grounding),
         "requirements":None if requirement_profile is None else asdict(requirement_profile),
-        "retrieved_candidates":[{"table_id":table.table_id,"relevance":score} for table,score in candidates],
+        "retrieved_candidates":None if retrieval is None else asdict(retrieval),
         "capability_profiles":{key:[asdict(capability) for capability in value] for key,value in sorted(profiles.items())},
         "alignment":alignments,
         "final_ranking":[asdict(item) for item in ranking],
@@ -59,6 +60,7 @@ def create_snapshot(text: str=DEFAULT_INPUT,root: Path|None=None,implementation_
             "implementation_commit":implementation_commit or CURRENT_PIPELINE_COMMIT,
             "knowledge_version":kg.version,
             "knowledge_hash":kg.digest,
+            "retrieval_contract_version":policy.version,
             "provider":"deterministic",
             "generator":"python -m intention demo-snapshot",
         },
