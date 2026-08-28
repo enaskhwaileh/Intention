@@ -1,19 +1,36 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "intention.retrieval-result.v1",
+  "$id": "intention.retrieval-result.v1.1",
   "type": "object",
   "additionalProperties": false,
-  "required": ["status", "identity", "timing", "candidates", "failure"],
+  "required": ["status", "identity", "timing", "normalization", "candidates", "failure"],
   "properties": {
     "status": {"enum": ["success", "failure"]},
     "identity": {
       "type": "object", "additionalProperties": false,
-      "required": ["name", "revision", "serialization_id", "input_scope"],
+      "required": ["name", "model", "checkpoint_revision", "adapter_revision", "serialization_id", "serialization_version", "input_scope", "registry_version", "registry_hash", "config_hash"],
       "properties": {
         "name": {"type": "string", "minLength": 1},
-        "revision": {"type": "string", "minLength": 1},
+        "model": {"type": "string", "minLength": 1},
+        "checkpoint_revision": {"type": "string", "minLength": 1},
+        "adapter_revision": {"type": "string", "minLength": 1},
         "serialization_id": {"type": "string", "minLength": 1},
-        "input_scope": {"enum": ["topical_only", "full_input_baseline"]}
+        "serialization_version": {"type": "string", "minLength": 1},
+        "input_scope": {"enum": ["topical_only", "full_input_baseline"]},
+        "registry_version": {"type": "string", "minLength": 1},
+        "registry_hash": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+        "config_hash": {"type": "string", "pattern": "^[0-9a-f]{64}$"}
+      }
+    },
+    "normalization": {
+      "type": "object", "additionalProperties": false,
+      "required": ["normalization_id", "method", "version", "fit_scope", "config_hash"],
+      "properties": {
+        "normalization_id": {"type": "string", "minLength": 1},
+        "method": {"type": "string", "minLength": 1},
+        "version": {"type": "string", "minLength": 1},
+        "fit_scope": {"type": "string", "minLength": 1},
+        "config_hash": {"type": "string", "pattern": "^[0-9a-f]{64}$"}
       }
     },
     "timing": {
@@ -30,9 +47,10 @@
       "type": "array",
       "items": {
         "type": "object", "additionalProperties": false,
-        "required": ["table_id", "relevance", "rank"],
+        "required": ["table_id", "raw_score", "relevance", "rank"],
         "properties": {
           "table_id": {"type": "string", "minLength": 1},
+          "raw_score": {"type": "number"},
           "relevance": {"type": "number", "minimum": 0, "maximum": 1},
           "rank": {"type": "integer", "minimum": 1}
         }

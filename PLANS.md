@@ -13,7 +13,7 @@ Unavailable external systems must fail explicitly rather than be approximated.
 4. **Online interpretation and grounding — complete.** Enforce the
    provider schema, normalization-backed provenance, independent topical and
    grounding failures, frame/span metrics, and action semantics.
-5. **Retrieval contracts and serialization — contract stage in review.** Freeze table serialization,
+5. **Retrieval contracts and serialization — contract merged; hardening in review.** Freeze table serialization,
    candidate depth, retriever interfaces, and pinned lexical/semantic baseline
    identities. Entry gate: Milestone 4 hardening reviewed and merged.
 6. **Evaluation library.** Finalize graded ranking metrics, action-switch

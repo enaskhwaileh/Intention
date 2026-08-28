@@ -10,10 +10,10 @@
     "notice": "Demonstration output only; not a paper result."
   },
   "provenance": {
-    "implementation_commit": "5bae8ed",
+    "implementation_commit": "7c2adeb8b7dc55ecf52bfee61979685862d2bbea",
     "knowledge_version": "2.1.0",
     "knowledge_hash": "1ddf47f9f4de2bf508c57ea7dbd5b8af266003b57767ad1d3e414d923cd6ec2c",
-    "retrieval_contract_version": "1.0.0",
+    "retrieval_contract_version": "1.1.0",
     "provider": "deterministic",
     "generator": "python -m intention demo-snapshot"
   },
@@ -107,9 +107,15 @@
       "status": "success",
       "identity": {
         "name": "BM25",
-        "revision": "1.0.0",
+        "model": "bm25",
+        "checkpoint_revision": "not_applicable",
+        "adapter_revision": "1.0.0",
         "serialization_id": "title_description_schema_v1",
-        "input_scope": "topical_only"
+        "serialization_version": "1.0.0",
+        "input_scope": "topical_only",
+        "registry_version": "2.1.0",
+        "registry_hash": "fc6ea164804c8e9d37363632bb6a3f71b37ffccf0f69911e746dd80f5d2985b9",
+        "config_hash": "52874a12969d1a4ef3fb3d8b3f9d85b57a67d668df34aaa09a8f66fe6260412d"
       },
       "timing": {
         "serialization_ms": 0,
@@ -117,14 +123,23 @@
         "total_ms": 0,
         "clock": "deterministic_demo"
       },
+      "normalization": {
+        "normalization_id": "bm25_query_max_v1",
+        "method": "query_max",
+        "version": "1.0.0",
+        "fit_scope": "query_local",
+        "config_hash": "52874a12969d1a4ef3fb3d8b3f9d85b57a67d668df34aaa09a8f66fe6260412d"
+      },
       "candidates": [
         {
           "table_id": "patient_records",
+          "raw_score": 1.027758393052174,
           "relevance": 1.0,
           "rank": 1
         },
         {
           "table_id": "country_rates",
+          "raw_score": 0.3756189932611239,
           "relevance": 0.3654740217159731,
           "rank": 2
         }
@@ -644,5 +659,5 @@
       }
     ]
   },
-  "stage_digest": "5870371166266361cfda7e121d5f7c6d44508bfc656f13fd2e9519ca5742b95b"
+  "stage_digest": "123a7123cf10460a05ff75c526a1237272c4e3f43dde45d47fc05e0c06f1f80c"
 }

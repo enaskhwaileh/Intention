@@ -16,14 +16,14 @@ from intention.retrieval import BM25Retriever,RetrievalRequest,load_retrieval_po
 
 SNAPSHOT_SCHEMA_VERSION="1.0.0"
 CURRENT_MILESTONE=5
-CURRENT_PIPELINE_COMMIT="5bae8ed"
+CURRENT_PIPELINE_COMMIT="7c2adeb8b7dc55ecf52bfee61979685862d2bbea"
 DEFAULT_INPUT="vaccine side effects compare measure=rate, comparison dimension=country"
 
 def create_snapshot(text: str=DEFAULT_INPUT,root: Path|None=None,implementation_commit: str|None=None,milestone: int=CURRENT_MILESTONE) -> dict:
     root=root or Path(__file__).resolve().parents[2]
     kg=load_knowledge(); tables=fixture(); artifact=DeterministicInterpreter().interpret(text)
     interpretation=ground(text,artifact,kg); requirement_profile=requirements(interpretation,kg); policy=load_retrieval_policy(); retriever=BM25Retriever(clock=lambda:0,clock_name="deterministic_demo")
-    retrieval=retriever.retrieve(RetrievalRequest(interpretation.topical_query,policy.primary_k,"topical_only"),tables) if interpretation.topical_query else None
+    retrieval=retriever.retrieve(RetrievalRequest(interpretation.topical_query,policy.default_k,"topical_only"),tables) if interpretation.topical_query else None
     by_id={table.table_id:table for table in tables}; candidates=[] if retrieval is None else [(by_id[item.table_id],item.relevance) for item in retrieval.candidates]
     profiles={table.table_id:profile_table(table) for table in tables}
     alignments={}
