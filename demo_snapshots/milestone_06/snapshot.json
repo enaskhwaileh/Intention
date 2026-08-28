@@ -665,21 +665,30 @@
         "paper_result": false
       },
       "protocol": {
-        "version": "1.0.0",
-        "hash": "1322916d9dec94632719157f332f7d53f2379952f9e2ade0bac03e453b09563f"
+        "version": "1.1.0",
+        "hash": "39f9421f4a33e3716a1479cc2cd4868bd065a9061054edde24a71d8b1a4121b3"
       },
       "interpretation_grounding": {
         "reported_separately": true
       },
       "retrieval": {
-        "candidate_recall@5": 0.75,
-        "upper_bound": 0.75
+        "candidate_set_recall": 0.6666666666666666
       },
       "usefulness_ranking": {
-        "ndcg@5": 0.8210727465696264,
-        "ndcg@10": 0.9085118946394064,
-        "mrr": 1.0,
+        "ranked_table_ids": [
+          "a",
+          "b",
+          "c",
+          "e"
+        ],
+        "topical_ndcg@5": 0.7479266229999318,
+        "usefulness_ndcg@5": 0.8678171500675899,
+        "topical_ndcg@10": 0.7479266229999318,
+        "usefulness_ndcg@10": 0.8678171500675899,
         "useful_recall@5": 0.6666666666666666,
+        "useful_recall@10": 0.6666666666666666,
+        "useful_recall@20": 0.6666666666666666,
+        "mrr": 1.0,
         "deltas": {
           "per_topic": {
             "t1": 0.29999999999999993,
@@ -704,22 +713,36 @@
         }
       },
       "per_action": {
-        "COMPARE": 0.75,
+        "COMPARE": 0.5,
         "PREDICT": 0.5
       },
       "action_switch": {
-        "pair_count": 2,
-        "pair_accuracy": 0.5,
-        "changed_top_rate": 0.5
+        "pair_count": 1,
+        "pair_accuracy": 1,
+        "changed_top_rate": 1
       },
       "annotation": {
-        "quadratic_weighted_kappa": 0.8
+        "agreement": {
+          "topical": 0.8,
+          "usefulness": 0.8
+        },
+        "completeness": {
+          "annotator_a": {
+            "topical": 1.0,
+            "usefulness": 1.0
+          },
+          "annotator_b": {
+            "topical": 1.0,
+            "usefulness": 1.0
+          }
+        }
       },
       "statistics": {
         "bootstrap": {
           "difference": 0.13333333333333333,
           "low": -0.09999999999999998,
-          "high": 0.29999999999999993
+          "high": 0.29999999999999993,
+          "confidence": 0.95
         },
         "corrected_tests": {
           "action_aware_vs_relevance": {
@@ -732,5 +755,5 @@
       }
     }
   },
-  "stage_digest": "762809e5115242a0dcfa3a3ea5a9a986efc82cc2ce0c6f7d18a83afd1a4a92eb"
+  "stage_digest": "127fe072ced996c2316316276a279a7e1de5be2233f1427d1777d50d72250173"
 }

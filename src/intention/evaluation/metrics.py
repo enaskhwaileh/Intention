@@ -34,9 +34,9 @@ def topic_first_mean(rows,metric):
     return {"per_topic":per_topic,"mean":mean(per_topic.values())}
 
 def per_action_metrics(rows,metric):
-    grouped=defaultdict(list)
-    for row in rows: grouped[row["action"]].append(float(row[metric]))
-    return {action:mean(values) for action,values in sorted(grouped.items())}
+    grouped=defaultdict(lambda:defaultdict(list))
+    for row in rows: grouped[row["action"]][row["topic_id"]].append(float(row[metric]))
+    return {action:mean(mean(values) for values in topics.values()) for action,topics in sorted(grouped.items())}
 
 def action_switch_diagnostics(pairs):
     if not pairs: return {"pair_count":0,"pair_accuracy":0.0,"changed_top_rate":0.0}

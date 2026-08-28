@@ -1,5 +1,6 @@
-version: "1.0.0"
+version: "1.1.0"
 labels:
+  topical: [0, 1, 2]
   usefulness: [0, 1, 2, 3]
   useful_threshold: 2
 ranking:
@@ -7,6 +8,11 @@ ranking:
   mrr_threshold: 2
   useful_recall_cutoffs: [5, 10, 20]
   tie_break: score_desc_table_id_asc
+  input: scored_table_ids
+  evaluation_universe: declared_tables_with_complete_qrels
+  ideal_dcg: all_tables_in_declared_universe
+  unreturned_tables: zero_gain
+  useful_recall_denominator: all_useful_judged_tables_in_declared_universe
 aggregation:
   unit: topic
   corpus_operation: arithmetic_mean_of_topic_metrics
@@ -14,7 +20,8 @@ retrieval:
   candidate_recall_cutoffs: [5, 10, 20]
   upper_bound: useful_items_present_in_candidates
 annotation:
-  agreement: quadratic_weighted_kappa
+  agreement: {topical: quadratic_weighted_kappa, usefulness: quadratic_weighted_kappa}
+  completeness: [topical_label, usefulness_label]
   missing_judgments: fail
 statistics:
   bootstrap: {iterations: 2000, seed: 2026, confidence: 0.95, unit: topic}

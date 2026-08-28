@@ -16,7 +16,7 @@ Unavailable external systems must fail explicitly rather than be approximated.
 5. **Retrieval contracts and serialization — complete.** Freeze table serialization,
    candidate depth, retriever interfaces, and pinned lexical/semantic baseline
    identities. Entry gate: Milestone 4 hardening reviewed and merged.
-6. **Evaluation library — in review.** Finalize graded ranking metrics, action-switch
+6. **Evaluation library — hardening in review.** Finalize graded ranking metrics, action-switch
    diagnostics, paired statistics, confidence intervals, and leakage guards.
 7. **IA-WikiTables benchmark construction.** Acquire licensed source data,
    create topic/action splits and pools, run human annotation, and adjudicate

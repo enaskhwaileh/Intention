@@ -82,16 +82,26 @@
 - The Milestone 6 demonstrator adds only a deterministic evaluation summary;
   Milestones 1–5 remain checksum-protected and all fixture outputs are labeled
   non-paper results.
+- Milestone 6 hardening preserves separate topical relevance (`0/1/2`) and
+  intended-action usefulness (`0/1/2/3`) qrels, agreement, and completeness.
+  Normative ranking evaluation consumes scored table IDs against complete
+  qrels for a declared universe and rejects duplicate, unknown, or unjudged
+  tables.
+- nDCG ideal gain and end-to-end Useful-Recall denominators use the complete
+  declared universe even when useful tables are not returned. Candidate-set
+  recall remains separately named; action-switch diagnostics accept tied
+  optimal tables; per-action aggregation is topic-first; and bootstrap
+  intervals use the configured confidence level.
 
 ## Current milestone
 
-Milestone 6 evaluation-library contract is complete on its review branch. No
+Milestone 6 evaluation-library hardening is complete on its review branch. No
 IA-WikiTables annotation, external model integration, or real run began.
 
 ## Commands and tests
 
 Git state/history, complete inventory, and source/config/test/document inspection.
-`pytest -q`: 226 passed. The normative suite includes contract,
+`pytest -q`: 232 passed. The normative suite includes contract,
 multi-topic benchmark, strict annotation, profile repository, profiler boundary,
 and metric regression tests.
 `PYTHONPATH=src python3 -m intention smoke`: completed with knowledge hash

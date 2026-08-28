@@ -10,6 +10,19 @@ def quadratic_weighted_kappa(left,right,minimum=0,maximum=3):
 
 def require_complete_judgments(records,expected_keys):
     by_key={tuple(record[key] for key in ("topic_id","variant_id","table_id","annotator_id")):record for record in records}
-    if len(by_key)!=len(records) or set(by_key)!=set(expected_keys) or any(record.get("usefulness_label") is None for record in records):
+    if len(by_key)!=len(records) or set(by_key)!=set(expected_keys) or any(record.get("topical_label") is None or record.get("usefulness_label") is None for record in records):
         raise ValueError("missing, duplicate, or incomplete judgments")
     return True
+
+def judgment_completeness(records):
+    if not records: raise ValueError("judgment records required")
+    return {
+        "topical":sum(record.get("topical_label") is not None for record in records)/len(records),
+        "usefulness":sum(record.get("usefulness_label") is not None for record in records)/len(records),
+    }
+
+def dual_ordinal_agreement(left_records,right_records):
+    if len(left_records)!=len(right_records) or not left_records: raise ValueError("paired judgments required")
+    for records in (left_records,right_records):
+        if any(set(record)!={"topical_label","usefulness_label"} for record in records): raise ValueError("both topical and usefulness judgments are required")
+    return {"topical":quadratic_weighted_kappa([r["topical_label"] for r in left_records],[r["topical_label"] for r in right_records],0,2),"usefulness":quadratic_weighted_kappa([r["usefulness_label"] for r in left_records],[r["usefulness_label"] for r in right_records],0,3)}
