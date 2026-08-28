@@ -83,5 +83,7 @@ synthetic artifacts are under `demo_snapshots/` and are not paper results.
   structured provider boundary, ambiguity rules, and controlled diagnostics.
 - `docs/retrieval_contract.md` — Milestone 5 first-stage input, serialization,
   result, depth, timing, and availability contracts.
+- `docs/evaluation_protocol.md` — Milestone 6 metric layers, aggregation,
+  agreement, statistics, and test-seal policy.
 - `notebooks/system_demo.ipynb` and `demo_snapshots/` — executable pipeline
   observability and immutable milestone archives.

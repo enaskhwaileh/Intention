@@ -16,7 +16,11 @@
     "milestone_04": {
       "implementation_commit": "6d9109c7e76a70e0fd005a43f7b7c9a859c525e6",
       "sha256": "6a4fc7ff08af782a55add1b13d6d1dec9a8bc722efeb9fc016027412785b53a3"
+    },
+    "milestone_05": {
+      "base_implementation_commit": "7c2adeb8b7dc55ecf52bfee61979685862d2bbea",
+      "sha256": "ff69f195df17151da38cdd998c5f00224a54f4571473bd3406b5e6a79904576b"
     }
   },
-  "current_snapshot": "milestone_05"
+  "current_snapshot": "milestone_06"
 }

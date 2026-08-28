@@ -12,13 +12,14 @@ def test_demo_snapshot_exposes_complete_ordered_pipeline():
     assert snapshot["stage_order"]==[
         "user_input","topical_interpretation","grounded_action","requirements",
         "retrieved_candidates","capability_profiles","alignment","final_ranking",
+        "evaluation_summary",
     ]
     assert snapshot["stages"]["grounded_action"]["action"]=="COMPARE"
     assert snapshot["stages"]["final_ranking"][0]["table_id"]=="country_rates"
     assert len(snapshot["stage_digest"])==64
 
 def test_current_snapshot_is_reproducible_and_historical_snapshots_are_present():
-    assert CURRENT_MILESTONE==5
+    assert CURRENT_MILESTONE==6
     write_current_snapshot(root=ROOT,check=True)
     for number in range(1,CURRENT_MILESTONE+1):
         path=ROOT/"demo_snapshots"/f"milestone_{number:02d}"/"snapshot.json"
@@ -29,7 +30,9 @@ def test_historical_snapshot_manifest_enforces_immutability():
     for directory,record in manifest["immutable_snapshots"].items():
         path=ROOT/"demo_snapshots"/directory/"snapshot.json"
         assert sha256(path.read_bytes()).hexdigest()==record["sha256"]
-        assert json.loads(path.read_text())["provenance"]["implementation_commit"]==record["implementation_commit"]
+        provenance=json.loads(path.read_text())["provenance"]
+        key="base_implementation_commit" if "base_implementation_commit" in record else "implementation_commit"
+        assert provenance[key]==record[key]
 
 def test_check_rejects_a_stale_snapshot(tmp_path,monkeypatch):
     target=tmp_path/"demo_snapshots"/f"milestone_{CURRENT_MILESTONE:02d}"/"snapshot.json"
