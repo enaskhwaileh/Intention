@@ -10,7 +10,7 @@
     "notice": "Demonstration output only; not a paper result."
   },
   "provenance": {
-    "implementation_commit": "7c2adeb8b7dc55ecf52bfee61979685862d2bbea",
+    "base_implementation_commit": "7c2adeb8b7dc55ecf52bfee61979685862d2bbea",
     "knowledge_version": "2.1.0",
     "knowledge_hash": "1ddf47f9f4de2bf508c57ea7dbd5b8af266003b57767ad1d3e414d923cd6ec2c",
     "retrieval_contract_version": "1.1.0",

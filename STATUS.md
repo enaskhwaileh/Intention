@@ -67,6 +67,10 @@
 - K=20 is the deterministic default, not a paper-level choice. Final K will be
   selected on development data only using the frozen recall-saturation rule;
   the existing sensitivity depths remain unchanged.
+- Retrieval raw scores, normalized relevance, and all latency components must
+  be finite. The tracked Milestone 5 snapshot records its merged
+  `base_implementation_commit`; actual checkout SHAs belong in runtime/CI
+  artifacts and are not hard-coded self-referentially.
 
 ## Current milestone
 
@@ -76,7 +80,7 @@ review branch. No external model integration, download, or benchmark run began.
 ## Commands and tests
 
 Git state/history, complete inventory, and source/config/test/document inspection.
-`pytest -q`: 213 passed. The normative suite includes contract,
+`pytest -q`: 216 passed. The normative suite includes contract,
 multi-topic benchmark, strict annotation, profile repository, profiler boundary,
 and metric regression tests.
 `PYTHONPATH=src python3 -m intention smoke`: completed with knowledge hash

@@ -1,6 +1,7 @@
 """Provider-independent retrieval request and result records."""
 from dataclasses import asdict,dataclass
 import json
+import math
 from pathlib import Path
 from jsonschema import Draft202012Validator
 
@@ -49,7 +50,7 @@ class RetrievalCandidate:
     def __post_init__(self):
         if not self.table_id.strip() or not isinstance(self.rank,int) or isinstance(self.rank,bool) or self.rank<=0:
             raise ValueError("invalid retrieval candidate identity or rank")
-        if not isinstance(self.raw_score,(int,float)) or isinstance(self.raw_score,bool) or not isinstance(self.relevance,(int,float)) or isinstance(self.relevance,bool) or not 0<=self.relevance<=1:
+        if not isinstance(self.raw_score,(int,float)) or isinstance(self.raw_score,bool) or not math.isfinite(self.raw_score) or not isinstance(self.relevance,(int,float)) or isinstance(self.relevance,bool) or not math.isfinite(self.relevance) or not 0<=self.relevance<=1:
             raise ValueError("retrieval relevance must be normalized to [0,1]")
 
 @dataclass(frozen=True)
@@ -70,7 +71,7 @@ class RetrievalTiming:
     total_ms: float
     clock: str
     def __post_init__(self):
-        if not self.clock.strip() or any(not isinstance(value,(int,float)) or isinstance(value,bool) or value<0 for value in (self.serialization_ms,self.inference_ms,self.total_ms)):
+        if not self.clock.strip() or any(not isinstance(value,(int,float)) or isinstance(value,bool) or not math.isfinite(value) or value<0 for value in (self.serialization_ms,self.inference_ms,self.total_ms)):
             raise ValueError("invalid retrieval timing")
         if self.total_ms+1e-9 < self.serialization_ms+self.inference_ms:
             raise ValueError("total retrieval time cannot be smaller than its components")

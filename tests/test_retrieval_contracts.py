@@ -1,4 +1,5 @@
 from dataclasses import asdict
+import math
 from pathlib import Path
 import pytest,yaml
 from intention.__main__ import fixture
@@ -90,6 +91,11 @@ def test_candidate_schema_rejects_unnormalized_relevance_and_bad_ranks():
     with pytest.raises(ValueError,match="normalized"): RetrievalCandidate("table",2,1.1,1)
     identity=RetrieverIdentity("x","m","c","a","s","1","topical_only","1","0"*64,"0"*64); timing=RetrievalTiming(0,0,0,"test"); normalization=ScoreNormalization("n","m","1","query","0"*64)
     with pytest.raises(ValueError,match="contiguous"): RetrievalResult("success",identity,timing,normalization,(RetrievalCandidate("table",2,1,2),))
+
+@pytest.mark.parametrize("value",[math.inf,-math.inf,math.nan])
+def test_retrieval_numeric_outputs_and_timings_must_be_finite(value):
+    with pytest.raises(ValueError,match="normalized"): RetrievalCandidate("table",value,0,1)
+    with pytest.raises(ValueError,match="timing"): RetrievalTiming(value,0,0,"test")
 
 def test_candidate_depth_selection_uses_development_recall_saturation_only():
     curve={5:.80,10:.94,20:.955,50:.96,100:.961}

@@ -15,6 +15,11 @@ is intentionally API-friendly:
 - `stages` contains typed JSON artifacts for every pipeline boundary.
 - `stage_digest` verifies the canonical stage payload.
 
+`base_implementation_commit` identifies the merged implementation on which
+the tracked snapshot was generated; it is deliberately not the self-referential
+commit containing the snapshot. Runtime/CI run artifacts may additionally
+record their actual checked-out Git SHA.
+
 `manifest.json` pins the full-file SHA-256 of every historical snapshot; the
 test suite fails if an immutable archive is changed.
 

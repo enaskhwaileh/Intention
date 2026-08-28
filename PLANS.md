@@ -43,6 +43,7 @@ new annotations, and new evaluation—not a retrieval or benchmark substitution.
 
 ## Current gate
 
-Milestone 4 hardening is merged. Review the small credential-free Milestone
-Demonstrator archive before beginning retrieval, serialization, baseline
-integration, or real-benchmark work in Milestone 5.
+Milestone 5 retrieval contracts are merged; the focused provenance/numeric
+hardening follow-up is awaiting review. Merge it before creating the Milestone
+6 evaluation-library branch. Do not integrate external retrievers, annotate
+IA-WikiTables, or run real benchmarks before their later milestone gates.

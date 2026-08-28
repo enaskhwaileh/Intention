@@ -16,10 +16,10 @@ from intention.retrieval import BM25Retriever,RetrievalRequest,load_retrieval_po
 
 SNAPSHOT_SCHEMA_VERSION="1.0.0"
 CURRENT_MILESTONE=5
-CURRENT_PIPELINE_COMMIT="7c2adeb8b7dc55ecf52bfee61979685862d2bbea"
+BASE_IMPLEMENTATION_COMMIT="7c2adeb8b7dc55ecf52bfee61979685862d2bbea"
 DEFAULT_INPUT="vaccine side effects compare measure=rate, comparison dimension=country"
 
-def create_snapshot(text: str=DEFAULT_INPUT,root: Path|None=None,implementation_commit: str|None=None,milestone: int=CURRENT_MILESTONE) -> dict:
+def create_snapshot(text: str=DEFAULT_INPUT,root: Path|None=None,base_implementation_commit: str|None=None,milestone: int=CURRENT_MILESTONE) -> dict:
     root=root or Path(__file__).resolve().parents[2]
     kg=load_knowledge(); tables=fixture(); artifact=DeterministicInterpreter().interpret(text)
     interpretation=ground(text,artifact,kg); requirement_profile=requirements(interpretation,kg); policy=load_retrieval_policy(); retriever=BM25Retriever(clock=lambda:0,clock_name="deterministic_demo")
@@ -57,7 +57,7 @@ def create_snapshot(text: str=DEFAULT_INPUT,root: Path|None=None,implementation_
             "notice":"Demonstration output only; not a paper result.",
         },
         "provenance":{
-            "implementation_commit":implementation_commit or CURRENT_PIPELINE_COMMIT,
+            "base_implementation_commit":base_implementation_commit or BASE_IMPLEMENTATION_COMMIT,
             "knowledge_version":kg.version,
             "knowledge_hash":kg.digest,
             "retrieval_contract_version":policy.version,
