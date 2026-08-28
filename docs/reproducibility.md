@@ -9,9 +9,11 @@ python -m intention smoke
 python -m intention synthetic-benchmark
 python -m intention evaluate-profiler
 python -m intention evaluate-interpreter
+python -m intention demo-snapshot --check
 ```
 
-The core suite stays offline. CLI commands are `smoke`, `profile`, `interpret`,
+The core suite stays offline. CLI commands include `smoke`, `demo-snapshot`,
+`profile`, `interpret`,
 `retrieve`, `build-benchmark`, `run-baselines`, `run-main`, `run-ablations`,
 `run-sensitivity`, `evaluate`, and `generate-paper-tables`. Use `ruff check .`
 and `mypy src` for lint and type checks.

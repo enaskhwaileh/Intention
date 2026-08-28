@@ -56,6 +56,15 @@ Evaluate deterministic interpretation and grounding:
 PYTHONPATH=src python3 -m intention evaluate-interpreter
 ```
 
+Regenerate the credential-free Milestone Demonstrator:
+
+```bash
+PYTHONPATH=src python3 -m intention demo-snapshot
+```
+
+The executable notebook is `notebooks/system_demo.ipynb`. Its stored
+synthetic artifacts are under `demo_snapshots/` and are not paper results.
+
 ## Authoritative documents
 
 - `docs/method_contract.md` — mathematics and scientific boundaries.
@@ -69,3 +78,5 @@ PYTHONPATH=src python3 -m intention evaluate-interpreter
   gold policy, structured granularity, and controlled diagnostics.
 - `docs/interpretation_protocol.md` and `docs/interpreter_validation.md` —
   structured provider boundary, ambiguity rules, and controlled diagnostics.
+- `notebooks/system_demo.ipynb` and `demo_snapshots/` — executable pipeline
+  observability and immutable milestone archives.
