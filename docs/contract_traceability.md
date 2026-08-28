@@ -15,7 +15,7 @@ They remain recoverable from Git history.
 | \(\mathcal B\), axis weights | `knowledge.yaml:actions.*.weights` | `align()` normalization | strict sum/domain and active-axis tests |
 | \(\mathcal V\), constraints | `knowledge.yaml:validation` | `load_knowledge()`, `ground()`, `align()` | fail-closed nested mutation tests |
 | \(\gamma=(p,x,v,s,c,prov)\) | predicate catalogue | `contracts.Capability`, `profile_table()` | gold predicate/value/provenance tests |
-| \(u\to(q_u,\iota_u)\to g_u\) | action argument declarations | `Interpreter`, `ground()` | missing/invented/unknown/fallback tests |
+| \(u\to(q_u,\iota_u)\to g_u\) | output schema + normalization catalogue | `ProviderArtifact`, `ground()` | action/argument/span/ambiguity/fallback tests |
 | \(\Psi(g_u)\to\Psi^*(g_u)\) | action templates | `requirements()` | conditional and existential tests |
 | topical-only \(\mathcal C_{q_u}\) | model config | `BM25Retriever`, `pipeline.run()` | action-switch/retrieval tests |
 | \(m(\rho,T)=\max M_pc\) | predicate matcher | `alignment/scoring.py` | maximum/confidence/missing tests |
@@ -29,6 +29,11 @@ Offline profile identity and persistence are implemented by
 `CapabilityProfile`, `build_profile()`, and `CapabilityRepository`. Gold schema,
 four-state unknown handling, and structured granularity are defined in
 `profiling/annotations.py` and evaluated by `profiling/evaluation.py`.
+
+Raw provider artifacts, strict structured validation, normalization, ambiguity,
+and validated grounding are separated by `interpretation/schema.py`,
+`normalization.py`, `providers.py`, and `interpreter.py`. Controlled action and
+argument diagnostics are implemented in `interpretation/evaluation.py`.
 
 ## Audit decisions
 

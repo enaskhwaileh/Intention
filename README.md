@@ -50,6 +50,12 @@ Evaluate profiling against controlled gold annotations:
 PYTHONPATH=src python3 -m intention evaluate-profiler
 ```
 
+Evaluate deterministic interpretation and grounding:
+
+```bash
+PYTHONPATH=src python3 -m intention evaluate-interpreter
+```
+
 ## Authoritative documents
 
 - `docs/method_contract.md` — mathematics and scientific boundaries.
@@ -61,3 +67,5 @@ PYTHONPATH=src python3 -m intention evaluate-profiler
 - `docs/synthetic_benchmark.md` — multi-topic action-switch benchmark.
 - `docs/capability_annotation_protocol.md` and `docs/profiler_validation.md` —
   gold policy, structured granularity, and controlled diagnostics.
+- `docs/interpretation_protocol.md` and `docs/interpreter_validation.md` —
+  structured provider boundary, ambiguity rules, and controlled diagnostics.

@@ -8,6 +8,7 @@ pytest -q
 python -m intention smoke
 python -m intention synthetic-benchmark
 python -m intention evaluate-profiler
+python -m intention evaluate-interpreter
 ```
 
 The core suite stays offline. CLI commands are `smoke`, `profile`, `interpret`,
