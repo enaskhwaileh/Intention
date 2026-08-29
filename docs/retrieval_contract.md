@@ -9,11 +9,13 @@ real-benchmark experiment.
 The proposed system and every proposed first-stage retriever receive only the
 validated topical query `q_u`. The action cue, grounded action, arguments,
 requirements, and full user input are unavailable to first-stage retrieval.
-`TABERTA-Hybrid` is registered with `input_scope: topical_only`.
+The historical Milestone 5 registry contains `TABERTA-Hybrid` with
+`input_scope: topical_only`, but the Pre-Milestone-7 architecture decision
+removes TABERTA from the planned primary encoder architecture.
 
 `TABERTA-FullInput` is a separately named baseline with
 `input_scope: full_input_baseline`. Its results must never be reported as the
-topical-only TABERTA-Hybrid condition. The main pipeline always constructs a
+topical-only historical TABERTA condition. The main pipeline always constructs a
 `topical_only` request; an adapter registered for full input fails that request.
 
 ## Common result
@@ -74,3 +76,7 @@ exact revisions are present and the remaining model-specific fields are pinned.
 Each result carries the registry hash and retrieval-config hash.
 
 No large model was downloaded and no real benchmark was run in this stage.
+
+The modern dense architecture, neural table serializer, vector index, and
+development-only encoder-selection gate are frozen separately in
+`docs/system_architecture_freeze.md`.

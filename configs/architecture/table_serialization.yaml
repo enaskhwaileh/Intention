@@ -1,0 +1,8 @@
+version: "1.0.0"
+serialization_id: neural_table_evidence_v1
+visible_components: [title, description, ordered_columns, deterministic_types, representative_rows, representative_values]
+forbidden_components: [grounded_action, action_arguments, requirements, capability_profiles, usefulness_labels, topical_labels, benchmark_labels, system_output, gold_information, full_user_input]
+ordering: source_row_and_column_order
+sampling: {method: stable_head, seed: 2026, maximum_rows: 3, maximum_values_per_column: 3}
+budget: {maximum_characters: 4096, truncation: right_boundary_with_marker}
+format: canonical_json

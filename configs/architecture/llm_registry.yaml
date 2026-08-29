@@ -1,0 +1,25 @@
+version: "1.0.0"
+prompt_version: interpreter_v1
+providers:
+  gemini-3.7-flash:
+    provider: google
+    model: gemini-3.7-flash
+    revision: stable_alias_observed_2026-08-29
+    source: https://ai.google.dev/gemini-api/docs/models
+    observed_date: "2026-08-29"
+    structured_output: response_format_json_schema_subset
+    temperature: 0
+    seed: null
+    availability: blocked
+    failure_reason: API credentials absent and immutable provider checkpoint revision unavailable
+  deterministic-reference:
+    provider: local
+    model: deterministic-rules
+    revision: "2.0.0"
+    source: src/intention/interpretation/interpreter.py
+    observed_date: "2026-08-29"
+    structured_output: direct_typed_artifact
+    temperature: 0
+    seed: 2026
+    availability: available
+    failure_reason: null

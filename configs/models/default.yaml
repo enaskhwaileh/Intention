@@ -1,2 +1,7 @@
-interpreter: {config: configs/models/interpreter.yaml}
-retriever: {name: BM25, serialization: title_description_schema_v1, input_scope: topical_only}
+mode: controlled_reference
+interpreter: {config: configs/models/interpreter.yaml, role: deterministic_reference_not_final_learned_system}
+retriever: {name: BM25, serialization: title_description_schema_v1, input_scope: topical_only, role: lexical_reference_not_primary_encoder}
+learned_configuration:
+  embedding_registry: configs/architecture/embeddings.yaml
+  llm_registry: configs/architecture/llm_registry.yaml
+  status: blocked_pending_development_bakeoff_and_external_requirements

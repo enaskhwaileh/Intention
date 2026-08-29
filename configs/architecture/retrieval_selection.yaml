@@ -1,0 +1,9 @@
+version: "1.0.0"
+split: development_only
+test_labels_permitted: false
+selection_target: topical_relevance_only
+forbidden_selection_metric: final_intended_action_usefulness
+criteria: [topical_ndcg, candidate_recall_at_frozen_and_sensitivity_k, embedding_latency, index_size, retrieval_latency, reproducibility, availability_cost, serialization_length_robustness]
+conditions: [BM25, Dense, Hybrid, Dense+IntendedActionAlignment, Hybrid+IntendedActionAlignment]
+hybrid: {method: reciprocal_rank_fusion, version: "1.0.0", k: 60, tuning_status: frozen_default_not_tuned}
+final_encoder_status: pending_real_development_data
