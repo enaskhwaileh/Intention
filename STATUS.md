@@ -103,17 +103,23 @@
 - TABERTA is excluded from the new primary architecture. BM25 remains an
   infrastructure/reference condition. Verified Gemini, Voyage, and Qwen
   candidates are fail-closed and no final encoder has been selected.
+- Pre-Milestone-7 architecture freeze PR #13 is merged. Operational hardening
+  corrects current Gemini embedding/LLM contracts, preserves raw cosine scores
+  behind development-pending calibration, and implements optional Hugging Face,
+  Qdrant, Parquet/DuckDB, offline-indexing, online-retrieval, and mocked external
+  structured-LLM paths without downloads in deterministic CI.
 
 ## Current milestone
 
-Milestones 1–6 are complete and merged. The Pre-Milestone-7 architecture freeze
-is complete on its review branch. No IA-WikiTables annotation, pool freeze,
-external model execution, or real run began.
+Milestones 1–6 and the Pre-Milestone-7 architecture freeze are complete and
+merged. Current stage: Pre-Milestone-7 operational hardening. No final semantic
+encoder is selected; no IA-WikiTables pool is frozen; no human annotation,
+external model execution, or paper-result run began.
 
 ## Commands and tests
 
 Git state/history, complete inventory, and source/config/test/document inspection.
-`pytest -q`: 241 passed. The normative suite includes contract,
+`pytest -q`: 251 passed. The normative suite includes contract,
 multi-topic benchmark, strict annotation, profile repository, profiler boundary,
 and metric regression tests.
 `PYTHONPATH=src python3 -m intention smoke`: completed with knowledge hash
@@ -142,8 +148,9 @@ No paper results. Smoke output is not an experiment run or metric claim.
 ## Blockers
 
 Immutable API-model checkpoint revisions, WikiTables, human annotations,
-credentials, downloaded weights, validated accelerators, Qdrant service,
-DuckDB, and `pyarrow` are absent. Thus no real-data smoke,
+credentials, downloaded weights, validated accelerators, and Qdrant service
+are absent. DuckDB and `pyarrow` are locally available and their real storage
+round trip passes, but remain optional in base CI. Thus no learned end-to-end smoke,
 baseline comparison, benchmark labels, run bundle, ablation/sensitivity results,
 confidence intervals, significance claims, efficiency measurements, or paper
 tables were produced. Capability macro-F1, row-granularity accuracy, ordinal
@@ -151,5 +158,5 @@ agreement, throughput, and full orchestration remain pending.
 
 ## Next action
 
-Review and merge the Pre-Milestone-7 architecture-freeze PR. Stop before
-IA-WikiTables annotation, pool freezing, encoder bake-off, or real execution.
+Review and merge the Pre-Milestone-7 operational-hardening PR. Stop before
+IA-WikiTables annotation, pool freezing, final encoder selection, or evaluation.

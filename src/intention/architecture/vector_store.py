@@ -1,6 +1,7 @@
 from abc import ABC,abstractmethod
 from dataclasses import dataclass
 import math
+from uuid import NAMESPACE_URL,uuid5
 
 @dataclass(frozen=True)
 class CollectionConfig:
@@ -62,22 +63,59 @@ class InMemoryVectorStore(VectorStore):
 
 class QdrantVectorStore(VectorStore):
     """Preferred production adapter boundary. Qdrant is a rebuildable index."""
-    def __init__(self,client=None): self.client=client; self.config=None
+    IDENTITY_ID=str(uuid5(NAMESPACE_URL,"intention:qdrant:collection-identity"))
+    def __init__(self,client=None,models_module=None): self.client=client; self.models_module=models_module; self.config=None
     @property
     def availability(self): return ("available",None) if self.client is not None else ("unavailable","qdrant client/service is not configured")
     def _require(self):
         if self.client is None: raise RuntimeError(self.availability[1])
     def create_or_validate_collection(self,config):
-        self._require(); existing=self.client.get_collection_config(config.name)
-        if existing is None:self.client.create_collection(config)
-        elif existing!=config:raise ValueError("Qdrant collection identity mismatch")
-        self.config=config; return config
-    def upsert(self,records): self._require(); self.client.upsert(self.config.name,records)
-    def get(self,table_id): self._require(); return self.client.get(self.config.name,table_id)
-    def search(self,vector,limit): self._require(); return self.client.search(self.config.name,vector,limit)
+        self._require(); models=self._models(); exists=self.client.collection_exists(config.name)
+        if not exists:
+            self.client.create_collection(collection_name=config.name,vectors_config={"topical_dense":models.VectorParams(size=config.dimension,distance=self._distance(models,config.metric))})
+            self.config=config
+            self.client.upsert(collection_name=config.name,points=[models.PointStruct(id=self.IDENTITY_ID,vector={"topical_dense":[0.0]*config.dimension},payload={"record_type":"collection_identity","identity":self._identity_payload(config)})])
+        else:
+            info=self.client.get_collection(config.name); vectors=info.config.params.vectors
+            dense=vectors.get("topical_dense") if hasattr(vectors,"get") else None
+            if dense is None or dense.size!=config.dimension or str(dense.distance).lower().split(".")[-1]!=config.metric: raise ValueError("Qdrant vector schema mismatch")
+            points=self.client.retrieve(collection_name=config.name,ids=[self.IDENTITY_ID],with_payload=True,with_vectors=False)
+            if len(points)!=1 or points[0].payload.get("identity")!=self._identity_payload(config): raise ValueError("Qdrant collection identity mismatch")
+            self.config=config
+        return config
+    def _models(self):
+        if self.models_module is not None:return self.models_module
+        try:
+            from qdrant_client import models
+            return models
+        except ImportError as error: raise RuntimeError("qdrant-client dependency unavailable") from error
+    def _distance(self,models,metric): return {"cosine":models.Distance.COSINE,"dot":models.Distance.DOT,"euclidean":models.Distance.EUCLID}[metric]
+    def _identity_payload(self,config): return {"version":config.version,"dimension":config.dimension,"metric":config.metric,"encoder_hash":config.encoder_hash,"serialization_hash":config.serialization_hash,"dataset_version":config.dataset_version,"profile_version":config.profile_version}
+    def _point_id(self,table_id): return str(uuid5(NAMESPACE_URL,f"intention:table:{table_id}"))
+    def upsert(self,records):
+        self._require(); models=self._models()
+        if self.config is None: raise RuntimeError("Qdrant collection is not validated")
+        points=[]
+        for record in records:
+            if len(record.vector)!=self.config.dimension or any(not math.isfinite(value) for value in record.vector): raise ValueError("vector identity mismatch")
+            payload={**record.payload,"table_id":record.table_id,"record_type":"table"}; points.append(models.PointStruct(id=self._point_id(record.table_id),vector={"topical_dense":list(record.vector)},payload=payload))
+        self.client.upsert(collection_name=self.config.name,points=points,wait=True)
+    def get(self,table_id):
+        self._require(); points=self.client.retrieve(collection_name=self.config.name,ids=[self._point_id(table_id)],with_payload=True,with_vectors=True)
+        if not points:return None
+        point=points[0]; vector=point.vector["topical_dense"] if isinstance(point.vector,dict) else point.vector
+        payload={key:value for key,value in point.payload.items() if key not in {"table_id","record_type"}}
+        return VectorRecord(table_id,tuple(vector),payload)
+    def search(self,vector,limit):
+        self._require()
+        if self.config is None or len(vector)!=self.config.dimension or limit<=0: raise ValueError("invalid vector search")
+        models=self._models(); response=self.client.query_points(collection_name=self.config.name,query=list(vector),using="topical_dense",limit=limit,with_payload=True,query_filter=models.Filter(must=[models.FieldCondition(key="record_type",match=models.MatchValue(value="table"))]))
+        points=response.points if hasattr(response,"points") else response
+        hits=[SearchHit(point.payload["table_id"],float(point.score),{key:value for key,value in point.payload.items() if key not in {"table_id","record_type"}}) for point in points]
+        return sorted(hits,key=lambda hit:(-hit.score,hit.table_id))
     def delete_collection(self):
         self._require()
-        if self.config:self.client.delete_collection(self.config.name)
+        if self.config:self.client.delete_collection(collection_name=self.config.name)
         self.config=None
     def rebuild_collection(self,config,records): self.delete_collection(); self.create_or_validate_collection(config); self.upsert(records)
     def collection_config(self): return self.config

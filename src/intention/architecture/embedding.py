@@ -51,7 +51,7 @@ class EmbeddingRegistration:
 
 @dataclass(frozen=True)
 class EmbeddingRegistry:
-    version: str; selection_status: str; primary_architecture: str; models: dict[str,EmbeddingRegistration]; digest: str
+    version: str; selection_status: str; primary_architecture: str; operational_smoke_encoder:str; models: dict[str,EmbeddingRegistration]; digest: str
     def require_available(self,name):
         if name not in self.models: raise KeyError(name)
         record=self.models[name].record
@@ -60,8 +60,8 @@ class EmbeddingRegistry:
 
 def load_embedding_registry(path:Path|None=None)->EmbeddingRegistry:
     path=path or Path(__file__).resolve().parents[3]/"configs/architecture/embeddings.yaml"; raw=yaml.safe_load(path.read_text())
-    if not isinstance(raw,dict) or set(raw)!={"version","selection_status","primary_architecture","models"}: raise ValueError("invalid embedding registry")
-    required={"category","provider","model","revision","source","license","dimensions","maximum_input_tokens","truncation_policy","query_mode","document_mode","query_instruction","document_instruction","similarity","normalization","requirement","hardware","approximate_cost","availability","failure_reason"}; optional={"tokenizer_revision","dimension_range"}
+    if not isinstance(raw,dict) or set(raw)!={"version","selection_status","primary_architecture","operational_smoke_encoder","models"}: raise ValueError("invalid embedding registry")
+    required={"category","provider","model","revision","source","license","dimensions","maximum_input_tokens","truncation_policy","query_mode","document_mode","query_instruction","document_instruction","similarity","normalization","requirement","hardware","approximate_cost","availability","failure_reason"}; optional={"tokenizer_revision","dimension_range","api_task_type_supported","title_handling","batch_semantics","api_limitations","operational_role"}
     models={}
     for name,record in raw["models"].items():
         if not required<=set(record) or set(record)-required-optional: raise ValueError(f"invalid embedding record: {name}")
@@ -70,4 +70,5 @@ def load_embedding_registry(path:Path|None=None)->EmbeddingRegistry:
         if not isinstance(record["hardware"],list) or not record["hardware"] or any(not isinstance(value,str) or not value for value in record["hardware"]): raise ValueError(f"invalid hardware requirement: {name}")
         models[name]=EmbeddingRegistration(name,record)
     digest=sha256(json.dumps(raw,sort_keys=True,separators=(",",":")).encode()).hexdigest()
-    return EmbeddingRegistry(raw["version"],raw["selection_status"],raw["primary_architecture"],models,digest)
+    if raw["operational_smoke_encoder"] not in models or models[raw["operational_smoke_encoder"]].record.get("operational_role")!="operational_smoke_encoder_not_final_primary": raise ValueError("invalid operational smoke encoder")
+    return EmbeddingRegistry(raw["version"],raw["selection_status"],raw["primary_architecture"],raw["operational_smoke_encoder"],models,digest)
