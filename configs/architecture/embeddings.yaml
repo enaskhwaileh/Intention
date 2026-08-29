@@ -1,0 +1,134 @@
+version: "1.0.0"
+selection_status: development_bakeoff_pending
+primary_architecture: provider_independent_dense
+models:
+  gemini-embedding-2:
+    category: proprietary_strong
+    provider: google
+    model: gemini-embedding-2
+    revision: stable_alias_observed_2026-08-29
+    source: https://ai.google.dev/gemini-api/docs/embeddings
+    license: proprietary_google_api_terms
+    dimensions: [768, 1536, 3072]
+    dimension_range: [128, 3072]
+    maximum_input_tokens: 8192
+    truncation_policy: fail_on_overflow
+    query_mode: RETRIEVAL_QUERY
+    document_mode: RETRIEVAL_DOCUMENT
+    query_instruction: RETRIEVAL_QUERY
+    document_instruction: RETRIEVAL_DOCUMENT_with_table_title
+    similarity: cosine
+    normalization: l2_required_for_reduced_dimensions
+    requirement: gemini_api_key
+    hardware: [provider_managed_api]
+    approximate_cost: {currency: USD, unit: million_text_input_tokens, value: 0.20, observed: "2026-08-29"}
+    availability: blocked
+    failure_reason: credentials absent and provider does not expose an immutable checkpoint revision
+  voyage-4-large:
+    category: proprietary_strong
+    provider: voyage_ai
+    model: voyage-4-large
+    revision: api_model_alias_observed_2026-08-29
+    source: https://docs.voyageai.com/docs/embeddings
+    license: proprietary_voyage_api_terms
+    dimensions: [256, 512, 1024, 2048]
+    maximum_input_tokens: 32000
+    truncation_policy: fail_on_overflow
+    query_mode: query
+    document_mode: document
+    query_instruction: "Represent the query for retrieving supporting documents: "
+    document_instruction: "Represent the document for retrieval: "
+    similarity: cosine
+    normalization: provider_managed
+    requirement: voyage_api_key
+    hardware: [provider_managed_api]
+    approximate_cost: {currency: USD, unit: million_tokens, value: 0.12, observed: "2026-08-29"}
+    availability: blocked
+    failure_reason: credentials absent and provider does not expose an immutable checkpoint revision
+  Qwen3-Embedding-8B:
+    category: open_weight_strong
+    provider: qwen_huggingface
+    model: Qwen/Qwen3-Embedding-8B
+    revision: 1d8ad4ca9b3dd8059ad90a75d4983776a23d44af
+    tokenizer_revision: 1d8ad4ca9b3dd8059ad90a75d4983776a23d44af
+    source: https://huggingface.co/Qwen/Qwen3-Embedding-8B
+    license: apache-2.0
+    dimensions: [4096]
+    maximum_input_tokens: 32768
+    truncation_policy: fail_on_overflow
+    query_mode: instruction_aware_query
+    document_mode: document_without_instruction
+    query_instruction: "Retrieve tables topically relevant to this query."
+    document_instruction: null
+    similarity: cosine
+    normalization: l2
+    requirement: local_accelerator_and_model_download
+    hardware: [accelerator_capacity_to_be_validated]
+    approximate_cost: null
+    availability: blocked
+    failure_reason: weights are not downloaded and accelerator capacity has not been validated
+  Qwen3-Embedding-0.6B:
+    category: open_weight_lightweight
+    provider: qwen_huggingface
+    model: Qwen/Qwen3-Embedding-0.6B
+    revision: 97b0c614be4d77ee51c0cef4e5f07c00f9eb65b3
+    tokenizer_revision: 97b0c614be4d77ee51c0cef4e5f07c00f9eb65b3
+    source: https://huggingface.co/Qwen/Qwen3-Embedding-0.6B
+    license: apache-2.0
+    dimensions: [1024]
+    maximum_input_tokens: 32768
+    truncation_policy: fail_on_overflow
+    query_mode: instruction_aware_query
+    document_mode: document_without_instruction
+    query_instruction: "Retrieve tables topically relevant to this query."
+    document_instruction: null
+    similarity: cosine
+    normalization: l2
+    requirement: local_model_download
+    hardware: [cpu_or_accelerator_to_be_benchmarked]
+    approximate_cost: null
+    availability: blocked
+    failure_reason: weights are not downloaded; deterministic CI must remain model-free
+  voyage-4-nano:
+    category: open_weight_lightweight_alternative
+    provider: voyage_huggingface
+    model: voyageai/voyage-4-nano
+    revision: 67fabc9bef010dabc5f6024aa1b1b6b93410426f
+    tokenizer_revision: 67fabc9bef010dabc5f6024aa1b1b6b93410426f
+    source: https://huggingface.co/voyageai/voyage-4-nano
+    license: apache-2.0
+    dimensions: [256, 512, 1024, 2048]
+    maximum_input_tokens: 32000
+    truncation_policy: fail_on_overflow
+    query_mode: query
+    document_mode: document
+    query_instruction: query_mode_from_official_model_adapter
+    document_instruction: document_mode_from_official_model_adapter
+    similarity: cosine
+    normalization: l2
+    requirement: local_model_download_and_trust_remote_code_review
+    hardware: [cpu_or_accelerator_to_be_benchmarked]
+    approximate_cost: null
+    availability: blocked
+    failure_reason: weights are not downloaded and remote model code has not been security-reviewed
+  BM25:
+    category: lexical_reference
+    provider: local
+    model: bm25
+    revision: not_applicable
+    source: docs/retrieval_contract.md
+    license: repository_license
+    dimensions: null
+    maximum_input_tokens: null
+    truncation_policy: not_applicable
+    query_mode: topical_tokens
+    document_mode: title_description_schema_v1
+    query_instruction: null
+    document_instruction: null
+    similarity: bm25
+    normalization: bm25_query_max_v1
+    requirement: cpu
+    hardware: [cpu]
+    approximate_cost: null
+    availability: available
+    failure_reason: null

@@ -92,16 +92,28 @@
   recall remains separately named; action-switch diagnostics accept tied
   optimal tables; per-action aggregation is topic-first; and bootstrap
   intervals use the configured confidence level.
+- Milestone 6 PR #12 is merged into `main`. `evaluate_paper_ranking` is now the
+  explicit normative qrel-based paper-evaluation entry point; label-list
+  metrics remain controlled legacy regression helpers only.
+- The Pre-Milestone-7 architecture gate freezes provider-independent embedding,
+  topical-only semantic retrieval, deterministic neural table serialization,
+  Qdrant index, authoritative Parquet/DuckDB table storage, versioned profile
+  storage, artifact manifests, external LLM interpretation, optional semantic
+  profiler enrichment, hybrid RRF, and development-only encoder selection.
+- TABERTA is excluded from the new primary architecture. BM25 remains an
+  infrastructure/reference condition. Verified Gemini, Voyage, and Qwen
+  candidates are fail-closed and no final encoder has been selected.
 
 ## Current milestone
 
-Milestone 6 evaluation-library hardening is complete on its review branch. No
-IA-WikiTables annotation, external model integration, or real run began.
+Milestones 1–6 are complete and merged. The Pre-Milestone-7 architecture freeze
+is complete on its review branch. No IA-WikiTables annotation, pool freeze,
+external model execution, or real run began.
 
 ## Commands and tests
 
 Git state/history, complete inventory, and source/config/test/document inspection.
-`pytest -q`: 232 passed. The normative suite includes contract,
+`pytest -q`: 241 passed. The normative suite includes contract,
 multi-topic benchmark, strict annotation, profile repository, profiler boundary,
 and metric regression tests.
 `PYTHONPATH=src python3 -m intention smoke`: completed with knowledge hash
@@ -129,8 +141,9 @@ No paper results. Smoke output is not an experiment run or metric claim.
 
 ## Blockers
 
-Exact external model revisions/checkpoints, WikiTables, human annotations,
-credentials, accelerators, and `pyarrow` are absent. Thus no real-data smoke,
+Immutable API-model checkpoint revisions, WikiTables, human annotations,
+credentials, downloaded weights, validated accelerators, Qdrant service,
+DuckDB, and `pyarrow` are absent. Thus no real-data smoke,
 baseline comparison, benchmark labels, run bundle, ablation/sensitivity results,
 confidence intervals, significance claims, efficiency measurements, or paper
 tables were produced. Capability macro-F1, row-granularity accuracy, ordinal
@@ -138,5 +151,5 @@ agreement, throughput, and full orchestration remain pending.
 
 ## Next action
 
-Review and merge the Milestone 6 evaluation-library PR. Stop before
-IA-WikiTables annotation or real benchmark execution.
+Review and merge the Pre-Milestone-7 architecture-freeze PR. Stop before
+IA-WikiTables annotation, pool freezing, encoder bake-off, or real execution.

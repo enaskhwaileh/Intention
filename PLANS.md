@@ -16,7 +16,7 @@ Unavailable external systems must fail explicitly rather than be approximated.
 5. **Retrieval contracts and serialization — complete.** Freeze table serialization,
    candidate depth, retriever interfaces, and pinned lexical/semantic baseline
    identities. Entry gate: Milestone 4 hardening reviewed and merged.
-6. **Evaluation library — hardening in review.** Finalize graded ranking metrics, action-switch
+6. **Evaluation library — complete and merged.** Finalize graded ranking metrics, action-switch
    diagnostics, paired statistics, confidence intervals, and leakage guards.
 7. **IA-WikiTables benchmark construction.** Acquire licensed source data,
    create topic/action splits and pools, run human annotation, and adjudicate
@@ -43,6 +43,7 @@ new annotations, and new evaluation—not a retrieval or benchmark substitution.
 
 ## Current gate
 
-Milestone 5 is complete. Review and merge the Milestone 6 evaluation-library
-contract before starting IA-WikiTables annotation, external model runs, or
-real-benchmark execution.
+Milestones 1–6 are complete and merged. Review and merge the Pre-Milestone-7
+architecture, encoder, LLM, serialization, and storage freeze before starting
+IA-WikiTables annotation or pool freezing. The semantic encoder bake-off occurs
+on development data only after source acquisition and before final pool freeze.
