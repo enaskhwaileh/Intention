@@ -54,8 +54,7 @@ def test_vector_store_enforces_collection_identity_and_qdrant_fails_explicitly()
 def test_semantic_retriever_encodes_only_topical_q_u_not_action_bearing_input():
     encoder=RecordingEncoder(); store=InMemoryVectorStore(); store.create_or_validate_collection(collection()); store.upsert([VectorRecord("t",(1.0,0.0),{})])
     identity=RetrieverIdentity("Dense","test","revision","1","neural_table_evidence_v1","1.0.0","topical_only","1",HASH,HASH)
-    normalization=ScoreNormalization("minmax","query_minmax","1","query_local",HASH)
-    retriever=SemanticRetriever(encoder,store,identity,normalization)
+    retriever=SemanticRetriever(encoder,store,identity)
     full="vaccine safety compare measure=rate by country"; topical="vaccine safety"
     result=retriever.retrieve(RetrievalRequest(topical,5,"topical_only"))
     assert result.status=="success" and encoder.queries==[topical] and full not in encoder.queries
@@ -63,7 +62,7 @@ def test_semantic_retriever_encodes_only_topical_q_u_not_action_bearing_input():
 
 def test_artifact_manifest_links_authoritative_storage_index_and_profile():
     identity={"id":"x","version":"1","hash":HASH}; artifact={"path":"artifacts/x.parquet","version":"1","hash":HASH}
-    manifest=ArtifactManifest("1.0.0","table",{"id":"wiki","version":"v1"},artifact,identity,identity,identity,artifact)
+    manifest=ArtifactManifest("1.0.0","table",{"id":"wiki","version":"v1","hash":HASH},artifact,identity,identity,identity,artifact)
     assert validate_artifact_manifest(manifest)["table_id"]=="table"
     broken=validate_artifact_manifest(manifest); broken["serialization"]["hash"]="bad"
     with pytest.raises(ValueError,match="manifest"): validate_artifact_manifest(broken)

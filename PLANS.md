@@ -43,7 +43,10 @@ new annotations, and new evaluation—not a retrieval or benchmark substitution.
 
 ## Current gate
 
-Milestones 1–6 are complete and merged. Review and merge the Pre-Milestone-7
-architecture, encoder, LLM, serialization, and storage freeze before starting
-IA-WikiTables annotation or pool freezing. The semantic encoder bake-off occurs
-on development data only after source acquisition and before final pool freeze.
+Milestones 1–6 and Pre-Milestone-7 architecture freeze PR #13 are complete and
+merged. The current gate is Pre-Milestone-7 operational hardening: executable
+optional adapters, artifact storage, indexing, and online retrieval without
+selecting the final semantic encoder. IA-WikiTables annotation and pool freezing
+remain forbidden. After this gate: acquire source data, construct a development
+subset, run the topical-only encoder bake-off, freeze the primary encoder, and
+only then construct and freeze annotation pools.
