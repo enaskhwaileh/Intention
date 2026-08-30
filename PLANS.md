@@ -43,15 +43,15 @@ new annotations, and new evaluation—not a retrieval or benchmark substitution.
 
 ## Current gate
 
-Milestones 1–6, Pre-Milestone-7 architecture freeze PR #13, and operational
-hardening PR #14 are complete and merged. The current gate is the small
-post-merge Pre-Milestone-7 hardening review. The next scientific sequence is:
+Milestones 1–6 and all Pre-Milestone-7 gates through merged PR #15 are complete.
+Milestone 7 has entered M7A.1 canonical source audit. The gated sequence is:
 
-1. Milestone 7A — source acquisition and benchmark foundation.
-2. Milestone 7B — development-only topical encoder bake-off.
-3. Freeze the primary semantic encoder using development topical metrics only.
-4. Milestone 7C — pooling and human annotation.
+1. M7A.1 — canonical source audit (current review gate).
+2. M7A.2 — corpus acquisition and normalization.
+3. M7B — development-only topical encoder bake-off.
+4. Freeze the primary semantic encoder using development topical metrics only.
+5. M7C — pooling and human annotation.
 
 This staging does not change official Milestone 7 in the 12-milestone roadmap.
-The final encoder remains unselected, and IA-WikiTables acquisition, annotation,
-pool freezing, and paper-result generation remain forbidden in this PR.
+The final encoder remains unselected. Corpus acquisition, annotation, pool
+freezing, and paper-result generation remain forbidden in M7A.1.

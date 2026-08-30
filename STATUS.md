@@ -112,20 +112,22 @@
   post-merge hardening review branch makes overflow handling exact and
   fail-closed, derives smoke readiness from runtime state, and strengthens
   Qdrant and artifact invalidation without redesigning the architecture.
+- Post-merge hardening PR #15 is complete and merged. Milestone 7 is entered at
+  M7A.1 with a pinned, executable audit of the canonical WWW 2018 WikiTables
+  query and qrel resources.
 
 ## Current milestone
 
-Milestones 1–6, the Pre-Milestone-7 architecture freeze, and operational
-hardening PR #14 are complete and merged. Current work: post-merge
-Pre-Milestone-7 hardening. The architecture is ready for source-data
-acquisition, while learned execution remains blocked where local artifacts or
-infrastructure are absent. No final semantic encoder is selected; IA-WikiTables
-has not started; no pool is frozen; no human annotation or paper result exists.
+Pre-Milestone-7 work is complete and merged. Current substage: Milestone 7A.1
+canonical source audit. The pinned metadata audit verifies 60 queries and 3,120
+unique source judgments while leaving the 3,120/3,117 discrepancy unresolved.
+The full WikiTables corpus is not acquired. No final semantic encoder is
+selected; no pool is frozen; no human annotation or paper result exists.
 
 ## Commands and tests
 
 Git state/history, complete inventory, and source/config/test/document inspection.
-`pytest -q`: 269 passed. The normative suite includes contract,
+`pytest -q`: 276 passed. The normative suite includes contract,
 multi-topic benchmark, strict annotation, profile repository, profiler boundary,
 and metric regression tests.
 `PYTHONPATH=src python3 -m intention smoke`: completed with knowledge hash
@@ -153,7 +155,8 @@ No paper results. Smoke output is not an experiment run or metric claim.
 
 ## Blockers
 
-Immutable API-model checkpoint revisions, WikiTables, human annotations,
+Immutable API-model checkpoint revisions, the full WikiTables corpus and its
+redistribution-license verification, human annotations,
 credentials, downloaded weights, validated accelerators, and Qdrant service
 are absent. DuckDB and `pyarrow` are locally available and their real storage
 round trip passes, but remain optional in base CI. Thus no learned end-to-end smoke,
@@ -164,6 +167,6 @@ agreement, throughput, and full orchestration remain pending.
 
 ## Next action
 
-Review and merge the post-merge Pre-Milestone-7 hardening PR. Then proceed in
-order through Milestone 7A source acquisition, 7B development-only encoder
-bake-off and encoder freeze, and 7C pooling and human annotation.
+Review M7A.1. After review only: M7A.2 corpus acquisition/normalization, M7B
+development-only encoder bake-off, encoder freeze, then M7C pooling and human
+annotation.
