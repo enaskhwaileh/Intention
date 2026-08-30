@@ -43,7 +43,8 @@ The WWW 2018 paper and pinned qrels establish 3,120 judgments. The EDBT 2025
 paper, *Dataset Discovery using Semantic Matching*, states 3,117 and a
 1,918/1,199 division ([paper](https://doi.org/10.48786/EDBT.2025.52)). The
 canonical audit checked exact and conflicting duplicates, malformed records,
-missing query IDs, labels, and unique pairs. It also searched the public
+both missing expected and unexpected outside-declared query IDs, labels, and
+unique pairs. It also searched the public
 implementation linked by the later paper for qrel, split, and preprocessing
 artifacts. No authoritative artifact identifies three removed records.
 
@@ -64,4 +65,3 @@ pooling, intended-action variants, annotation, or evaluation occurred. Future
 splits must be topic-level: every intended-action variant of one underlying
 topic belongs to the same split. The next gate after review is M7A.2 corpus
 acquisition and normalization.
-

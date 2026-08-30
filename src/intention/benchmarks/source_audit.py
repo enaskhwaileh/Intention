@@ -21,9 +21,9 @@ class QueryAudit:
 
 @dataclass(frozen=True)
 class QrelAudit:
-    file_sha256:str; physical_line_count:int; parsed_judgment_count:int; unique_pair_count:int; exact_duplicate_lines:tuple[dict,...]; duplicate_pairs:tuple[dict,...]; conflicting_duplicate_judgments:tuple[dict,...]; malformed_rows:tuple[dict,...]; query_ids:tuple[int,...]; missing_query_ids:tuple[int,...]; table_id_examples:tuple[str,...]; unique_table_count:int; label_distribution:dict[int,int]; labels_outside_scale:tuple[int,...]; judgments_per_query:dict[str,float]; table_id_pattern:str; table_id_suffix_width_distribution:dict[int,int]; table_ids_matching_pattern:bool
+    file_sha256:str; physical_line_count:int; parsed_judgment_count:int; unique_pair_count:int; exact_duplicate_lines:tuple[dict,...]; duplicate_pairs:tuple[dict,...]; conflicting_duplicate_judgments:tuple[dict,...]; malformed_rows:tuple[dict,...]; query_ids:tuple[int,...]; missing_query_ids:tuple[int,...]; outside_declared_query_ids:tuple[int,...]; table_id_examples:tuple[str,...]; unique_table_count:int; label_distribution:dict[int,int]; labels_outside_scale:tuple[int,...]; judgments_per_query:dict[str,float]; table_id_pattern:str; table_id_suffix_width_distribution:dict[int,int]; table_ids_matching_pattern:bool
     @property
-    def valid(self):return not (self.duplicate_pairs or self.conflicting_duplicate_judgments or self.malformed_rows or self.missing_query_ids or self.labels_outside_scale) and self.table_ids_matching_pattern
+    def valid(self):return not (self.duplicate_pairs or self.conflicting_duplicate_judgments or self.malformed_rows or self.missing_query_ids or self.outside_declared_query_ids or self.labels_outside_scale) and self.table_ids_matching_pattern
 
 @dataclass(frozen=True)
 class SourceAuditReport:
@@ -79,14 +79,15 @@ def audit_qrels(path:Path,expected_query_ids=range(1,61),label_scale=(0,1,2),tab
     labels=Counter(judgments.values()); pattern=re.compile(table_id_pattern)
     widths=Counter(len(table_id.rsplit("-",1)[-1]) for table_id in table_ids)
     examples=sorted({table_ids[0],table_ids[-1],*(next((item for item in table_ids if len(item.rsplit('-',1)[-1])==width),table_ids[0]) for width in sorted(widths))}) if table_ids else []
-    return QrelAudit(_hash(path),len(lines),len(parsed),len(judgments),exact,tuple(duplicates),tuple(conflicts),tuple(malformed),tuple(query_ids),tuple(sorted(set(expected_query_ids)-set(query_ids))),tuple(examples),len(table_ids),dict(sorted(labels.items())),tuple(sorted(set(labels)-set(label_scale))),stats,table_id_pattern,dict(sorted(widths.items())),all(pattern.fullmatch(table_id) for table_id in table_ids))
+    expected=set(expected_query_ids); observed=set(query_ids)
+    return QrelAudit(_hash(path),len(lines),len(parsed),len(judgments),exact,tuple(duplicates),tuple(conflicts),tuple(malformed),tuple(query_ids),tuple(sorted(expected-observed)),tuple(sorted(observed-expected)),tuple(examples),len(table_ids),dict(sorted(labels.items())),tuple(sorted(set(labels)-set(label_scale))),stats,table_id_pattern,dict(sorted(widths.items())),all(pattern.fullmatch(table_id) for table_id in table_ids))
 
 def _identity(contract):
     paper=contract["source_paper"]; repository=contract["repository"]
     return SourceIdentity(contract["lineage_name"],paper["title"],paper["venue"],paper["year"],repository["url"],repository["commit"],contract["audit_version"])
 
 def discrepancy_audit(qrels:QrelAudit|None)->dict:
-    checks=["canonical qrel physical and parsed counts","exact/duplicate query-table pairs","conflicting duplicate labels","malformed qrel rows","missing query IDs","canonical label distribution","EDBT 2025 paper statement and linked public implementation search for qrel/split/preprocessing artifacts"]
+    checks=["canonical qrel physical and parsed counts","exact/duplicate query-table pairs","conflicting duplicate labels","malformed qrel rows","missing and outside-declared query IDs","canonical label distribution","EDBT 2025 paper statement and linked public implementation search for qrel/split/preprocessing artifacts"]
     evidence={"WWW2018_reported_pairs":3120,"EDBT2025_reported_pairs":3117,"difference":3,"canonical_physical_records":None if qrels is None else qrels.physical_line_count,"canonical_unique_pairs":None if qrels is None else qrels.unique_pair_count,"authoritative_removal_artifact_found":False}
     return {"discrepancy_status":"unresolved","verified_cause":None,"hypotheses":[],"evidence":evidence,"checked":checks,"conclusion":"No authoritative artifact inspected identifies the three removed judgments; canonical qrels remain unchanged."}
 

@@ -18,6 +18,7 @@ def test_valid_query_and_qrel_audits_are_deterministic_and_hand_computable():
     queries=audit_queries(FIXTURES/"queries_valid.txt",range(1,5),range(1,3),range(3,5)); qrels=audit_qrels(FIXTURES/"qrels_valid.txt",range(1,5))
     assert queries.valid and queries.record_count==4 and queries.qs1_ids==(1,2) and queries.qs2_ids==(3,4)
     assert qrels.valid and qrels.physical_line_count==5 and qrels.unique_pair_count==5 and qrels.label_distribution=={0:2,1:1,2:2}
+    assert qrels.outside_declared_query_ids==()
     assert qrels.judgments_per_query=={"minimum":1,"maximum":2,"mean":1.25,"median":1.0}
     assert queries.file_sha256==sha256((FIXTURES/"queries_valid.txt").read_bytes()).hexdigest()
     assert audit_qrels(FIXTURES/"qrels_valid.txt",range(1,5))==qrels
@@ -38,6 +39,12 @@ def test_qrel_audit_reports_exact_and_conflicting_duplicates_malformed_and_label
 def test_qrel_table_id_contract_fails_closed(tmp_path):
     path=tmp_path/"qrels.txt"; path.write_text("1 0 invented-id 2\n")
     audit=audit_qrels(path,[1]); assert not audit.valid and not audit.table_ids_matching_pattern
+
+def test_qrel_audit_rejects_query_ids_outside_declared_set(tmp_path):
+    path=tmp_path/"qrels.txt"; path.write_text("1 0 table-0001-001 2\n2 0 table-0002-001 1\n3 0 table-0003-001 0\n4 0 table-0004-001 1\n5 0 table-0005-001 1\n")
+    audit=audit_qrels(path,range(1,5))
+    assert audit.missing_query_ids==() and audit.outside_declared_query_ids==(5,)
+    assert audit.valid is False
 
 def test_source_report_validates_hashes_and_preserves_unresolved_discrepancy(tmp_path):
     source=tmp_path/"source"; data=source/"data"; data.mkdir(parents=True)
