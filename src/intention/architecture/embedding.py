@@ -55,17 +55,19 @@ class EmbeddingRegistry:
     def require_available(self,name):
         if name not in self.models: raise KeyError(name)
         record=self.models[name].record
-        if record["availability"]!="available": raise RuntimeError(f"embedding provider blocked: {record['failure_reason']}")
+        if record["availability"]!="available": raise RuntimeError(f"embedding provider blocked: {record['failure_reason'] or 'runtime readiness must be established'}")
         return self.models[name]
 
 def load_embedding_registry(path:Path|None=None)->EmbeddingRegistry:
     path=path or Path(__file__).resolve().parents[3]/"configs/architecture/embeddings.yaml"; raw=yaml.safe_load(path.read_text())
     if not isinstance(raw,dict) or set(raw)!={"version","selection_status","primary_architecture","operational_smoke_encoder","models"}: raise ValueError("invalid embedding registry")
-    required={"category","provider","model","revision","source","license","dimensions","maximum_input_tokens","truncation_policy","query_mode","document_mode","query_instruction","document_instruction","similarity","normalization","requirement","hardware","approximate_cost","availability","failure_reason"}; optional={"tokenizer_revision","dimension_range","api_task_type_supported","title_handling","batch_semantics","api_limitations","operational_role"}
+    required={"category","provider","model","revision","source","license","dimensions","maximum_input_tokens","truncation_policy","query_mode","document_mode","query_instruction","document_instruction","similarity","normalization","requirement","hardware","approximate_cost","availability","failure_reason"}; optional={"tokenizer_revision","dimension_range","api_task_type_supported","title_handling","batch_semantics","api_limitations","operational_role","trust_remote_code_required","official_query_prompt","official_document_prompt","query_instruction_origin","sentence_transformers_modules","sentence_transformers_artifacts","dimensionality_method","adapter_normalization"}
     models={}
     for name,record in raw["models"].items():
         if not required<=set(record) or set(record)-required-optional: raise ValueError(f"invalid embedding record: {name}")
-        if record["availability"] not in {"available","blocked"} or (record["availability"]=="blocked")!=(bool(record["failure_reason"])): raise ValueError(f"invalid availability: {name}")
+        if record["availability"] not in {"available","blocked","runtime_detected"}: raise ValueError(f"invalid availability: {name}")
+        if record["availability"]=="blocked" and not record["failure_reason"]: raise ValueError(f"invalid availability: {name}")
+        if record["availability"]!="blocked" and record["failure_reason"]: raise ValueError(f"invalid availability: {name}")
         if record["category"]!="lexical_reference" and (not isinstance(record["dimensions"],list) or not record["dimensions"] or any(not isinstance(value,int) or value<=0 for value in record["dimensions"])): raise ValueError(f"invalid dimensions: {name}")
         if not isinstance(record["hardware"],list) or not record["hardware"] or any(not isinstance(value,str) or not value for value in record["hardware"]): raise ValueError(f"invalid hardware requirement: {name}")
         models[name]=EmbeddingRegistration(name,record)

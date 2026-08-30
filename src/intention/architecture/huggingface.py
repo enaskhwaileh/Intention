@@ -7,6 +7,7 @@ class HuggingFaceEmbeddingProvider(EmbeddingProvider):
     def __init__(self,registration,dimension=None,device="cpu",model_factory=None,tokenizer_factory=None,clock=None):
         record=registration.record if hasattr(registration,"record") else registration
         if not record.get("tokenizer_revision") or len(record["revision"])!=40 or len(record["tokenizer_revision"])!=40: raise ValueError("exact model and tokenizer revisions required")
+        if record.get("trust_remote_code_required") is not False:raise ValueError("remote-code embedding models are forbidden by this adapter contract")
         allowed=record["dimensions"]; dimension=dimension or max(allowed)
         bounds=record.get("dimension_range")
         if bounds and not bounds[0]<=dimension<=bounds[1] or not bounds and dimension not in allowed: raise ValueError("unsupported embedding dimension")
@@ -21,8 +22,8 @@ class HuggingFaceEmbeddingProvider(EmbeddingProvider):
             if tokenizer_factory is None:
                 from transformers import AutoTokenizer
                 tokenizer_factory=lambda **kwargs:AutoTokenizer.from_pretrained(kwargs.pop("model_name"),**kwargs)
-            self.model=model_factory(model_name=record["model"],revision=record["revision"],device=device,truncate_dim=dimension)
-            self.tokenizer=tokenizer_factory(model_name=record["model"],revision=record["tokenizer_revision"])
+            self.model=model_factory(model_name=record["model"],revision=record["revision"],device=device,truncate_dim=dimension,trust_remote_code=False)
+            self.tokenizer=tokenizer_factory(model_name=record["model"],revision=record["tokenizer_revision"],trust_remote_code=False)
         except Exception as error: self.failure=f"model unavailable: {error}"
     @property
     def identity(self): return self._identity

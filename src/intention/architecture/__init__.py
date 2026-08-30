@@ -8,7 +8,7 @@ from .manifest import ArtifactManifest,validate_artifact_manifest
 from .semantic import SemanticRetriever
 from .serialization import NeuralTableSerializer,NeuralSerializationPolicy,load_neural_serialization_policy
 from .storage import ManifestRepository,ParquetDuckDBTableStore,VersionedProfileStore,table_checksum
-from .operational import OfflineTableIndexer,OnlineSemanticPipeline,operational_smoke_status
+from .operational import OfflineTableIndexer,OnlineSemanticPipeline,OperationalReadinessProbe,operational_smoke_status
 from .vector_store import CollectionConfig,InMemoryVectorStore,QdrantVectorStore,SearchHit,VectorRecord,VectorStore
 
 __all__=["EmbeddingFailure","EmbeddingIdentity","EmbeddingProvider","EmbeddingRegistry","EmbeddingResult","load_embedding_registry","reciprocal_rank_fusion","LLMInterpreterRegistration","LLMRegistry","load_llm_registry","ArtifactManifest","validate_artifact_manifest","SemanticRetriever","NeuralTableSerializer","NeuralSerializationPolicy","load_neural_serialization_policy","CollectionConfig","InMemoryVectorStore","QdrantVectorStore","SearchHit","VectorRecord","VectorStore"]

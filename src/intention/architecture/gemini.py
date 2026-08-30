@@ -5,11 +5,19 @@ def format_gemini_embedding_query(text):return f"task: search result | query: {t
 def format_gemini_embedding_document(text,title=None):return f"title: {title or 'none'} | text: {text}"
 
 class GeminiEmbedding2Client:
-    """Current prompt-formatted API boundary; task_type is deliberately absent."""
-    def __init__(self,client,model="gemini-embedding-2",output_dimension=3072):self.client=client; self.model=model; self.output_dimension=output_dimension
+    """Prompt-formatted boundary with exact provider-tokenizer prevalidation."""
+    def __init__(self,client,model="gemini-embedding-2",output_dimension=3072,maximum_input_tokens=8192):
+        self.client=client; self.model=model; self.output_dimension=output_dimension; self.maximum_input_tokens=maximum_input_tokens
     def embed_query(self,text):return self._embed(format_gemini_embedding_query(text))
     def embed_document(self,text,title=None):return self._embed(format_gemini_embedding_document(text,title))
     def _embed(self,text):
+        try:
+            count=self.client.models.count_tokens(model=self.model,contents=text)
+        except Exception as error:
+            raise RuntimeError("Gemini embedding token prevalidation failed") from error
+        total=count.total_tokens if hasattr(count,"total_tokens") else count.get("total_tokens")
+        if not isinstance(total,int) or total<0:raise RuntimeError("Gemini embedding token prevalidation returned an invalid count")
+        if total>self.maximum_input_tokens:raise ValueError(f"Gemini embedding input overflow: {total} > {self.maximum_input_tokens} tokens")
         return self.client.models.embed_content(model=self.model,contents=[{"parts":[{"text":text}]}],config={"output_dimensionality":self.output_dimension})
 
 class GeminiStructuredOutputClient:

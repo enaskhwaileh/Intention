@@ -43,10 +43,15 @@ new annotations, and new evaluation—not a retrieval or benchmark substitution.
 
 ## Current gate
 
-Milestones 1–6 and Pre-Milestone-7 architecture freeze PR #13 are complete and
-merged. The current gate is Pre-Milestone-7 operational hardening: executable
-optional adapters, artifact storage, indexing, and online retrieval without
-selecting the final semantic encoder. IA-WikiTables annotation and pool freezing
-remain forbidden. After this gate: acquire source data, construct a development
-subset, run the topical-only encoder bake-off, freeze the primary encoder, and
-only then construct and freeze annotation pools.
+Milestones 1–6, Pre-Milestone-7 architecture freeze PR #13, and operational
+hardening PR #14 are complete and merged. The current gate is the small
+post-merge Pre-Milestone-7 hardening review. The next scientific sequence is:
+
+1. Milestone 7A — source acquisition and benchmark foundation.
+2. Milestone 7B — development-only topical encoder bake-off.
+3. Freeze the primary semantic encoder using development topical metrics only.
+4. Milestone 7C — pooling and human annotation.
+
+This staging does not change official Milestone 7 in the 12-milestone roadmap.
+The final encoder remains unselected, and IA-WikiTables acquisition, annotation,
+pool freezing, and paper-result generation remain forbidden in this PR.

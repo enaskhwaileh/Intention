@@ -13,9 +13,13 @@ model is `gemini-embedding-2`, accepts 8,192 input tokens and output dimensions
 128–3072, and automatically normalizes reduced-dimensional output. It does not
 support the old `task_type` request parameter. Multiple parts in one Content
 are aggregated, so distinct batch items require distinct Content objects or the
-Batch API. Client-side overflow validation fails closed; no silent truncation is
-assumed. The stable API alias has no immutable checkpoint revision and remains
-blocked without credentials. These facts were observed 2026-08-29 in the
+Batch API. The adapter calls the official `count_tokens` method with the exact
+model and complete formatted string before embedding. Counts above 8,192,
+invalid counts, and counting failures stop before `embed_content`; no
+approximate tokenizer or silent truncation is allowed. Google documents that
+the provider otherwise silently truncates overflow. The stable API alias has no
+immutable checkpoint revision and remains blocked without credentials. These
+facts were rechecked 2026-08-30 in the
 [official embedding guide](https://ai.google.dev/gemini-api/docs/embeddings).
 
 Gemini `gemini-3.7-flash` remains the structured-output candidate. Google's
@@ -34,11 +38,22 @@ and [structured-output documentation](https://ai.google.dev/gemini-api/docs/stru
   selection, fail-on-overflow token validation, L2 normalization, finite-vector
   validation, timing, and explicit unavailable/OOM failures. Normal CI injects
   mocks and downloads nothing.
-- `Qwen/Qwen3-Embedding-0.6B` is designated only as the
+- `Qwen/Qwen3-Embedding-0.6B` at model/tokenizer revision
+  `97b0c614be4d77ee51c0cef4e5f07c00f9eb65b3` is designated only as the
   `operational_smoke_encoder`. Its official Apache-2.0 model card supports
   instruction-aware queries, unprompted documents, dimensions 32–1024, and a
-  32k context. It requires no remote-code trust. It remains blocked because its
-  pinned weights are absent. This is not final encoder selection.
+  32k context through Matryoshka `truncate_dim`. The immutable tree contains
+  `modules.json`, `config_sentence_transformers.json`, last-token pooling with
+  prompt inclusion, a Normalize module, tokenizer/model configuration, and
+  weights. It requires no remote-code trust. The official query prompt is
+  `Instruct: Given a web search query, retrieve relevant passages that answer
+  the query\nQuery:` and the official document prompt is empty. This project
+  freezes a separate table-discovery instruction using that official template;
+  it is experiment configuration, not model identity. SentenceTransformers
+  normalizes the embedding, and the adapter's explicit final L2 normalization
+  is reproducible and mathematically idempotent while guaranteeing unit norm
+  after dimensional truncation. It remains blocked because its pinned weights
+  are absent. This is not final encoder selection.
 - `QdrantVectorStore` uses the official client shape: named `topical_dense`
   vectors, deterministic UUID point IDs, payloads, batch upsert, retrieval,
   nearest-neighbor query, deterministic post-query tie ordering, deletion and
@@ -71,12 +86,13 @@ mapping must be fitted on development data only; test labels remain forbidden.
 
 ## Smoke and blockers
 
-`PYTHONPATH=src python -m intention operational-smoke` is the integration
-harness. It reports `classification: operational_smoke`, `paper_result: false`,
-and exact blockers rather than fabricating vectors or results. The actual local
-run is currently blocked by absent Qwen weights and Qdrant service. Operational
-dependencies are locally importable but remain optional and are not installed
-by credential-free base CI.
+`PYTHONPATH=src python -m intention operational-smoke` is a read-only readiness
+harness. Structured checks are derived from the pinned encoder registry, local
+Hugging Face cache, dependencies, `INTENTION_EMBEDDING_DEVICE`,
+`INTENTION_ARTIFACT_ROOT`, `INTENTION_QDRANT_URL`, and expected collection. A
+configured Qdrant service may be probed with `get_collections`; the harness
+never downloads weights, starts services, calls paid APIs, or substitutes a
+backend. It transitions to `ready` only when every required component is ready.
 
 No IA-WikiTables annotation or pool freeze, encoder bake-off, test evaluation,
 prompt/K/fusion tuning, or paper-result generation occurs here. Future

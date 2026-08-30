@@ -1,4 +1,4 @@
-version: "1.1.0"
+version: "1.2.0"
 selection_status: development_bakeoff_pending
 primary_architecture: provider_independent_dense
 operational_smoke_encoder: Qwen3-Embedding-0.6B
@@ -7,13 +7,13 @@ models:
     category: proprietary_strong
     provider: google
     model: gemini-embedding-2
-    revision: stable_alias_no_immutable_checkpoint_observed_2026-08-29
+    revision: stable_alias_no_immutable_checkpoint_observed_2026-08-30
     source: https://ai.google.dev/gemini-api/docs/embeddings
     license: proprietary_google_api_terms
     dimensions: [768, 1536, 3072]
     dimension_range: [128, 3072]
     maximum_input_tokens: 8192
-    truncation_policy: client_prevalidation_fail_on_overflow
+    truncation_policy: exact_provider_tokenizer_prevalidation_fail_on_overflow
     query_mode: prompt_asymmetric_search
     document_mode: prompt_title_text
     query_instruction: "task: search result | query: {content}"
@@ -21,12 +21,12 @@ models:
     api_task_type_supported: false
     title_handling: literal_title_or_none_in_document_prompt
     batch_semantics: separate_Content_objects_or_Batch_API_for_distinct_embeddings
-    api_limitations: [multiple_parts_in_one_Content_are_aggregated, task_type_parameter_rejected, no_immutable_checkpoint_revision]
+    api_limitations: [multiple_parts_in_one_Content_are_aggregated, task_type_parameter_rejected, provider_silently_truncates_overflow_without_prevalidation, count_tokens_requires_provider_access, no_immutable_checkpoint_revision]
     similarity: cosine
     normalization: provider_auto_for_output_dimensionality_below_3072
     requirement: gemini_api_key
     hardware: [provider_managed_api]
-    approximate_cost: {currency: USD, unit: million_text_input_tokens, value: 0.20, observed: "2026-08-29"}
+    approximate_cost: {currency: USD, unit: million_text_input_tokens, value: 0.20, observed: "2026-08-30"}
     availability: blocked
     failure_reason: credentials absent and provider does not expose an immutable checkpoint revision
   voyage-4-large:
@@ -86,16 +86,24 @@ models:
     truncation_policy: fail_on_overflow
     query_mode: instruction_aware_query
     document_mode: document_without_instruction
-    query_instruction: "Instruct: Given a table discovery query, retrieve tables topically relevant to the query\nQuery: {content}"
+    query_instruction: "Instruct: Given a table discovery query, retrieve tables topically relevant to the query\nQuery:{content}"
     document_instruction: null
+    official_query_prompt: "Instruct: Given a web search query, retrieve relevant passages that answer the query\nQuery:"
+    official_document_prompt: ""
+    query_instruction_origin: frozen_table_discovery_experiment_configuration_using_official_Instruct_Query_template
+    sentence_transformers_modules: [Transformer, Pooling_lasttoken_include_prompt, Normalize]
+    sentence_transformers_artifacts: [modules.json, config_sentence_transformers.json, 1_Pooling/config.json, config.json, tokenizer.json, tokenizer_config.json, model.safetensors]
+    dimensionality_method: matryoshka_truncate_dim_then_explicit_l2
+    adapter_normalization: explicit_final_l2_idempotent_with_official_Normalize_and_required_after_truncation
     similarity: cosine
     normalization: l2
     requirement: local_model_download
     hardware: [cpu_or_accelerator_to_be_benchmarked]
     approximate_cost: null
     operational_role: operational_smoke_encoder_not_final_primary
-    availability: blocked
-    failure_reason: weights are not downloaded; deterministic CI must remain model-free
+    trust_remote_code_required: false
+    availability: runtime_detected
+    failure_reason: null
   voyage-4-nano:
     category: open_weight_lightweight_alternative
     provider: voyage_huggingface

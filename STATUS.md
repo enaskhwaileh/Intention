@@ -108,18 +108,24 @@
   behind development-pending calibration, and implements optional Hugging Face,
   Qdrant, Parquet/DuckDB, offline-indexing, online-retrieval, and mocked external
   structured-LLM paths without downloads in deterministic CI.
+- Pre-Milestone-7 operational hardening PR #14 is complete and merged. The
+  post-merge hardening review branch makes overflow handling exact and
+  fail-closed, derives smoke readiness from runtime state, and strengthens
+  Qdrant and artifact invalidation without redesigning the architecture.
 
 ## Current milestone
 
-Milestones 1–6 and the Pre-Milestone-7 architecture freeze are complete and
-merged. Current stage: Pre-Milestone-7 operational hardening. No final semantic
-encoder is selected; no IA-WikiTables pool is frozen; no human annotation,
-external model execution, or paper-result run began.
+Milestones 1–6, the Pre-Milestone-7 architecture freeze, and operational
+hardening PR #14 are complete and merged. Current work: post-merge
+Pre-Milestone-7 hardening. The architecture is ready for source-data
+acquisition, while learned execution remains blocked where local artifacts or
+infrastructure are absent. No final semantic encoder is selected; IA-WikiTables
+has not started; no pool is frozen; no human annotation or paper result exists.
 
 ## Commands and tests
 
 Git state/history, complete inventory, and source/config/test/document inspection.
-`pytest -q`: 251 passed. The normative suite includes contract,
+`pytest -q`: 269 passed. The normative suite includes contract,
 multi-topic benchmark, strict annotation, profile repository, profiler boundary,
 and metric regression tests.
 `PYTHONPATH=src python3 -m intention smoke`: completed with knowledge hash
@@ -158,5 +164,6 @@ agreement, throughput, and full orchestration remain pending.
 
 ## Next action
 
-Review and merge the Pre-Milestone-7 operational-hardening PR. Stop before
-IA-WikiTables annotation, pool freezing, final encoder selection, or evaluation.
+Review and merge the post-merge Pre-Milestone-7 hardening PR. Then proceed in
+order through Milestone 7A source acquisition, 7B development-only encoder
+bake-off and encoder freeze, and 7C pooling and human annotation.

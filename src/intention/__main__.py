@@ -27,12 +27,8 @@ def main():
         from intention.demonstrator import write_current_snapshot
         print(write_current_snapshot(check=args.check)); return
     if args.command == "operational-smoke":
-        import importlib.util
-        from intention.architecture.operational import operational_smoke_status
-        blockers=["Qwen3-Embedding-0.6B weights not downloaded","Qdrant service not configured"]
-        missing=[name for name in ("pyarrow","duckdb","qdrant_client","sentence_transformers","transformers") if importlib.util.find_spec(name) is None]
-        if missing:blockers.append(f"optional operational dependencies unavailable: {', '.join(missing)}")
-        print(json.dumps(operational_smoke_status(blockers),indent=2)); return
+        from intention.architecture.operational import OperationalReadinessProbe,operational_smoke_status
+        print(json.dumps(operational_smoke_status(OperationalReadinessProbe().inspect()),indent=2)); return
     if args.command in {"smoke","profile","interpret","retrieve","run-main"}:
         result=run(args.input,fixture()); print(json.dumps({"knowledge_hash":result["knowledge_hash"],"ranking":[r.__dict__ for r in result["ranking"]]},indent=2)); return
     raise SystemExit(f"{args.command} requires an explicit experiment configuration; no approximation was run")
