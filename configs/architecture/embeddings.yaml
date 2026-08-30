@@ -76,8 +76,8 @@ models:
     category: open_weight_lightweight
     provider: qwen_huggingface
     model: Qwen/Qwen3-Embedding-0.6B
-    revision: e692b5a16e45607c7e85d81c53e944ac90e6260a
-    tokenizer_revision: e692b5a16e45607c7e85d81c53e944ac90e6260a
+    revision: 97b0c614be4d77ee51c0cef4e5f07c00f9eb65b3
+    tokenizer_revision: 97b0c614be4d77ee51c0cef4e5f07c00f9eb65b3
     source: https://huggingface.co/Qwen/Qwen3-Embedding-0.6B
     license: apache-2.0
     dimensions: [32, 1024]
@@ -88,6 +88,13 @@ models:
     document_mode: document_without_instruction
     query_instruction: "Instruct: Given a table discovery query, retrieve tables topically relevant to the query\nQuery:{content}"
     document_instruction: null
+    official_query_prompt: "Instruct: Given a web search query, retrieve relevant passages that answer the query\nQuery:"
+    official_document_prompt: ""
+    query_instruction_origin: frozen_table_discovery_experiment_configuration_using_official_Instruct_Query_template
+    sentence_transformers_modules: [Transformer, Pooling_lasttoken_include_prompt, Normalize]
+    sentence_transformers_artifacts: [modules.json, config_sentence_transformers.json, 1_Pooling/config.json, config.json, tokenizer.json, tokenizer_config.json, model.safetensors]
+    dimensionality_method: matryoshka_truncate_dim_then_explicit_l2
+    adapter_normalization: explicit_final_l2_idempotent_with_official_Normalize_and_required_after_truncation
     similarity: cosine
     normalization: l2
     requirement: local_model_download

@@ -39,11 +39,21 @@ and [structured-output documentation](https://ai.google.dev/gemini-api/docs/stru
   validation, timing, and explicit unavailable/OOM failures. Normal CI injects
   mocks and downloads nothing.
 - `Qwen/Qwen3-Embedding-0.6B` at model/tokenizer revision
-  `e692b5a16e45607c7e85d81c53e944ac90e6260a` is designated only as the
+  `97b0c614be4d77ee51c0cef4e5f07c00f9eb65b3` is designated only as the
   `operational_smoke_encoder`. Its official Apache-2.0 model card supports
   instruction-aware queries, unprompted documents, dimensions 32–1024, and a
-  32k context. It requires no remote-code trust. It remains blocked because its
-  pinned weights are absent. This is not final encoder selection.
+  32k context through Matryoshka `truncate_dim`. The immutable tree contains
+  `modules.json`, `config_sentence_transformers.json`, last-token pooling with
+  prompt inclusion, a Normalize module, tokenizer/model configuration, and
+  weights. It requires no remote-code trust. The official query prompt is
+  `Instruct: Given a web search query, retrieve relevant passages that answer
+  the query\nQuery:` and the official document prompt is empty. This project
+  freezes a separate table-discovery instruction using that official template;
+  it is experiment configuration, not model identity. SentenceTransformers
+  normalizes the embedding, and the adapter's explicit final L2 normalization
+  is reproducible and mathematically idempotent while guaranteeing unit norm
+  after dimensional truncation. It remains blocked because its pinned weights
+  are absent. This is not final encoder selection.
 - `QdrantVectorStore` uses the official client shape: named `topical_dense`
   vectors, deterministic UUID point IDs, payloads, batch upsert, retrieval,
   nearest-neighbor query, deterministic post-query tie ordering, deletion and

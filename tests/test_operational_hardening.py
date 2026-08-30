@@ -68,9 +68,14 @@ def test_gemini_embedding_2_uses_current_prompt_contract_and_never_task_type():
 
 def test_operational_qwen_registration_matches_audited_smoke_only_contract():
     registry=load_embedding_registry(); record=registry.models[registry.operational_smoke_encoder].record
-    assert record["model"]=="Qwen/Qwen3-Embedding-0.6B" and record["revision"]==record["tokenizer_revision"]=="e692b5a16e45607c7e85d81c53e944ac90e6260a"
+    assert record["model"]=="Qwen/Qwen3-Embedding-0.6B" and record["revision"]==record["tokenizer_revision"]=="97b0c614be4d77ee51c0cef4e5f07c00f9eb65b3"
+    assert len(record["revision"])==40 and all(character in "0123456789abcdef" for character in record["revision"])
     assert record["license"]=="apache-2.0" and record["dimension_range"]==[32,1024] and record["maximum_input_tokens"]==32768
     assert record["query_instruction"].startswith("Instruct:") and record["document_instruction"] is None and record["normalization"]=="l2"
+    assert record["official_query_prompt"].endswith("\nQuery:") and record["official_document_prompt"]==""
+    assert record["sentence_transformers_modules"]==["Transformer","Pooling_lasttoken_include_prompt","Normalize"]
+    assert set(record["sentence_transformers_artifacts"])>={"modules.json","config_sentence_transformers.json","1_Pooling/config.json","tokenizer_config.json","model.safetensors"}
+    assert record["dimensionality_method"]=="matryoshka_truncate_dim_then_explicit_l2" and "explicit_final_l2" in record["adapter_normalization"]
     assert record["trust_remote_code_required"] is False and record["operational_role"]=="operational_smoke_encoder_not_final_primary" and registry.selection_status=="development_bakeoff_pending"
 
 def test_gemini_embedding_fails_before_embedding_on_overflow_or_count_failure():
@@ -106,7 +111,9 @@ def test_generic_huggingface_adapter_pins_revisions_batches_formats_and_normaliz
     result=provider.encode_queries(["topic one","topic two"])
     assert result.status=="success" and result.elapsed_ms==10 and result.vectors[0][:2]==pytest.approx((.6,.8))
     assert seen["model"]["revision"]==registration.record["revision"] and seen["tokenizer"]["revision"]==registration.record["tokenizer_revision"]
+    assert seen["model"]["truncate_dim"]==32 and seen["model"]["trust_remote_code"] is False and seen["tokenizer"]["trust_remote_code"] is False
     assert model.calls[0][0][0].startswith("Instruct:") and "Query:topic one" in model.calls[0][0][0]
+    assert model.calls[0][1]["normalize_embeddings"] is True
     assert all(math.isclose(sum(value*value for value in vector),1) for vector in result.vectors)
 
 def test_huggingface_adapter_fails_closed_for_missing_model_and_long_input():
@@ -115,6 +122,12 @@ def test_huggingface_adapter_fails_closed_for_missing_model_and_long_input():
     assert unavailable.encode_query("topic").failure.code=="unavailable"
     record=dict(registration.record); record["maximum_input_tokens"]=1; model=FakeModel(); provider=HuggingFaceEmbeddingProvider(record,dimension=32,model_factory=lambda **_:model,tokenizer_factory=lambda **_:FakeTokenizer())
     assert provider.encode_query("two tokens").failure.code=="input_too_long" and not model.calls
+
+def test_huggingface_adapter_rejects_unsupported_dimension_and_remote_code():
+    registration=load_embedding_registry().models["Qwen3-Embedding-0.6B"]
+    with pytest.raises(ValueError,match="unsupported embedding dimension"):HuggingFaceEmbeddingProvider(registration,dimension=31,model_factory=lambda **_:FakeModel(),tokenizer_factory=lambda **_:FakeTokenizer())
+    unsafe=dict(registration.record); unsafe["trust_remote_code_required"]=True
+    with pytest.raises(ValueError,match="remote-code"):HuggingFaceEmbeddingProvider(unsafe,dimension=32,model_factory=lambda **_:FakeModel(),tokenizer_factory=lambda **_:FakeTokenizer())
 
 class FakeParquetBackend:
     def __init__(self):self.rows={}

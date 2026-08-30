@@ -61,7 +61,7 @@ class EmbeddingRegistry:
 def load_embedding_registry(path:Path|None=None)->EmbeddingRegistry:
     path=path or Path(__file__).resolve().parents[3]/"configs/architecture/embeddings.yaml"; raw=yaml.safe_load(path.read_text())
     if not isinstance(raw,dict) or set(raw)!={"version","selection_status","primary_architecture","operational_smoke_encoder","models"}: raise ValueError("invalid embedding registry")
-    required={"category","provider","model","revision","source","license","dimensions","maximum_input_tokens","truncation_policy","query_mode","document_mode","query_instruction","document_instruction","similarity","normalization","requirement","hardware","approximate_cost","availability","failure_reason"}; optional={"tokenizer_revision","dimension_range","api_task_type_supported","title_handling","batch_semantics","api_limitations","operational_role","trust_remote_code_required"}
+    required={"category","provider","model","revision","source","license","dimensions","maximum_input_tokens","truncation_policy","query_mode","document_mode","query_instruction","document_instruction","similarity","normalization","requirement","hardware","approximate_cost","availability","failure_reason"}; optional={"tokenizer_revision","dimension_range","api_task_type_supported","title_handling","batch_semantics","api_limitations","operational_role","trust_remote_code_required","official_query_prompt","official_document_prompt","query_instruction_origin","sentence_transformers_modules","sentence_transformers_artifacts","dimensionality_method","adapter_normalization"}
     models={}
     for name,record in raw["models"].items():
         if not required<=set(record) or set(record)-required-optional: raise ValueError(f"invalid embedding record: {name}")

@@ -60,7 +60,7 @@ class OperationalReadinessProbe:
     def _local_hf_artifact(self,model,revision):
         try:
             from huggingface_hub import try_to_load_from_cache
-            required=("config.json","tokenizer.json","model.safetensors")
+            required=("modules.json","config_sentence_transformers.json","1_Pooling/config.json","config.json","tokenizer.json","tokenizer_config.json","model.safetensors")
             values=(try_to_load_from_cache(model,name,revision=revision) for name in required)
             return all(isinstance(value,str) and Path(value).is_file() for value in values)
         except (ImportError,OSError,ValueError):return False
