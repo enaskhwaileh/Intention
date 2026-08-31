@@ -1,4 +1,4 @@
-import argparse,json
+import argparse,json,os
 from pathlib import Path
 from intention.contracts import Table
 from intention.pipeline import run
@@ -7,7 +7,7 @@ def fixture():
     raw=json.loads((Path(__file__).resolve().parents[2]/"fixtures/synthetic_tables.json").read_text())
     return [Table(x["table_id"],x["title"],x["description"],tuple(x["rows"]),x["metadata"]) for x in raw["tables"]]
 def main():
-    parser=argparse.ArgumentParser(); parser.add_argument("command",choices=["smoke","operational-smoke","synthetic-benchmark","evaluate-profiler","evaluate-interpreter","evaluate-controlled","demo-snapshot","profile","interpret","retrieve","build-benchmark","run-baselines","run-main","run-ablations","run-sensitivity","evaluate","generate-paper-tables"]); parser.add_argument("--input",default="vaccine side effects compare measure=rate, comparison dimension=country"); parser.add_argument("--check",action="store_true")
+    parser=argparse.ArgumentParser(); parser.add_argument("command",choices=["smoke","operational-smoke","synthetic-benchmark","evaluate-profiler","evaluate-interpreter","evaluate-controlled","demo-snapshot","audit-wikitables-source","profile","interpret","retrieve","build-benchmark","run-baselines","run-main","run-ablations","run-sensitivity","evaluate","generate-paper-tables"]); parser.add_argument("--input",default="vaccine side effects compare measure=rate, comparison dimension=country"); parser.add_argument("--check",action="store_true"); parser.add_argument("--source-root")
     args=parser.parse_args()
     if args.command == "synthetic-benchmark":
         from intention.benchmarks import run_synthetic_benchmark
@@ -26,6 +26,11 @@ def main():
     if args.command == "demo-snapshot":
         from intention.demonstrator import write_current_snapshot
         print(write_current_snapshot(check=args.check)); return
+    if args.command == "audit-wikitables-source":
+        from intention.benchmarks.source_audit import audit_source,blocked_source_audit,load_source_contract
+        root=args.source_root or os.environ.get("INTENTION_WIKITABLES_SOURCE_ROOT")
+        result=audit_source(Path(root)) if root else blocked_source_audit(load_source_contract(),[{"component":"source_files","reason":"canonical metadata root is not configured","required_action":"set --source-root or INTENTION_WIKITABLES_SOURCE_ROOT to an already acquired pinned repository checkout"}])
+        print(json.dumps(result.to_dict(),indent=2)); return
     if args.command == "operational-smoke":
         from intention.architecture.operational import OperationalReadinessProbe,operational_smoke_status
         print(json.dumps(operational_smoke_status(OperationalReadinessProbe().inspect()),indent=2)); return
