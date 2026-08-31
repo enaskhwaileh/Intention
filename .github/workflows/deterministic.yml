@@ -36,4 +36,5 @@ jobs:
           python -m intention evaluate-controlled
           python -m intention operational-smoke
           python -m intention audit-wikitables-source
+          python -m intention preflight-wikitables-corpus
           python -m intention demo-snapshot --check

@@ -115,25 +115,32 @@
 - Post-merge hardening PR #15 is complete and merged. Milestone 7 is entered at
   M7A.1 with a pinned, executable audit of the canonical WWW 2018 WikiTables
   query and qrel resources.
+- M7A.1 PR #16 is merged. M7A.2a freezes the corpus preflight, loss-minimizing
+  logical record, deterministic sharding, index, rejection, and checksum
+  contracts without acquiring or normalizing the full corpus.
 
 ## Current milestone
 
-Pre-Milestone-7 work is complete and merged. Current substage: Milestone 7A.1
-canonical source audit. The pinned metadata audit verifies 60 queries and 3,120
-unique source judgments while leaving the 3,120/3,117 discrepancy unresolved.
-The full WikiTables corpus is not acquired. No final semantic encoder is
-selected; no pool is frozen; no human annotation or paper result exists.
+Current substage: Milestone 7A.2a corpus preflight and scalable normalized-store
+contract. M7A.1 is merged and its 60-query, 3,120-judgment audit remains
+unchanged, including the unresolved 3,120/3,117 discrepancy. The full corpus is
+not acquired and the normalized corpus is not built. No final semantic encoder
+is selected; no pool is frozen; no annotation or paper result exists.
 
 ## Commands and tests
 
 Git state/history, complete inventory, and source/config/test/document inspection.
-`pytest -q`: 277 passed. The normative suite includes contract,
+`pytest -q`: 293 passed. The normative suite includes contract,
 multi-topic benchmark, strict annotation, profile repository, profiler boundary,
 and metric regression tests.
 `PYTHONPATH=src python3 -m intention smoke`: completed with knowledge hash
 `1ddf47f9...6ec2c`; COMPARE ranks `country_rates` above `patient_records`.
 The report verification reproduced final scores 0.6037896 and 0.4800000.
 `python3 -m compileall -q src tests`: passed.
+`PYTHONPATH=src python3 -m intention preflight-wikitables-corpus`: passed
+offline with `not_acquired`, `requires_full_archive_acquisition`, and
+`requires_verification` statuses. An explicit HEAD-only network run reached the
+canonical redirect target without downloading the archive.
 `PYTHONPATH=src python3 -m intention synthetic-benchmark`: six of six cases
 passed; three final winners differ from their relevance-only winners.
 `PYTHONPATH=src python3 -m intention evaluate-profiler`: controlled macro-F1,
@@ -167,6 +174,6 @@ agreement, throughput, and full orchestration remain pending.
 
 ## Next action
 
-Review M7A.1. After review only: M7A.2 corpus acquisition/normalization, M7B
-development-only encoder bake-off, encoder freeze, then M7C pooling and human
-annotation.
+Review M7A.2a. After review only: M7A.2b full acquisition/normalization, M7B
+development-only retriever bake-off, encoder freeze, then M7C pooling and
+human annotation.

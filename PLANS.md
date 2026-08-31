@@ -43,15 +43,16 @@ new annotations, and new evaluation—not a retrieval or benchmark substitution.
 
 ## Current gate
 
-Milestones 1–6 and all Pre-Milestone-7 gates through merged PR #15 are complete.
-Milestone 7 has entered M7A.1 canonical source audit. The gated sequence is:
+Milestones 1–6, all Pre-Milestone-7 gates, and M7A.1 are merged and complete.
+Milestone 7 is at M7A.2a corpus preflight/storage-contract review. The gated sequence is:
 
-1. M7A.1 — canonical source audit (current review gate).
-2. M7A.2 — corpus acquisition and normalization.
-3. M7B — development-only topical encoder bake-off.
+1. M7A.2a — corpus preflight and scalable storage contract (current gate).
+2. M7A.2b — full corpus acquisition and normalization.
+3. M7B — development-only topical retriever bake-off.
 4. Freeze the primary semantic encoder using development topical metrics only.
 5. M7C — pooling and human annotation.
 
 This staging does not change official Milestone 7 in the 12-milestone roadmap.
-The final encoder remains unselected. Corpus acquisition, annotation, pool
-freezing, and paper-result generation remain forbidden in M7A.1.
+The final encoder remains unselected. Full acquisition/normalization,
+annotation, pool freezing, and paper-result generation remain forbidden in
+M7A.2a.
