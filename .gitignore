@@ -22,5 +22,7 @@ build/
 .DS_Store
 outputs/
 data/raw/
+data/normalized/
+data/runtime/
 *.parquet
 *.feather

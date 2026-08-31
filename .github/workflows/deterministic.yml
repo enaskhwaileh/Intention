@@ -37,4 +37,5 @@ jobs:
           python -m intention operational-smoke
           python -m intention audit-wikitables-source
           python -m intention preflight-wikitables-corpus
+          python -m intention acquire-wikitables-corpus --data-root /tmp/intention-ci-no-network
           python -m intention demo-snapshot --check
