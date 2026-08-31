@@ -33,7 +33,12 @@ bounded, append-only batch parts into 256 deterministic SHA-256 shards using
 Parquet and zstd, plus lightweight index parts, rejection parts, batch
 manifests, and a finalized corpus manifest. A
 logical corpus digest hashes sorted `(table_id, logical_checksum)` pairs and is
-independent of Parquet bytes. The generic store contains no qrels, labels,
+independent of Parquet bytes. This scientific identity contains accepted tables
+only. A separate `batch_artifact_digest` covers accepted logical pairs plus the
+deterministically ordered rejection stream and names physical batch artifacts,
+preventing collisions when rejection outcomes differ. Store writes fail closed
+before creating artifacts if a table's dataset or normalization version differs
+from the target store. The generic store contains no qrels, labels,
 actions, requirements, pools, splits, outputs, or other gold information.
 
 The downstream runtime adapter keys columns by positional IDs such as `c0000`,

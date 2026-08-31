@@ -130,7 +130,7 @@ is selected; no pool is frozen; no annotation or paper result exists.
 ## Commands and tests
 
 Git state/history, complete inventory, and source/config/test/document inspection.
-`pytest -q`: 293 passed. The normative suite includes contract,
+`pytest -q`: 300 passed. The normative suite includes contract,
 multi-topic benchmark, strict annotation, profile repository, profiler boundary,
 and metric regression tests.
 `PYTHONPATH=src python3 -m intention smoke`: completed with knowledge hash
