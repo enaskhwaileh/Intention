@@ -1,6 +1,7 @@
 from pathlib import Path
 import pytest
 from intention.evaluation.m7b_pilot import GPUInfo,TorchHardwareDetector,_module_contract,calibrate_batch_size,pilot_table_ids
+from intention.architecture.serialization import load_neural_serialization_policy
 
 class Props:
     name="Mock A100"; total_memory=40*1024**3; major=8; minor=0
@@ -28,6 +29,10 @@ def test_deterministic_exact_10k_selection_and_digest():
     second,digest2=pilot_table_ids(Path("unused"),index_reader=lambda _:list(reversed(ids)),expected_total=10000)
     assert len(first)==10000 and first==second and digest==digest2
     with pytest.raises(ValueError,match="exactly 10,000"):pilot_table_ids(Path("unused"),9999,index_reader=lambda _:ids,expected_total=10000)
+
+def test_corrected_serialization_identity_invalidates_old_pilots():
+    policy=load_neural_serialization_policy()
+    assert policy.version=="1.1.0" and policy.digest!="06fe970aade950ca4d6fcbf724a9ff3214d7431009a4eff216836465895d2305"
 
 class CalibrationCuda:
     def __init__(self):self.cleared=False

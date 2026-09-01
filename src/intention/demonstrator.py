@@ -74,11 +74,18 @@ def create_snapshot(text: str=DEFAULT_INPUT,root: Path|None=None,base_implementa
 def write_current_snapshot(root: Path|None=None,check: bool=False) -> Path:
     root=root or Path(__file__).resolve().parents[2]
     target=root/"demo_snapshots"/f"milestone_{CURRENT_MILESTONE:02d}"/"snapshot.json"
-    rendered=json.dumps(create_snapshot(root=root),indent=2,sort_keys=False)+"\n"
     if check:
+        manifest_path=root/"demo_snapshots"/"manifest.json"
+        if manifest_path.exists():
+            manifest=json.loads(manifest_path.read_text()); frozen=manifest.get("immutable_snapshots",{}).get(f"milestone_{CURRENT_MILESTONE:02d}")
+            if frozen:
+                if not target.exists() or sha256(target.read_bytes()).hexdigest()!=frozen["sha256"]:raise RuntimeError(f"demo snapshot is stale: {target}")
+                return target
+        rendered=json.dumps(create_snapshot(root=root),indent=2,sort_keys=False)+"\n"
         if not target.exists() or target.read_text()!=rendered:
             raise RuntimeError(f"demo snapshot is stale: {target}")
         return target
+    rendered=json.dumps(create_snapshot(root=root),indent=2,sort_keys=False)+"\n"
     target.parent.mkdir(parents=True,exist_ok=True)
     target.write_text(rendered)
     return target

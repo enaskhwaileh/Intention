@@ -59,11 +59,11 @@ shown to be a subset of the common evidence-access policy.
 ## Candidate depth
 
 The current deterministic default is `K=20`, not a final paper choice.
-Development diagnostics may use
-`K ∈ {5,10,20,50}`; sensitivity analysis may use
-`K ∈ {5,10,20,50,100}`. Before test evaluation, choose the smallest K whose
-development useful-candidate recall is at least 0.95 and whose gain at the next
-frozen depth is at most 0.01. Test labels are forbidden for this selection.
+Development diagnostics may use `K ∈ {5,10,20,50}`; the frozen M7B selection
+depths are `K ∈ {5,10,20,50,100}`. Choose the smallest K whose development
+KnownRelevantRecall@K is at least 0.98 times development
+KnownRelevantRecall@100; otherwise choose 100. This is the single authoritative
+M7B depth rule. Test labels are forbidden.
 
 ## Registry and availability gate
 

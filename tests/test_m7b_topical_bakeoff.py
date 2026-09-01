@@ -43,7 +43,9 @@ def test_known_relevant_recall_and_unjudged_diagnostics():
     (["n1","r1","r2","r3"],{"r1":1,"r2":1,"r3":1,"n1":0},0), # R>N
     (["r1","n1","r2"],{"r1":1,"r2":1,"n1":0,"n2":0},.75), # R=N
     (["n1"],{"n1":0},0), # R=0
-    (["r1","r2"],{"r1":1,"r2":2},1), # N=0
+    (["r1","r2"],{"r1":1,"r2":2},1), # N=0 complete
+    (["r1"],{"r1":1,"r2":2},.5), # N=0 partial
+    ([],{"r1":1,"r2":2},0), # N=0 none
     (["r1","x","n1","y","r2"],{"r1":1,"r2":1,"n1":0},.5), # unjudged ignored
 ])
 def test_bpref_hand_computable_cases(ranking,qrels,expected):
@@ -67,6 +69,12 @@ def test_reference_and_api_models_cannot_win_or_substitute():
 def test_depth_saturation_rule():
     assert select_candidate_depth({5:.7,10:.795,20:.8,50:.81,100:.81})==10
     assert select_candidate_depth({5:.7,10:.75,20:.77,50:.78,100:.8})==100
+
+def test_m7b_and_retrieval_contract_share_one_depth_rule():
+    from intention.retrieval import load_retrieval_policy
+    contract=load_bakeoff_contract(); policy=load_retrieval_policy()
+    assert contract["depths"]==list(policy.sensitivity_k)
+    assert policy.depth_selection["metric"]=="known_relevant_recall" and policy.depth_selection["saturation_ratio"]==.98
 
 def test_exact_search_enforced_and_timed():
     require_exact_search(True,10)

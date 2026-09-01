@@ -6,6 +6,7 @@ from pathlib import Path
 from statistics import mean
 import math,yaml
 from intention.evaluation.statistics import paired_bootstrap
+from intention.retrieval.serialization import select_candidate_depth
 
 ROOT=Path(__file__).resolve().parents[3]
 CONFIG_PATH=ROOT/"configs/benchmarks/m7b_topical_bakeoff.yaml"
@@ -51,7 +52,7 @@ def known_relevant_recall(ranked_ids,qrels,k,threshold=1):
 def bpref(ranked_ids,qrels,threshold=1):
     relevant={t for t,y in qrels.items() if y>=threshold}; nonrelevant={t for t,y in qrels.items() if y<threshold}
     if not relevant:return 0.0
-    if not nonrelevant:return 1.0
+    if not nonrelevant:return len(set(ranked_ids)&relevant)/len(relevant)
     denominator=min(len(relevant),len(nonrelevant)); seen_nonrelevant=0; contributions=[]
     for table_id in ranked_ids:
         if table_id not in qrels:continue
@@ -110,10 +111,6 @@ def select_encoder(results,eligible):
     if second["embedding_wall_seconds"]>first["embedding_wall_seconds"]*1.1:return {"status":"selected","winner":first["model"],"rule":"embedding_wall_time"}
     sized=sorted((first,second),key=lambda r:(r["physical_index_bytes"],r["model"]))
     return {"status":"selected","winner":sized[0]["model"],"rule":"physical_index_bytes"}
-
-def select_candidate_depth(recall_by_k):
-    r100=recall_by_k[100]
-    return next((k for k in (5,10,20,50,100) if recall_by_k[k]>=.98*r100),100)
 
 def require_exact_search(exact,elapsed_seconds,contract=None):
     contract=contract or load_bakeoff_contract()

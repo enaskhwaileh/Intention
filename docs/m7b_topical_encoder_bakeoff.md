@@ -66,15 +66,26 @@ freezes may RRF (`k=60`) run as a diagnostic; it cannot change the encoder.
 For bpref, `R` is the judged-relevant count, `N` the judged-nonrelevant count,
 and the penalty denominator is `min(R,N)`. Each judged relevant contributes
 `1 - min(nonrelevant_before, min(R,N)) / min(R,N)`. Unjudged documents are
-ignored; `R=0` returns 0 and `N=0` returns 1. Hand-computable tests cover all
-three `R`/`N` orderings and both zero cases.
+ignored; `R=0` returns 0. When `N=0`, bpref is the fraction of all judged
+relevant documents actually retrieved. Hand-computable tests cover all three
+`R`/`N` orderings, partial/complete/empty retrieval with `N=0`, and `R=0`.
 
 Gemini and Voyage are estimate-only external ceilings. Full API execution is
 forbidden in this stage and requires future explicit user approval. Neither
 provider was called, no quota was intentionally consumed, and actual spend is
 USD 0. There is no environment-variable authorization path.
 
-## Real A100 10K feasibility pilots
+## Semantic-header repair and corrected A100 pilots
+
+Independent review of commit `5c49bedf2ecc80d3391eed3d8c2d3abb4d977670`
+found that the initial pilots exposed internal `cXXXX` identifiers instead of
+canonical semantic column headers. The normalized corpus was correct and was
+not changed. One canonical normalized-record adapter now preserves positional
+internal IDs plus ordered `header_text` metadata. Both neural and lexical
+serializers consume that metadata; duplicate, empty, and null headers remain
+positional, representative rows are arrays, and missing normalized metadata
+fails closed. The original 77.216/84.157/281.580-second measurements and policy
+hash `06fe970a...072905` are superseded and are not current evidence.
 
 Pilots ran sequentially in the isolated M7B environment: Python 3.10.12,
 PyTorch 2.5.1+cu121 (CUDA 12.1), Transformers 5.2.0,
@@ -86,22 +97,27 @@ with BF16 support.
 `m7b-pilot-table-id-order-v1` selects the first 10,000 unique IDs in canonical
 `table_id` order from the complete normalized index. Its ordered-ID SHA-256 is
 `5a8ee854f5bb6d94438d5043dda2625e1ae3044518f0417c9940e86ee1f5e16c`.
-Every model used this population and unchanged `neural_table_evidence_v1`
-(policy hash `06fe970aade950ca4d6fcbf724a9ff3214d7431009a4eff216836465895d2305`).
-Serialized lengths were 72/828/1,961/4,095 characters at min/median/p95/max.
+Every corrected run used this population and `neural_table_evidence_v1`
+version 1.1.0 (policy hash
+`1b37ffbfb3b0a47ea053f315d064427a0c61bdcac2ec8413bdd593ee46507290`).
+All 10,000 tables passed semantic-header validation. Serialized lengths were
+75/765/1,797/4,095 characters at min/median/p95/max.
 
 | Model | Batch | OOM | Seconds | Tables/s | Peak allocated | Peak reserved | Projected hours | Gate |
 |---|---:|---:|---:|---:|---:|---:|---:|---|
-| Qwen 0.6B | 64 | 0 | 77.216 | 129.507 | 17,875,962,368 | 37,545,312,256 | 3.545 | pass |
-| Nemotron 1B | 64 | 0 | 84.157 | 118.826 | 17,249,216,512 | 38,373,687,296 | 3.864 | pass |
-| Qwen 4B | 32 | 1 at batch 64 | 281.580 | 35.514 | 21,397,055,488 | 36,328,964,096 | 12.927 | fail (>12h) |
+| Qwen 0.6B | 64 | 0 | 66.669 | 149.994 | 16,577,182,208 | 36,068,917,248 | 3.061 | pass |
+| Nemotron 1B | 128 | 0 | 78.218 | 127.847 | 30,146,498,048 | 35,932,602,368 | 3.591 | pass |
+| Qwen 4B | 32 | 1 at batch 64 | 241.566 median | 41.397 | 20,637,003,776 | 30,654,070,784 | 11.090 | pass |
 
 Calibration used the longest real pilot inputs in the bounded sequence
 4/8/16/32/64/128 and retained an 85% VRAM safety margin. All outputs had the
 expected dimensions, finite/nonzero values, BF16-tolerant L2 norms, exact
 model/tokenizer revisions, zero truncation violations, and the correct isolated
 model-defined pooling (Qwen last-token; Nemotron mean). Qwen 4B handled its OOM
-and returned to batch 32; it was not quantized or substituted.
+and returned to batch 32; it was not quantized or substituted. Because its
+first projection was within 10% of 12 hours, the boundary-stability timings
+were 243.758, 241.566, and 241.221 seconds without reload or recalibration; the
+median determined its gate result.
 
 These are transparent projections from 10K pilots, not full-corpus timings.
 No full-corpus embedding/index, exact development retrieval, effectiveness

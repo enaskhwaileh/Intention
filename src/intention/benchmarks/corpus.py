@@ -105,10 +105,22 @@ def logical_corpus_digest(tables:Iterable[NormalizedCorpusTable])->str:
     if len({pair[0] for pair in pairs})!=len(pairs):raise ValueError("duplicate table IDs in logical corpus")
     return _digest(pairs)
 
+def runtime_table_from_normalized_record(record:dict[str,Any])->Table:
+    required={"table_id","source","context","columns","rows","normalization"}
+    if not required<=set(record):raise ValueError("normalized runtime record missing canonical metadata")
+    source,context,columns=record["source"],record["context"],record["columns"]
+    if not isinstance(source,dict) or source.get("dataset_id")!=DATASET_ID or not isinstance(context,dict) or not isinstance(columns,(list,tuple)):raise ValueError("malformed normalized WikiTables metadata")
+    expected_keys={"column_id","ordinal","header_text"}
+    if any(not isinstance(column,dict) or set(column)!=expected_keys for column in columns):raise ValueError("malformed canonical semantic-column metadata")
+    if [column["ordinal"] for column in columns]!=list(range(len(columns))) or len({column["column_id"] for column in columns})!=len(columns) or any(column["header_text"] is not None and not isinstance(column["header_text"],str) for column in columns):raise ValueError("malformed canonical semantic-column metadata")
+    internal=[column["column_id"] for column in columns]; positional=record["rows"]
+    if not isinstance(positional,(list,tuple)) or any(not isinstance(row,(list,tuple)) or len(row)!=len(columns) for row in positional):raise ValueError("normalized positional rows do not align with columns")
+    rows=tuple({column_id:cell for column_id,cell in zip(internal,row)} for row in positional)
+    metadata={"source":source,"context":context,"columns":list(columns),"normalization":record["normalization"]}
+    return Table(record["table_id"],context.get("page_title") or "",context.get("table_caption") or "",rows,metadata)
+
 def to_runtime_table(table:NormalizedCorpusTable)->Table:
-    rows=tuple({column.column_id:cell for column,cell in zip(table.columns,row)} for row in table.rows)
-    metadata={"source":asdict(table.source),"context":asdict(table.context),"columns":[asdict(column) for column in table.columns],"normalization":asdict(table.normalization)}
-    return Table(table.table_id,table.context.page_title or "",table.context.table_caption or "",rows,metadata)
+    return runtime_table_from_normalized_record(asdict(table))
 
 def qrel_resolution(qrel_table_ids:Iterable[str],resolved_table_ids:Iterable[str])->dict:
     expected=set(qrel_table_ids); resolved=expected&set(resolved_table_ids); missing=sorted(expected-resolved)

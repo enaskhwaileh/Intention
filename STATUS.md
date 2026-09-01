@@ -127,17 +127,19 @@
 
 ## Current milestone
 
-Current substage: M7B scientific contract and real A100 10K feasibility pilots
-are complete. Qwen 0.6B and Nemotron 1B pass the projected <=12 GPU-hour gate;
-Qwen 4B fails it at 12.927 projected hours after a safely handled batch-64 OOM.
-The full-corpus development bakeoff awaits review. No encoder or K is selected,
-no development/holdout effectiveness metric exists, external API spend is USD
-0, and M7C has not started.
+Current substage: M7B scientific contract repaired, semantic-header
+serialization verified, and corrected real A100 10K feasibility pilots
+complete. The initial timings at `5c49bed...` are superseded because review
+found internal column IDs in retrieval text. The normalized corpus was not
+changed. Qwen 0.6B, Nemotron 1B, and Qwen 4B now pass the projected <=12
+GPU-hour gate; Qwen 4B uses the median of three boundary-stability timings.
+The full-corpus development bakeoff awaits review. No encoder/K or effectiveness
+metric exists, external API spend is USD 0, and M7C has not started.
 
 ## Commands and tests
 
 Git state/history, complete inventory, and source/config/test/document inspection.
-`pytest -q`: 347 passed. The normative suite includes contract,
+`pytest -q`: 354 passed. The normative suite includes contract,
 multi-topic benchmark, strict annotation, profile repository, profiler boundary,
 and metric regression tests.
 `PYTHONPATH=src python3 -m intention smoke`: completed with knowledge hash

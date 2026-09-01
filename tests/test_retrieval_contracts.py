@@ -19,8 +19,9 @@ def test_candidate_depth_and_serialization_contract_are_frozen():
     policy=load_retrieval_policy()
     assert (policy.default_k,policy.final_k_status,policy.development_k,policy.sensitivity_k)==(20,"development_selection_pending",(5,10,20,50),(5,10,20,50,100))
     assert policy.depth_selection["split"]=="development_only" and not policy.depth_selection["test_labels_permitted"]
+    assert policy.depth_selection=={"split":"development_only","metric":"known_relevant_recall","reference_depth":100,"saturation_ratio":.98,"choice":"smallest_k_reaching_ratio_of_recall_at_100","test_labels_permitted":False}
     contract=policy.serializations["title_description_schema_v1"]
-    assert contract.version=="1.0.0"
+    assert contract.version=="1.1.0"
     assert contract.visible_components==("title","description","column_names")
     assert contract.evidence_policy=="retrieval_table_evidence_v1"
     assert {"cell_values","metadata","capability_profiles","grounded_action","action_arguments","full_user_input"}<=set(contract.excluded_components)
@@ -37,7 +38,7 @@ def test_bm25_implements_common_result_schema_with_identity_rank_and_timing():
     ticks=iter((0,.001,.003)); result=BM25Retriever(clock=lambda:next(ticks),clock_name="test_clock").retrieve(RetrievalRequest("vaccine side effects",2),fixture())
     assert result.status=="success" and result.failure is None
     assert result.identity.name=="BM25" and result.identity.adapter_revision=="1.0.0"
-    assert result.identity.serialization_id=="title_description_schema_v1" and result.identity.serialization_version=="1.0.0"
+    assert result.identity.serialization_id=="title_description_schema_v1" and result.identity.serialization_version=="1.1.0"
     assert len(result.identity.registry_hash)==len(result.identity.config_hash)==64
     assert result.timing==RetrievalTiming(1,2,3,"test_clock")
     assert [candidate.rank for candidate in result.candidates]==[1,2]
@@ -98,8 +99,8 @@ def test_retrieval_numeric_outputs_and_timings_must_be_finite(value):
     with pytest.raises(ValueError,match="timing"): RetrievalTiming(value,0,0,"test")
 
 def test_candidate_depth_selection_uses_development_recall_saturation_only():
-    curve={5:.80,10:.94,20:.955,50:.96,100:.961}
-    assert select_candidate_depth(curve)==20
+    curve={5:.80,10:.94,20:.955,50:.96,100:.961}; assert select_candidate_depth(curve)==20
+    assert select_candidate_depth({5:.1,10:.2,20:.3,50:.7,100:1.0})==100
     with pytest.raises(ValueError,match="development-only"): select_candidate_depth(curve,split="test")
 
 def test_future_score_calibration_is_development_only():
