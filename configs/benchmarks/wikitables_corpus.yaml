@@ -52,6 +52,7 @@ separation:
 verified_corpus:
   status: normalized_complete_not_vendored
   batch_size: 25000
+  source_records_attempted: 1652771
   accepted_tables: 1652771
   rejected_records: 0
   logical_corpus_digest: 27b811722376d38aa2b37986dc3ff713869e7ae76fa5c399929905b8b31c589c

@@ -16,6 +16,10 @@ manifest remain ignored and untracked. Public acquisition evidence does not
 establish redistribution permission; `redistribution_status` remains
 `requires_verification`.
 
+The acquisition path now requires the exact tracked SHA-256 for both reused and
+newly downloaded archives, in addition to exact size and ZIP integrity. A
+same-size valid ZIP with different bytes fails before reuse or atomic promotion.
+
 The archive has 1,654 members: one directory and 1,653 UTF-8 JSON files under
 `tables_redi2_1/`, named `re_tables-0001.json` through
 `re_tables-1653.json`. Compressed member bytes total 686,862,116 and
@@ -91,6 +95,11 @@ The streaming full run used `PartitionedCorpusStore`, 256 SHA-256 shards,
 The logical digest covers accepted `(table_id, logical_checksum)` pairs only;
 operational batch identities remain rejection-aware. Raw, pilot, normalized,
 index, manifest, and report artifacts stay under ignored data roots.
+Authoritative full runs resolve batch size `25000` from the tracked contract and
+reject conflicting explicit values. Their source count, accepted count,
+rejection count, and logical digest must exactly match the frozen verified
+corpus identity; pilots are exempt. JSON parsing rejects duplicate keys at both
+the outer table-ID and inner record levels instead of retaining a last value.
 
 ## Qrel resolution and next gate
 
