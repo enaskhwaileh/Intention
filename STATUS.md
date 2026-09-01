@@ -118,19 +118,24 @@
 - M7A.1 PR #16 is merged. M7A.2a freezes the corpus preflight, loss-minimizing
   logical record, deterministic sharding, index, rejection, and checksum
   contracts without acquiring or normalizing the full corpus.
+- M7A.2a PR #17 is merged. M7A.2b acquired and verified the canonical archive,
+  implemented the real source adapter, normalized all 1,652,771 tables, and
+  resolved every one of the 2,932 qrel-referenced table IDs.
 
 ## Current milestone
 
-Current substage: Milestone 7A.2a corpus preflight and scalable normalized-store
-contract. M7A.1 is merged and its 60-query, 3,120-judgment audit remains
-unchanged, including the unresolved 3,120/3,117 discrepancy. The full corpus is
-not acquired and the normalized corpus is not built. No final semantic encoder
-is selected; no pool is frozen; no annotation or paper result exists.
+Current substage: Milestone 7A.2b complete, awaiting PR review. The verified
+archive SHA-256 is `cc8f509a...21ce47`; its real JSON-object format maps exact
+table keys to qrel IDs. All 1,652,771 source records were normalized with zero
+rejections; logical corpus digest `27b81172...c589c`. The full index resolves
+2,932/2,932 qrel tables and affects zero judgments. The 3,120/3,117 discrepancy
+remains unresolved. No encoder is selected; no pool, annotation, or paper
+result exists.
 
 ## Commands and tests
 
 Git state/history, complete inventory, and source/config/test/document inspection.
-`pytest -q`: 300 passed. The normative suite includes contract,
+`pytest -q`: 321 passed. The normative suite includes contract,
 multi-topic benchmark, strict annotation, profile repository, profiler boundary,
 and metric regression tests.
 `PYTHONPATH=src python3 -m intention smoke`: completed with knowledge hash
@@ -138,9 +143,10 @@ and metric regression tests.
 The report verification reproduced final scores 0.6037896 and 0.4800000.
 `python3 -m compileall -q src tests`: passed.
 `PYTHONPATH=src python3 -m intention preflight-wikitables-corpus`: passed
-offline with `not_acquired`, `requires_full_archive_acquisition`, and
-`requires_verification` statuses. An explicit HEAD-only network run reached the
-canonical redirect target without downloading the archive.
+offline with tracked verified archive/format/corpus evidence and
+`requires_verification` redistribution status. Explicit acquisition streamed,
+hashed, ZIP-tested, and atomically promoted the canonical archive; a subsequent
+offline reuse revalidated it without downloading.
 `PYTHONPATH=src python3 -m intention synthetic-benchmark`: six of six cases
 passed; three final winners differ from their relevance-only winners.
 `PYTHONPATH=src python3 -m intention evaluate-profiler`: controlled macro-F1,
@@ -174,6 +180,5 @@ agreement, throughput, and full orchestration remain pending.
 
 ## Next action
 
-Review M7A.2a. After review only: M7A.2b full acquisition/normalization, M7B
-development-only retriever bake-off, encoder freeze, then M7C pooling and
-human annotation.
+Review M7A.2b. After review only: M7B development-only retriever bake-off,
+encoder freeze, then M7C pooling and human annotation.

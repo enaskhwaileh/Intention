@@ -127,5 +127,5 @@ def test_qrel_resolution_reports_missing_without_changing_judgments():
 def test_offline_preflight_is_structured_and_does_not_attempt_network(monkeypatch):
     monkeypatch.setattr("intention.benchmarks.corpus.inspect_archive",lambda _:pytest.fail("network called")); result=corpus_preflight()
     assert result["classification"]=="corpus_preflight" and result["network_status"]["status"]=="not_requested"
-    assert result["acquisition_status"]["full_corpus_status"]=="not_acquired" and result["acquisition_status"]["advertised_filename"]=="WP_tables.zip"
-    assert result["paper_result"] is False and result["benchmark_frozen"] is False and result["corpus_normalized"] is False and result["annotation_started"] is False and result["final_encoder_selected"] is False
+    assert result["acquisition_status"]["full_corpus_status"]=="acquired_verified_not_vendored" and result["acquisition_status"]["advertised_filename"]=="WP_tables.zip"
+    assert result["paper_result"] is False and result["benchmark_frozen"] is False and result["corpus_normalized"] is True and result["annotation_started"] is False and result["final_encoder_selected"] is False

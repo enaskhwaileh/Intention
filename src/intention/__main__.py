@@ -7,7 +7,7 @@ def fixture():
     raw=json.loads((Path(__file__).resolve().parents[2]/"fixtures/synthetic_tables.json").read_text())
     return [Table(x["table_id"],x["title"],x["description"],tuple(x["rows"]),x["metadata"]) for x in raw["tables"]]
 def main():
-    parser=argparse.ArgumentParser(); parser.add_argument("command",choices=["smoke","operational-smoke","synthetic-benchmark","evaluate-profiler","evaluate-interpreter","evaluate-controlled","demo-snapshot","audit-wikitables-source","preflight-wikitables-corpus","profile","interpret","retrieve","build-benchmark","run-baselines","run-main","run-ablations","run-sensitivity","evaluate","generate-paper-tables"]); parser.add_argument("--input",default="vaccine side effects compare measure=rate, comparison dimension=country"); parser.add_argument("--check",action="store_true"); parser.add_argument("--source-root"); parser.add_argument("--network",action="store_true")
+    parser=argparse.ArgumentParser(); parser.add_argument("command",choices=["smoke","operational-smoke","synthetic-benchmark","evaluate-profiler","evaluate-interpreter","evaluate-controlled","demo-snapshot","audit-wikitables-source","preflight-wikitables-corpus","acquire-wikitables-corpus","normalize-wikitables-corpus","audit-wikitables-resolution","profile","interpret","retrieve","build-benchmark","run-baselines","run-main","run-ablations","run-sensitivity","evaluate","generate-paper-tables"]); parser.add_argument("--input",default="vaccine side effects compare measure=rate, comparison dimension=country"); parser.add_argument("--check",action="store_true"); parser.add_argument("--source-root"); parser.add_argument("--network",action="store_true"); parser.add_argument("--data-root",default="data"); parser.add_argument("--output-root"); parser.add_argument("--report-path"); parser.add_argument("--qrels-path"); parser.add_argument("--normalized-root"); parser.add_argument("--limit",type=int); parser.add_argument("--batch-size",type=int)
     args=parser.parse_args()
     if args.command == "synthetic-benchmark":
         from intention.benchmarks import run_synthetic_benchmark
@@ -34,6 +34,17 @@ def main():
     if args.command == "preflight-wikitables-corpus":
         from intention.benchmarks.corpus import corpus_preflight
         print(json.dumps(corpus_preflight(network=args.network),indent=2)); return
+    if args.command == "acquire-wikitables-corpus":
+        from intention.benchmarks.wikitables import acquire_archive
+        print(json.dumps(acquire_archive(Path(args.data_root),network=args.network),indent=2)); return
+    if args.command == "normalize-wikitables-corpus":
+        from intention.benchmarks.wikitables import normalize_archive
+        archive=Path(args.data_root)/"raw/wikitables-www2018/WP_tables.zip"; output=Path(args.output_root or Path(args.data_root)/"normalized/wikitables-www2018")
+        print(json.dumps(normalize_archive(archive,output,args.limit,args.batch_size,None if args.report_path is None else Path(args.report_path)),indent=2)); return
+    if args.command == "audit-wikitables-resolution":
+        from intention.benchmarks.wikitables import audit_qrel_resolution
+        if not args.qrels_path or not args.normalized_root:raise SystemExit("--qrels-path and --normalized-root are required")
+        indexes=sorted((Path(args.normalized_root)/"index").glob("*.parquet")); print(json.dumps(audit_qrel_resolution(Path(args.qrels_path),indexes),indent=2)); return
     if args.command == "operational-smoke":
         from intention.architecture.operational import OperationalReadinessProbe,operational_smoke_status
         print(json.dumps(operational_smoke_status(OperationalReadinessProbe().inspect()),indent=2)); return
