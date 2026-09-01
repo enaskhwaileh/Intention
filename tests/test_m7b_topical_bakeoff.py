@@ -1,4 +1,3 @@
-from dataclasses import replace
 import pytest
 from intention.architecture.embedding import load_embedding_registry
 from intention.architecture.huggingface import HuggingFaceEmbeddingProvider
@@ -39,9 +38,16 @@ def test_known_relevant_recall_and_unjudged_diagnostics():
     assert known_relevant_recall(["x"],{"c":0},1)==0
     assert unjudged_diagnostic(["a","x","c"],qrels,3)=={"judged_count_in_topK":2,"unjudged_count_in_topK":1,"unjudged_rate":1/3}
 
-def test_bpref_hand_computable_and_unjudged_ignored():
-    assert bpref(["n","x","r1","r2"],{"r1":2,"r2":1,"n":0})==.5
-    assert bpref(["x"],{"n":0})==0
+@pytest.mark.parametrize(("ranking","qrels","expected"),[
+    (["n1","r1","r2"],{"r1":1,"r2":1,"n1":0,"n2":0,"n3":0},.5), # R<N
+    (["n1","r1","r2","r3"],{"r1":1,"r2":1,"r3":1,"n1":0},0), # R>N
+    (["r1","n1","r2"],{"r1":1,"r2":1,"n1":0,"n2":0},.75), # R=N
+    (["n1"],{"n1":0},0), # R=0
+    (["r1","r2"],{"r1":1,"r2":2},1), # N=0
+    (["r1","x","n1","y","r2"],{"r1":1,"r2":1,"n1":0},.5), # unjudged ignored
+])
+def test_bpref_hand_computable_cases(ranking,qrels,expected):
+    assert bpref(ranking,qrels)==expected
 
 def _result(model,r,b,t,s,status="complete"):
     return {"model":model,"status":status,"known_relevant_recall_at_100":r,"bpref":b,"embedding_wall_seconds":t,"physical_index_bytes":s}
@@ -67,10 +73,12 @@ def test_exact_search_enforced_and_timed():
     with pytest.raises(RuntimeError,match="exact cosine"):require_exact_search(False,10)
     with pytest.raises(TimeoutError):require_exact_search(True,7200.1)
 
-def test_paid_default_cost_gate():
-    assert paid_execution_status(environ={})["code"]=="paid_execution_not_authorized"
-    assert paid_execution_status(76,environ={"INTENTION_ALLOW_PAID_EMBEDDING_BAKEOFF":"1"})["code"]=="cost_cap_exceeded"
-    assert paid_execution_status(75,environ={"INTENTION_ALLOW_PAID_EMBEDDING_BAKEOFF":"1"})["status"]=="authorized"
+def test_external_policy_is_zero_spend_estimate_only(monkeypatch):
+    monkeypatch.setenv("INTENTION_ALLOW_PAID_EMBEDDING_BAKEOFF","1")
+    contract=load_bakeoff_contract(); assert "paid_api" not in contract and contract["external_api"]["full_execution_allowed"] is False
+    estimate=external_cost_estimate("gemini-embedding-2",1_000_000,True)
+    assert estimate["execution_status"]=="estimate_only_not_executed"
+    assert estimate["estimated_hypothetical_cost_usd"]==.2 and estimate["actual_spend_usd"]==0
 
 def test_structured_pilot_failure_and_hybrid_ordering():
     outcome=local_pilot_preflight(["m"],False)[0]
@@ -90,3 +98,4 @@ def test_preflight_never_claims_selection_without_execution():
     report=preflight_report(False,{})
     assert report["winner"]["status"]=="blocked" and report["holdout"]["status"]=="locked_not_evaluated"
     assert all(item["failure"]["code"]=="accelerator_unavailable" for item in report["local_pilots"])
+    assert all(item["execution_status"]=="estimate_only_not_executed" and item["actual_spend_usd"]==0 for item in report["external_ceilings"].values())

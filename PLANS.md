@@ -44,13 +44,13 @@ new annotations, and new evaluation—not a retrieval or benchmark substitution.
 ## Current gate
 
 Milestones 1–6, all Pre-Milestone-7 gates, M7A.1, M7A.2a, and M7A.2b are merged
-and complete. M7B's contract is implemented; execution is blocked until a
-validated accelerator can run the required native 10K pilots.
+and complete. M7B's scientific contract and real A100 10K feasibility pilots
+are complete; the full-corpus development bakeoff awaits review.
 The gated sequence is:
 
-1. Review M7B's split, metrics, candidate, safety, and selection contract.
-2. Run native 10K pilots on one validated accelerator type.
-3. If gates pass, run exact development evaluation and freeze the encoder and K.
+1. Review M7B's contract, corrected bpref, and real 10K pilot evidence.
+2. Run full-corpus embedding only for candidates passing the frozen pilot gate.
+3. Run exact development evaluation and freeze the encoder and K.
 4. After successful M7B review, begin M7C pooling and human annotation.
 
 This staging does not change official Milestone 7 in the 12-milestone roadmap.

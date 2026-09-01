@@ -61,21 +61,50 @@ if times are within 10%, smaller physical index. K is then the smallest frozen
 depth reaching 98% of the winner's development Recall@100. Only after both
 freezes may RRF (`k=60`) run as a diagnostic; it cannot change the encoder.
 
-## Execution evidence
+## Corrected bpref and zero-spend boundary
 
-No CUDA accelerator or working NVIDIA driver is available on the current host.
-None of the three native, unquantized local candidates could therefore satisfy
-the common-accelerator 10,000-table pilot gate. No weights were downloaded, no
-CPU/alternate model was substituted, no full embeddings or indexes were built,
-and no development effectiveness metrics were computed. Efficiency values
-remain missing rather than estimated.
+For bpref, `R` is the judged-relevant count, `N` the judged-nonrelevant count,
+and the penalty denominator is `min(R,N)`. Each judged relevant contributes
+`1 - min(nonrelevant_before, min(R,N)) / min(R,N)`. Unjudged documents are
+ignored; `R=0` returns 0 and `N=0` returns 1. Hand-computable tests cover all
+three `R`/`N` orderings and both zero cases.
 
-Paid execution was not authorized because
-`INTENTION_ALLOW_PAID_EMBEDDING_BAKEOFF=1` was absent. Gemini and Voyage made no
-calls and incurred zero known cost. Authorized execution would additionally
-require an estimate and is blocked above USD 75 per provider.
+Gemini and Voyage are estimate-only external ceilings. Full API execution is
+forbidden in this stage and requires future explicit user approval. Neither
+provider was called, no quota was intentionally consumed, and actual spend is
+USD 0. There is no environment-variable authorization path.
 
-The outcome is explicitly blocked: no winner or K is selected and hybrid is
-not executed. The holdout was neither loaded nor evaluated. Regenerate the
-small structured report with `PYTHONPATH=src python3 -m intention
-m7b-bakeoff-preflight`.
+## Real A100 10K feasibility pilots
+
+Pilots ran sequentially in the isolated M7B environment: Python 3.10.12,
+PyTorch 2.5.1+cu121 (CUDA 12.1), Transformers 5.2.0,
+SentenceTransformers 5.4.1, Hugging Face Hub 1.29.0, qdrant-client 1.15.1,
+pyarrow 23.0.1, and DuckDB 1.2.2. The detected device was one NVIDIA
+A100-PCIE-40GB (42,409,000,960 bytes nominal VRAM), compute capability 8.0,
+with BF16 support.
+
+`m7b-pilot-table-id-order-v1` selects the first 10,000 unique IDs in canonical
+`table_id` order from the complete normalized index. Its ordered-ID SHA-256 is
+`5a8ee854f5bb6d94438d5043dda2625e1ae3044518f0417c9940e86ee1f5e16c`.
+Every model used this population and unchanged `neural_table_evidence_v1`
+(policy hash `06fe970aade950ca4d6fcbf724a9ff3214d7431009a4eff216836465895d2305`).
+Serialized lengths were 72/828/1,961/4,095 characters at min/median/p95/max.
+
+| Model | Batch | OOM | Seconds | Tables/s | Peak allocated | Peak reserved | Projected hours | Gate |
+|---|---:|---:|---:|---:|---:|---:|---:|---|
+| Qwen 0.6B | 64 | 0 | 77.216 | 129.507 | 17,875,962,368 | 37,545,312,256 | 3.545 | pass |
+| Nemotron 1B | 64 | 0 | 84.157 | 118.826 | 17,249,216,512 | 38,373,687,296 | 3.864 | pass |
+| Qwen 4B | 32 | 1 at batch 64 | 281.580 | 35.514 | 21,397,055,488 | 36,328,964,096 | 12.927 | fail (>12h) |
+
+Calibration used the longest real pilot inputs in the bounded sequence
+4/8/16/32/64/128 and retained an 85% VRAM safety margin. All outputs had the
+expected dimensions, finite/nonzero values, BF16-tolerant L2 norms, exact
+model/tokenizer revisions, zero truncation violations, and the correct isolated
+model-defined pooling (Qwen last-token; Nemotron mean). Qwen 4B handled its OOM
+and returned to batch 32; it was not quantized or substituted.
+
+These are transparent projections from 10K pilots, not full-corpus timings.
+No full-corpus embedding/index, exact development retrieval, effectiveness
+metric, encoder selection, K selection, hybrid run, or holdout evaluation has
+occurred. M7C remains unstarted. Runtime reports, weights, and caches remain
+outside Git.

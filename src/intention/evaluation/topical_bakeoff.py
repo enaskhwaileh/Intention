@@ -4,7 +4,7 @@ from dataclasses import dataclass
 from hashlib import sha256
 from pathlib import Path
 from statistics import mean
-import math,os,yaml
+import math,yaml
 from intention.evaluation.statistics import paired_bootstrap
 
 ROOT=Path(__file__).resolve().parents[3]
@@ -16,7 +16,7 @@ class BakeoffFailure:
 
 def load_bakeoff_contract(path:Path|None=None)->dict:
     raw=yaml.safe_load((path or CONFIG_PATH).read_text())
-    required={"version","split","corpus","qrels","depths","quality_search","bootstrap","pilot","paid_api","hybrid","models"}
+    required={"version","split","corpus","qrels","depths","quality_search","bootstrap","pilot","external_api","hybrid","models"}
     if not isinstance(raw,dict) or set(raw)!=required:raise ValueError("invalid M7B contract")
     if raw["depths"]!=[5,10,20,50,100] or raw["quality_search"]!={"metric_depth":100,"cosine_exact":True,"maximum_seconds_per_model":7200}:raise ValueError("quality search contract changed")
     development,holdout=derive_topic_split(raw["split"]["version"],raw["split"]["strata"])
@@ -51,11 +51,12 @@ def known_relevant_recall(ranked_ids,qrels,k,threshold=1):
 def bpref(ranked_ids,qrels,threshold=1):
     relevant={t for t,y in qrels.items() if y>=threshold}; nonrelevant={t for t,y in qrels.items() if y<threshold}
     if not relevant:return 0.0
-    cap=len(relevant); seen_nonrelevant=0; contributions=[]
+    if not nonrelevant:return 1.0
+    denominator=min(len(relevant),len(nonrelevant)); seen_nonrelevant=0; contributions=[]
     for table_id in ranked_ids:
         if table_id not in qrels:continue
         if table_id in nonrelevant:seen_nonrelevant+=1
-        elif table_id in relevant:contributions.append(1-min(seen_nonrelevant,cap)/cap)
+        elif table_id in relevant:contributions.append(1-min(seen_nonrelevant,denominator)/denominator)
     return sum(contributions)/len(relevant)
 
 def unjudged_diagnostic(ranked_ids,qrels,k):
@@ -120,21 +121,23 @@ def require_exact_search(exact,elapsed_seconds,contract=None):
     if not math.isfinite(elapsed_seconds) or elapsed_seconds<0:raise ValueError("invalid exact-search timing")
     if elapsed_seconds>contract["quality_search"]["maximum_seconds_per_model"]:raise TimeoutError("exact development search exceeded two-hour model limit")
 
-def paid_execution_status(projected_usd=None,environ=None,contract=None):
-    contract=contract or load_bakeoff_contract(); environ=os.environ if environ is None else environ
-    if environ.get(contract["paid_api"]["environment_gate"])!="1":return {"status":"not_executed","code":"paid_execution_not_authorized"}
-    if projected_usd is None:return {"status":"blocked","code":"cost_estimate_required"}
-    if not math.isfinite(projected_usd) or projected_usd<0:raise ValueError("invalid projected cost")
-    if projected_usd>contract["paid_api"]["maximum_usd_per_provider"]:return {"status":"blocked","code":"cost_cap_exceeded","projected_usd":projected_usd}
-    return {"status":"authorized","projected_usd":projected_usd}
+def external_cost_estimate(model_name,estimated_tokens=None,credentials_present=False,contract=None):
+    contract=contract or load_bakeoff_contract(); model=contract["models"][model_name]
+    if model["role"]!="external_ceiling":raise ValueError("cost estimates are external-ceiling only")
+    if estimated_tokens is not None and (not isinstance(estimated_tokens,int) or estimated_tokens<0):raise ValueError("invalid estimated token volume")
+    rate=model["reference_cost_per_million_tokens_usd"]
+    return {"provider":"google" if model_name.startswith("gemini") else "voyage_ai","model_alias":model_name,"credentials_present":bool(credentials_present),"estimated_corpus_tokens":estimated_tokens,"reference_cost_per_million_tokens_usd":rate,"estimated_hypothetical_cost_usd":None if estimated_tokens is None else estimated_tokens/1_000_000*rate,"free_quota_status":"unknown","execution_status":"estimate_only_not_executed","actual_spend_usd":0}
 
 def local_pilot_preflight(models,accelerator_available):
     if accelerator_available:return [{"model":m,"status":"ready_for_10k_pilot"} for m in models]
     return [{"model":m,"status":"not_executed","failure":{"code":"accelerator_unavailable","reason":"native unquantized common-accelerator pilot requirement cannot be satisfied; no substitution made"}} for m in models]
 
-def preflight_report(accelerator_available=False,environ=None):
+def preflight_report(accelerator_available=None,environ=None):
     contract=load_bakeoff_contract(); eligible=[name for name,item in contract["models"].items() if item["eligible"]]
-    return {"classification":"m7b_execution_preflight","paper_result":False,"development_only":True,"split_version":contract["split"]["version"],"contract_sha256":sha256(CONFIG_PATH.read_bytes()).hexdigest(),"corpus_digest":contract["corpus"]["logical_digest"],"serialization_id":contract["corpus"]["serialization_id"],"local_pilots":local_pilot_preflight(eligible,accelerator_available),"external_ceilings":{"gemini-embedding-2":paid_execution_status(environ=environ,contract=contract),"voyage-4-large":paid_execution_status(environ=environ,contract=contract)},"winner":{"status":"blocked","winner":None,"reason":"eligible local pilots and full-corpus exact-search results are unavailable"},"candidate_depth":{"status":"not_selected","reason":"encoder is not frozen"},"hybrid":{"status":"not_executed","reason":"encoder and candidate depth must be frozen first"},"holdout":{"status":"locked_not_evaluated","topic_count":30}}
+    if accelerator_available is None:
+        from intention.evaluation.m7b_pilot import TorchHardwareDetector
+        accelerator_available=TorchHardwareDetector().detect().cuda_available
+    return {"classification":"m7b_execution_preflight","paper_result":False,"development_only":True,"split_version":contract["split"]["version"],"contract_sha256":sha256(CONFIG_PATH.read_bytes()).hexdigest(),"corpus_digest":contract["corpus"]["logical_digest"],"serialization_id":contract["corpus"]["serialization_id"],"local_pilots":local_pilot_preflight(eligible,accelerator_available),"external_ceilings":{"gemini-embedding-2":external_cost_estimate("gemini-embedding-2",contract=contract),"voyage-4-large":external_cost_estimate("voyage-4-large",contract=contract)},"winner":{"status":"blocked","winner":None,"reason":"full-corpus exact-search results are unavailable"},"candidate_depth":{"status":"not_selected","reason":"encoder is not frozen"},"hybrid":{"status":"not_executed","reason":"encoder and candidate depth must be frozen first"},"holdout":{"status":"locked_not_evaluated","topic_count":30}}
 
 def assert_hybrid_cannot_change_winner(frozen_winner,hybrid_results):
     if not frozen_winner:raise RuntimeError("encoder must be frozen before hybrid diagnostics")

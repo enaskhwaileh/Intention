@@ -15,13 +15,17 @@ qrels: {judgment_count: 3120, unique_table_count: 2932, labels: [0, 1, 2], known
 depths: [5, 10, 20, 50, 100]
 quality_search: {metric_depth: 100, cosine_exact: true, maximum_seconds_per_model: 7200}
 bootstrap: {confidence: 0.95, iterations: 10000, seed: 2026, role: diagnostic_only}
-pilot: {table_count: 10000, maximum_projected_gpu_hours: 12, quantization: forbidden}
-paid_api: {environment_gate: INTENTION_ALLOW_PAID_EMBEDDING_BAKEOFF, maximum_usd_per_provider: 75}
+pilot: {selection_version: m7b-pilot-table-id-order-v1, table_count: 10000, maximum_projected_gpu_hours: 12, quantization: forbidden}
+external_api:
+  execution_mode: estimate_only
+  full_execution_allowed: false
+  explicit_future_user_approval_required: true
+  actual_spend_usd: 0
 hybrid: {rrf_k: 60, timing: after_encoder_and_depth_freeze, may_change_winner: false}
 models:
   BM25: {role: lexical_reference, eligible: false}
   Qwen3-Embedding-0.6B: {role: open_primary_candidate, eligible: true, dimension: 1024}
   Qwen3-Embedding-4B: {role: open_primary_candidate, eligible: true, dimension: 2560}
   Nemotron-3-Embed-1B-BF16: {role: open_primary_candidate, eligible: true, dimension: 2048}
-  gemini-embedding-2: {role: external_ceiling, eligible: false, dimension: 1536}
-  voyage-4-large: {role: external_ceiling, eligible: false, dimension: 1024}
+  gemini-embedding-2: {role: external_ceiling, eligible: false, dimension: 1536, reference_cost_per_million_tokens_usd: 0.20}
+  voyage-4-large: {role: external_ceiling, eligible: false, dimension: 1024, reference_cost_per_million_tokens_usd: 0.12}

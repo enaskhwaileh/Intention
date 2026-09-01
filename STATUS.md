@@ -122,21 +122,22 @@
   implemented the real source adapter, normalized all 1,652,771 tables, and
   resolved every one of the 2,932 qrel-referenced table IDs.
 - M7A.2b PR #18 is merged. M7B freezes its exact stratified topic split,
-  incomplete-qrel metrics, exact-search boundary, winner and K rules, paid API
-  gate, and post-freeze hybrid boundary.
+  incomplete-qrel metrics, exact-search boundary, winner/K rules, zero-spend
+  external ceiling policy, and post-freeze hybrid boundary.
 
 ## Current milestone
 
-Current substage: M7B is contract-complete but execution-blocked on this host.
-No CUDA accelerator or working NVIDIA driver is available, so the mandatory
-native/unquantized 10K pilots were not run and no model was substituted. Paid
-API execution was not authorized. No encoder or K is selected, no development
-or holdout effectiveness metric exists, and M7C has not started.
+Current substage: M7B scientific contract and real A100 10K feasibility pilots
+are complete. Qwen 0.6B and Nemotron 1B pass the projected <=12 GPU-hour gate;
+Qwen 4B fails it at 12.927 projected hours after a safely handled batch-64 OOM.
+The full-corpus development bakeoff awaits review. No encoder or K is selected,
+no development/holdout effectiveness metric exists, external API spend is USD
+0, and M7C has not started.
 
 ## Commands and tests
 
 Git state/history, complete inventory, and source/config/test/document inspection.
-`pytest -q`: 336 passed. The normative suite includes contract,
+`pytest -q`: 347 passed. The normative suite includes contract,
 multi-topic benchmark, strict annotation, profile repository, profiler boundary,
 and metric regression tests.
 `PYTHONPATH=src python3 -m intention smoke`: completed with knowledge hash
@@ -169,10 +170,11 @@ No paper results. Smoke output is not an experiment run or metric claim.
 
 ## Blockers
 
-Immutable API-model checkpoint revisions, corpus redistribution-license
-verification, human annotations, credentials, downloaded weights, a validated
-accelerator, and Qdrant service are absent. The verified WikiTables corpus is
-locally available. DuckDB and `pyarrow` are locally available and their real storage
+Immutable API-model checkpoint revisions for external ceilings, corpus
+redistribution-license verification, human annotations, credentials, and a
+Qdrant service are absent. Pinned local weights, the validated A100, and the
+verified WikiTables corpus are locally available outside Git. DuckDB and
+`pyarrow` are locally available and their real storage
 round trip passes, but remain optional in base CI. Thus no learned end-to-end smoke,
 baseline comparison, benchmark labels, run bundle, ablation/sensitivity results,
 confidence intervals, significance claims, efficiency measurements, or paper
@@ -181,5 +183,6 @@ agreement, throughput, and full orchestration remain pending.
 
 ## Next action
 
-Review M7B and its structured execution blocker. Resume native 10K pilots on a
-validated common accelerator before any encoder/K freeze. Do not start M7C.
+Review the M7B repair and real pilot evidence. After approval only, run the
+full-corpus development bakeoff for pilot-eligible candidates. Do not select an
+encoder/K or start M7C before that review and execution.
