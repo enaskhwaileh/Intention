@@ -1,4 +1,4 @@
-version: "1.0.0"
+version: "1.1.0"
 serialization_id: neural_table_evidence_v1
 visible_components: [title, description, ordered_columns, deterministic_types, representative_rows, representative_values]
 forbidden_components: [grounded_action, action_arguments, requirements, capability_profiles, usefulness_labels, topical_labels, benchmark_labels, system_output, gold_information, full_user_input]

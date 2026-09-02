@@ -4,6 +4,7 @@ from pathlib import Path
 import json,yaml
 from intention.contracts import Table
 from intention.retrieval.serialization import SerializedTable
+from intention.table_evidence import ordered_serialization_columns
 
 @dataclass(frozen=True)
 class NeuralSerializationPolicy:
@@ -31,9 +32,8 @@ def _kind(values):
 class NeuralTableSerializer:
     def __init__(self,policy:NeuralSerializationPolicy|None=None): self.policy=policy or load_neural_serialization_policy()
     def serialize(self,table:Table)->SerializedTable:
-        columns=list(table.rows[0]) if table.rows else []
-        values={column:[row.get(column) for row in table.rows[:self.policy.maximum_values_per_column]] for column in columns}
-        payload={"title":table.title,"description":table.description,"columns":[{"name":column,"type":_kind([row.get(column) for row in table.rows]),"representative_values":values[column]} for column in columns],"representative_rows":[{column:row.get(column) for column in columns} for row in table.rows[:self.policy.maximum_rows]]}
+        columns=ordered_serialization_columns(table)
+        payload={"title":table.title,"description":table.description,"columns":[{"name":name,"type":_kind([row.get(column_id) for row in table.rows]),"representative_values":[row.get(column_id) for row in table.rows[:self.policy.maximum_values_per_column]]} for column_id,name in columns],"representative_rows":[[row.get(column_id) for column_id,_ in columns] for row in table.rows[:self.policy.maximum_rows]]}
         text=json.dumps(payload,sort_keys=True,separators=(",",":"),ensure_ascii=False)
         if len(text)>self.policy.maximum_characters: text=text[:self.policy.maximum_characters-15]+"...[TRUNCATED]"
         checksum=sha256(json.dumps({"serialization_id":self.policy.serialization_id,"version":self.policy.version,"policy_hash":self.policy.digest,"text":text},sort_keys=True,separators=(",",":")).encode()).hexdigest()

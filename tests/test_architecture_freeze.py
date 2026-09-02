@@ -39,7 +39,7 @@ def test_neural_serialization_is_deterministic_bounded_and_leakage_free():
     table=Table("t","Title","Caption",({"b":2,"a":"x"},{"b":3,"a":"y"}),{"grounded_action":"COMPARE","usefulness_label":3,"gold":"SECRET"})
     serializer=NeuralTableSerializer(); first=serializer.serialize(table); second=serializer.serialize(table)
     assert first==second and len(first.checksum)==64 and first.serialization_id=="neural_table_evidence_v1"
-    payload=json.loads(first.text); assert [column["name"] for column in payload["columns"]]==["b","a"]
+    payload=json.loads(first.text); assert [column["name"] for column in payload["columns"]]==["b","a"] and payload["representative_rows"]==[[2,"x"],[3,"y"]]
     assert "COMPARE" not in first.text and "SECRET" not in first.text and "usefulness" not in first.text
     policy=load_neural_serialization_policy(); assert len(first.text)<=policy.maximum_characters
 

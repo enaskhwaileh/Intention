@@ -1,9 +1,12 @@
 import importlib.util
 from pathlib import Path
-import pytest,yaml
+import json,pytest,yaml
 from dataclasses import replace
 from copy import deepcopy
-from intention.benchmarks.corpus import DATASET_ID,NORMALIZATION_VERSION,PartitionedCorpusStore,RejectedCorpusRecord,corpus_preflight,load_corpus_contract,logical_corpus_digest,normalize_source_record,qrel_resolution,shard_for,to_runtime_table
+from intention.architecture.serialization import NeuralTableSerializer,load_neural_serialization_policy
+from intention.benchmarks.corpus import DATASET_ID,NORMALIZATION_VERSION,PartitionedCorpusStore,RejectedCorpusRecord,corpus_preflight,load_corpus_contract,logical_corpus_digest,normalize_source_record,qrel_resolution,runtime_table_from_normalized_record,shard_for,to_runtime_table
+from intention.contracts import Table
+from intention.retrieval import TableSerializer,load_retrieval_policy
 
 REVISION="ae156771cacc252031d74d61380e09bc1e838bc3"
 
@@ -56,6 +59,29 @@ def test_runtime_adapter_uses_internal_ids_without_column_loss():
     normalized=normalize_source_record(source_record(),REVISION); runtime=to_runtime_table(normalized)
     assert list(runtime.rows[0])==["c0000","c0001","c0002","c0003","c0004"] and len(runtime.rows[0])==normalized.column_count
     assert [item["header_text"] for item in runtime.metadata["columns"]]==["Year","Value","Value",None,""]
+
+def test_normalized_serializers_expose_ordered_semantic_headers_and_aligned_values():
+    runtime=to_runtime_table(normalize_source_record(source_record(),REVISION))
+    neural=json.loads(NeuralTableSerializer().serialize(runtime).text)
+    assert [item["name"] for item in neural["columns"]]==["Year","Value","Value",None,""]
+    assert [item["representative_values"] for item in neural["columns"]]==[["2020","2021"],["10","20"],["11",None],[None,None],["",None]]
+    assert neural["representative_rows"]==[["2020","10","11",None,""],["2021","20",None,None,None]]
+    assert "c0000" not in neural["columns"][0]["name"] and load_neural_serialization_policy().version=="1.1.0"
+    lexical=TableSerializer(load_retrieval_policy().serializations["title_description_schema_v1"]).serialize(runtime).text
+    assert lexical.startswith("Café 世界 Annual values Year Value Value") and "c0000" not in lexical and "c0001" not in lexical
+
+def test_normalized_serialization_fails_closed_without_canonical_column_metadata():
+    broken=Table("t","title","description",({"c0000":"x"},),{"source":{"dataset_id":DATASET_ID}})
+    with pytest.raises(ValueError,match="canonical semantic-column metadata"):NeuralTableSerializer().serialize(broken)
+    with pytest.raises(ValueError,match="canonical semantic-column metadata"):TableSerializer(load_retrieval_policy().serializations["title_description_schema_v1"]).serialize(broken)
+
+def test_normalized_record_adapter_is_canonical_and_rejects_malformed_columns():
+    normalized=normalize_source_record(source_record(headers=["Country","Population","Year"],rows=[["IT","59m","2024"]]),REVISION)
+    from dataclasses import asdict
+    record=asdict(normalized); runtime=runtime_table_from_normalized_record(record)
+    assert [item["header_text"] for item in runtime.metadata["columns"]]==["Country","Population","Year"]
+    record["columns"][0]["ordinal"]=2
+    with pytest.raises(ValueError,match="semantic-column"):runtime_table_from_normalized_record(record)
 
 class FakeParquetBackend:
     def __init__(self):self.writes=[]

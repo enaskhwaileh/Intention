@@ -4,6 +4,7 @@ from hashlib import sha256
 from pathlib import Path
 import json,yaml
 from intention.contracts import Table
+from intention.table_evidence import ordered_serialization_columns
 
 @dataclass(frozen=True)
 class SerializationContract:
@@ -46,7 +47,7 @@ def load_retrieval_policy(path: Path|None=None) -> RetrievalPolicy:
     if not isinstance(depths["default"],int) or depths["default"]<=0 or depths["final_status"]!="development_selection_pending" or any(not isinstance(group,list) or group!=sorted(set(group)) or any(not isinstance(k,int) or k<=0 for k in group) for group in groups) or depths["default"] not in groups[0] or not set(groups[0])<=set(groups[1]):
         raise ValueError("invalid candidate-depth values")
     selection=depths["selection_rule"]
-    expected_selection={"split":"development_only","metric":"useful_candidate_recall","minimum_recall":.95,"maximum_next_depth_gain":.01,"choice":"smallest_qualifying_k","test_labels_permitted":False}
+    expected_selection={"split":"development_only","metric":"known_relevant_recall","reference_depth":100,"saturation_ratio":.98,"choice":"smallest_k_reaching_ratio_of_recall_at_100","test_labels_permitted":False}
     if selection!=expected_selection: raise ValueError("invalid development-only depth selection rule")
     evidence=raw["evidence_access"]
     if set(evidence)!={"retrieval_table_evidence_v1"}: raise ValueError("invalid evidence-access policy")
@@ -58,7 +59,7 @@ def load_retrieval_policy(path: Path|None=None) -> RetrievalPolicy:
     for name,item in raw["serializations"].items():
         if not isinstance(item,dict) or set(item)!={"version","evidence_policy","visible_components","excluded_components","column_policy","format"}: raise ValueError("invalid serialization contract")
         if item["evidence_policy"] not in evidence or not set(item["visible_components"])<=allowed or set(item["visible_components"])&forbidden: raise ValueError("serialization violates evidence-access policy")
-        if tuple(item["visible_components"])!=expected_components or not forbidden<=set(item["excluded_components"]) or item["column_policy"]!="first_row_insertion_order" or item["format"]!="ordered_space_join": raise ValueError("serialization visibility contract changed")
+        if tuple(item["visible_components"])!=expected_components or not forbidden<=set(item["excluded_components"]) or item["column_policy"]!="canonical_semantic_metadata_or_legacy_first_row" or item["format"]!="ordered_space_join": raise ValueError("serialization visibility contract changed")
         contracts[name]=SerializationContract(name,item["version"],item["evidence_policy"],tuple(item["visible_components"]),tuple(item["excluded_components"]),item["column_policy"],item["format"])
     scopes=raw["input_scopes"]
     if set(scopes)!={"topical_only","full_input_baseline"} or scopes["topical_only"]!={"query_field":"topical_query","permits_full_user_input":False} or scopes["full_input_baseline"]!={"query_field":"full_user_input","permits_full_user_input":True}: raise ValueError("invalid retrieval input scopes")
@@ -72,14 +73,15 @@ def select_candidate_depth(recall_by_k: dict[int,float],policy: RetrievalPolicy|
     if split!="development" or set(recall_by_k)!=set(policy.sensitivity_k): raise ValueError("candidate depth selection requires all frozen development-only sensitivity values")
     values=[recall_by_k[k] for k in policy.sensitivity_k]
     if any(not isinstance(value,(int,float)) or not 0<=value<=1 for value in values) or values!=sorted(values): raise ValueError("development recall curve must be bounded and monotonic")
-    for index,k in enumerate(policy.sensitivity_k[:-1]):
-        if recall_by_k[k]>=policy.depth_selection["minimum_recall"] and recall_by_k[policy.sensitivity_k[index+1]]-recall_by_k[k]<=policy.depth_selection["maximum_next_depth_gain"]: return k
+    target=policy.depth_selection["saturation_ratio"]*recall_by_k[policy.depth_selection["reference_depth"]]
+    for k in policy.sensitivity_k:
+        if recall_by_k[k]>=target:return k
     return policy.sensitivity_k[-1]
 
 class TableSerializer:
     def __init__(self,contract: SerializationContract): self.contract=contract
     def serialize(self,table: Table) -> SerializedTable:
-        columns=list(table.rows[0]) if table.rows else []
-        text=" ".join((table.title,table.description,*columns))
+        columns=ordered_serialization_columns(table); names=[name if isinstance(name,str) else "" for _,name in columns]
+        text=" ".join((table.title,table.description,*names))
         checksum=sha256(json.dumps({"serialization_id":self.contract.serialization_id,"text":text},sort_keys=True,separators=(",",":")).encode()).hexdigest()
         return SerializedTable(table.table_id,self.contract.serialization_id,text,checksum)

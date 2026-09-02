@@ -121,21 +121,26 @@
 - M7A.2a PR #17 is merged. M7A.2b acquired and verified the canonical archive,
   implemented the real source adapter, normalized all 1,652,771 tables, and
   resolved every one of the 2,932 qrel-referenced table IDs.
+- M7A.2b PR #18 is merged. M7B freezes its exact stratified topic split,
+  incomplete-qrel metrics, exact-search boundary, winner/K rules, zero-spend
+  external ceiling policy, and post-freeze hybrid boundary.
 
 ## Current milestone
 
-Current substage: Milestone 7A.2b complete, awaiting PR review. The verified
-archive SHA-256 is `cc8f509a...21ce47`; its real JSON-object format maps exact
-table keys to qrel IDs. All 1,652,771 source records were normalized with zero
-rejections; logical corpus digest `27b81172...c589c`. The full index resolves
-2,932/2,932 qrel tables and affects zero judgments. The 3,120/3,117 discrepancy
-remains unresolved. No encoder is selected; no pool, annotation, or paper
-result exists.
+Current substage: M7B scientific contract repaired, semantic-header
+serialization verified, and corrected real A100 10K feasibility pilots
+complete. The initial timings at `5c49bed...` are superseded because review
+found internal column IDs in retrieval text. The normalized corpus was not
+changed. Qwen 0.6B, Nemotron 1B, and Qwen 4B now pass the projected <=12
+GPU-hour gate; Qwen 4B uses the median of three boundary-stability timings.
+The full-corpus development bakeoff awaits review. No encoder/K or effectiveness
+metric exists, external API spend is USD 0, and M7C has not started.
 
 ## Commands and tests
 
 Git state/history, complete inventory, and source/config/test/document inspection.
-`pytest -q`: 321 passed. The normative suite includes contract,
+Local isolated A100 environment: `pytest -q` completed with 354 passed. The
+normative suite includes contract,
 multi-topic benchmark, strict annotation, profile repository, profiler boundary,
 and metric regression tests.
 `PYTHONPATH=src python3 -m intention smoke`: completed with knowledge hash
@@ -158,9 +163,9 @@ judgments are excluded as unknown.
 cases; action accuracy/macro-F1, argument precision/recall/F1, joint-frame
 accuracy, provenance-span accuracy, and grounding-decision accuracy are 1.000.
 This is deterministic contract evidence, not an external LLM result.
-GitHub Actions repeats the offline suite and five deterministic CLI checks on
-Python 3.10 and 3.11 without credentials, and verifies the current demo
-snapshot.
+GitHub deterministic CI completed with 352 passed and 2 skipped per Python job.
+It repeats the offline suite and five deterministic CLI checks on Python 3.10
+and 3.11 without credentials, and verifies the current demo snapshot.
 
 ## Artifacts
 
@@ -168,10 +173,11 @@ No paper results. Smoke output is not an experiment run or metric claim.
 
 ## Blockers
 
-Immutable API-model checkpoint revisions, the full WikiTables corpus and its
-redistribution-license verification, human annotations,
-credentials, downloaded weights, validated accelerators, and Qdrant service
-are absent. DuckDB and `pyarrow` are locally available and their real storage
+Immutable API-model checkpoint revisions for external ceilings, corpus
+redistribution-license verification, human annotations, credentials, and a
+Qdrant service are absent. Pinned local weights, the validated A100, and the
+verified WikiTables corpus are locally available outside Git. DuckDB and
+`pyarrow` are locally available and their real storage
 round trip passes, but remain optional in base CI. Thus no learned end-to-end smoke,
 baseline comparison, benchmark labels, run bundle, ablation/sensitivity results,
 confidence intervals, significance claims, efficiency measurements, or paper
@@ -180,5 +186,6 @@ agreement, throughput, and full orchestration remain pending.
 
 ## Next action
 
-Review M7A.2b. After review only: M7B development-only retriever bake-off,
-encoder freeze, then M7C pooling and human annotation.
+Review the M7B repair and real pilot evidence. After approval only, run the
+full-corpus development bakeoff for pilot-eligible candidates. Do not select an
+encoder/K or start M7C before that review and execution.

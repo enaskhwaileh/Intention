@@ -1,4 +1,4 @@
-version: "1.2.0"
+version: "1.3.0"
 selection_status: development_bakeoff_pending
 primary_architecture: provider_independent_dense
 operational_smoke_encoder: Qwen3-Embedding-0.6B
@@ -102,6 +102,54 @@ models:
     approximate_cost: null
     operational_role: operational_smoke_encoder_not_final_primary
     trust_remote_code_required: false
+    availability: runtime_detected
+    failure_reason: null
+  Qwen3-Embedding-4B:
+    category: open_weight_strong
+    provider: qwen_huggingface
+    model: Qwen/Qwen3-Embedding-4B
+    revision: 5cf2132abc99cad020ac570b19d031efec650f2b
+    tokenizer_revision: 5cf2132abc99cad020ac570b19d031efec650f2b
+    source: https://huggingface.co/Qwen/Qwen3-Embedding-4B
+    license: apache-2.0
+    dimensions: [2560]
+    maximum_input_tokens: 32768
+    truncation_policy: fail_on_overflow
+    query_mode: instruction_aware_query
+    document_mode: document_without_instruction
+    query_instruction: "Instruct: Given a table discovery query, retrieve tables topically relevant to the query\nQuery:{content}"
+    document_instruction: null
+    similarity: cosine
+    normalization: l2
+    requirement: local_accelerator_and_model_download
+    hardware: [common_validated_accelerator]
+    approximate_cost: null
+    trust_remote_code_required: false
+    sentence_transformers_modules: [Transformer, Pooling_model_defined, Normalize]
+    availability: runtime_detected
+    failure_reason: null
+  Nemotron-3-Embed-1B-BF16:
+    category: open_weight_strong
+    provider: nvidia_huggingface
+    model: nvidia/Nemotron-3-Embed-1B-BF16
+    revision: f880174635613cff04033875fc6a69296cb72006
+    tokenizer_revision: f880174635613cff04033875fc6a69296cb72006
+    source: https://huggingface.co/nvidia/Nemotron-3-Embed-1B-BF16
+    license: openmdw-1.1
+    dimensions: [2048]
+    maximum_input_tokens: 32768
+    truncation_policy: fail_on_overflow
+    query_mode: prefixed_query
+    document_mode: prefixed_passage
+    query_instruction: "query: {content}"
+    document_instruction: "passage: {content}"
+    similarity: cosine
+    normalization: l2
+    requirement: local_accelerator_and_model_download
+    hardware: [common_validated_accelerator]
+    approximate_cost: null
+    trust_remote_code_required: false
+    sentence_transformers_modules: [Transformer, Pooling_average_model_defined, Normalize]
     availability: runtime_detected
     failure_reason: null
   voyage-4-nano:
