@@ -1,0 +1,20 @@
+version: "1.0.0"
+execution_id: m7b-full-corpus-v1
+corpus_iteration: normalized_shard_then_table_id_v1
+partition_count: 256
+vector_dtype: float32
+vector_format: npy
+normalization: l2
+resume_policy: checksum_verified_atomic_shards
+exact_backend: sharded_torch_matmul
+exact_compute_dtype: float32
+allow_tf32: false
+top_k: 100
+maximum_exact_search_seconds_per_model: 7200
+minimum_free_disk_gib_before_full_execution: 100
+batch_sizes:
+  Qwen3-Embedding-0.6B: 64
+  Nemotron-3-Embed-1B-BF16: 128
+  Qwen3-Embedding-4B: 32
+oom_policy: halve_batch_and_continue
+minimum_batch_size: 1

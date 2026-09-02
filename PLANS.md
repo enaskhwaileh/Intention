@@ -43,15 +43,16 @@ new annotations, and new evaluation—not a retrieval or benchmark substitution.
 
 ## Current gate
 
-Milestones 1–6, all Pre-Milestone-7 gates, M7A.1, M7A.2a, and M7A.2b are merged
-and complete. M7B's scientific contract is repaired, semantic-header
-serialization is verified, and corrected A100 10K pilots are complete; the
-full-corpus development bakeoff awaits review.
+Milestones 1–6, all Pre-Milestone-7 gates, M7A.1, M7A.2a, M7A.2b, and the M7B
+10K pilot gate are merged and complete. The resumable M7B full-corpus execution
+harness is implemented and awaits independent review; no full-corpus model
+inference or development effectiveness evaluation has run.
 The gated sequence is:
 
-1. Review M7B's semantic repair, corrected bpref/K contract, and superseding
-   real 10K pilot evidence.
-2. Run full-corpus embedding only for candidates passing the frozen pilot gate.
+1. Review the guarded full-corpus harness, atomic resume semantics, exact search,
+   and holdout non-materialization boundary.
+2. Run full-corpus embedding only for all three candidates passing the frozen
+   pilot gate.
 3. Run exact development evaluation and freeze the encoder and K.
 4. After successful M7B review, begin M7C pooling and human annotation.
 
