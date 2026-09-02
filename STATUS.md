@@ -139,7 +139,8 @@ metric exists, external API spend is USD 0, and M7C has not started.
 ## Commands and tests
 
 Git state/history, complete inventory, and source/config/test/document inspection.
-`pytest -q`: 354 passed. The normative suite includes contract,
+Local isolated A100 environment: `pytest -q` completed with 354 passed. The
+normative suite includes contract,
 multi-topic benchmark, strict annotation, profile repository, profiler boundary,
 and metric regression tests.
 `PYTHONPATH=src python3 -m intention smoke`: completed with knowledge hash
@@ -162,9 +163,9 @@ judgments are excluded as unknown.
 cases; action accuracy/macro-F1, argument precision/recall/F1, joint-frame
 accuracy, provenance-span accuracy, and grounding-decision accuracy are 1.000.
 This is deterministic contract evidence, not an external LLM result.
-GitHub Actions repeats the offline suite and five deterministic CLI checks on
-Python 3.10 and 3.11 without credentials, and verifies the current demo
-snapshot.
+GitHub deterministic CI completed with 352 passed and 2 skipped per Python job.
+It repeats the offline suite and five deterministic CLI checks on Python 3.10
+and 3.11 without credentials, and verifies the current demo snapshot.
 
 ## Artifacts
 

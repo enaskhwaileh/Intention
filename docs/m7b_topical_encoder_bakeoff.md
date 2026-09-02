@@ -94,6 +94,10 @@ pyarrow 23.0.1, and DuckDB 1.2.2. The detected device was one NVIDIA
 A100-PCIE-40GB (42,409,000,960 bytes nominal VRAM), compute capability 8.0,
 with BF16 support.
 
+Test reporting is environment-specific: the local isolated A100 environment
+completed with 354 passed, while GitHub deterministic CI completed with 352
+passed and 2 skipped per Python job. GitHub CI did not run 354 tests per job.
+
 `m7b-pilot-table-id-order-v1` selects the first 10,000 unique IDs in canonical
 `table_id` order from the complete normalized index. Its ordered-ID SHA-256 is
 `5a8ee854f5bb6d94438d5043dda2625e1ae3044518f0417c9940e86ee1f5e16c`.

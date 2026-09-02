@@ -126,8 +126,8 @@ models:
     approximate_cost: null
     trust_remote_code_required: false
     sentence_transformers_modules: [Transformer, Pooling_model_defined, Normalize]
-    availability: blocked
-    failure_reason: weights are not downloaded and accelerator capacity has not been validated
+    availability: runtime_detected
+    failure_reason: null
   Nemotron-3-Embed-1B-BF16:
     category: open_weight_strong
     provider: nvidia_huggingface
@@ -150,8 +150,8 @@ models:
     approximate_cost: null
     trust_remote_code_required: false
     sentence_transformers_modules: [Transformer, Pooling_average_model_defined, Normalize]
-    availability: blocked
-    failure_reason: weights are not downloaded and accelerator capacity has not been validated
+    availability: runtime_detected
+    failure_reason: null
   voyage-4-nano:
     category: open_weight_lightweight_alternative
     provider: voyage_huggingface
