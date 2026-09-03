@@ -124,17 +124,18 @@
 - M7A.2b PR #18 is merged. M7B freezes its exact stratified topic split,
   incomplete-qrel metrics, exact-search boundary, winner/K rules, zero-spend
   external ceiling policy, and post-freeze hybrid boundary.
+- M7B PR #19 is merged with corrected semantic serialization and real 10K A100
+  feasibility pilots for all three pinned local candidates.
 
 ## Current milestone
 
-Current substage: M7B scientific contract repaired, semantic-header
-serialization verified, and corrected real A100 10K feasibility pilots
-complete. The initial timings at `5c49bed...` are superseded because review
-found internal column IDs in retrieval text. The normalized corpus was not
-changed. Qwen 0.6B, Nemotron 1B, and Qwen 4B now pass the projected <=12
-GPU-hour gate; Qwen 4B uses the median of three boundary-stability timings.
-The full-corpus development bakeoff awaits review. No encoder/K or effectiveness
-metric exists, external API spend is USD 0, and M7C has not started.
+Current substage: the corrected M7B 10K pilot gate is merged. The resumable
+full-corpus execution harness is implemented and awaits independent review.
+Metadata-only preflight verifies the complete normalized index, canonical M7A
+digest, deterministic execution order, serialization identity, and disk gate.
+Full-corpus encoding has not run, no full vector index exists, development
+effectiveness has not been measured, encoder and K remain unselected, external
+API spend is USD 0, holdout remains locked, and M7C has not started.
 
 ## Commands and tests
 
@@ -166,6 +167,11 @@ This is deterministic contract evidence, not an external LLM result.
 GitHub deterministic CI completed with 352 passed and 2 skipped per Python job.
 It repeats the offline suite and five deterministic CLI checks on Python 3.10
 and 3.11 without credentials, and verifies the current demo snapshot.
+M7B full-execution harness regression: 23 passed. An expanded M7A/M7B targeted
+integration run passed 78 tests. Metadata-only real preflight
+verified 1,652,771 tables, 256 shards, logical digest `27b81172...589c`, and
+execution table-ID digest `b7119e05...de34`; it loaded no embedding model.
+Current harness-branch full deterministic suite: 377 passed locally.
 
 ## Artifacts
 
@@ -186,6 +192,7 @@ agreement, throughput, and full orchestration remain pending.
 
 ## Next action
 
-Review the M7B repair and real pilot evidence. After approval only, run the
-full-corpus development bakeoff for pilot-eligible candidates. Do not select an
-encoder/K or start M7C before that review and execution.
+Review the M7B full-corpus execution harness. Only after approval, run guarded
+full-corpus encoding and exact development evaluation for all three eligible
+local candidates. Do not freeze an encoder/K or start M7C before that review
+and execution.

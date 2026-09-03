@@ -102,6 +102,11 @@ def shard_for(table_id:str,partition_count:int=256)->int:
 
 def logical_corpus_digest(tables:Iterable[NormalizedCorpusTable])->str:
     pairs=sorted((table.table_id,table.normalization.logical_checksum) for table in tables)
+    return logical_index_digest(pairs)
+
+def logical_index_digest(pairs:Iterable[tuple[str,str]])->str:
+    """Apply the canonical M7A corpus digest to lightweight index pairs."""
+    pairs=sorted(tuple(pair) for pair in pairs)
     if len({pair[0] for pair in pairs})!=len(pairs):raise ValueError("duplicate table IDs in logical corpus")
     return _digest(pairs)
 
