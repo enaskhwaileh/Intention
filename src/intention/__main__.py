@@ -58,8 +58,8 @@ def main():
         print(json.dumps(exact_development_evaluate(args.model,Path(args.source_root),Path(args.artifact_root),args.device),indent=2)); return
     if args.command == "m7b-provisional-select":
         from intention.evaluation.m7b_full import provisional_select
-        if not args.artifact_root:raise SystemExit("--artifact-root is required")
-        print(json.dumps(provisional_select(Path(args.artifact_root)),indent=2)); return
+        if not args.artifact_root or not args.source_root:raise SystemExit("--artifact-root and --source-root are required")
+        print(json.dumps(provisional_select(Path(args.artifact_root),Path(args.source_root)),indent=2)); return
     if args.command == "acquire-wikitables-corpus":
         from intention.benchmarks.wikitables import acquire_archive
         print(json.dumps(acquire_archive(Path(args.data_root),network=args.network),indent=2)); return

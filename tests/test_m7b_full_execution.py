@@ -231,32 +231,95 @@ def test_source_hash_and_development_only_materialization(tmp_path,monkeypatch):
     queries.write_text("changed\n")
     with pytest.raises(ValueError,match="SHA-256"):full.load_development_sources(source,contract)
 
-def _evaluation(recall=.8,bpref=.7):
-    metrics={f"known_relevant_recall_at_{k}":{"all":recall if k==100 else recall*.99} for k in (5,10,20,50,100)}; metrics["bpref"]={"all":bpref}
-    return {"classification":"development_topical_retrieval","topic_count":30,"metrics":metrics}
+def _development_sources():
+    query_ids=full.load_bakeoff_contract()["split"]["development_ids"]
+    return {"queries":{query_id:f"query {query_id}" for query_id in query_ids},"qrels":{query_id:{f"t{query_id}-000":2} for query_id in query_ids},"query_sha256":"a"*64,"qrels_sha256":"b"*64,"canonical_qrel_judgments":3120,"holdout_qrels_materialized":False,"holdout":"locked_not_evaluated"}
 
-def _ranking():
-    return {"classification":"m7b_exact_development_rankings","searched_table_count":full.EXPECTED_TABLE_COUNT,"holdout_qrels_materialized":False,"query_ids":list(range(30)),"rankings":[[{"table_id":f"t{query}-{rank}"} for rank in range(100)] for query in range(30)]}
+def _write_development_artifacts(root,model,recall_marker=0):
+    contract=full.load_bakeoff_contract(); query_ids=contract["split"]["development_ids"]; sources=_development_sources()
+    model_root=root/model; model_root.mkdir(parents=True,exist_ok=True)
+    identity={"model_name":model,"dimension":2,"corpus":{"logical_digest":full.EXPECTED_CORPUS_DIGEST,"execution_order_id":full.EXECUTION_ORDER_ID,"full_table_id_digest":"c"*64},"serialization":{"id":"neural_table_evidence_v1","version":"1.1.0","hash":full.EXPECTED_SERIALIZATION_HASH}}
+    np.save(model_root/"development-query-vectors.npy",np.tile(np.array([[1,0]],dtype=np.float32),(30,1)),allow_pickle=False)
+    rows=[]
+    for query_id in query_ids:
+        ids=[f"t{query_id}-{rank:03d}" for rank in range(100)]
+        if recall_marker:ids[0]=f"irrelevant-{query_id}"
+        rows.append([{"rank":rank+1,"table_id":table_id,"score":float(100-rank)} for rank,table_id in enumerate(ids)])
+    ranking={"classification":"m7b_exact_development_rankings","schema_version":full.RANKING_SCHEMA_VERSION,"paper_result":False,"model":model,"split_version":contract["split"]["version"],"query_ids":query_ids,"query_sha256":sources["query_sha256"],"qrels_sha256":sources["qrels_sha256"],"canonical_qrel_judgments":sources["canonical_qrel_judgments"],"model_identity":identity,"corpus_logical_digest":identity["corpus"]["logical_digest"],"execution_order_id":identity["corpus"]["execution_order_id"],"full_table_id_digest":identity["corpus"]["full_table_id_digest"],"serialization_identity":identity["serialization"],"holdout":"locked_not_evaluated","holdout_qrels_materialized":False,"query_vector_dtype":"float32","query_vector_sha256":full._sha(model_root/"development-query-vectors.npy"),"model_load_seconds":1.0,"query_embedding_seconds":1.0,"rankings":rows,"searched_table_count":full.EXPECTED_TABLE_COUNT,"exact_search_seconds":1.0,"backend":"sharded_torch_matmul","compute_dtype":"float32","allow_tf32":False,"tie_policy":"score_descending_then_table_id_ascending"}
+    ranking_path=model_root/"exact-development-rankings.json"; ranking_path.write_text(json.dumps(ranking,sort_keys=True,indent=2)+"\n")
+    ranked={query_id:[item["table_id"] for item in rows[index]] for index,query_id in enumerate(query_ids)}
+    evaluation=full.evaluate_development_rankings(ranked,sources["qrels"],query_ids,contract)
+    evaluation=full._evaluation_artifact(model,evaluation,full._sha(ranking_path),sources,query_ids,contract)
+    (model_root/"development-evaluation.json").write_text(json.dumps(evaluation,sort_keys=True,indent=2)+"\n")
+    (model_root/"full-encode-report.json").write_text(json.dumps({"status":"complete"}))
+    validated={"model_root":model_root,"identity":identity,"validated_embedding_wall_seconds":1+recall_marker,"validated_physical_index_bytes":10+recall_marker}
+    return validated,sources
 
 def test_provisional_selection_blocks_until_all_three(tmp_path):
-    validator=lambda *_:{"validated_embedding_wall_seconds":1,"validated_physical_index_bytes":10}
-    assert full.provisional_select(tmp_path,validator)["status"]=="blocked"
+    sources=_development_sources(); loader=lambda *_:sources; validator=lambda *_:{}
+    assert full.provisional_select(tmp_path,tmp_path,validator,loader)["status"]=="blocked"
     for model in full.MODEL_ORDER[:2]:
-        root=tmp_path/model; root.mkdir(); (root/"full-encode-report.json").write_text(json.dumps({"status":"complete","embedding_wall_seconds":1,"physical_index_bytes":10})); (root/"exact-development-rankings.json").write_text(json.dumps(_ranking())); (root/"development-evaluation.json").write_text(json.dumps(_evaluation()))
-    assert full.provisional_select(tmp_path,validator)["status"]=="blocked" and full.MODEL_ORDER[2] in full.provisional_select(tmp_path,validator)["missing_or_failed_models"]
+        _write_development_artifacts(tmp_path,model)
+    validated={model:_write_development_artifacts(tmp_path,model)[0] for model in full.MODEL_ORDER[:2]}
+    result=full.provisional_select(tmp_path,tmp_path,lambda model,_:validated[model],loader)
+    assert result["status"]=="blocked" and full.MODEL_ORDER[2] in result["missing_or_failed_models"]
 
 def test_provisional_selection_reuses_frozen_selection_and_depth(tmp_path,monkeypatch):
-    for index,model in enumerate(full.MODEL_ORDER):
-        root=tmp_path/model; root.mkdir(); (root/"full-encode-report.json").write_text(json.dumps({"status":"complete","embedding_wall_seconds":index+1,"physical_index_bytes":10+index})); (root/"exact-development-rankings.json").write_text(json.dumps(_ranking())); (root/"development-evaluation.json").write_text(json.dumps(_evaluation(.8-index*.02,.7)))
+    validated={}
+    for index,model in enumerate(full.MODEL_ORDER):validated[model]=_write_development_artifacts(tmp_path,model,index)[0]
     calls=[]
     monkeypatch.setattr(full,"select_encoder",lambda results,eligible:(calls.append((results,eligible)) or {"status":"selected","winner":full.MODEL_ORDER[0],"rule":"test"}))
     monkeypatch.setattr(full,"select_candidate_depth",lambda curve:(calls.append(curve) or 20))
-    validated={model:{"validated_embedding_wall_seconds":100+index,"validated_physical_index_bytes":1000+index} for index,model in enumerate(full.MODEL_ORDER)}
-    result=full.provisional_select(tmp_path,lambda model,_:validated[model])
+    for index,model in enumerate(full.MODEL_ORDER):validated[model].update({"validated_embedding_wall_seconds":100+index,"validated_physical_index_bytes":1000+index})
+    result=full.provisional_select(tmp_path,tmp_path,lambda model,_:validated[model],lambda *_:_development_sources())
     assert result["status"]=="complete" and result["provisional_k"]==20 and len(calls)==2
     assert result["encoder_frozen"] is result["candidate_depth_frozen"] is False
     selection_rows=calls[0][0]
     assert [(row["embedding_wall_seconds"],row["physical_index_bytes"]) for row in selection_rows]==[(100,1000),(101,1001),(102,1002)]
+
+def test_provisional_selection_rejects_query_vector_tampering(tmp_path):
+    validated={}; sources=_development_sources()
+    for model in full.MODEL_ORDER:validated[model]=_write_development_artifacts(tmp_path,model)[0]
+    model=full.MODEL_ORDER[0]
+    np.save(tmp_path/model/"development-query-vectors.npy",np.tile(np.array([[0,1]],dtype=np.float32),(30,1)),allow_pickle=False)
+    result=full.provisional_select(tmp_path,tmp_path,lambda name,_:validated[name],lambda *_:sources)
+    assert result["status"]=="blocked" and model in result["missing_or_failed_models"]
+
+def test_provisional_selection_blocks_when_pinned_sources_are_unavailable(tmp_path):
+    result=full.provisional_select(tmp_path,tmp_path,lambda *_:None,lambda *_:(_ for _ in ()).throw(ValueError("source hash mismatch")))
+    assert result["status"]=="blocked" and result["winner"] is None and result["missing_or_failed_models"]==list(full.MODEL_ORDER)
+
+@pytest.mark.parametrize("mutation",[
+    "query_id","holdout_query_id","model","model_identity","query_sha","qrel_sha","rank","duplicate","score_order","tie_order","nonfinite","table_count","backend","tf32","evaluation_ranking_sha","evaluation_metric","evaluation_split","missing_metric","per_topic_id",
+])
+def test_provisional_selection_rejects_independent_artifact_tampering(tmp_path,mutation):
+    validated={}; sources=_development_sources()
+    for model in full.MODEL_ORDER:validated[model]=_write_development_artifacts(tmp_path,model)[0]
+    model=full.MODEL_ORDER[0]; root=tmp_path/model; ranking_path=root/"exact-development-rankings.json"; evaluation_path=root/"development-evaluation.json"
+    target=evaluation_path if mutation.startswith("evaluation_") or mutation in {"missing_metric","per_topic_id"} else ranking_path
+    payload=json.loads(target.read_text())
+    if mutation=="query_id":payload["query_ids"][0]=999
+    elif mutation=="holdout_query_id":payload["query_ids"][0]=full.load_bakeoff_contract()["split"]["holdout_ids"][0]
+    elif mutation=="model":payload["model"]="wrong-model"
+    elif mutation=="model_identity":payload["model_identity"]["dimension"]=3
+    elif mutation=="query_sha":payload["query_sha256"]="0"*64
+    elif mutation=="qrel_sha":payload["qrels_sha256"]="0"*64
+    elif mutation=="rank":payload["rankings"][0][0]["rank"]=2
+    elif mutation=="duplicate":payload["rankings"][0][1]["table_id"]=payload["rankings"][0][0]["table_id"]
+    elif mutation=="score_order":payload["rankings"][0][1]["score"]=1000
+    elif mutation=="tie_order":payload["rankings"][0][0].update({"table_id":"z","score":99}); payload["rankings"][0][1].update({"table_id":"a","score":99})
+    elif mutation=="nonfinite":payload["rankings"][0][0]["score"]=float("nan")
+    elif mutation=="table_count":payload["searched_table_count"]-=1
+    elif mutation=="backend":payload["backend"]="ann"
+    elif mutation=="tf32":payload["allow_tf32"]=True
+    elif mutation=="evaluation_ranking_sha":payload["exact_ranking_sha256"]="0"*64
+    elif mutation=="evaluation_metric":payload["metrics"]["bpref"]["all"]=0.123
+    elif mutation=="evaluation_split":payload["split_version"]="wrong"
+    elif mutation=="missing_metric":del payload["metrics"]["mrr_at_10"]
+    elif mutation=="per_topic_id":payload["per_topic"]["999"]=payload["per_topic"].pop(next(iter(payload["per_topic"])))
+    target.write_text(json.dumps(payload))
+    result=full.provisional_select(tmp_path,tmp_path,lambda name,_:validated[name],lambda *_:sources)
+    assert result["status"]=="blocked" and result["winner"] is None and model in result["missing_or_failed_models"]
 
 def test_harness_reuses_existing_evaluator_and_has_no_external_or_qdrant_path():
     from intention.evaluation.topical_bakeoff import evaluate_development_rankings
