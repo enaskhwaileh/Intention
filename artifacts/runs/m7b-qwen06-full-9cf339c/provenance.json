@@ -1,0 +1,63 @@
+{
+  "classification": "m7b_validated_full_corpus_encoding_provenance",
+  "paper_result": false,
+  "stage": "M7B development-only encoder bake-off",
+  "validation": {
+    "validator": "intention.evaluation.m7b_full.validate_full_index",
+    "repository_commit": "9cf339ce483b8fe64eefe925916ae6161da380ee",
+    "status": "passed",
+    "expected_table_count": 1652771,
+    "expected_shard_count": 256,
+    "validated_shard_count": 256,
+    "validated_table_count": 1652771,
+    "validated_embedding_inference_seconds": 27913.97077783197,
+    "validated_embedding_wall_seconds": 27913.97077783197,
+    "validated_physical_index_bytes": 6794397477
+  },
+  "model": {
+    "name": "Qwen3-Embedding-0.6B",
+    "identifier": "Qwen/Qwen3-Embedding-0.6B",
+    "revision": "97b0c614be4d77ee51c0cef4e5f07c00f9eb65b3",
+    "tokenizer_revision": "97b0c614be4d77ee51c0cef4e5f07c00f9eb65b3",
+    "dimension": 1024,
+    "inference_precision": "bfloat16",
+    "persisted_dtype": "float32",
+    "pooling": {
+      "expected": "lasttoken",
+      "observed": {
+        "lasttoken": true,
+        "mean": false
+      }
+    },
+    "quantization": false,
+    "trust_remote_code": false
+  },
+  "serialization": {
+    "id": "neural_table_evidence_v1",
+    "version": "1.1.0",
+    "digest": "1b37ffbfb3b0a47ea053f315d064427a0c61bdcac2ec8413bdd593ee46507290"
+  },
+  "corpus": {
+    "table_count": 1652771,
+    "logical_digest": "27b811722376d38aa2b37986dc3ff713869e7ae76fa5c399929905b8b31c589c",
+    "partition_count": 256,
+    "execution_order_id": "normalized_shard_then_table_id_v1",
+    "full_table_id_digest": "b7119e05a5b5bafd6db35565a11e0d0e7431c5800b311028fd5fa40177e4de34"
+  },
+  "runtime_metadata": {
+    "full_encode_report_status": "complete",
+    "full_encode_report_sha256": "5dcf4c780877370171bab66eade002684307c083d20baca87f7ee6a0af52030a",
+    "identity_sha256": "e680b15e6052c2f872d9e51c6444bf976869d95f8021e176bba6262b6f51dd20",
+    "aggregate_shard_manifest_sha256": "9e7bd560f50fe872ad05a0da359a6111762adefb6bd049e246f10658d3d8e220",
+    "aggregate_shard_manifest_digest_rule": "SHA-256 of UTF-8 lines formatted as three-digit shard ID, one ASCII space, manifest SHA-256, newline; shards ordered 000..255",
+    "oom_events": []
+  },
+  "scientific_state": {
+    "development_evaluation_performed": false,
+    "encoder_frozen": false,
+    "candidate_depth_frozen": false,
+    "holdout_evaluated": false,
+    "m7c_started": false,
+    "external_api_spend_usd": 0
+  }
+}
