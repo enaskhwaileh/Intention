@@ -14,11 +14,22 @@ shard values, every logical checksum, and the canonical M7A corpus digest. It
 uses the same canonical M7A digest implementation rather than defining another
 corpus hash.
 
+Preflight also records, for each source shard `0` through `255`, the expected
+table count and the digest of its ascending table IDs. After a physical Parquet
+shard is loaded, its non-empty, unique, canonically ordered table IDs must match
+that index-derived count and digest before serialization or embedding inference.
+Any missing, extra, duplicate, reordered, or substituted ID fails closed with
+`physical_source_shard_identity_mismatch`; the records are not repaired or sent
+to the encoder.
+
 Execution order is `normalized_shard_then_table_id_v1`: source shards 0 through
 255, with canonical table IDs sorted ascending inside each shard. One SHA-256
 is accumulated over each ordered UTF-8 table ID followed by a newline. Every
 model identity and shard manifest binds that execution-order identity, full
-table-ID digest, corpus digest, and frozen serialization identity.
+table-ID digest, corpus digest, frozen serialization identity, and the
+index-derived count and ordered table-ID digest for that source shard. Resume
+validation therefore requires the lightweight index, physical normalized
+source, and persisted exact-index shard to describe the same population.
 
 Every record passes through `runtime_table_from_normalized_record()` and
 `NeuralTableSerializer`. Structural schema checks reject benchmark/action/qrel
@@ -46,6 +57,14 @@ quantization, dropped records, or skipped records.
 `physical_index_bytes` is the actual byte size of all 256 `vectors.npy` files
 plus all 256 `table_ids.txt` mappings. Reports, manifests, query vectors, and
 logs are excluded from this winner-rule tie-break.
+
+Full-index validation independently recomputes the embedding tie-break as the
+sum of `embedding_inference_seconds` across all 256 validated shard manifests,
+and recomputes the physical-size tie-break from the actual `vectors.npy` and
+`table_ids.txt` file sizes. It cross-checks both values against
+`full-encode-report.json` (tight numeric tolerance for time and exact equality
+for bytes). Provisional selection consumes only these validated values, never
+the report fields directly.
 
 ## Exact development retrieval
 

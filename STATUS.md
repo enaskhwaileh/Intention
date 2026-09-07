@@ -130,7 +130,11 @@
 ## Current milestone
 
 Current substage: the corrected M7B 10K pilot gate is merged. The resumable
-full-corpus execution harness is implemented and awaits independent review.
+full-corpus execution harness is implemented and integrity-hardened after
+independent review. Per-shard physical source populations must match the
+verified lightweight index before GPU inference, and winner tie-break inputs
+are recomputed from validated shard manifests and files rather than trusted
+from the summary report. The repair awaits review.
 Metadata-only preflight verifies the complete normalized index, canonical M7A
 digest, deterministic execution order, serialization identity, and disk gate.
 Full-corpus encoding has not run, no full vector index exists, development
@@ -171,7 +175,11 @@ M7B full-execution harness regression: 23 passed. An expanded M7A/M7B targeted
 integration run passed 78 tests. Metadata-only real preflight
 verified 1,652,771 tables, 256 shards, logical digest `27b81172...589c`, and
 execution table-ID digest `b7119e05...de34`; it loaded no embedding model.
-Current harness-branch full deterministic suite: 377 passed locally.
+Integrity-hardening regression: 29 M7B harness tests passed; 47 directly
+affected corpus/acquisition tests passed. The final deterministic suite passed
+383 tests. Metadata-only real preflight reconfirmed the same corpus identities,
+produced 256 per-shard count/digest expectations, passed the 100 GiB disk gate,
+and detected no GPU in this shell; it performed no model loading or inference.
 
 ## Artifacts
 
