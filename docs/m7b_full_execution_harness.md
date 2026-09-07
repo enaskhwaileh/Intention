@@ -2,8 +2,11 @@
 
 This is an engineering execution layer for the frozen M7B development-only
 topical encoder bakeoff. It is not a new scientific protocol and produces no
-paper result by itself. The corrected 10K A100 pilot gate is merged; full-corpus
-encoding and development effectiveness measurement have not run.
+paper result by itself. The corrected 10K A100 pilot gate is merged.
+Qwen3-Embedding-0.6B full-corpus encoding has completed and passed the frozen
+post-run validator; its lightweight provenance checkpoint is tracked at
+`artifacts/runs/m7b-qwen06-full-9cf339c/provenance.json`. The other eligible
+full-corpus runs and all development effectiveness measurements remain pending.
 
 ## Identity and ordering
 

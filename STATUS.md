@@ -126,20 +126,22 @@
   external ceiling policy, and post-freeze hybrid boundary.
 - M7B PR #19 is merged with corrected semantic serialization and real 10K A100
   feasibility pilots for all three pinned local candidates.
+- Qwen3-Embedding-0.6B guarded full-corpus encoding completed with all 256
+  shards persisted. Post-run validation through the frozen M7B full-index
+  validator accepted all 1,652,771 rows, corpus/index identities, vector
+  checks, and report provenance. Lightweight reproducibility metadata is
+  tracked under `artifacts/runs/m7b-qwen06-full-9cf339c/`; the large runtime
+  artifacts remain outside Git. This is development-only execution evidence,
+  not a paper result.
 
 ## Current milestone
 
-Current substage: the corrected M7B 10K pilot gate is merged. The resumable
-full-corpus execution harness is implemented and integrity-hardened after
-independent review. Per-shard physical source populations must match the
-verified lightweight index before GPU inference, and winner tie-break inputs
-are recomputed from validated shard manifests and files rather than trusted
-from the summary report. The repair awaits review.
-Metadata-only preflight verifies the complete normalized index, canonical M7A
-digest, deterministic execution order, serialization identity, and disk gate.
-Full-corpus encoding has not run, no full vector index exists, development
-effectiveness has not been measured, encoder and K remain unselected, external
-API spend is USD 0, holdout remains locked, and M7C has not started.
+Current substage: M7B full-corpus execution and post-run validation are complete
+for Qwen3-Embedding-0.6B only. This is development-only execution evidence, not
+a paper result. Development effectiveness has not been evaluated, the other
+two eligible local encoder full-corpus runs are not complete, no encoder or K
+has been selected, external API spend remains USD 0, the holdout remains
+locked, and M7C has not started.
 
 ## Commands and tests
 
@@ -180,10 +182,16 @@ affected corpus/acquisition tests passed. The final deterministic suite passed
 383 tests. Metadata-only real preflight reconfirmed the same corpus identities,
 produced 256 per-shard count/digest expectations, passed the 100 GiB disk gate,
 and detected no GPU in this shell; it performed no model loading or inference.
+Post-execution `validate_full_index()` accepted the Qwen3-Embedding-0.6B index:
+256 shards and 1,652,771 rows, with validated embedding inference time
+27,913.97077783197 seconds and validated physical exact-index size
+6,794,397,477 bytes. No development retrieval or evaluation was run.
 
 ## Artifacts
 
-No paper results. Smoke output is not an experiment run or metric claim.
+No paper results. Smoke output is not an experiment run or metric claim. The
+tracked Qwen full-corpus provenance checkpoint is development-only execution
+evidence; embeddings and other large runtime artifacts remain outside Git.
 
 ## Blockers
 
@@ -200,7 +208,7 @@ agreement, throughput, and full orchestration remain pending.
 
 ## Next action
 
-Review the M7B full-corpus execution harness. Only after approval, run guarded
-full-corpus encoding and exact development evaluation for all three eligible
-local candidates. Do not freeze an encoder/K or start M7C before that review
-and execution.
+Run guarded full-corpus encoding for the remaining two eligible local
+candidates. After all three indexes validate, run exact development evaluation
+under the frozen M7B contract. Do not freeze an encoder/K or start M7C before
+those executions and evaluations complete.
