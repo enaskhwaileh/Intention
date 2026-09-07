@@ -85,9 +85,11 @@ def inspect_corpus_identity(data_root:Path,index_reader=None,normalized_root:Pat
     if logical!=expected_digest:raise ValueError("logical corpus digest mismatch")
     grouped={shard:[] for shard in range(partition_count)}
     for row in records:grouped[row["shard"]].append(row["table_id"])
-    ordered=[]
-    for shard in range(partition_count):ordered.extend(sorted(grouped[shard]))
-    return {"normalized_root":str(root),"count":len(ordered),"logical_digest":logical,"partition_count":partition_count,"execution_order_id":EXECUTION_ORDER_ID,"full_table_id_digest":_ids_digest(ordered)}
+    ordered=[]; shard_identities={}
+    for shard in range(partition_count):
+        shard_ids=sorted(grouped[shard]); ordered.extend(shard_ids)
+        shard_identities[str(shard)]={"expected_table_count":len(shard_ids),"expected_ordered_table_id_digest":_ids_digest(shard_ids)}
+    return {"normalized_root":str(root),"count":len(ordered),"logical_digest":logical,"partition_count":partition_count,"execution_order_id":EXECUTION_ORDER_ID,"full_table_id_digest":_ids_digest(ordered),"shards":shard_identities}
 
 def _version(distribution):
     try:return importlib.metadata.version(distribution)
@@ -128,6 +130,9 @@ def _vector_checks(vectors,dimension:int,tolerance=.01)->dict:
 def _expected_shard_identity(model_name:str,source_shard:int,corpus:dict,batch_size:int|None)->dict:
     operational=load_full_execution_contract(); registry=load_embedding_registry(); record=registry.models[model_name].record; policy=load_neural_serialization_policy()
     result={"execution_id":operational["execution_id"],"corpus_digest":corpus["logical_digest"],"execution_order_id":corpus["execution_order_id"],"full_table_id_digest":corpus["full_table_id_digest"],"source_shard":source_shard,"model":record["model"],"model_revision":record["revision"],"tokenizer_revision":record["tokenizer_revision"],"dimension":max(record["dimensions"]),"dtype":"float32","serialization_id":policy.serialization_id,"serialization_version":policy.version,"serialization_hash":policy.digest}
+    shard_expectation=corpus.get("shards",{}).get(str(source_shard))
+    if not isinstance(shard_expectation,dict):raise ValueError(f"missing verified index identity for source shard {source_shard}")
+    result.update({"table_count":shard_expectation.get("expected_table_count"),"ordered_table_id_digest":shard_expectation.get("expected_ordered_table_id_digest")})
     if batch_size is not None:result["selected_batch_size"]=batch_size
     return result
 
@@ -202,6 +207,17 @@ def _load_source_shard(normalized_root:Path,shard:int)->list[dict]:
     if not path.is_dir():raise FileNotFoundError(f"normalized source shard missing: {shard}")
     return sorted(ds.dataset(str(path),format="parquet").to_table().to_pylist(),key=lambda row:row["table_id"])
 
+def _verify_physical_source_shard(records:Iterable[dict],source_shard:int,corpus:dict)->list[dict]:
+    records=list(records); expectation=corpus.get("shards",{}).get(str(source_shard),{})
+    expected_count=expectation.get("expected_table_count"); expected_digest=expectation.get("expected_ordered_table_id_digest")
+    raw_ids=[record.get("table_id") if isinstance(record,dict) else None for record in records]
+    valid_ids=all(isinstance(table_id,str) and bool(table_id) for table_id in raw_ids)
+    unique=valid_ids and len(raw_ids)==len(set(raw_ids)); canonical=valid_ids and raw_ids==sorted(raw_ids)
+    actual_digest=_ids_digest(raw_ids) if valid_ids else None
+    if not (isinstance(expected_count,int) and isinstance(expected_digest,str) and len(expected_digest)==64 and len(records)==expected_count and unique and canonical and actual_digest==expected_digest):
+        raise RuntimeError(json.dumps({"status":"failed","code":"physical_source_shard_identity_mismatch","source_shard":source_shard,"expected_table_count":expected_count,"actual_table_count":len(records),"expected_ordered_table_id_digest":expected_digest,"actual_ordered_table_id_digest":actual_digest},sort_keys=True))
+    return records
+
 def serialize_normalized_records(records:Iterable[dict],serializer=None)->tuple[list[str],list[str]]:
     serializer=serializer or NeuralTableSerializer(); records=list(records)
     if any(set(record)&FORBIDDEN_SOURCE_FIELDS for record in records):raise ValueError("normalized source contains structurally forbidden benchmark metadata")
@@ -247,6 +263,7 @@ def full_encode(model_name:str,data_root:Path,artifact_root:Path,device="cuda",c
         if shard_dir.exists():
             manifest=validate_complete_shard(shard_dir,expected); selected_batch=manifest["selected_batch_size"]; manifests.append(manifest); continue
         shard_started=perf_counter(); records=(shard_reader or _load_source_shard)(normalized_root,shard)
+        records=_verify_physical_source_shard(records,shard,corpus)
         serialization_started=perf_counter(); table_ids,texts=serialize_normalized_records(records,serializer)
         serialization_seconds=perf_counter()-serialization_started
         formatted=[record["document_instruction"].replace("{content}",text) if record["document_instruction"] else text for text in texts]
@@ -269,15 +286,20 @@ def validate_full_index(model_name:str,artifact_root:Path)->dict:
     if not identity_path.is_file() or not report_path.is_file():raise FileNotFoundError("complete full-corpus encoding is unavailable")
     identity=json.loads(identity_path.read_text()); report=json.loads(report_path.read_text())
     if report.get("status")!="complete" or report.get("model")!=model_name:raise ValueError("full encoding report is incomplete")
-    corpus=identity.get("corpus",{}); manifests=[]; digest=sha256(); observed=set()
+    corpus=identity.get("corpus",{}); manifests=[]; digest=sha256(); observed=set(); physical_index_bytes=0
     for shard in range(256):
         shard_root=model_root/"shards"/f"shard-{shard:03d}"; manifests.append(validate_complete_shard(shard_root,_expected_shard_identity(model_name,shard,corpus,None)))
+        physical_index_bytes+=(shard_root/"vectors.npy").stat().st_size+(shard_root/"table_ids.txt").stat().st_size
         for table_id in shard_root.joinpath("table_ids.txt").read_text().splitlines():
             if table_id in observed:raise ValueError("duplicate table ID across exact-index shards")
             observed.add(table_id); digest.update(table_id.encode("utf-8")+b"\n")
     if sum(item["table_count"] for item in manifests)!=EXPECTED_TABLE_COUNT:raise ValueError("validated full index table count mismatch")
     if digest.hexdigest()!=corpus.get("full_table_id_digest"):raise ValueError("full exact-index execution-order digest mismatch")
-    return {"model_root":model_root,"identity":identity,"report":report,"manifests":manifests}
+    embedding_wall_seconds=sum(item["embedding_inference_seconds"] for item in manifests)
+    reported_seconds=report.get("embedding_wall_seconds"); reported_bytes=report.get("physical_index_bytes")
+    if not _finite_nonnegative(reported_seconds) or not math.isclose(reported_seconds,embedding_wall_seconds,rel_tol=1e-12,abs_tol=1e-12):raise ValueError("full encoding report embedding wall time does not match validated shard manifests")
+    if not isinstance(reported_bytes,int) or isinstance(reported_bytes,bool) or reported_bytes!=physical_index_bytes:raise ValueError("full encoding report physical index bytes do not match validated shard files")
+    return {"model_root":model_root,"identity":identity,"report":report,"manifests":manifests,"validated_embedding_wall_seconds":embedding_wall_seconds,"validated_physical_index_bytes":physical_index_bytes}
 
 def load_development_sources(source_root:Path,contract=None)->dict:
     contract=contract or load_bakeoff_contract(); source=load_source_contract(); queries_path=Path(source_root)/source["resources"]["queries"]["path"]; qrels_path=Path(source_root)/source["resources"]["qrels"]["path"]
@@ -364,13 +386,13 @@ def provisional_select(artifact_root:Path,index_validator=validate_full_index)->
     for model_name in MODEL_ORDER:
         root=Path(artifact_root)/model_name; encode_path=root/"full-encode-report.json"; ranking_path=root/"exact-development-rankings.json"; evaluation_path=root/"development-evaluation.json"
         if not encode_path.is_file() or not ranking_path.is_file() or not evaluation_path.is_file():missing.append(model_name); continue
-        try:index_validator(model_name,Path(artifact_root))
+        try:validated=index_validator(model_name,Path(artifact_root))
         except Exception:missing.append(model_name); continue
         encode=json.loads(encode_path.read_text()); ranking=json.loads(ranking_path.read_text()); evaluation=json.loads(evaluation_path.read_text())
         ranking_rows=ranking.get("rankings",[])
         rankings_valid=ranking.get("classification")=="m7b_exact_development_rankings" and ranking.get("searched_table_count")==EXPECTED_TABLE_COUNT and ranking.get("holdout_qrels_materialized") is False and len(ranking.get("query_ids",[]))==30 and len(ranking_rows)==30 and all(len(row)==100 and len({item["table_id"] for item in row})==100 for row in ranking_rows)
         if encode.get("status")!="complete" or evaluation.get("classification")!="development_topical_retrieval" or evaluation.get("topic_count")!=30 or not rankings_valid:missing.append(model_name); continue
-        metrics=evaluation["metrics"]; results.append({"model":model_name,"status":"complete","known_relevant_recall_at_100":metrics["known_relevant_recall_at_100"]["all"],"bpref":metrics["bpref"]["all"],"embedding_wall_seconds":encode["embedding_wall_seconds"],"physical_index_bytes":encode["physical_index_bytes"]}); evaluations[model_name]=evaluation
+        metrics=evaluation["metrics"]; results.append({"model":model_name,"status":"complete","known_relevant_recall_at_100":metrics["known_relevant_recall_at_100"]["all"],"bpref":metrics["bpref"]["all"],"embedding_wall_seconds":validated["validated_embedding_wall_seconds"],"physical_index_bytes":validated["validated_physical_index_bytes"]}); evaluations[model_name]=evaluation
     if missing:return {"classification":"provisional_development_selection","paper_result":False,"status":"blocked","winner":None,"missing_or_failed_models":missing,"encoder_frozen":False,"candidate_depth_frozen":False}
     selected=select_encoder(results,set(MODEL_ORDER)); winner=selected["winner"]; curve={k:evaluations[winner]["metrics"][f"known_relevant_recall_at_{k}"]["all"] for k in (5,10,20,50,100)}; depth=select_candidate_depth(curve)
     return {"classification":"provisional_development_selection","paper_result":False,"status":"complete","selection":selected,"provisional_k":depth,"encoder_frozen":False,"candidate_depth_frozen":False,"external_api_spend_usd":0,"holdout":"locked_not_evaluated"}

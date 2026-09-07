@@ -44,7 +44,10 @@ def _unit_rows():
 
 def _corpus():
     rows=_unit_rows()
-    return {"logical_digest":logical_index_digest((r["table_id"],r["logical_checksum"]) for r in rows),"execution_order_id":full.EXECUTION_ORDER_ID,"full_table_id_digest":full._ids_digest(["a","b","c"])}
+    return {"logical_digest":logical_index_digest((r["table_id"],r["logical_checksum"]) for r in rows),"execution_order_id":full.EXECUTION_ORDER_ID,"full_table_id_digest":full._ids_digest(["a","b","c"]),"shards":{"0":{"expected_table_count":2,"expected_ordered_table_id_digest":full._ids_digest(["a","b"])},"1":{"expected_table_count":1,"expected_ordered_table_id_digest":full._ids_digest(["c"])}}}
+
+def _tiny_corpus(ids,normalized_root="normalized"):
+    return {"normalized_root":str(normalized_root),"count":len(ids),"logical_digest":full.EXPECTED_CORPUS_DIGEST,"partition_count":len(ids),"execution_order_id":full.EXECUTION_ORDER_ID,"full_table_id_digest":full._ids_digest(ids),"shards":{str(shard):{"expected_table_count":1,"expected_ordered_table_id_digest":full._ids_digest([table_id])} for shard,table_id in enumerate(ids)}}
 
 def _identity(dimension=2):
     return {"execution_id":"m7b-full-corpus-v1","corpus_digest":"d"*64,"execution_order_id":full.EXECUTION_ORDER_ID,"full_table_id_digest":"e"*64,"source_shard":0,"model":"fake/model","model_revision":"a"*40,"tokenizer_revision":"a"*40,"dimension":dimension,"dtype":"float32","serialization_id":"neural_table_evidence_v1","serialization_version":"1.1.0","serialization_hash":full.EXPECTED_SERIALIZATION_HASH,"selected_batch_size":4}
@@ -70,6 +73,9 @@ def test_index_preflight_reuses_m7a_digest_and_shard_order(tmp_path):
     result=full.inspect_corpus_identity(tmp_path,index_reader=lambda _:rows,normalized_root=root,expected_count=3,expected_digest=digest,partition_count=2)
     assert result["count"]==3 and result["logical_digest"]==digest
     assert result["full_table_id_digest"]==full._ids_digest(["a","b","c"])
+    assert result["shards"]=={"0":{"expected_table_count":2,"expected_ordered_table_id_digest":full._ids_digest(["a","b"])},"1":{"expected_table_count":1,"expected_ordered_table_id_digest":full._ids_digest(["c"])}}
+    shuffled=full.inspect_corpus_identity(tmp_path,index_reader=lambda _:list(reversed(rows)),normalized_root=root,expected_count=3,expected_digest=digest,partition_count=2)
+    assert shuffled["shards"]==result["shards"]
     with pytest.raises(ValueError,match="duplicate"):full.inspect_corpus_identity(tmp_path,index_reader=lambda _:[rows[0],rows[0],rows[2]],normalized_root=root,expected_count=3,expected_digest=digest,partition_count=2)
 
 def test_index_preflight_requires_checksums_and_all_declared_shards(tmp_path):
@@ -96,7 +102,7 @@ def test_confirmation_gate_precedes_preflight_and_model_loading(tmp_path):
 
 def test_full_encode_orchestration_and_resume_use_tiny_mock_shards(tmp_path,monkeypatch):
     model_name="Qwen3-Embedding-0.6B"; registry=full.load_embedding_registry(); record=registry.models[model_name].record; ids=[f"t{shard:03d}" for shard in range(256)]
-    corpus={"normalized_root":str(tmp_path/"normalized"),"count":256,"logical_digest":full.EXPECTED_CORPUS_DIGEST,"partition_count":256,"execution_order_id":full.EXECUTION_ORDER_ID,"full_table_id_digest":full._ids_digest(ids)}
+    corpus=_tiny_corpus(ids,tmp_path/"normalized")
     preflight=lambda *_:{"storage":{"passed":True},"corpus":corpus,"serialization":{"id":"neural_table_evidence_v1","version":"1.1.0","hash":full.EXPECTED_SERIALIZATION_HASH}}
     class Model:
         tokenizer=lambda self,batch,**_:{"input_ids":[[1] for _ in batch]}
@@ -114,6 +120,21 @@ def test_full_encode_orchestration_and_resume_use_tiny_mock_shards(tmp_path,monk
     second=full.full_encode(model_name,tmp_path,tmp_path/"artifacts",confirm_full_corpus=True,preflight_fn=preflight,shard_reader=lambda *_:(_ for _ in ()).throw(AssertionError("resume must skip")))
     assert second["status"]=="complete" and model.calls==256
 
+@pytest.mark.parametrize("ids",[[],["t000","extra"],["wrong"],["t000","t000"]],ids=["missing","extra","wrong-id","duplicate"])
+def test_physical_source_shard_identity_mismatch_precedes_encoding(tmp_path,monkeypatch,ids):
+    model_name="Qwen3-Embedding-0.6B"; record=full.load_embedding_registry().models[model_name].record; expected=[f"t{shard:03d}" for shard in range(256)]; corpus=_tiny_corpus(expected,tmp_path/"normalized")
+    preflight=lambda *_:{"storage":{"passed":True},"corpus":corpus,"serialization":{"id":"neural_table_evidence_v1","version":"1.1.0","hash":full.EXPECTED_SERIALIZATION_HASH}}
+    class Model:
+        calls=0
+        tokenizer=lambda self,batch,**_:{"input_ids":[[1] for _ in batch]}
+        def encode(self,*_,**__):self.calls+=1; raise AssertionError("encoder must not be called")
+    model=Model(); monkeypatch.setattr(full,"_load_runtime_model",lambda *_:(model,record,_FakeTorch,0.0,{}))
+    records=[{**_normalized_record(),"table_id":table_id} for table_id in ids]
+    with pytest.raises(RuntimeError,match='"code": "physical_source_shard_identity_mismatch"') as error:
+        full.full_encode(model_name,tmp_path,tmp_path/"artifacts",confirm_full_corpus=True,preflight_fn=preflight,shard_reader=lambda _,shard:records if shard==0 else [])
+    payload=json.loads(str(error.value)); assert payload["source_shard"]==0 and payload["expected_table_count"]==1 and payload["actual_table_count"]==len(ids)
+    assert model.calls==0
+
 def test_float32_atomic_shard_and_exact_resume(tmp_path):
     vectors=np.array([[1,0],[0,1]],dtype=np.float32); identity=_identity(); root=tmp_path/"shard-000"
     first=full.promote_complete_shard(root,["a","b"],vectors,identity,.2,.3); second=full.promote_complete_shard(root,["a","b"],vectors,identity,.2,.3)
@@ -127,6 +148,11 @@ def test_resume_rejects_checksum_model_and_serialization_mismatch(tmp_path):
     root=tmp_path/"other"; full.promote_complete_shard(root,["a"],np.array([[1,0]],np.float32),_identity(),.1,.2)
     with pytest.raises(ValueError,match="identity"):full.validate_complete_shard(root,{**_identity(),"model_revision":"b"*40})
     with pytest.raises(ValueError,match="identity"):full.validate_complete_shard(root,{**_identity(),"serialization_hash":"c"*64})
+
+def test_resume_rejects_population_different_from_verified_index(tmp_path):
+    root=tmp_path/"shard-000"; full.promote_complete_shard(root,["a"],np.array([[1,0]],np.float32),_identity(),.1,.2)
+    expected={**_identity(),"table_count":1,"ordered_table_id_digest":full._ids_digest(["different"])}
+    with pytest.raises(ValueError,match="identity"):full.validate_complete_shard(root,expected)
 
 @pytest.mark.parametrize("bad",[
     np.array([[1,0]],dtype=np.float64),
@@ -168,6 +194,31 @@ def test_exact_top_100_is_unique_and_timeout_fails_closed(monkeypatch):
     ticks=iter([0,2,2]); monkeypatch.setattr(full,"perf_counter",lambda:next(ticks))
     with pytest.raises(TimeoutError):full.exact_search_shards(np.array([[1,0]],np.float32),[(["a"],np.array([[1,0]],np.float32))],top_k=1,maximum_seconds=1,torch_module=_FakeTorch)
 
+def _write_validated_full_index(tmp_path,monkeypatch):
+    model_name=full.MODEL_ORDER[0]; ids=[f"t{shard:03d}" for shard in range(256)]; corpus=_tiny_corpus(ids)
+    model_root=tmp_path/model_name; model_root.mkdir(parents=True)
+    identity={"corpus":corpus}; (model_root/"identity.json").write_text(json.dumps(identity))
+    seconds=0.0; physical_bytes=0
+    for shard,table_id in enumerate(ids):
+        expected=full._expected_shard_identity(model_name,shard,corpus,4)
+        manifest=full.promote_complete_shard(model_root/"shards"/f"shard-{shard:03d}",[table_id],np.pad(np.array([[1]],np.float32),((0,0),(0,1023))),expected,shard/1000,.1)
+        seconds+=manifest["embedding_inference_seconds"]
+        physical_bytes+=(model_root/"shards"/f"shard-{shard:03d}"/"vectors.npy").stat().st_size+(model_root/"shards"/f"shard-{shard:03d}"/"table_ids.txt").stat().st_size
+    report={"status":"complete","model":model_name,"embedding_wall_seconds":seconds,"physical_index_bytes":physical_bytes}
+    report_path=model_root/"full-encode-report.json"; report_path.write_text(json.dumps(report))
+    monkeypatch.setattr(full,"EXPECTED_TABLE_COUNT",256)
+    return model_name,report_path,seconds,physical_bytes
+
+def test_full_index_recomputes_and_cross_checks_tie_break_values(tmp_path,monkeypatch):
+    model_name,report_path,seconds,physical_bytes=_write_validated_full_index(tmp_path,monkeypatch)
+    validated=full.validate_full_index(model_name,tmp_path)
+    assert validated["validated_embedding_wall_seconds"]==seconds
+    assert validated["validated_physical_index_bytes"]==physical_bytes
+    report=json.loads(report_path.read_text()); report["embedding_wall_seconds"]+=.001; report_path.write_text(json.dumps(report))
+    with pytest.raises(ValueError,match="embedding wall time"):full.validate_full_index(model_name,tmp_path)
+    report["embedding_wall_seconds"]=seconds; report["physical_index_bytes"]+=1; report_path.write_text(json.dumps(report))
+    with pytest.raises(ValueError,match="physical index bytes"):full.validate_full_index(model_name,tmp_path)
+
 def test_source_hash_and_development_only_materialization(tmp_path,monkeypatch):
     source=tmp_path/"source"; (source/"data").mkdir(parents=True); queries=source/"data/queries.txt"; qrels=source/"data/qrels.txt"
     queries.write_text("1 development query\n2 secret holdout query\n"); qrels.write_text("1 0 table-dev 2\n2 this holdout-content-is-never-materialized\n")
@@ -188,7 +239,7 @@ def _ranking():
     return {"classification":"m7b_exact_development_rankings","searched_table_count":full.EXPECTED_TABLE_COUNT,"holdout_qrels_materialized":False,"query_ids":list(range(30)),"rankings":[[{"table_id":f"t{query}-{rank}"} for rank in range(100)] for query in range(30)]}
 
 def test_provisional_selection_blocks_until_all_three(tmp_path):
-    validator=lambda *_:{}
+    validator=lambda *_:{"validated_embedding_wall_seconds":1,"validated_physical_index_bytes":10}
     assert full.provisional_select(tmp_path,validator)["status"]=="blocked"
     for model in full.MODEL_ORDER[:2]:
         root=tmp_path/model; root.mkdir(); (root/"full-encode-report.json").write_text(json.dumps({"status":"complete","embedding_wall_seconds":1,"physical_index_bytes":10})); (root/"exact-development-rankings.json").write_text(json.dumps(_ranking())); (root/"development-evaluation.json").write_text(json.dumps(_evaluation()))
@@ -200,9 +251,12 @@ def test_provisional_selection_reuses_frozen_selection_and_depth(tmp_path,monkey
     calls=[]
     monkeypatch.setattr(full,"select_encoder",lambda results,eligible:(calls.append((results,eligible)) or {"status":"selected","winner":full.MODEL_ORDER[0],"rule":"test"}))
     monkeypatch.setattr(full,"select_candidate_depth",lambda curve:(calls.append(curve) or 20))
-    result=full.provisional_select(tmp_path,lambda *_:{})
+    validated={model:{"validated_embedding_wall_seconds":100+index,"validated_physical_index_bytes":1000+index} for index,model in enumerate(full.MODEL_ORDER)}
+    result=full.provisional_select(tmp_path,lambda model,_:validated[model])
     assert result["status"]=="complete" and result["provisional_k"]==20 and len(calls)==2
     assert result["encoder_frozen"] is result["candidate_depth_frozen"] is False
+    selection_rows=calls[0][0]
+    assert [(row["embedding_wall_seconds"],row["physical_index_bytes"]) for row in selection_rows]==[(100,1000),(101,1001),(102,1002)]
 
 def test_harness_reuses_existing_evaluator_and_has_no_external_or_qdrant_path():
     from intention.evaluation.topical_bakeoff import evaluate_development_rankings
