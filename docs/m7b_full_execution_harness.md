@@ -116,8 +116,18 @@ After all three development evaluations validate:
 
 ```bash
 PYTHONPATH=src python -m intention m7b-provisional-select \
-  --artifact-root <ARTIFACT_ROOT>
+  --artifact-root <ARTIFACT_ROOT> \
+  --source-root <PINNED_WWW2018_REPO>
 ```
+
+Provisional selection fails closed unless all three candidates have validated
+full indexes, schema-valid exact top-100 rankings, and development evaluations
+bound to those rankings. It reloads the checksum-pinned development queries and
+qrels, validates the query-vector checksum and ranking semantics, recomputes the
+authoritative evaluation from the rankings and development-only qrels, and
+requires an exact match with the persisted evaluation before using any metric.
+This validation does not change the frozen encoder winner rule or candidate-K
+rule and never materializes holdout qrels.
 
 Gemini and Voyage have no execution route here. External calls remain zero,
 actual external API spend is USD 0, holdout evaluation is forbidden, and M7C

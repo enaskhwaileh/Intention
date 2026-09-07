@@ -29,6 +29,8 @@ EXPECTED_CORPUS_DIGEST="27b811722376d38aa2b37986dc3ff713869e7ae76fa5c399929905b8
 EXPECTED_TABLE_COUNT=1_652_771
 EXPECTED_SERIALIZATION_HASH="1b37ffbfb3b0a47ea053f315d064427a0c61bdcac2ec8413bdd593ee46507290"
 MODEL_ORDER=("Qwen3-Embedding-0.6B","Nemotron-3-Embed-1B-BF16","Qwen3-Embedding-4B")
+RANKING_SCHEMA_VERSION="m7b-exact-development-rankings-v1"
+EVALUATION_SCHEMA_VERSION="m7b-development-evaluation-v1"
 
 def _sha(path:Path)->str:
     digest=sha256()
@@ -364,6 +366,62 @@ def _atomic_npy(path:Path,vectors):
         np.save(stream,np.asarray(vectors,dtype=np.float32),allow_pickle=False); stream.flush(); os.fsync(stream.fileno())
     os.replace(tmp,path)
 
+def _ranking_identity(validated:dict)->dict:
+    identity=validated["identity"]; corpus=identity["corpus"]
+    return {"model_identity":identity,"corpus_logical_digest":corpus["logical_digest"],"execution_order_id":corpus["execution_order_id"],"full_table_id_digest":corpus["full_table_id_digest"],"serialization_identity":identity["serialization"]}
+
+def validate_exact_development_ranking(model_name:str,ranking_path:Path,validated:dict,sources:dict,contract=None)->dict:
+    import numpy as np
+    contract=contract or load_bakeoff_contract(); query_ids=contract["split"]["development_ids"]
+    ranking=json.loads(Path(ranking_path).read_text())
+    required={"classification","schema_version","paper_result","model","model_identity","split_version","query_ids","query_sha256","qrels_sha256","canonical_qrel_judgments","corpus_logical_digest","execution_order_id","full_table_id_digest","serialization_identity","holdout","holdout_qrels_materialized","query_vector_dtype","query_vector_sha256","model_load_seconds","query_embedding_seconds","rankings","searched_table_count","exact_search_seconds","backend","compute_dtype","allow_tf32","tie_policy"}
+    if not isinstance(ranking,dict) or set(ranking)!=required:raise ValueError("invalid exact-development ranking schema")
+    expected={"classification":"m7b_exact_development_rankings","schema_version":RANKING_SCHEMA_VERSION,"paper_result":False,"model":model_name,"split_version":contract["split"]["version"],"query_ids":query_ids,"query_sha256":sources["query_sha256"],"qrels_sha256":sources["qrels_sha256"],"canonical_qrel_judgments":sources["canonical_qrel_judgments"],"holdout":"locked_not_evaluated","holdout_qrels_materialized":False,"query_vector_dtype":"float32","searched_table_count":EXPECTED_TABLE_COUNT,"backend":"sharded_torch_matmul","compute_dtype":"float32","allow_tf32":False,"tie_policy":"score_descending_then_table_id_ascending",**_ranking_identity(validated)}
+    if any(ranking.get(key)!=value for key,value in expected.items()):raise ValueError("exact-development ranking provenance mismatch")
+    if any(not _finite_nonnegative(ranking[key]) for key in ("model_load_seconds","query_embedding_seconds","exact_search_seconds")):raise ValueError("invalid exact-development timing")
+    rows=ranking["rankings"]
+    if not isinstance(rows,list) or len(rows)!=len(query_ids):raise ValueError("complete frozen development rankings required")
+    for query_rows in rows:
+        if not isinstance(query_rows,list) or len(query_rows)!=100:raise ValueError("exact top-100 ranking required")
+        previous=None; seen=set()
+        for position,row in enumerate(query_rows,1):
+            if not isinstance(row,dict) or set(row)!={"rank","table_id","score"}:raise ValueError("invalid exact ranking row schema")
+            rank=row["rank"]; table_id=row["table_id"]; score=row["score"]
+            if isinstance(rank,bool) or not isinstance(rank,int) or rank!=position:raise ValueError("invalid exact ranking rank")
+            if not isinstance(table_id,str) or not table_id or table_id in seen:raise ValueError("invalid or duplicate exact ranking table ID")
+            if isinstance(score,bool) or not isinstance(score,(int,float)) or not math.isfinite(score):raise ValueError("invalid exact ranking score")
+            current=(-float(score),table_id)
+            if previous is not None and current<previous:raise ValueError("exact ranking order violates frozen tie policy")
+            previous=current; seen.add(table_id)
+    vector_path=Path(validated["model_root"])/"development-query-vectors.npy"
+    if not vector_path.is_file() or ranking["query_vector_sha256"]!=_sha(vector_path):raise ValueError("development query-vector checksum mismatch")
+    vectors=np.load(vector_path,mmap_mode="r",allow_pickle=False)
+    _vector_checks(vectors,validated["identity"]["dimension"])
+    if vectors.shape[0]!=len(query_ids):raise ValueError("development query-vector row count mismatch")
+    return ranking
+
+def _evaluation_artifact(model_name:str,evaluation:dict,ranking_sha256:str,sources:dict,query_ids:list[int],contract:dict)->dict:
+    return {**evaluation,"schema_version":EVALUATION_SCHEMA_VERSION,"model":model_name,"query_ids":query_ids,"query_sha256":sources["query_sha256"],"qrels_sha256":sources["qrels_sha256"],"exact_ranking_sha256":ranking_sha256,"holdout":"locked_not_evaluated","holdout_qrels_materialized":False}
+
+def validate_recomputed_development_evaluation(model_name:str,evaluation_path:Path,ranking_path:Path,ranking:dict,sources:dict,contract=None)->dict:
+    contract=contract or load_bakeoff_contract(); query_ids=contract["split"]["development_ids"]
+    persisted=json.loads(Path(evaluation_path).read_text())
+    required={"classification","schema_version","paper_result","split_version","topic_count","model","query_ids","query_sha256","qrels_sha256","exact_ranking_sha256","holdout","holdout_qrels_materialized","metrics","per_topic"}
+    if not isinstance(persisted,dict) or set(persisted)!=required:raise ValueError("invalid development evaluation schema")
+    ranked_ids={query_id:[row["table_id"] for row in ranking["rankings"][index]] for index,query_id in enumerate(query_ids)}
+    recomputed=evaluate_development_rankings(ranked_ids,sources["qrels"],query_ids,contract)
+    expected=_evaluation_artifact(model_name,recomputed,_sha(Path(ranking_path)),sources,query_ids,contract)
+    expected=json.loads(json.dumps(expected,sort_keys=True))
+    if persisted!=expected:raise ValueError("persisted development evaluation does not match deterministic recomputation")
+    metric_names={*(f"known_relevant_recall_at_{k}" for k in contract["depths"]),"ndcg_at_10","mrr_at_10","bpref"}
+    if set(persisted["metrics"])!=metric_names or set(persisted["per_topic"])!={str(value) for value in query_ids}:raise ValueError("development evaluation metric/query schema mismatch")
+    for strata in persisted["metrics"].values():
+        if set(strata)!={"all","QS1","QS2"} or any(isinstance(value,bool) or not isinstance(value,(int,float)) or not math.isfinite(value) or not 0<=value<=1 for value in strata.values()):raise ValueError("invalid development evaluation metric value")
+    for topic in persisted["per_topic"].values():
+        if set(topic)!={*metric_names,"unjudged"}:raise ValueError("invalid per-topic evaluation schema")
+        if any(isinstance(topic[name],bool) or not isinstance(topic[name],(int,float)) or not math.isfinite(topic[name]) or not 0<=topic[name]<=1 for name in metric_names):raise ValueError("invalid per-topic evaluation metric value")
+    return persisted
+
 def exact_development_evaluate(model_name:str,source_root:Path,artifact_root:Path,device="cuda",model_factory=None,torch_module=None,index_validator=validate_full_index,source_loader=load_development_sources,search_fn=exact_search_shards)->dict:
     validated=index_validator(model_name,Path(artifact_root)); sources=source_loader(Path(source_root)); model,record,torch,load_seconds,pooling=_load_runtime_model(model_name,device,model_factory,torch_module)
     query_ids=list(sources["queries"]); raw=[sources["queries"][query_id] for query_id in query_ids]; formatted=[record["query_instruction"].replace("{content}",text) if record["query_instruction"] else text for text in raw]
@@ -378,20 +436,27 @@ def exact_development_evaluate(model_name:str,source_root:Path,artifact_root:Pat
     if search["searched_table_count"]!=EXPECTED_TABLE_COUNT or any(len(row)!=100 for row in search["rankings"]):raise ValueError("exact full-corpus top-100 completeness failure")
     rankings={query_id:[item["table_id"] for item in search["rankings"][index]] for index,query_id in enumerate(query_ids)}
     evaluation=evaluate_development_rankings(rankings,sources["qrels"],query_ids)
-    ranking_report={"classification":"m7b_exact_development_rankings","paper_result":False,"model":model_name,"model_identity":validated["identity"],"query_ids":query_ids,"query_sha256":sources["query_sha256"],"qrels_sha256":sources["qrels_sha256"],"canonical_qrel_judgments":sources["canonical_qrel_judgments"],"holdout":"locked_not_evaluated","holdout_qrels_materialized":False,"query_vector_dtype":"float32","query_vector_sha256":_sha(query_vector_path),"model_load_seconds":load_seconds,"query_embedding_seconds":query_seconds,**search}
-    _atomic_json(validated["model_root"]/"exact-development-rankings.json",ranking_report); _atomic_json(validated["model_root"]/"development-evaluation.json",evaluation); return {"rankings":ranking_report,"evaluation":evaluation}
+    contract=load_bakeoff_contract(); ranking_report={"classification":"m7b_exact_development_rankings","schema_version":RANKING_SCHEMA_VERSION,"paper_result":False,"model":model_name,"split_version":contract["split"]["version"],"query_ids":query_ids,"query_sha256":sources["query_sha256"],"qrels_sha256":sources["qrels_sha256"],"canonical_qrel_judgments":sources["canonical_qrel_judgments"],**_ranking_identity(validated),"holdout":"locked_not_evaluated","holdout_qrels_materialized":False,"query_vector_dtype":"float32","query_vector_sha256":_sha(query_vector_path),"model_load_seconds":load_seconds,"query_embedding_seconds":query_seconds,**search}
+    ranking_path=validated["model_root"]/"exact-development-rankings.json"; _atomic_json(ranking_path,ranking_report)
+    evaluation=_evaluation_artifact(model_name,evaluation,_sha(ranking_path),sources,query_ids,contract)
+    _atomic_json(validated["model_root"]/"development-evaluation.json",evaluation); return {"rankings":ranking_report,"evaluation":evaluation}
 
-def provisional_select(artifact_root:Path,index_validator=validate_full_index)->dict:
+def provisional_select(artifact_root:Path,source_root:Path,index_validator=validate_full_index,source_loader=load_development_sources)->dict:
+    contract=load_bakeoff_contract()
+    try:sources=source_loader(Path(source_root),contract)
+    except Exception:return {"classification":"provisional_development_selection","paper_result":False,"status":"blocked","winner":None,"missing_or_failed_models":list(MODEL_ORDER),"encoder_frozen":False,"candidate_depth_frozen":False}
     results=[]; missing=[]; evaluations={}
     for model_name in MODEL_ORDER:
         root=Path(artifact_root)/model_name; encode_path=root/"full-encode-report.json"; ranking_path=root/"exact-development-rankings.json"; evaluation_path=root/"development-evaluation.json"
         if not encode_path.is_file() or not ranking_path.is_file() or not evaluation_path.is_file():missing.append(model_name); continue
         try:validated=index_validator(model_name,Path(artifact_root))
         except Exception:missing.append(model_name); continue
-        encode=json.loads(encode_path.read_text()); ranking=json.loads(ranking_path.read_text()); evaluation=json.loads(evaluation_path.read_text())
-        ranking_rows=ranking.get("rankings",[])
-        rankings_valid=ranking.get("classification")=="m7b_exact_development_rankings" and ranking.get("searched_table_count")==EXPECTED_TABLE_COUNT and ranking.get("holdout_qrels_materialized") is False and len(ranking.get("query_ids",[]))==30 and len(ranking_rows)==30 and all(len(row)==100 and len({item["table_id"] for item in row})==100 for row in ranking_rows)
-        if encode.get("status")!="complete" or evaluation.get("classification")!="development_topical_retrieval" or evaluation.get("topic_count")!=30 or not rankings_valid:missing.append(model_name); continue
+        try:
+            encode=json.loads(encode_path.read_text())
+            ranking=validate_exact_development_ranking(model_name,ranking_path,validated,sources,contract)
+            evaluation=validate_recomputed_development_evaluation(model_name,evaluation_path,ranking_path,ranking,sources,contract)
+        except Exception:missing.append(model_name); continue
+        if encode.get("status")!="complete":missing.append(model_name); continue
         metrics=evaluation["metrics"]; results.append({"model":model_name,"status":"complete","known_relevant_recall_at_100":metrics["known_relevant_recall_at_100"]["all"],"bpref":metrics["bpref"]["all"],"embedding_wall_seconds":validated["validated_embedding_wall_seconds"],"physical_index_bytes":validated["validated_physical_index_bytes"]}); evaluations[model_name]=evaluation
     if missing:return {"classification":"provisional_development_selection","paper_result":False,"status":"blocked","winner":None,"missing_or_failed_models":missing,"encoder_frozen":False,"candidate_depth_frozen":False}
     selected=select_encoder(results,set(MODEL_ORDER)); winner=selected["winner"]; curve={k:evaluations[winner]["metrics"][f"known_relevant_recall_at_{k}"]["all"] for k in (5,10,20,50,100)}; depth=select_candidate_depth(curve)
