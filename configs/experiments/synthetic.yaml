@@ -1,9 +1,0 @@
-seed: 2026
-candidate_depth: 20
-candidate_depth_policy: configs/retrieval/contracts.yaml
-lambda_r: 0.4
-lambda_a: 0.6
-eta_o: 0.2
-eta_n: 0.5
-split_policy: topic
-status: synthetic_only

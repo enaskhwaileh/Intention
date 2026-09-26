@@ -1,0 +1,484 @@
+{
+  "metadata": {
+    "version": "1.0",
+    "description": "Knowledge Base for Intention-Aware Dataset Grounding",
+    "last_updated": "2026-09-14",
+    "domain": "vaccine adverse reaction analysis",
+    "actions_count": 7,
+    "status": "APPROVED"
+  },
+  "actions": {
+    "PREDICT": {
+      "id": "action_001",
+      "name": "PREDICT",
+      "purpose": "Forecast future outcomes based on historical patterns",
+      "description": "Extract patterns from past data to make predictions about future events",
+      "status": "APPROVED",
+      "hard_constraints": {
+        "HC1": {
+          "name": "temporal_column",
+          "description": "Table must have temporal column (date, year, timestamp)",
+          "type": "column_type_check",
+          "required": true
+        },
+        "HC2": {
+          "name": "outcome_column",
+          "description": "Table must have outcome/target column (side effect, symptom, measurement)",
+          "type": "column_presence_check",
+          "required": true
+        },
+        "HC3": {
+          "name": "explanatory_columns",
+          "description": "Table must have at least 2 explanatory columns (features, dimensions)",
+          "type": "column_count_check",
+          "min_count": 2,
+          "required": true
+        },
+        "HC4": {
+          "name": "data_volume",
+          "description": "Table must have at least 100 rows for statistical validity",
+          "type": "row_count_check",
+          "min_rows": 100,
+          "required": true
+        }
+      },
+      "soft_predicates": {
+        "semantic": {
+          "name": "ψ_semantic",
+          "description": "Column relevance to prediction domain (0-1 scale)",
+          "weight": 0.20,
+          "evaluation": "Count domain-relevant columns / total columns"
+        },
+        "structural": {
+          "name": "ψ_structural",
+          "description": "Data types appropriate for prediction (0-1 scale)",
+          "weight": 0.15,
+          "evaluation": "Average score of: temporal (1.0 if DATE/TIMESTAMP, 0.5 if year, 0), outcome (0.75 if numeric, 0.25 if categorical), explanatory (0.5-1.0 mix)"
+        },
+        "coverage": {
+          "name": "ψ_coverage",
+          "description": "Breadth of columns covering prediction domain (0-1 scale)",
+          "weight": 0.35,
+          "evaluation": "Measure: demographics, environment, temporal range, outcome diversity"
+        },
+        "quality": {
+          "name": "ψ_quality",
+          "description": "Data completeness and consistency (0-1 scale)",
+          "weight": 0.25,
+          "evaluation": "(1 - missing_percentage) × consistency_score"
+        },
+        "joinability": {
+          "name": "ψ_joinability",
+          "description": "Ability to link with other tables (0-1 scale)",
+          "weight": 0.05,
+          "evaluation": "Count joinable columns / potential join opportunities"
+        }
+      },
+      "weights": {
+        "w_semantic": 0.20,
+        "w_structural": 0.15,
+        "w_coverage": 0.35,
+        "w_quality": 0.25,
+        "w_joinability": 0.05,
+        "sum": 1.0,
+        "rationale": "PREDICT prioritizes coverage (0.35) and quality (0.25) because forecasting needs complete, accurate feature sets. Joinability is low (0.05) because prediction is typically single-table."
+      },
+      "scoring_formula": "score = 0.20×ψ_semantic + 0.15×ψ_structural + 0.35×ψ_coverage + 0.25×ψ_quality + 0.05×ψ_joinability",
+      "uses": 3,
+      "promoted": true
+    },
+    "COMPARE": {
+      "id": "action_002",
+      "name": "COMPARE",
+      "purpose": "Identify differences between groups or regions",
+      "description": "Find and quantify differences in outcomes across multiple groups or time periods",
+      "status": "APPROVED",
+      "hard_constraints": {
+        "HC1": {
+          "name": "grouping_column",
+          "description": "Table must have grouping column (region, country, vaccine type, demographic)",
+          "type": "column_presence_check",
+          "required": true
+        },
+        "HC2": {
+          "name": "measured_outcome",
+          "description": "Table must have outcome/measured column (rate, count, percentage)",
+          "type": "column_presence_check",
+          "required": true
+        },
+        "HC3": {
+          "name": "multi_dimensional_groups",
+          "description": "Table must have at least 2 grouping dimensions",
+          "type": "column_count_check",
+          "min_count": 2,
+          "required": true
+        },
+        "HC4": {
+          "name": "group_cardinality",
+          "description": "Table must have at least 2 distinct groups per dimension",
+          "type": "group_distinctness_check",
+          "min_groups": 2,
+          "required": true
+        }
+      },
+      "soft_predicates": {
+        "semantic": {
+          "name": "ψ_semantic",
+          "description": "Column relevance to comparison domain (0-1 scale)",
+          "weight": 0.15,
+          "evaluation": "Count domain-relevant columns / total columns"
+        },
+        "structural": {
+          "name": "ψ_structural",
+          "description": "Group column cardinality and clarity (0-1 scale)",
+          "weight": 0.30,
+          "evaluation": "Normalized cardinality: actual groups / expected maximum groups"
+        },
+        "coverage": {
+          "name": "ψ_coverage",
+          "description": "Breadth of measured outcomes (0-1 scale)",
+          "weight": 0.20,
+          "evaluation": "Count of distinct outcome measures / expected outcomes"
+        },
+        "quality": {
+          "name": "ψ_quality",
+          "description": "Group balance and data consistency (0-1 scale)",
+          "weight": 0.20,
+          "evaluation": "Balance: min_group_size / max_group_size; consistency: (1 - missing_percentage)"
+        },
+        "joinability": {
+          "name": "ψ_joinability",
+          "description": "Ability to align groups across tables (0-1 scale)",
+          "weight": 0.15,
+          "evaluation": "Count of group columns that match other tables / total group columns"
+        }
+      },
+      "weights": {
+        "w_semantic": 0.15,
+        "w_structural": 0.30,
+        "w_coverage": 0.20,
+        "w_quality": 0.20,
+        "w_joinability": 0.15,
+        "sum": 1.0,
+        "rationale": "COMPARE prioritizes structural clarity (0.30) because meaningful comparison requires clear, distinct groups. Joinability (0.15) matters to validate comparisons across tables."
+      },
+      "scoring_formula": "score = 0.15×ψ_semantic + 0.30×ψ_structural + 0.20×ψ_coverage + 0.20×ψ_quality + 0.15×ψ_joinability",
+      "uses": 2,
+      "promoted": true
+    },
+    "CORRELATE": {
+      "id": "action_003",
+      "name": "CORRELATE",
+      "purpose": "Find relationships or dependencies between variables",
+      "description": "Identify statistical or logical associations between two or more variables",
+      "status": "APPROVED",
+      "hard_constraints": {
+        "HC1": {
+          "name": "min_variables",
+          "description": "Table must have at least 2 numeric/measurable columns",
+          "type": "column_count_check",
+          "min_count": 2,
+          "required": true
+        },
+        "HC2": {
+          "name": "sufficient_rows",
+          "description": "Table must have at least 50 rows for correlation validity",
+          "type": "row_count_check",
+          "min_rows": 50,
+          "required": true
+        },
+        "HC3": {
+          "name": "variable_variance",
+          "description": "Each variable must have meaningful variance (not constant)",
+          "type": "variance_check",
+          "required": true
+        }
+      },
+      "soft_predicates": {
+        "semantic": {
+          "name": "ψ_semantic",
+          "weight": 0.25
+        },
+        "structural": {
+          "name": "ψ_structural",
+          "weight": 0.20
+        },
+        "coverage": {
+          "name": "ψ_coverage",
+          "weight": 0.20
+        },
+        "quality": {
+          "name": "ψ_quality",
+          "weight": 0.30
+        },
+        "joinability": {
+          "name": "ψ_joinability",
+          "weight": 0.05
+        }
+      },
+      "weights": {
+        "w_semantic": 0.25,
+        "w_structural": 0.20,
+        "w_coverage": 0.20,
+        "w_quality": 0.30,
+        "w_joinability": 0.05
+      },
+      "uses": 1,
+      "promoted": false
+    },
+    "SUMMARIZE": {
+      "id": "action_004",
+      "name": "SUMMARIZE",
+      "purpose": "Describe current data or compute aggregates",
+      "description": "Create summaries, overviews, or aggregate statistics from data",
+      "status": "APPROVED",
+      "hard_constraints": {
+        "HC1": {
+          "name": "aggregatable_columns",
+          "description": "Table must have at least 1 column suitable for aggregation",
+          "type": "column_presence_check",
+          "required": true
+        },
+        "HC2": {
+          "name": "grouping_optional",
+          "description": "Table should ideally have grouping columns (not strictly required)",
+          "type": "column_presence_check",
+          "required": false
+        }
+      },
+      "soft_predicates": {
+        "semantic": {
+          "name": "ψ_semantic",
+          "weight": 0.30
+        },
+        "structural": {
+          "name": "ψ_structural",
+          "weight": 0.10
+        },
+        "coverage": {
+          "name": "ψ_coverage",
+          "weight": 0.25
+        },
+        "quality": {
+          "name": "ψ_quality",
+          "weight": 0.30
+        },
+        "joinability": {
+          "name": "ψ_joinability",
+          "weight": 0.05
+        }
+      },
+      "weights": {
+        "w_semantic": 0.30,
+        "w_structural": 0.10,
+        "w_coverage": 0.25,
+        "w_quality": 0.30,
+        "w_joinability": 0.05
+      },
+      "uses": 0,
+      "promoted": false
+    },
+    "EXPLAIN": {
+      "id": "action_005",
+      "name": "EXPLAIN",
+      "purpose": "Understand why something happens",
+      "description": "Find causal or mechanistic explanations for observed phenomena",
+      "status": "APPROVED",
+      "hard_constraints": {
+        "HC1": {
+          "name": "outcome_column",
+          "description": "Table must have a target outcome to explain",
+          "type": "column_presence_check",
+          "required": true
+        },
+        "HC2": {
+          "name": "feature_columns",
+          "description": "Table must have at least 3 potential explanatory features",
+          "type": "column_count_check",
+          "min_count": 3,
+          "required": true
+        }
+      },
+      "soft_predicates": {
+        "semantic": {
+          "name": "ψ_semantic",
+          "weight": 0.30
+        },
+        "structural": {
+          "name": "ψ_structural",
+          "weight": 0.15
+        },
+        "coverage": {
+          "name": "ψ_coverage",
+          "weight": 0.30
+        },
+        "quality": {
+          "name": "ψ_quality",
+          "weight": 0.20
+        },
+        "joinability": {
+          "name": "ψ_joinability",
+          "weight": 0.05
+        }
+      },
+      "weights": {
+        "w_semantic": 0.30,
+        "w_structural": 0.15,
+        "w_coverage": 0.30,
+        "w_quality": 0.20,
+        "w_joinability": 0.05
+      },
+      "uses": 0,
+      "promoted": false
+    },
+    "FILTER": {
+      "id": "action_006",
+      "name": "FILTER",
+      "purpose": "Select subset of data based on criteria",
+      "description": "Extract rows or records matching specific conditions",
+      "status": "APPROVED",
+      "hard_constraints": {
+        "HC1": {
+          "name": "filterable_columns",
+          "description": "Table must have columns with meaningful values to filter on",
+          "type": "column_presence_check",
+          "required": true
+        }
+      },
+      "soft_predicates": {
+        "semantic": {
+          "name": "ψ_semantic",
+          "weight": 0.25
+        },
+        "structural": {
+          "name": "ψ_structural",
+          "weight": 0.15
+        },
+        "coverage": {
+          "name": "ψ_coverage",
+          "weight": 0.20
+        },
+        "quality": {
+          "name": "ψ_quality",
+          "weight": 0.35
+        },
+        "joinability": {
+          "name": "ψ_joinability",
+          "weight": 0.05
+        }
+      },
+      "weights": {
+        "w_semantic": 0.25,
+        "w_structural": 0.15,
+        "w_coverage": 0.20,
+        "w_quality": 0.35,
+        "w_joinability": 0.05
+      },
+      "uses": 0,
+      "promoted": false
+    },
+    "JOIN": {
+      "id": "action_007",
+      "name": "JOIN",
+      "purpose": "Combine data from multiple tables",
+      "description": "Link tables on common keys to create enriched dataset",
+      "status": "APPROVED",
+      "hard_constraints": {
+        "HC1": {
+          "name": "join_key",
+          "description": "Table must have at least one column that can serve as join key",
+          "type": "column_presence_check",
+          "required": true
+        },
+        "HC2": {
+          "name": "key_uniqueness",
+          "description": "Join key should have reasonable cardinality (not all unique, not all same)",
+          "type": "key_cardinality_check",
+          "required": true
+        }
+      },
+      "soft_predicates": {
+        "semantic": {
+          "name": "ψ_semantic",
+          "weight": 0.20
+        },
+        "structural": {
+          "name": "ψ_structural",
+          "weight": 0.25
+        },
+        "coverage": {
+          "name": "ψ_coverage",
+          "weight": 0.15
+        },
+        "quality": {
+          "name": "ψ_quality",
+          "weight": 0.25
+        },
+        "joinability": {
+          "name": "ψ_joinability",
+          "weight": 0.15
+        }
+      },
+      "weights": {
+        "w_semantic": 0.20,
+        "w_structural": 0.25,
+        "w_coverage": 0.15,
+        "w_quality": 0.25,
+        "w_joinability": 0.15
+      },
+      "uses": 0,
+      "promoted": false
+    }
+  },
+  "framework": {
+    "five_axes": [
+      {
+        "axis": "semantic",
+        "description": "Column relevance to analytical domain",
+        "source": "Semantic parsing / column annotation"
+      },
+      {
+        "axis": "structural",
+        "description": "Data types and cardinality appropriate for action",
+        "source": "Schema analysis / data profiling"
+      },
+      {
+        "axis": "coverage",
+        "description": "Breadth of columns covering domain",
+        "source": "Feature completeness / domain knowledge"
+      },
+      {
+        "axis": "quality",
+        "description": "Data completeness, consistency, correctness",
+        "source": "Data quality metrics / validation checks"
+      },
+      {
+        "axis": "joinability",
+        "description": "Ability to link with other tables",
+        "source": "Foreign key inference / column matching"
+      }
+    ],
+    "balke_foundation": "This KB extends Balke (2004) multi-objective ranking by: (1) making weights action-dependent rather than static, (2) adding hard constraints as binary filters before soft scoring, (3) unifying 5 domain-derived axes instead of arbitrary objectives, (4) storing specifications in a queryable KB that grows with novel actions."
+  },
+  "metadata_extended": {
+    "creation_date": "2026-09-14",
+    "last_modified": "2026-09-14",
+    "total_actions": 7,
+    "approved_actions": 7,
+    "derived_actions": 0,
+    "total_uses": 6,
+    "kb_growth_strategy": "Phase 1: First-principles logical derivation of specifications. Phase 2: Expert validation against domain knowledge. Phase 3: Empirical tuning based on ranked-table usage feedback.",
+    "storage_structure": {
+      "approved": [
+        "PREDICT.json",
+        "COMPARE.json",
+        "CORRELATE.json",
+        "SUMMARIZE.json",
+        "EXPLAIN.json",
+        "FILTER.json",
+        "JOIN.json"
+      ],
+      "derived": []
+    }
+  }
+}

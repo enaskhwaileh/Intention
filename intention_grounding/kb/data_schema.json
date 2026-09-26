@@ -1,0 +1,85 @@
+{
+  "version": "1.0",
+  "created": "2026-09-16",
+  "domain": "vaccine adverse reaction analysis",
+  "tables": {
+    "vaccine_batches": {
+      "table_id": "T001",
+      "name": "vaccine_batches",
+      "description": "Vaccine manufacturing batch information",
+      "record_count": 5000,
+      "columns": [
+        {"name": "batch_id", "type": "INTEGER", "description": "Unique batch identifier", "primary_key": true},
+        {"name": "batch_date", "type": "DATE", "description": "Manufacturing date", "is_temporal": true},
+        {"name": "manufacturer", "type": "STRING", "description": "Manufacturer name", "is_categorical": true},
+        {"name": "location", "type": "STRING", "description": "Manufacturing location", "is_categorical": true},
+        {"name": "temperature", "type": "FLOAT", "description": "Storage temperature", "is_numerical": true},
+        {"name": "quantity", "type": "INTEGER", "description": "Number of doses", "is_numerical": true}
+      ],
+      "temporal_columns": ["batch_date"],
+      "categorical_columns": ["manufacturer", "location"],
+      "numerical_columns": ["temperature", "quantity"],
+      "join_keys": ["batch_id"]
+    },
+    "adverse_events": {
+      "table_id": "T002",
+      "name": "adverse_events",
+      "description": "Reported adverse events from vaccine administration",
+      "record_count": 50000,
+      "columns": [
+        {"name": "event_id", "type": "INTEGER", "description": "Unique event identifier", "primary_key": true},
+        {"name": "batch_id", "type": "INTEGER", "description": "Associated vaccine batch", "foreign_key": "vaccine_batches.batch_id"},
+        {"name": "severity", "type": "INTEGER", "description": "Event severity (1-10)", "is_numerical": true},
+        {"name": "date_reported", "type": "DATE", "description": "Date of report", "is_temporal": true},
+        {"name": "region", "type": "STRING", "description": "Geographic region", "is_categorical": true},
+        {"name": "age_group", "type": "STRING", "description": "Patient age group", "is_categorical": true},
+        {"name": "symptom_type", "type": "STRING", "description": "Type of symptom", "is_categorical": true}
+      ],
+      "temporal_columns": ["date_reported"],
+      "categorical_columns": ["region", "age_group", "symptom_type"],
+      "numerical_columns": ["severity"],
+      "join_keys": ["batch_id"]
+    },
+    "trial_data": {
+      "table_id": "T003",
+      "name": "trial_data",
+      "description": "Clinical trial results and metrics",
+      "record_count": 200,
+      "columns": [
+        {"name": "trial_id", "type": "INTEGER", "description": "Unique trial identifier", "primary_key": true},
+        {"name": "phase", "type": "STRING", "description": "Trial phase (I, II, III)", "is_categorical": true},
+        {"name": "start_date", "type": "DATE", "description": "Trial start date", "is_temporal": true},
+        {"name": "end_date", "type": "DATE", "description": "Trial end date", "is_temporal": true},
+        {"name": "efficacy_rate", "type": "FLOAT", "description": "Efficacy percentage (0-100)", "is_numerical": true},
+        {"name": "sample_size", "type": "INTEGER", "description": "Number of participants", "is_numerical": true}
+      ],
+      "temporal_columns": ["start_date", "end_date"],
+      "categorical_columns": ["phase"],
+      "numerical_columns": ["efficacy_rate", "sample_size"],
+      "join_keys": []
+    },
+    "safety_reports": {
+      "table_id": "T004",
+      "name": "safety_reports",
+      "description": "Structured safety monitoring reports",
+      "record_count": 10000,
+      "columns": [
+        {"name": "report_id", "type": "INTEGER", "description": "Unique report identifier", "primary_key": true},
+        {"name": "batch_id", "type": "INTEGER", "description": "Associated vaccine batch", "foreign_key": "vaccine_batches.batch_id"},
+        {"name": "event_date", "type": "DATE", "description": "Date of safety event", "is_temporal": true},
+        {"name": "severity_score", "type": "INTEGER", "description": "Safety severity (1-10)", "is_numerical": true},
+        {"name": "region", "type": "STRING", "description": "Region of report", "is_categorical": true}
+      ],
+      "temporal_columns": ["event_date"],
+      "categorical_columns": ["region"],
+      "numerical_columns": ["severity_score"],
+      "join_keys": ["batch_id"]
+    }
+  },
+  "metadata": {
+    "total_tables": 4,
+    "total_records": 65200,
+    "domain": "vaccine adverse reaction analysis",
+    "last_updated": "2026-09-16"
+  }
+}

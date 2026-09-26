@@ -1,0 +1,17 @@
+{
+  "input": [
+    "Predict vaccine side effects in Europe for next month",
+    "Compare side effect rates across vaccine brands",
+    "Does age correlate with severe side effects?",
+    "Summarize adverse events by region",
+    "Why do some regions report more side effects than others?",
+    "Find all severe adverse events reported in Q1 2026",
+    "Link vaccine batches with adverse event reports to track batch-specific safety",
+    "Does vaccine batch production date correlate with event rates in the following months?",
+    "Compare trial efficacy outcomes for Moderna vs Pfizer across different trial phases",
+    "Forecast adverse event trends by age group over the next 12 months",
+    "What is the relationship between vaccine batch temperature storage and reported side effect severity?",
+    "Quantify the divergence in adverse event reporting practices between regions",
+    "I want to understand everything about vaccine safety"
+  ]
+}

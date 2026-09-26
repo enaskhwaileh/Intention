@@ -1,0 +1,714 @@
+{
+  "metadata": {
+    "version": "1.0.1",
+    "description": "Action Base for Intention-Aware Dataset Grounding with Explicit Axes Specifications",
+    "last_updated": "2026-09-16",
+    "domain": "vaccine adverse reaction analysis",
+    "actions_count": 7,
+    "status": "APPROVED",
+    "axes_framework_version": "1.0"
+  },
+  "axes_framework": {
+    "description": "Five-dimensional framework for table profiling across multiple analytical perspectives",
+    "axes": {
+      "schema": {
+        "id": "axis_001",
+        "name": "Schema",
+        "description": "Table structure, column types, and cardinality properties",
+        "profile_metrics": [
+          "numeric_columns_count",
+          "categorical_columns_count",
+          "temporal_columns_count",
+          "unique_identifiers_count",
+          "column_cardinality_distribution",
+          "data_type_distribution"
+        ],
+        "evaluation_method": "Schema analysis and column type detection"
+      },
+      "temporal": {
+        "id": "axis_002",
+        "name": "Temporal",
+        "description": "Time-series properties, date ranges, granularity, and continuity",
+        "profile_metrics": [
+          "has_temporal_column",
+          "temporal_column_type",
+          "date_range_coverage",
+          "temporal_granularity",
+          "time_series_continuity",
+          "missing_time_periods"
+        ],
+        "evaluation_method": "Temporal column detection and time-series analysis"
+      },
+      "statistical": {
+        "id": "axis_003",
+        "name": "Statistical",
+        "description": "Data distribution, variance, nullness, and statistical properties",
+        "profile_metrics": [
+          "row_count",
+          "missing_value_percentage",
+          "variance_by_column",
+          "distribution_shapes",
+          "outlier_counts",
+          "statistical_validity"
+        ],
+        "evaluation_method": "Statistical descriptive analysis and quality metrics"
+      },
+      "quality": {
+        "id": "axis_004",
+        "name": "Quality",
+        "description": "Data completeness, consistency, accuracy, and reliability indicators",
+        "profile_metrics": [
+          "completeness_score",
+          "consistency_score",
+          "duplicate_rows_count",
+          "data_integrity_issues",
+          "value_validity_score",
+          "consistency_violations"
+        ],
+        "evaluation_method": "Data validation, duplicate detection, constraint checking"
+      },
+      "domain": {
+        "id": "axis_005",
+        "name": "Domain",
+        "description": "Domain relevance, business context, and semantic alignment",
+        "profile_metrics": [
+          "domain_relevance_score",
+          "semantic_alignment",
+          "business_context_fit",
+          "column_semantic_relevance",
+          "actionable_insights_potential"
+        ],
+        "evaluation_method": "Semantic analysis, domain expert annotation, keyword matching"
+      }
+    }
+  },
+  "actions": {
+    "PREDICT": {
+      "id": "action_001",
+      "name": "PREDICT",
+      "purpose": "Forecast future outcomes based on historical patterns",
+      "description": "Extract patterns from past data to make predictions about future events",
+      "status": "APPROVED",
+      "required_axes": ["temporal", "statistical", "schema", "quality", "domain"],
+      "axes_specifications": {
+        "temporal": {
+          "required": true,
+          "critical": true,
+          "specification": "Table must have temporal column (date, year, timestamp) for time-series model building. Required for model training across time periods.",
+          "profile_properties": ["has_temporal_column", "temporal_granularity", "date_range_coverage"]
+        },
+        "statistical": {
+          "required": true,
+          "critical": true,
+          "specification": "Table must have measurable numeric outcome with meaningful variance. Requires sufficient statistical validity for forecasting. Minimum 100 rows for model stability.",
+          "profile_properties": ["row_count", "missing_value_percentage", "variance_by_column"]
+        },
+        "schema": {
+          "required": true,
+          "critical": true,
+          "specification": "Table must have outcome/target column (numeric or categorical) and at least 2 explanatory feature columns. Data types must be appropriate for ML (numeric or properly encoded categorical).",
+          "profile_properties": ["numeric_columns_count", "categorical_columns_count", "column_cardinality_distribution"]
+        },
+        "quality": {
+          "required": true,
+          "critical": true,
+          "specification": "High data quality essential. Completeness must support model training (missing <20% per column). Data consistency across time periods required.",
+          "profile_properties": ["completeness_score", "consistency_score", "duplicate_rows_count"]
+        },
+        "domain": {
+          "required": true,
+          "critical": false,
+          "specification": "Columns should be semantically relevant to prediction domain. Domain relevance improves feature interpretation and model validity.",
+          "profile_properties": ["domain_relevance_score", "semantic_alignment"]
+        }
+      },
+      "hard_constraints": {
+        "HC1": {
+          "name": "temporal_column",
+          "description": "Table must have temporal column (date, year, timestamp)",
+          "type": "column_type_check",
+          "required": true
+        },
+        "HC2": {
+          "name": "outcome_column",
+          "description": "Table must have outcome/target column (side effect, symptom, measurement)",
+          "type": "column_presence_check",
+          "required": true
+        },
+        "HC3": {
+          "name": "explanatory_columns",
+          "description": "Table must have at least 2 explanatory columns (features, dimensions)",
+          "type": "column_count_check",
+          "min_count": 2,
+          "required": true
+        },
+        "HC4": {
+          "name": "data_volume",
+          "description": "Table must have at least 100 rows for statistical validity",
+          "type": "row_count_check",
+          "min_rows": 100,
+          "required": true
+        }
+      },
+      "soft_predicates": {
+        "semantic": {
+          "name": "ψ_semantic",
+          "description": "Column relevance to prediction domain (0-1 scale)",
+          "weight": 0.20,
+          "evaluation": "Count domain-relevant columns / total columns"
+        },
+        "structural": {
+          "name": "ψ_structural",
+          "description": "Data types appropriate for prediction (0-1 scale)",
+          "weight": 0.15,
+          "evaluation": "Average score of: temporal (1.0 if DATE/TIMESTAMP, 0.5 if year, 0), outcome (0.75 if numeric, 0.25 if categorical), explanatory (0.5-1.0 mix)"
+        },
+        "coverage": {
+          "name": "ψ_coverage",
+          "description": "Breadth of columns covering prediction domain (0-1 scale)",
+          "weight": 0.35,
+          "evaluation": "Measure: demographics, environment, temporal range, outcome diversity"
+        },
+        "quality": {
+          "name": "ψ_quality",
+          "description": "Data completeness and consistency (0-1 scale)",
+          "weight": 0.25,
+          "evaluation": "(1 - missing_percentage) × consistency_score"
+        },
+        "joinability": {
+          "name": "ψ_joinability",
+          "description": "Ability to link with other tables (0-1 scale)",
+          "weight": 0.05,
+          "evaluation": "Count joinable columns / potential join opportunities"
+        }
+      },
+      "weights": {
+        "w_semantic": 0.20,
+        "w_structural": 0.15,
+        "w_coverage": 0.35,
+        "w_quality": 0.25,
+        "w_joinability": 0.05,
+        "sum": 1.0,
+        "rationale": "PREDICT prioritizes coverage (0.35) and quality (0.25) because forecasting needs complete, accurate feature sets. Joinability is low (0.05) because prediction is typically single-table."
+      },
+      "scoring_formula": "score = 0.20×ψ_semantic + 0.15×ψ_structural + 0.35×ψ_coverage + 0.25×ψ_quality + 0.05×ψ_joinability",
+      "uses": 3,
+      "promoted": true
+    },
+    "COMPARE": {
+      "id": "action_002",
+      "name": "COMPARE",
+      "purpose": "Identify differences between groups or regions",
+      "description": "Find and quantify differences in outcomes across multiple groups or time periods",
+      "status": "APPROVED",
+      "required_axes": ["schema", "statistical", "quality", "temporal", "domain"],
+      "axes_specifications": {
+        "schema": {
+          "required": true,
+          "critical": true,
+          "specification": "Table must have grouping columns (region, country, vaccine type, demographic) with at least 2 dimensions. Must have measured outcome column (rate, count, percentage).",
+          "profile_properties": ["categorical_columns_count", "column_cardinality_distribution", "numeric_columns_count"]
+        },
+        "statistical": {
+          "required": true,
+          "critical": true,
+          "specification": "Table must show variance across groups. Each group must have sufficient observations. Group cardinality must be at least 2 per dimension.",
+          "profile_properties": ["variance_by_column", "row_count", "group_balance_score"]
+        },
+        "quality": {
+          "required": true,
+          "critical": true,
+          "specification": "Data quality critical for fair comparison. Group balance essential (min_group_size / max_group_size > 0.1). Missing values should not bias groups.",
+          "profile_properties": ["completeness_score", "consistency_score", "group_balance_score"]
+        },
+        "temporal": {
+          "required": false,
+          "critical": false,
+          "specification": "Optional temporal dimension for time-based comparisons (e.g., comparing trends across countries over time).",
+          "profile_properties": ["has_temporal_column", "temporal_granularity"]
+        },
+        "domain": {
+          "required": true,
+          "critical": false,
+          "specification": "Columns should represent meaningful business/analytical dimensions for comparison.",
+          "profile_properties": ["domain_relevance_score", "semantic_alignment"]
+        }
+      },
+      "hard_constraints": {
+        "HC1": {
+          "name": "grouping_column",
+          "description": "Table must have grouping column (region, country, vaccine type, demographic)",
+          "type": "column_presence_check",
+          "required": true
+        },
+        "HC2": {
+          "name": "measured_outcome",
+          "description": "Table must have outcome/measured column (rate, count, percentage)",
+          "type": "column_presence_check",
+          "required": true
+        },
+        "HC3": {
+          "name": "multi_dimensional_groups",
+          "description": "Table must have at least 2 grouping dimensions",
+          "type": "column_count_check",
+          "min_count": 2,
+          "required": true
+        },
+        "HC4": {
+          "name": "group_cardinality",
+          "description": "Table must have at least 2 distinct groups per dimension",
+          "type": "group_distinctness_check",
+          "min_groups": 2,
+          "required": true
+        }
+      },
+      "soft_predicates": {
+        "semantic": {
+          "name": "ψ_semantic",
+          "description": "Column relevance to comparison domain (0-1 scale)",
+          "weight": 0.15,
+          "evaluation": "Count domain-relevant columns / total columns"
+        },
+        "structural": {
+          "name": "ψ_structural",
+          "description": "Group column cardinality and clarity (0-1 scale)",
+          "weight": 0.30,
+          "evaluation": "Normalized cardinality: actual groups / expected maximum groups"
+        },
+        "coverage": {
+          "name": "ψ_coverage",
+          "description": "Breadth of measured outcomes (0-1 scale)",
+          "weight": 0.20,
+          "evaluation": "Count of distinct outcome measures / expected outcomes"
+        },
+        "quality": {
+          "name": "ψ_quality",
+          "description": "Group balance and data consistency (0-1 scale)",
+          "weight": 0.20,
+          "evaluation": "Balance: min_group_size / max_group_size; consistency: (1 - missing_percentage)"
+        },
+        "joinability": {
+          "name": "ψ_joinability",
+          "description": "Ability to align groups across tables (0-1 scale)",
+          "weight": 0.15,
+          "evaluation": "Count of group columns that match other tables / total group columns"
+        }
+      },
+      "weights": {
+        "w_semantic": 0.15,
+        "w_structural": 0.30,
+        "w_coverage": 0.20,
+        "w_quality": 0.20,
+        "w_joinability": 0.15,
+        "sum": 1.0,
+        "rationale": "COMPARE prioritizes structural clarity (0.30) because meaningful comparison requires clear, distinct groups. Joinability (0.15) matters to validate comparisons across tables."
+      },
+      "scoring_formula": "score = 0.15×ψ_semantic + 0.30×ψ_structural + 0.20×ψ_coverage + 0.20×ψ_quality + 0.15×ψ_joinability",
+      "uses": 2,
+      "promoted": true
+    },
+    "CORRELATE": {
+      "id": "action_003",
+      "name": "CORRELATE",
+      "purpose": "Find relationships or dependencies between variables",
+      "description": "Identify statistical or logical associations between two or more variables",
+      "status": "APPROVED",
+      "required_axes": ["statistical", "schema", "quality", "domain"],
+      "axes_specifications": {
+        "statistical": {
+          "required": true,
+          "critical": true,
+          "specification": "Table must have at least 2 numeric/measurable columns with meaningful variance. Requires sufficient rows (min 50) for correlation validity. Each variable must show variation (not constant).",
+          "profile_properties": ["row_count", "variance_by_column", "numeric_columns_count"]
+        },
+        "schema": {
+          "required": true,
+          "critical": true,
+          "specification": "Table must have numeric or measurable columns. Data types must support correlation analysis (numeric, ordinal, or properly encoded categorical).",
+          "profile_properties": ["numeric_columns_count", "column_cardinality_distribution"]
+        },
+        "quality": {
+          "required": true,
+          "critical": true,
+          "specification": "Data quality essential for valid correlations. Missing values should not create artificial patterns. Data consistency required across all variables.",
+          "profile_properties": ["completeness_score", "consistency_score", "missing_value_percentage"]
+        },
+        "domain": {
+          "required": true,
+          "critical": false,
+          "specification": "Variables should have meaningful semantic relationship (not spurious correlations). Domain knowledge helps validate correlation findings.",
+          "profile_properties": ["domain_relevance_score", "semantic_alignment"]
+        }
+      },
+      "hard_constraints": {
+        "HC1": {
+          "name": "min_variables",
+          "description": "Table must have at least 2 numeric/measurable columns",
+          "type": "column_count_check",
+          "min_count": 2,
+          "required": true
+        },
+        "HC2": {
+          "name": "sufficient_rows",
+          "description": "Table must have at least 50 rows for correlation validity",
+          "type": "row_count_check",
+          "min_rows": 50,
+          "required": true
+        },
+        "HC3": {
+          "name": "variable_variance",
+          "description": "Each variable must have meaningful variance (not constant)",
+          "type": "variance_check",
+          "required": true
+        }
+      },
+      "soft_predicates": {
+        "semantic": {
+          "name": "ψ_semantic",
+          "weight": 0.25
+        },
+        "structural": {
+          "name": "ψ_structural",
+          "weight": 0.20
+        },
+        "coverage": {
+          "name": "ψ_coverage",
+          "weight": 0.20
+        },
+        "quality": {
+          "name": "ψ_quality",
+          "weight": 0.30
+        },
+        "joinability": {
+          "name": "ψ_joinability",
+          "weight": 0.05
+        }
+      },
+      "weights": {
+        "w_semantic": 0.25,
+        "w_structural": 0.20,
+        "w_coverage": 0.20,
+        "w_quality": 0.30,
+        "w_joinability": 0.05
+      },
+      "uses": 1,
+      "promoted": false
+    },
+    "SUMMARIZE": {
+      "id": "action_004",
+      "name": "SUMMARIZE",
+      "purpose": "Describe current data or compute aggregates",
+      "description": "Create summaries, overviews, or aggregate statistics from data",
+      "status": "APPROVED",
+      "required_axes": ["schema", "statistical", "quality", "domain"],
+      "axes_specifications": {
+        "schema": {
+          "required": true,
+          "critical": true,
+          "specification": "Table must have at least 1 column suitable for aggregation (numeric, categorical, or temporal). Ideally has grouping columns for breakdown summaries.",
+          "profile_properties": ["numeric_columns_count", "categorical_columns_count", "temporal_columns_count"]
+        },
+        "statistical": {
+          "required": true,
+          "critical": false,
+          "specification": "Table structure and row count affect summary meaningfulness. Variance in values makes summaries more informative.",
+          "profile_properties": ["row_count", "variance_by_column", "distribution_shapes"]
+        },
+        "quality": {
+          "required": true,
+          "critical": true,
+          "specification": "Data completeness important for accurate aggregates. Missing values affect summary calculations. Consistency ensures reliable totals/averages.",
+          "profile_properties": ["completeness_score", "consistency_score", "missing_value_percentage"]
+        },
+        "domain": {
+          "required": true,
+          "critical": false,
+          "specification": "Columns should represent business-meaningful metrics for summary reporting.",
+          "profile_properties": ["domain_relevance_score", "semantic_alignment"]
+        }
+      },
+      "hard_constraints": {
+        "HC1": {
+          "name": "aggregatable_columns",
+          "description": "Table must have at least 1 column suitable for aggregation",
+          "type": "column_presence_check",
+          "required": true
+        },
+        "HC2": {
+          "name": "grouping_optional",
+          "description": "Table should ideally have grouping columns (not strictly required)",
+          "type": "column_presence_check",
+          "required": false
+        }
+      },
+      "soft_predicates": {
+        "semantic": {
+          "name": "ψ_semantic",
+          "weight": 0.30
+        },
+        "structural": {
+          "name": "ψ_structural",
+          "weight": 0.10
+        },
+        "coverage": {
+          "name": "ψ_coverage",
+          "weight": 0.25
+        },
+        "quality": {
+          "name": "ψ_quality",
+          "weight": 0.30
+        },
+        "joinability": {
+          "name": "ψ_joinability",
+          "weight": 0.05
+        }
+      },
+      "weights": {
+        "w_semantic": 0.30,
+        "w_structural": 0.10,
+        "w_coverage": 0.25,
+        "w_quality": 0.30,
+        "w_joinability": 0.05
+      },
+      "uses": 0,
+      "promoted": false
+    },
+    "EXPLAIN": {
+      "id": "action_005",
+      "name": "EXPLAIN",
+      "purpose": "Understand why something happens",
+      "description": "Find causal or mechanistic explanations for observed phenomena",
+      "status": "APPROVED",
+      "required_axes": ["schema", "domain", "statistical", "quality"],
+      "axes_specifications": {
+        "schema": {
+          "required": true,
+          "critical": true,
+          "specification": "Table must have outcome/target column to explain. Must have at least 3 explanatory feature columns. Feature types should support causal analysis.",
+          "profile_properties": ["numeric_columns_count", "categorical_columns_count", "column_cardinality_distribution"]
+        },
+        "domain": {
+          "required": true,
+          "critical": true,
+          "specification": "High domain relevance essential. Columns should map to domain concepts. Strong semantic alignment improves causal interpretation.",
+          "profile_properties": ["domain_relevance_score", "semantic_alignment", "actionable_insights_potential"]
+        },
+        "statistical": {
+          "required": true,
+          "critical": true,
+          "specification": "Sufficient variance in features and outcome for causal patterns. Adequate row count for robust explanations.",
+          "profile_properties": ["row_count", "variance_by_column", "distribution_shapes"]
+        },
+        "quality": {
+          "required": true,
+          "critical": true,
+          "specification": "Data quality critical for valid explanations. Consistency and completeness ensure reliable causal inference.",
+          "profile_properties": ["completeness_score", "consistency_score", "data_integrity_issues"]
+        }
+      },
+      "hard_constraints": {
+        "HC1": {
+          "name": "outcome_column",
+          "description": "Table must have a target outcome to explain",
+          "type": "column_presence_check",
+          "required": true
+        },
+        "HC2": {
+          "name": "feature_columns",
+          "description": "Table must have at least 3 potential explanatory features",
+          "type": "column_count_check",
+          "min_count": 3,
+          "required": true
+        }
+      },
+      "soft_predicates": {
+        "semantic": {
+          "name": "ψ_semantic",
+          "weight": 0.30
+        },
+        "structural": {
+          "name": "ψ_structural",
+          "weight": 0.15
+        },
+        "coverage": {
+          "name": "ψ_coverage",
+          "weight": 0.30
+        },
+        "quality": {
+          "name": "ψ_quality",
+          "weight": 0.20
+        },
+        "joinability": {
+          "name": "ψ_joinability",
+          "weight": 0.05
+        }
+      },
+      "weights": {
+        "w_semantic": 0.30,
+        "w_structural": 0.15,
+        "w_coverage": 0.30,
+        "w_quality": 0.20,
+        "w_joinability": 0.05
+      },
+      "uses": 0,
+      "promoted": false
+    },
+    "FILTER": {
+      "id": "action_006",
+      "name": "FILTER",
+      "purpose": "Select subset of data based on criteria",
+      "description": "Extract rows or records matching specific conditions",
+      "status": "APPROVED",
+      "required_axes": ["schema", "quality", "domain"],
+      "axes_specifications": {
+        "schema": {
+          "required": true,
+          "critical": true,
+          "specification": "Table must have filterable columns with meaningful values. Columns should have discrete values or ranges suitable for filtering.",
+          "profile_properties": ["categorical_columns_count", "numeric_columns_count", "column_cardinality_distribution"]
+        },
+        "quality": {
+          "required": true,
+          "critical": true,
+          "specification": "Non-null values in filter columns essential. Missing values in filtering dimensions reduce result quality.",
+          "profile_properties": ["completeness_score", "missing_value_percentage", "data_integrity_issues"]
+        },
+        "domain": {
+          "required": true,
+          "critical": false,
+          "specification": "Filter columns should represent meaningful business/analytical dimensions.",
+          "profile_properties": ["domain_relevance_score", "semantic_alignment"]
+        }
+      },
+      "hard_constraints": {
+        "HC1": {
+          "name": "filterable_columns",
+          "description": "Table must have columns with meaningful values to filter on",
+          "type": "column_presence_check",
+          "required": true
+        }
+      },
+      "soft_predicates": {
+        "semantic": {
+          "name": "ψ_semantic",
+          "weight": 0.25
+        },
+        "structural": {
+          "name": "ψ_structural",
+          "weight": 0.15
+        },
+        "coverage": {
+          "name": "ψ_coverage",
+          "weight": 0.20
+        },
+        "quality": {
+          "name": "ψ_quality",
+          "weight": 0.35
+        },
+        "joinability": {
+          "name": "ψ_joinability",
+          "weight": 0.05
+        }
+      },
+      "weights": {
+        "w_semantic": 0.25,
+        "w_structural": 0.15,
+        "w_coverage": 0.20,
+        "w_quality": 0.35,
+        "w_joinability": 0.05
+      },
+      "uses": 0,
+      "promoted": false
+    },
+    "JOIN": {
+      "id": "action_007",
+      "name": "JOIN",
+      "purpose": "Combine data from multiple tables",
+      "description": "Link tables on common keys to create enriched dataset",
+      "status": "APPROVED",
+      "required_axes": ["schema", "quality", "domain"],
+      "axes_specifications": {
+        "schema": {
+          "required": true,
+          "critical": true,
+          "specification": "Table must have at least one column suitable as join key. Join key should have reasonable cardinality (not all unique, not all identical). Additional enrichment columns benefit from structural diversity.",
+          "profile_properties": ["numeric_columns_count", "categorical_columns_count", "column_cardinality_distribution"]
+        },
+        "quality": {
+          "required": true,
+          "critical": true,
+          "specification": "Join key must be reliable. Uniqueness and consistency of key values essential. Missing or duplicate key values reduce join quality.",
+          "profile_properties": ["completeness_score", "consistency_score", "missing_value_percentage", "duplicate_rows_count"]
+        },
+        "domain": {
+          "required": true,
+          "critical": false,
+          "specification": "Join columns should represent meaningful linkable entities. Semantic clarity improves join success.",
+          "profile_properties": ["domain_relevance_score", "semantic_alignment"]
+        }
+      },
+      "hard_constraints": {
+        "HC1": {
+          "name": "join_key",
+          "description": "Table must have at least one column that can serve as join key",
+          "type": "column_presence_check",
+          "required": true
+        },
+        "HC2": {
+          "name": "key_uniqueness",
+          "description": "Join key should have reasonable cardinality (not all unique, not all same)",
+          "type": "key_cardinality_check",
+          "required": true
+        }
+      },
+      "soft_predicates": {
+        "semantic": {
+          "name": "ψ_semantic",
+          "weight": 0.20
+        },
+        "structural": {
+          "name": "ψ_structural",
+          "weight": 0.25
+        },
+        "coverage": {
+          "name": "ψ_coverage",
+          "weight": 0.15
+        },
+        "quality": {
+          "name": "ψ_quality",
+          "weight": 0.25
+        },
+        "joinability": {
+          "name": "ψ_joinability",
+          "weight": 0.15
+        }
+      },
+      "weights": {
+        "w_semantic": 0.20,
+        "w_structural": 0.25,
+        "w_coverage": 0.15,
+        "w_quality": 0.25,
+        "w_joinability": 0.15
+      },
+      "uses": 0,
+      "promoted": false
+    }
+  },
+  "metadata_extended": {
+    "creation_date": "2026-09-14",
+    "last_modified": "2026-09-16",
+    "axes_added_date": "2026-09-16",
+    "total_actions": 7,
+    "approved_actions": 7,
+    "derived_actions": 0,
+    "total_uses": 6,
+    "axes_framework_status": "COMPLETE",
+    "kb_growth_strategy": "Phase 1: First-principles logical derivation of specifications. Phase 2: Expert validation against domain knowledge. Phase 3: Empirical tuning based on ranked-table usage feedback.",
+    "notes": [
+      "Each action now explicitly specifies required axes and detailed axis specifications",
+      "Axis specifications include: required (boolean), critical (boolean for hard constraints), specification (text), and profile_properties (metrics to compute)",
+      "Profiler component can now use required_axes to determine which dimensional views to compute for each table",
+      "Critical axes are included in hard_constraints validation during grounding phase"
+    ]
+  }
+}

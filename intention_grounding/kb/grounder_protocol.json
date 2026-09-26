@@ -1,0 +1,100 @@
+{
+  "version": "1.0",
+  "created": "2026-09-16",
+  "title": "Grounder-Action Base Communication Protocol",
+  "rationale": "Defines how Grounder retrieves conditions from Action Base and formats output for Ranker",
+  "protocol_flow": {
+    "step_1_input": {
+      "description": "Grounder receives interpreter output (NOT original query)",
+      "input_structure": {
+        "query_semantic": "string (semantic meaning of query)",
+        "intended_action": "string (action from AB: PREDICT|COMPARE|CORRELATE|SUMMARIZE|EXPLAIN|FILTER|JOIN)",
+        "confidence": "float (0.0-1.0)",
+        "description": "string (additional context)"
+      },
+      "example": {
+        "query_semantic": "forecast vaccine side effects in Europe",
+        "intended_action": "PREDICT",
+        "confidence": 0.95,
+        "description": "User wants predictions of future adverse events"
+      }
+    },
+    "step_2_lookup": {
+      "description": "Grounder looks up action in Action Base",
+      "algorithm": "Direct dictionary lookup: AB[intended_action]",
+      "pseudocode": "conditions = AB.get(intended_action, None)",
+      "complexity": "O(1) constant time"
+    },
+    "step_3_validation": {
+      "description": "Grounder validates action exists in AB",
+      "return_structure_if_valid": {
+        "action_found": true,
+        "conditions_retrieved": "list of condition objects"
+      },
+      "return_structure_if_invalid": {
+        "action_found": false,
+        "error_message": "Action {intended_action} not found in Action Base v1.0"
+      }
+    },
+    "step_4_output": {
+      "description": "Grounder returns structured conditions for Ranker",
+      "output_structure": {
+        "grounding_id": "string (unique ID for this grounding)",
+        "query_semantic": "string (echo from input)",
+        "intended_action": "string (action name)",
+        "action_found": "boolean (was action in AB?)",
+        "conditions": [
+          {
+            "condition_id": "C1",
+            "name": "string",
+            "type": "string (column_type_check|column_presence_check|column_count_check|row_count_check)",
+            "description": "string",
+            "rationale": "string (why this condition matters)",
+            "required": "boolean",
+            "min_count": "int (if applicable)",
+            "min_rows": "int (if applicable)",
+            "ranker_check": "string (pseudocode for Ranker to evaluate)"
+          }
+        ],
+        "timestamp": "ISO timestamp"
+      },
+      "example_output": {
+        "grounding_id": "gr_001",
+        "query_semantic": "forecast vaccine side effects in Europe",
+        "intended_action": "PREDICT",
+        "action_found": true,
+        "conditions": [
+          {
+            "condition_id": "C1",
+            "name": "temporal_column_required",
+            "type": "column_type_check",
+            "description": "Table must have at least one temporal column",
+            "ranker_check": "len(table['temporal_columns']) > 0"
+          },
+          {
+            "condition_id": "C2",
+            "name": "numerical_metric_required",
+            "type": "column_type_check",
+            "description": "Table must have at least one numerical column",
+            "ranker_check": "len(table['numerical_columns']) >= 1"
+          }
+        ],
+        "timestamp": "2026-09-16T..."
+      }
+    }
+  },
+  "grounder_pseudocode": "\ndef ground_intent(interpreter_output, action_base):\n    # Step 1: Extract intended action\n    intended_action = interpreter_output['intended_action']\n    \n    # Step 2: Lookup in Action Base\n    if intended_action in action_base['actions']:\n        # Step 3: Retrieve conditions\n        action_spec = action_base['actions'][intended_action]\n        conditions = action_spec['conditions']\n        \n        # Step 4: Return formatted output\n        return {\n            'grounding_id': generate_id(),\n            'query_semantic': interpreter_output['query_semantic'],\n            'intended_action': intended_action,\n            'action_found': True,\n            'conditions': conditions,\n            'timestamp': now()\n        }\n    else:\n        # Action not found\n        return {\n            'grounding_id': generate_id(),\n            'intended_action': intended_action,\n            'action_found': False,\n            'conditions': [],\n            'error': f'Action {intended_action} not in Action Base',\n            'timestamp': now()\n        }\n    ",
+  "key_design_principles": [
+    "No LLM needed - pure data lookup and extraction",
+    "Conditions are pre-authored in Action Base (not generated)",
+    "Each condition includes 'ranker_check' for Ranker to evaluate",
+    "Grounder is stateless and deterministic (same input = same output)",
+    "Conditions are action-specific, not table-specific"
+  ],
+  "research_contribution": {
+    "novelty": "Separates intent grounding (finding what the user wants) from data ranking (finding which tables can do it)",
+    "rigor": "Conditions are evaluable from schema, not theoretical assumptions",
+    "clarity": "Action Base is explicit, version-controlled, auditable",
+    "extensibility": "Easy to add new actions or conditions without code changes"
+  }
+}

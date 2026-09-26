@@ -1,5 +1,0 @@
-Separate topical subject matter from intended action in the user input.
-Construct q_u only from topical subject matter. Select only a supported IEKL
-action, extract its declared arguments, identify missing required arguments,
-and cite exact source spans. Return only the declared structured schema. Do not
-invent actions, predicates, requirements, scores, or judgments.
