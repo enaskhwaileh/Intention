@@ -76,6 +76,9 @@ def ground_intent(interpreter_output: Dict, action_base: Dict) -> Dict:
         Grounding result with conditions
     """
     
+    if "schema_version" in interpreter_output or "interpretation" in interpreter_output:
+        raise ValueError("AB-M1 contract is incompatible with the legacy grounder; action resolution and binding are not implemented")
+
     intended_action = interpreter_output.get("intended_action", "UNKNOWN")
     
     if intended_action in action_base.get('actions', {}):
