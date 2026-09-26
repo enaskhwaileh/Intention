@@ -32,8 +32,10 @@ All three requested proposal files are absent:
 - `docs/ab_proposal/grounded-card-examples-v0.1.json`
 
 Paths above are relative to `intention_grounding`. The untracked root JSON was read
-as a partial draft reference, not copied into runtime or committed. Conformance to
-the missing specification/examples cannot be claimed. That draft describes Compare
+as a partial draft reference, not copied into runtime or committed. A root-level
+`AB-Specification-v0.1.md` appeared during implementation and was also read, preserved,
+and excluded from commits. The canonical proposal paths remain absent; the companion
+examples remain unseen, so full proposal conformance cannot be claimed. That draft describes Compare
 specializations, additive inheritance, role binding, and explicit complete-grid
 activation. Its global requirement for time grain alongside time points is stricter
 than extraction of a bare year; extraction preserves the year without inventing a
@@ -42,6 +44,17 @@ grounder policy, not interpreter defaults. A time filter does not select traject
 a range implies neither endpoints only nor complete annual coverage. The draft's
 descriptive scope differs from legacy generic statistical thresholds. None of these
 scientific or policy questions is silently reconciled.
+
+The newly available root specification's review table interprets “between 2019 and
+2021” as two annual points, while its general prose disallows silently inferred
+cadence. This interpreter deliberately retains competing range/endpoint readings
+instead of applying that example universally. The specification permits authorized
+external context; this first contract accepts only exact-input evidence, so “these
+datasets” stays unresolved. Its inference/transformation exclusions describe the
+future Compare route, not interpreter scope: recognizable requests remain available
+for a later resolver to reject or support. Its undecided “compare or forecast” case
+is ambiguity, distinct from explicitly accepted alternatives. Requirement and
+profile-side assertions from that specification are not interpreter outputs.
 
 ## Contract and validation
 
