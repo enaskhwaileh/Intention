@@ -1,0 +1,1662 @@
+{
+  "normalization_rules": {
+    "fixture_literal_v1": "Preserve the literal source phrase unchanged, including a concept, entity, or coverage expression. Never derive a coverage policy.",
+    "fixture_country_role_from_named_entities_v1": "Manually annotated France and Spain as country entities, with group_dimension=country. No automatic entity resolution is claimed.",
+    "fixture_explicit_year_range_v1": "Manually expand an explicitly inclusive year range only with independently explicit annual granularity. Preserve ambiguity for between X and Y without resolving context; no default endpoints or cadence.",
+    "fixture_explicit_annual_or_year_literal_v1": "Normalize explicit annual/year granularity to year. A bare year label is not evidence of requested annual cadence.",
+    "fixture_year_literal_v1": "Parse an explicitly named four-digit year as an integer time-point label; this does not establish cadence or coverage."
+  },
+  "examples": [
+    {
+      "fixture_id": "groups_single_year",
+      "kind": "manually_authored_contract_example_not_llm_output",
+      "input": "Compare annual unemployment rates in France and Spain in 2020.",
+      "card": {
+        "card_version": "0.1.0",
+        "ab_version": "0.1.0-draft",
+        "status": "grounded",
+        "actions": [
+          {
+            "instance_id": "a1",
+            "action_id": "compare.groups",
+            "bindings": {
+              "measure": "unemployment rates",
+              "group_dimension": "country",
+              "groups": [
+                "France",
+                "Spain"
+              ],
+              "time_points": [
+                2020
+              ],
+              "time_grain": "year",
+              "coverage_policy": "available_observations"
+            },
+            "binding_evidence": {
+              "measure": {
+                "span": [
+                  15,
+                  33
+                ],
+                "text": "unemployment rates",
+                "normalization_rule": "fixture_literal_v1"
+              },
+              "group_dimension": {
+                "span": [
+                  37,
+                  53
+                ],
+                "text": "France and Spain",
+                "normalization_rule": "fixture_country_role_from_named_entities_v1"
+              },
+              "groups": {
+                "span": [
+                  37,
+                  53
+                ],
+                "text": "France and Spain",
+                "normalization_rule": "fixture_country_role_from_named_entities_v1"
+              },
+              "time_points": {
+                "span": [
+                  57,
+                  61
+                ],
+                "text": "2020",
+                "normalization_rule": "fixture_year_literal_v1"
+              },
+              "time_grain": {
+                "span": [
+                  8,
+                  14
+                ],
+                "text": "annual",
+                "normalization_rule": "fixture_explicit_annual_or_year_literal_v1"
+              },
+              "coverage_policy": {
+                "source": "system_policy",
+                "rule_id": "default_available_observations_v1"
+              }
+            }
+          }
+        ],
+        "composition": {
+          "type": "single",
+          "action": "a1"
+        },
+        "requirements": [
+          {
+            "id": "measure_semantics",
+            "action_instance": "a1",
+            "predicate": "measure_semantics",
+            "axis": "sem",
+            "arguments": {
+              "measure": "unemployment rates"
+            },
+            "shared_variables": {
+              "measure": "m",
+              "observations": "o"
+            },
+            "modality": "required",
+            "scope": "table",
+            "origin": {
+              "action_id": "compare",
+              "template_id": "measure_semantics",
+              "binding_evidence": {
+                "measure": {
+                  "span": [
+                    15,
+                    33
+                  ],
+                  "text": "unemployment rates",
+                  "normalization_rule": "fixture_literal_v1"
+                }
+              }
+            }
+          },
+          {
+            "id": "observation_binding",
+            "action_instance": "a1",
+            "predicate": "observation_binding",
+            "axis": "str",
+            "arguments": {
+              "group_dimension": "country",
+              "groups": [
+                "France",
+                "Spain"
+              ],
+              "time_points": [
+                2020
+              ],
+              "time_grain": "year"
+            },
+            "shared_variables": {
+              "measure": "m",
+              "observations": "o"
+            },
+            "modality": "required",
+            "scope": "table",
+            "origin": {
+              "action_id": "compare",
+              "template_id": "observation_binding",
+              "binding_evidence": {
+                "group_dimension": {
+                  "span": [
+                    37,
+                    53
+                  ],
+                  "text": "France and Spain",
+                  "normalization_rule": "fixture_country_role_from_named_entities_v1"
+                },
+                "groups": {
+                  "span": [
+                    37,
+                    53
+                  ],
+                  "text": "France and Spain",
+                  "normalization_rule": "fixture_country_role_from_named_entities_v1"
+                },
+                "time_points": {
+                  "span": [
+                    57,
+                    61
+                  ],
+                  "text": "2020",
+                  "normalization_rule": "fixture_year_literal_v1"
+                },
+                "time_grain": {
+                  "span": [
+                    8,
+                    14
+                  ],
+                  "text": "annual",
+                  "normalization_rule": "fixture_explicit_annual_or_year_literal_v1"
+                }
+              }
+            }
+          },
+          {
+            "id": "usable_numeric_observations",
+            "action_instance": "a1",
+            "predicate": "usable_numeric_observations",
+            "axis": "qual",
+            "arguments": {
+              "groups": [
+                "France",
+                "Spain"
+              ],
+              "time_points": [
+                2020
+              ],
+              "time_grain": "year",
+              "coverage_policy": "available_observations"
+            },
+            "shared_variables": {
+              "measure": "m",
+              "observations": "o"
+            },
+            "modality": "required",
+            "scope": "table",
+            "origin": {
+              "action_id": "compare",
+              "template_id": "usable_numeric_observations",
+              "binding_evidence": {
+                "groups": {
+                  "span": [
+                    37,
+                    53
+                  ],
+                  "text": "France and Spain",
+                  "normalization_rule": "fixture_country_role_from_named_entities_v1"
+                },
+                "time_points": {
+                  "span": [
+                    57,
+                    61
+                  ],
+                  "text": "2020",
+                  "normalization_rule": "fixture_year_literal_v1"
+                },
+                "time_grain": {
+                  "span": [
+                    8,
+                    14
+                  ],
+                  "text": "annual",
+                  "normalization_rule": "fixture_explicit_annual_or_year_literal_v1"
+                },
+                "coverage_policy": {
+                  "source": "system_policy",
+                  "rule_id": "default_available_observations_v1"
+                }
+              }
+            }
+          },
+          {
+            "id": "comparable_measure_definition",
+            "action_instance": "a1",
+            "predicate": "comparable_measure_definition",
+            "axis": "aff",
+            "arguments": {
+              "groups": [
+                "France",
+                "Spain"
+              ],
+              "time_points": [
+                2020
+              ],
+              "time_grain": "year"
+            },
+            "shared_variables": {
+              "measure": "m",
+              "observations": "o"
+            },
+            "modality": "required",
+            "scope": "table",
+            "origin": {
+              "action_id": "compare",
+              "template_id": "comparable_measure_definition",
+              "binding_evidence": {
+                "groups": {
+                  "span": [
+                    37,
+                    53
+                  ],
+                  "text": "France and Spain",
+                  "normalization_rule": "fixture_country_role_from_named_entities_v1"
+                },
+                "time_points": {
+                  "span": [
+                    57,
+                    61
+                  ],
+                  "text": "2020",
+                  "normalization_rule": "fixture_year_literal_v1"
+                },
+                "time_grain": {
+                  "span": [
+                    8,
+                    14
+                  ],
+                  "text": "annual",
+                  "normalization_rule": "fixture_explicit_annual_or_year_literal_v1"
+                }
+              }
+            }
+          },
+          {
+            "id": "time_coverage",
+            "action_instance": "a1",
+            "predicate": "time_coverage",
+            "axis": "cov",
+            "arguments": {
+              "groups": [
+                "France",
+                "Spain"
+              ],
+              "time_points": [
+                2020
+              ],
+              "time_grain": "year"
+            },
+            "shared_variables": {
+              "measure": "m",
+              "observations": "o"
+            },
+            "modality": "required",
+            "scope": "table",
+            "origin": {
+              "action_id": "compare",
+              "template_id": "time_coverage",
+              "binding_evidence": {
+                "groups": {
+                  "span": [
+                    37,
+                    53
+                  ],
+                  "text": "France and Spain",
+                  "normalization_rule": "fixture_country_role_from_named_entities_v1"
+                },
+                "time_points": {
+                  "span": [
+                    57,
+                    61
+                  ],
+                  "text": "2020",
+                  "normalization_rule": "fixture_year_literal_v1"
+                },
+                "time_grain": {
+                  "span": [
+                    8,
+                    14
+                  ],
+                  "text": "annual",
+                  "normalization_rule": "fixture_explicit_annual_or_year_literal_v1"
+                }
+              }
+            }
+          },
+          {
+            "id": "group_coverage",
+            "action_instance": "a1",
+            "predicate": "group_coverage",
+            "axis": "cov",
+            "arguments": {
+              "group_dimension": "country",
+              "groups": [
+                "France",
+                "Spain"
+              ],
+              "time_points": [
+                2020
+              ],
+              "time_grain": "year"
+            },
+            "shared_variables": {
+              "measure": "m",
+              "observations": "o"
+            },
+            "modality": "required",
+            "scope": "table",
+            "origin": {
+              "action_id": "compare.groups",
+              "template_id": "group_coverage",
+              "binding_evidence": {
+                "group_dimension": {
+                  "span": [
+                    37,
+                    53
+                  ],
+                  "text": "France and Spain",
+                  "normalization_rule": "fixture_country_role_from_named_entities_v1"
+                },
+                "groups": {
+                  "span": [
+                    37,
+                    53
+                  ],
+                  "text": "France and Spain",
+                  "normalization_rule": "fixture_country_role_from_named_entities_v1"
+                },
+                "time_points": {
+                  "span": [
+                    57,
+                    61
+                  ],
+                  "text": "2020",
+                  "normalization_rule": "fixture_year_literal_v1"
+                },
+                "time_grain": {
+                  "span": [
+                    8,
+                    14
+                  ],
+                  "text": "annual",
+                  "normalization_rule": "fixture_explicit_annual_or_year_literal_v1"
+                }
+              }
+            }
+          }
+        ],
+        "requirement_logic": {
+          "all_of": [
+            "measure_semantics",
+            "observation_binding",
+            "usable_numeric_observations",
+            "comparable_measure_definition",
+            "time_coverage",
+            "group_coverage"
+          ]
+        },
+        "unresolved_arguments": []
+      }
+    },
+    {
+      "fixture_id": "group_trajectories",
+      "kind": "manually_authored_contract_example_not_llm_output",
+      "input": "Compare how annual unemployment rates changed for each of France and Spain in every year from 2019 to 2021 inclusive.",
+      "card": {
+        "card_version": "0.1.0",
+        "ab_version": "0.1.0-draft",
+        "status": "grounded",
+        "actions": [
+          {
+            "instance_id": "a1",
+            "action_id": "compare.groups.trajectories",
+            "bindings": {
+              "measure": "unemployment rates",
+              "group_dimension": "country",
+              "groups": [
+                "France",
+                "Spain"
+              ],
+              "time_points": [
+                2019,
+                2020,
+                2021
+              ],
+              "time_grain": "year",
+              "coverage_policy": "complete_grid"
+            },
+            "binding_evidence": {
+              "measure": {
+                "span": [
+                  19,
+                  37
+                ],
+                "text": "unemployment rates",
+                "normalization_rule": "fixture_literal_v1"
+              },
+              "group_dimension": {
+                "span": [
+                  58,
+                  74
+                ],
+                "text": "France and Spain",
+                "normalization_rule": "fixture_country_role_from_named_entities_v1"
+              },
+              "groups": {
+                "span": [
+                  58,
+                  74
+                ],
+                "text": "France and Spain",
+                "normalization_rule": "fixture_country_role_from_named_entities_v1"
+              },
+              "time_points": {
+                "span": [
+                  89,
+                  116
+                ],
+                "text": "from 2019 to 2021 inclusive",
+                "normalization_rule": "fixture_explicit_year_range_v1",
+                "evidence_refs": [
+                  "time_domain",
+                  "time_grain"
+                ]
+              },
+              "time_grain": {
+                "span": [
+                  12,
+                  18
+                ],
+                "text": "annual",
+                "normalization_rule": "fixture_explicit_annual_or_year_literal_v1"
+              },
+              "coverage_policy": {
+                "source": "grounding_derivation",
+                "rule_id": "derive_explicit_group_time_grid_v1",
+                "binding_refs": {
+                  "groups": "groups",
+                  "time_domain": "time_points",
+                  "time_grain": "time_grain"
+                },
+                "evidence_refs": {
+                  "groups": [
+                    "groups"
+                  ],
+                  "time_domain": [
+                    "time_domain"
+                  ],
+                  "time_grain": [
+                    "time_grain"
+                  ],
+                  "exhaustive_coverage": [
+                    "exhaustive_coverage"
+                  ],
+                  "all_groups_scope": [
+                    "all_groups_scope"
+                  ]
+                },
+                "reviewed_conditions": {
+                  "groups": true,
+                  "time_domain": true,
+                  "time_grain": true,
+                  "exhaustive_coverage": true,
+                  "all_groups_scope": true
+                }
+              }
+            },
+            "extracted_coverage_expression": {
+              "literal": "every year",
+              "evidence_refs": [
+                "exhaustive_coverage"
+              ],
+              "normalization_rule": "fixture_literal_v1"
+            }
+          }
+        ],
+        "composition": {
+          "type": "single",
+          "action": "a1"
+        },
+        "requirements": [
+          {
+            "id": "measure_semantics",
+            "action_instance": "a1",
+            "predicate": "measure_semantics",
+            "axis": "sem",
+            "arguments": {
+              "measure": "unemployment rates"
+            },
+            "shared_variables": {
+              "measure": "m",
+              "observations": "o"
+            },
+            "modality": "required",
+            "scope": "table",
+            "origin": {
+              "action_id": "compare",
+              "template_id": "measure_semantics",
+              "binding_evidence": {
+                "measure": {
+                  "span": [
+                    19,
+                    37
+                  ],
+                  "text": "unemployment rates",
+                  "normalization_rule": "fixture_literal_v1"
+                }
+              }
+            }
+          },
+          {
+            "id": "observation_binding",
+            "action_instance": "a1",
+            "predicate": "observation_binding",
+            "axis": "str",
+            "arguments": {
+              "group_dimension": "country",
+              "groups": [
+                "France",
+                "Spain"
+              ],
+              "time_points": [
+                2019,
+                2020,
+                2021
+              ],
+              "time_grain": "year"
+            },
+            "shared_variables": {
+              "measure": "m",
+              "observations": "o"
+            },
+            "modality": "required",
+            "scope": "table",
+            "origin": {
+              "action_id": "compare",
+              "template_id": "observation_binding",
+              "binding_evidence": {
+                "group_dimension": {
+                  "span": [
+                    58,
+                    74
+                  ],
+                  "text": "France and Spain",
+                  "normalization_rule": "fixture_country_role_from_named_entities_v1"
+                },
+                "groups": {
+                  "span": [
+                    58,
+                    74
+                  ],
+                  "text": "France and Spain",
+                  "normalization_rule": "fixture_country_role_from_named_entities_v1"
+                },
+                "time_points": {
+                  "span": [
+                    89,
+                    116
+                  ],
+                  "text": "from 2019 to 2021 inclusive",
+                  "normalization_rule": "fixture_explicit_year_range_v1",
+                  "evidence_refs": [
+                    "time_domain",
+                    "time_grain"
+                  ]
+                },
+                "time_grain": {
+                  "span": [
+                    12,
+                    18
+                  ],
+                  "text": "annual",
+                  "normalization_rule": "fixture_explicit_annual_or_year_literal_v1"
+                }
+              }
+            }
+          },
+          {
+            "id": "usable_numeric_observations",
+            "action_instance": "a1",
+            "predicate": "usable_numeric_observations",
+            "axis": "qual",
+            "arguments": {
+              "groups": [
+                "France",
+                "Spain"
+              ],
+              "time_points": [
+                2019,
+                2020,
+                2021
+              ],
+              "time_grain": "year",
+              "coverage_policy": "complete_grid"
+            },
+            "shared_variables": {
+              "measure": "m",
+              "observations": "o"
+            },
+            "modality": "required",
+            "scope": "table",
+            "origin": {
+              "action_id": "compare",
+              "template_id": "usable_numeric_observations",
+              "binding_evidence": {
+                "groups": {
+                  "span": [
+                    58,
+                    74
+                  ],
+                  "text": "France and Spain",
+                  "normalization_rule": "fixture_country_role_from_named_entities_v1"
+                },
+                "time_points": {
+                  "span": [
+                    89,
+                    116
+                  ],
+                  "text": "from 2019 to 2021 inclusive",
+                  "normalization_rule": "fixture_explicit_year_range_v1",
+                  "evidence_refs": [
+                    "time_domain",
+                    "time_grain"
+                  ]
+                },
+                "time_grain": {
+                  "span": [
+                    12,
+                    18
+                  ],
+                  "text": "annual",
+                  "normalization_rule": "fixture_explicit_annual_or_year_literal_v1"
+                },
+                "coverage_policy": {
+                  "source": "grounding_derivation",
+                  "rule_id": "derive_explicit_group_time_grid_v1",
+                  "binding_refs": {
+                    "groups": "groups",
+                    "time_domain": "time_points",
+                    "time_grain": "time_grain"
+                  },
+                  "evidence_refs": {
+                    "groups": [
+                      "groups"
+                    ],
+                    "time_domain": [
+                      "time_domain"
+                    ],
+                    "time_grain": [
+                      "time_grain"
+                    ],
+                    "exhaustive_coverage": [
+                      "exhaustive_coverage"
+                    ],
+                    "all_groups_scope": [
+                      "all_groups_scope"
+                    ]
+                  },
+                  "reviewed_conditions": {
+                    "groups": true,
+                    "time_domain": true,
+                    "time_grain": true,
+                    "exhaustive_coverage": true,
+                    "all_groups_scope": true
+                  }
+                }
+              }
+            }
+          },
+          {
+            "id": "comparable_measure_definition",
+            "action_instance": "a1",
+            "predicate": "comparable_measure_definition",
+            "axis": "aff",
+            "arguments": {
+              "groups": [
+                "France",
+                "Spain"
+              ],
+              "time_points": [
+                2019,
+                2020,
+                2021
+              ],
+              "time_grain": "year"
+            },
+            "shared_variables": {
+              "measure": "m",
+              "observations": "o"
+            },
+            "modality": "required",
+            "scope": "table",
+            "origin": {
+              "action_id": "compare",
+              "template_id": "comparable_measure_definition",
+              "binding_evidence": {
+                "groups": {
+                  "span": [
+                    58,
+                    74
+                  ],
+                  "text": "France and Spain",
+                  "normalization_rule": "fixture_country_role_from_named_entities_v1"
+                },
+                "time_points": {
+                  "span": [
+                    89,
+                    116
+                  ],
+                  "text": "from 2019 to 2021 inclusive",
+                  "normalization_rule": "fixture_explicit_year_range_v1",
+                  "evidence_refs": [
+                    "time_domain",
+                    "time_grain"
+                  ]
+                },
+                "time_grain": {
+                  "span": [
+                    12,
+                    18
+                  ],
+                  "text": "annual",
+                  "normalization_rule": "fixture_explicit_annual_or_year_literal_v1"
+                }
+              }
+            }
+          },
+          {
+            "id": "time_coverage",
+            "action_instance": "a1",
+            "predicate": "time_coverage",
+            "axis": "cov",
+            "arguments": {
+              "groups": [
+                "France",
+                "Spain"
+              ],
+              "time_points": [
+                2019,
+                2020,
+                2021
+              ],
+              "time_grain": "year"
+            },
+            "shared_variables": {
+              "measure": "m",
+              "observations": "o"
+            },
+            "modality": "required",
+            "scope": "table",
+            "origin": {
+              "action_id": "compare",
+              "template_id": "time_coverage",
+              "binding_evidence": {
+                "groups": {
+                  "span": [
+                    58,
+                    74
+                  ],
+                  "text": "France and Spain",
+                  "normalization_rule": "fixture_country_role_from_named_entities_v1"
+                },
+                "time_points": {
+                  "span": [
+                    89,
+                    116
+                  ],
+                  "text": "from 2019 to 2021 inclusive",
+                  "normalization_rule": "fixture_explicit_year_range_v1",
+                  "evidence_refs": [
+                    "time_domain",
+                    "time_grain"
+                  ]
+                },
+                "time_grain": {
+                  "span": [
+                    12,
+                    18
+                  ],
+                  "text": "annual",
+                  "normalization_rule": "fixture_explicit_annual_or_year_literal_v1"
+                }
+              }
+            }
+          },
+          {
+            "id": "group_coverage",
+            "action_instance": "a1",
+            "predicate": "group_coverage",
+            "axis": "cov",
+            "arguments": {
+              "group_dimension": "country",
+              "groups": [
+                "France",
+                "Spain"
+              ],
+              "time_points": [
+                2019,
+                2020,
+                2021
+              ],
+              "time_grain": "year"
+            },
+            "shared_variables": {
+              "measure": "m",
+              "observations": "o"
+            },
+            "modality": "required",
+            "scope": "table",
+            "origin": {
+              "action_id": "compare.groups",
+              "template_id": "group_coverage",
+              "binding_evidence": {
+                "group_dimension": {
+                  "span": [
+                    58,
+                    74
+                  ],
+                  "text": "France and Spain",
+                  "normalization_rule": "fixture_country_role_from_named_entities_v1"
+                },
+                "groups": {
+                  "span": [
+                    58,
+                    74
+                  ],
+                  "text": "France and Spain",
+                  "normalization_rule": "fixture_country_role_from_named_entities_v1"
+                },
+                "time_points": {
+                  "span": [
+                    89,
+                    116
+                  ],
+                  "text": "from 2019 to 2021 inclusive",
+                  "normalization_rule": "fixture_explicit_year_range_v1",
+                  "evidence_refs": [
+                    "time_domain",
+                    "time_grain"
+                  ]
+                },
+                "time_grain": {
+                  "span": [
+                    12,
+                    18
+                  ],
+                  "text": "annual",
+                  "normalization_rule": "fixture_explicit_annual_or_year_literal_v1"
+                }
+              }
+            }
+          },
+          {
+            "id": "complete_requested_grid",
+            "action_instance": "a1",
+            "predicate": "complete_requested_grid",
+            "axis": "cov",
+            "arguments": {
+              "group_dimension": "country",
+              "groups": [
+                "France",
+                "Spain"
+              ],
+              "time_points": [
+                2019,
+                2020,
+                2021
+              ],
+              "time_grain": "year"
+            },
+            "shared_variables": {
+              "measure": "m",
+              "observations": "o"
+            },
+            "modality": "required",
+            "scope": "table",
+            "origin": {
+              "action_id": "compare.groups",
+              "template_id": "complete_requested_grid",
+              "binding_evidence": {
+                "group_dimension": {
+                  "span": [
+                    58,
+                    74
+                  ],
+                  "text": "France and Spain",
+                  "normalization_rule": "fixture_country_role_from_named_entities_v1"
+                },
+                "groups": {
+                  "span": [
+                    58,
+                    74
+                  ],
+                  "text": "France and Spain",
+                  "normalization_rule": "fixture_country_role_from_named_entities_v1"
+                },
+                "time_points": {
+                  "span": [
+                    89,
+                    116
+                  ],
+                  "text": "from 2019 to 2021 inclusive",
+                  "normalization_rule": "fixture_explicit_year_range_v1",
+                  "evidence_refs": [
+                    "time_domain",
+                    "time_grain"
+                  ]
+                },
+                "time_grain": {
+                  "span": [
+                    12,
+                    18
+                  ],
+                  "text": "annual",
+                  "normalization_rule": "fixture_explicit_annual_or_year_literal_v1"
+                }
+              },
+              "coverage_derivation": {
+                "source": "grounding_derivation",
+                "rule_id": "derive_explicit_group_time_grid_v1",
+                "binding_refs": {
+                  "groups": "groups",
+                  "time_domain": "time_points",
+                  "time_grain": "time_grain"
+                },
+                "evidence_refs": {
+                  "groups": [
+                    "groups"
+                  ],
+                  "time_domain": [
+                    "time_domain"
+                  ],
+                  "time_grain": [
+                    "time_grain"
+                  ],
+                  "exhaustive_coverage": [
+                    "exhaustive_coverage"
+                  ],
+                  "all_groups_scope": [
+                    "all_groups_scope"
+                  ]
+                },
+                "reviewed_conditions": {
+                  "groups": true,
+                  "time_domain": true,
+                  "time_grain": true,
+                  "exhaustive_coverage": true,
+                  "all_groups_scope": true
+                }
+              }
+            }
+          },
+          {
+            "id": "paired_temporal_support",
+            "action_instance": "a1",
+            "predicate": "paired_temporal_support",
+            "axis": "str",
+            "arguments": {
+              "group_dimension": "country",
+              "groups": [
+                "France",
+                "Spain"
+              ],
+              "time_points": [
+                2019,
+                2020,
+                2021
+              ],
+              "time_grain": "year"
+            },
+            "shared_variables": {
+              "measure": "m",
+              "observations": "o"
+            },
+            "modality": "required",
+            "scope": "table",
+            "origin": {
+              "action_id": "compare.groups.trajectories",
+              "template_id": "paired_temporal_support",
+              "binding_evidence": {
+                "group_dimension": {
+                  "span": [
+                    58,
+                    74
+                  ],
+                  "text": "France and Spain",
+                  "normalization_rule": "fixture_country_role_from_named_entities_v1"
+                },
+                "groups": {
+                  "span": [
+                    58,
+                    74
+                  ],
+                  "text": "France and Spain",
+                  "normalization_rule": "fixture_country_role_from_named_entities_v1"
+                },
+                "time_points": {
+                  "span": [
+                    89,
+                    116
+                  ],
+                  "text": "from 2019 to 2021 inclusive",
+                  "normalization_rule": "fixture_explicit_year_range_v1",
+                  "evidence_refs": [
+                    "time_domain",
+                    "time_grain"
+                  ]
+                },
+                "time_grain": {
+                  "span": [
+                    12,
+                    18
+                  ],
+                  "text": "annual",
+                  "normalization_rule": "fixture_explicit_annual_or_year_literal_v1"
+                }
+              }
+            }
+          }
+        ],
+        "requirement_logic": {
+          "all_of": [
+            "measure_semantics",
+            "observation_binding",
+            "usable_numeric_observations",
+            "comparable_measure_definition",
+            "time_coverage",
+            "group_coverage",
+            "complete_requested_grid",
+            "paired_temporal_support"
+          ]
+        },
+        "unresolved_arguments": []
+      },
+      "evidence": {
+        "groups": {
+          "span": [
+            58,
+            74
+          ],
+          "text": "France and Spain"
+        },
+        "time_domain": {
+          "span": [
+            89,
+            116
+          ],
+          "text": "from 2019 to 2021 inclusive"
+        },
+        "time_grain": {
+          "span": [
+            12,
+            18
+          ],
+          "text": "annual"
+        },
+        "exhaustive_coverage": {
+          "span": [
+            78,
+            88
+          ],
+          "text": "every year"
+        },
+        "all_groups_scope": {
+          "span": [
+            50,
+            88
+          ],
+          "text": "each of France and Spain in every year"
+        }
+      }
+    },
+    {
+      "fixture_id": "time",
+      "kind": "manually_authored_contract_example_not_llm_output",
+      "input": "Compare the annual unemployment rate in France in 2019 versus 2021.",
+      "card": {
+        "card_version": "0.1.0",
+        "ab_version": "0.1.0-draft",
+        "status": "grounded",
+        "actions": [
+          {
+            "instance_id": "a1",
+            "action_id": "compare.time",
+            "bindings": {
+              "measure": "unemployment rate",
+              "subject": "France",
+              "time_points": [
+                2019,
+                2021
+              ],
+              "time_grain": "year",
+              "coverage_policy": "available_observations"
+            },
+            "binding_evidence": {
+              "measure": {
+                "span": [
+                  19,
+                  36
+                ],
+                "text": "unemployment rate",
+                "normalization_rule": "fixture_literal_v1"
+              },
+              "subject": {
+                "span": [
+                  40,
+                  46
+                ],
+                "text": "France",
+                "normalization_rule": "fixture_literal_v1"
+              },
+              "time_points": {
+                "items": [
+                  {
+                    "span": [
+                      50,
+                      54
+                    ],
+                    "text": "2019",
+                    "normalization_rule": "fixture_year_literal_v1"
+                  },
+                  {
+                    "span": [
+                      62,
+                      66
+                    ],
+                    "text": "2021",
+                    "normalization_rule": "fixture_year_literal_v1"
+                  }
+                ],
+                "contrast_evidence": {
+                  "span": [
+                    50,
+                    66
+                  ],
+                  "text": "2019 versus 2021",
+                  "normalization_rule": "fixture_literal_v1"
+                }
+              },
+              "time_grain": {
+                "span": [
+                  12,
+                  18
+                ],
+                "text": "annual",
+                "normalization_rule": "fixture_explicit_annual_or_year_literal_v1"
+              },
+              "coverage_policy": {
+                "source": "system_policy",
+                "rule_id": "default_available_observations_v1"
+              }
+            }
+          }
+        ],
+        "composition": {
+          "type": "single",
+          "action": "a1"
+        },
+        "requirements": [
+          {
+            "id": "measure_semantics",
+            "action_instance": "a1",
+            "predicate": "measure_semantics",
+            "axis": "sem",
+            "arguments": {
+              "measure": "unemployment rate"
+            },
+            "shared_variables": {
+              "measure": "m",
+              "observations": "o"
+            },
+            "modality": "required",
+            "scope": "table",
+            "origin": {
+              "action_id": "compare",
+              "template_id": "measure_semantics",
+              "binding_evidence": {
+                "measure": {
+                  "span": [
+                    19,
+                    36
+                  ],
+                  "text": "unemployment rate",
+                  "normalization_rule": "fixture_literal_v1"
+                }
+              }
+            }
+          },
+          {
+            "id": "observation_binding",
+            "action_instance": "a1",
+            "predicate": "observation_binding",
+            "axis": "str",
+            "arguments": {
+              "subject": "France",
+              "time_points": [
+                2019,
+                2021
+              ],
+              "time_grain": "year"
+            },
+            "shared_variables": {
+              "measure": "m",
+              "observations": "o"
+            },
+            "modality": "required",
+            "scope": "table",
+            "origin": {
+              "action_id": "compare",
+              "template_id": "observation_binding",
+              "binding_evidence": {
+                "subject": {
+                  "span": [
+                    40,
+                    46
+                  ],
+                  "text": "France",
+                  "normalization_rule": "fixture_literal_v1"
+                },
+                "time_points": {
+                  "items": [
+                    {
+                      "span": [
+                        50,
+                        54
+                      ],
+                      "text": "2019",
+                      "normalization_rule": "fixture_year_literal_v1"
+                    },
+                    {
+                      "span": [
+                        62,
+                        66
+                      ],
+                      "text": "2021",
+                      "normalization_rule": "fixture_year_literal_v1"
+                    }
+                  ],
+                  "contrast_evidence": {
+                    "span": [
+                      50,
+                      66
+                    ],
+                    "text": "2019 versus 2021",
+                    "normalization_rule": "fixture_literal_v1"
+                  }
+                },
+                "time_grain": {
+                  "span": [
+                    12,
+                    18
+                  ],
+                  "text": "annual",
+                  "normalization_rule": "fixture_explicit_annual_or_year_literal_v1"
+                }
+              }
+            }
+          },
+          {
+            "id": "usable_numeric_observations",
+            "action_instance": "a1",
+            "predicate": "usable_numeric_observations",
+            "axis": "qual",
+            "arguments": {
+              "subject": "France",
+              "time_points": [
+                2019,
+                2021
+              ],
+              "time_grain": "year",
+              "coverage_policy": "available_observations"
+            },
+            "shared_variables": {
+              "measure": "m",
+              "observations": "o"
+            },
+            "modality": "required",
+            "scope": "table",
+            "origin": {
+              "action_id": "compare",
+              "template_id": "usable_numeric_observations",
+              "binding_evidence": {
+                "subject": {
+                  "span": [
+                    40,
+                    46
+                  ],
+                  "text": "France",
+                  "normalization_rule": "fixture_literal_v1"
+                },
+                "time_points": {
+                  "items": [
+                    {
+                      "span": [
+                        50,
+                        54
+                      ],
+                      "text": "2019",
+                      "normalization_rule": "fixture_year_literal_v1"
+                    },
+                    {
+                      "span": [
+                        62,
+                        66
+                      ],
+                      "text": "2021",
+                      "normalization_rule": "fixture_year_literal_v1"
+                    }
+                  ],
+                  "contrast_evidence": {
+                    "span": [
+                      50,
+                      66
+                    ],
+                    "text": "2019 versus 2021",
+                    "normalization_rule": "fixture_literal_v1"
+                  }
+                },
+                "time_grain": {
+                  "span": [
+                    12,
+                    18
+                  ],
+                  "text": "annual",
+                  "normalization_rule": "fixture_explicit_annual_or_year_literal_v1"
+                },
+                "coverage_policy": {
+                  "source": "system_policy",
+                  "rule_id": "default_available_observations_v1"
+                }
+              }
+            }
+          },
+          {
+            "id": "comparable_measure_definition",
+            "action_instance": "a1",
+            "predicate": "comparable_measure_definition",
+            "axis": "aff",
+            "arguments": {
+              "subject": "France",
+              "time_points": [
+                2019,
+                2021
+              ],
+              "time_grain": "year"
+            },
+            "shared_variables": {
+              "measure": "m",
+              "observations": "o"
+            },
+            "modality": "required",
+            "scope": "table",
+            "origin": {
+              "action_id": "compare",
+              "template_id": "comparable_measure_definition",
+              "binding_evidence": {
+                "subject": {
+                  "span": [
+                    40,
+                    46
+                  ],
+                  "text": "France",
+                  "normalization_rule": "fixture_literal_v1"
+                },
+                "time_points": {
+                  "items": [
+                    {
+                      "span": [
+                        50,
+                        54
+                      ],
+                      "text": "2019",
+                      "normalization_rule": "fixture_year_literal_v1"
+                    },
+                    {
+                      "span": [
+                        62,
+                        66
+                      ],
+                      "text": "2021",
+                      "normalization_rule": "fixture_year_literal_v1"
+                    }
+                  ],
+                  "contrast_evidence": {
+                    "span": [
+                      50,
+                      66
+                    ],
+                    "text": "2019 versus 2021",
+                    "normalization_rule": "fixture_literal_v1"
+                  }
+                },
+                "time_grain": {
+                  "span": [
+                    12,
+                    18
+                  ],
+                  "text": "annual",
+                  "normalization_rule": "fixture_explicit_annual_or_year_literal_v1"
+                }
+              }
+            }
+          },
+          {
+            "id": "time_coverage",
+            "action_instance": "a1",
+            "predicate": "time_coverage",
+            "axis": "cov",
+            "arguments": {
+              "subject": "France",
+              "time_points": [
+                2019,
+                2021
+              ],
+              "time_grain": "year"
+            },
+            "shared_variables": {
+              "measure": "m",
+              "observations": "o"
+            },
+            "modality": "required",
+            "scope": "table",
+            "origin": {
+              "action_id": "compare",
+              "template_id": "time_coverage",
+              "binding_evidence": {
+                "subject": {
+                  "span": [
+                    40,
+                    46
+                  ],
+                  "text": "France",
+                  "normalization_rule": "fixture_literal_v1"
+                },
+                "time_points": {
+                  "items": [
+                    {
+                      "span": [
+                        50,
+                        54
+                      ],
+                      "text": "2019",
+                      "normalization_rule": "fixture_year_literal_v1"
+                    },
+                    {
+                      "span": [
+                        62,
+                        66
+                      ],
+                      "text": "2021",
+                      "normalization_rule": "fixture_year_literal_v1"
+                    }
+                  ],
+                  "contrast_evidence": {
+                    "span": [
+                      50,
+                      66
+                    ],
+                    "text": "2019 versus 2021",
+                    "normalization_rule": "fixture_literal_v1"
+                  }
+                },
+                "time_grain": {
+                  "span": [
+                    12,
+                    18
+                  ],
+                  "text": "annual",
+                  "normalization_rule": "fixture_explicit_annual_or_year_literal_v1"
+                }
+              }
+            }
+          }
+        ],
+        "requirement_logic": {
+          "all_of": [
+            "measure_semantics",
+            "observation_binding",
+            "usable_numeric_observations",
+            "comparable_measure_definition",
+            "time_coverage"
+          ]
+        },
+        "unresolved_arguments": []
+      }
+    }
+  ],
+  "non_grounded_cases": [
+    {
+      "input": "Compare these datasets.",
+      "status": "insufficient_input",
+      "reason": "Measure and group or time roles unresolved."
+    },
+    {
+      "input": "Compare unemployment trends in France and Spain.",
+      "status": "insufficient_input",
+      "candidate_action": "compare.groups.trajectories",
+      "missing_roles": [
+        "time_points",
+        "time_grain"
+      ]
+    },
+    {
+      "input": "Is France’s unemployment rate significantly higher than Spain’s?",
+      "status": "unsupported",
+      "reason": "Inferential comparison is outside v0.1."
+    },
+    {
+      "input": "Compare annual totals computed from monthly sales.",
+      "status": "unsupported",
+      "reason": "Requires an unsupported aggregation route."
+    },
+    {
+      "input": "Compare or forecast unemployment rates; I have not decided.",
+      "status": "ambiguous",
+      "reason": "Competing goals; forecast is also outside the implemented branch."
+    },
+    {
+      "input": "Compare the unemployment rate in France between 2019 and 2021.",
+      "status": "ambiguous",
+      "candidate_action": "compare.time",
+      "reason": "Between 2019 and 2021 does not resolve endpoints versus an interval; annual cadence is not explicit.",
+      "alternative_readings": [
+        "Contrast endpoint observations if clarified.",
+        "Compare observations within an interval if clarified."
+      ],
+      "missing_roles": [
+        "time_grain"
+      ]
+    }
+  ],
+  "rule_catalogue": "action-base-v0.1.json",
+  "coverage_review_cases": [
+    {
+      "id": "every_year_alone",
+      "kind": "manually_authored_coverage_review_not_grounder_output",
+      "input": "Compare rates every year.",
+      "rule_id": "derive_explicit_group_time_grid_v1",
+      "reviewed_conditions": {
+        "groups": false,
+        "time_domain": false,
+        "time_grain": true,
+        "exhaustive_coverage": true,
+        "all_groups_scope": false
+      },
+      "expected_derivation": null,
+      "reason": "Unsupported or unresolved conditions: groups, time_domain, all_groups_scope. No complete-grid activation; preserve unresolved information."
+    },
+    {
+      "id": "annual_only",
+      "kind": "manually_authored_coverage_review_not_grounder_output",
+      "input": "Compare annual rates in France and Spain.",
+      "rule_id": "derive_explicit_group_time_grid_v1",
+      "reviewed_conditions": {
+        "groups": true,
+        "time_domain": false,
+        "time_grain": true,
+        "exhaustive_coverage": false,
+        "all_groups_scope": false
+      },
+      "expected_derivation": null,
+      "reason": "Unsupported or unresolved conditions: time_domain, exhaustive_coverage, all_groups_scope. No complete-grid activation; preserve unresolved information."
+    },
+    {
+      "id": "range_only",
+      "kind": "manually_authored_coverage_review_not_grounder_output",
+      "input": "Compare rates in France and Spain from 2019 to 2021.",
+      "rule_id": "derive_explicit_group_time_grid_v1",
+      "reviewed_conditions": {
+        "groups": true,
+        "time_domain": true,
+        "time_grain": false,
+        "exhaustive_coverage": false,
+        "all_groups_scope": false
+      },
+      "expected_derivation": null,
+      "reason": "Unsupported or unresolved conditions: time_grain, exhaustive_coverage, all_groups_scope. No complete-grid activation; preserve unresolved information."
+    },
+    {
+      "id": "missing_group_scope",
+      "kind": "manually_authored_coverage_review_not_grounder_output",
+      "input": "Compare annual rates in France and Spain from 2019 to 2021 inclusive; require every year for France only.",
+      "rule_id": "derive_explicit_group_time_grid_v1",
+      "reviewed_conditions": {
+        "groups": true,
+        "time_domain": true,
+        "time_grain": true,
+        "exhaustive_coverage": true,
+        "all_groups_scope": false
+      },
+      "expected_derivation": null,
+      "reason": "Unsupported or unresolved conditions: all_groups_scope. No complete-grid activation; preserve unresolved information."
+    },
+    {
+      "id": "unresolved_between",
+      "kind": "manually_authored_coverage_review_not_grounder_output",
+      "input": "Compare annual rates in France and Spain between 2019 and 2021.",
+      "rule_id": "derive_explicit_group_time_grid_v1",
+      "reviewed_conditions": {
+        "groups": true,
+        "time_domain": false,
+        "time_grain": true,
+        "exhaustive_coverage": false,
+        "all_groups_scope": false
+      },
+      "expected_derivation": null,
+      "reason": "Unsupported or unresolved conditions: time_domain, exhaustive_coverage, all_groups_scope. No complete-grid activation; preserve unresolved information."
+    }
+  ]
+}
