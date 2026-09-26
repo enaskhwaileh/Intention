@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "intention-grounding"
-version = "0.1.0"
+version = "0.2.0"
 description = "Validated interpretation boundary for intended-action grounding"
 requires-python = ">=3.10"
 dependencies = ["jsonschema==4.23.0"]
@@ -13,8 +13,12 @@ dependencies = ["jsonschema==4.23.0"]
 groq = ["groq>=0.11,<1"]
 dev = [] # Tests use the Python standard library.
 
+[project.scripts]
+intention-grounding = "intention_grounding.cli:main"
+
 [tool.setuptools.packages.find]
-include = ["intention_grounding.interpreter*"]
+include = ["intention_grounding*"]
 
 [tool.setuptools.package-data]
 "intention_grounding.interpreter" = ["schema.json", "fixtures/*.json"]
+"intention_grounding" = ["fixtures/*.csv", "fixtures/*.json", "docs/ab_proposal/*.json"]

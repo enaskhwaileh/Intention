@@ -1,0 +1,10 @@
+{
+  "dataset_name": "WikiDBs-10k",
+  "dataset_id": "wikidbs-10k",
+  "source_url": "https://doi.org/10.5281/zenodo.8227452",
+  "version": "v1 (published 2023-08-29)",
+  "license": "CC BY 4.0",
+  "acquisition_date": "not-acquired",
+  "archive_checksum": "wikidbs_10k.zip md5:71ebb739508f1a54b79c2112687d5d83 (official Zenodo record; archive not locally verified)",
+  "selection_procedure": "For a real run, pass explicit local CSV/JSON paths. The CLI sorts paths lexicographically; use --max-tables N for a deterministic first-N subset. Stable table IDs are source filenames."
+}
