@@ -25,48 +25,45 @@ historical assertions, not scientific claims endorsed by this implementation.
 Both files are preserved. The legacy grounder still accepts old dictionaries, but
 explicitly rejects versioned interpretations and execution envelopes.
 
-All three requested proposal files are absent:
+During AB-M1, the three requested canonical proposal files were absent. The root
+JSON was initially untracked; the specification and example cards appeared during
+implementation and were read as they became available. They were preserved without
+being committed in AB-M1. That historical absence no longer describes availability:
+the focused proposal follow-up commits authoritative, corrected copies at:
 
 - `docs/ab_proposal/AB-Specification-v0.1.md`
 - `docs/ab_proposal/action-base-v0.1.json`
 - `docs/ab_proposal/grounded-card-examples-v0.1.json`
 
-Paths above are relative to `intention_grounding`. The untracked root JSON was read
-as a partial draft reference, not copied into runtime or committed. A root-level
-`AB-Specification-v0.1.md` appeared during implementation and was also read, preserved,
-and excluded from commits. Root-level `grounded-card-examples-v0.1.json` then
-appeared and was read as well. All three root drafts are preserved untracked; the
-requested canonical proposal paths remain absent. These are research references,
-not executable AB-M1 schemas, validated taxonomies, or live model results. That draft describes Compare
-specializations, additive inheritance, role binding, and explicit complete-grid
-activation. Its global requirement for time grain alongside time points is stricter
-than extraction of a bare year; extraction preserves the year without inventing a
-grain. Its `available_observations` default and complete-grid activation are future
-grounder policy, not interpreter defaults. A time filter does not select trajectories;
-a range implies neither endpoints only nor complete annual coverage. The draft's
-descriptive scope differs from legacy generic statistical thresholds. None of these
-scientific or policy questions is silently reconciled.
+These paths are relative to `intention_grounding`. Root copies remain unchanged,
+untracked historical source drafts, not authoritative alternatives. No competing
+local copies were found. The proposal is research design data, not the active AB,
+an executable AB-M1 schema, an empirically validated taxonomy, or live model output.
 
-The newly available root specification's review table interprets “between 2019 and
-2021” as two annual points, while its general prose disallows silently inferred
-cadence. This interpreter deliberately retains competing range/endpoint readings
-instead of applying that example universally. The specification permits authorized
-external context; this first contract accepts only exact-input evidence, so “these
-datasets” stays unresolved. Its inference/transformation exclusions describe the
-future Compare route, not interpreter scope: recognizable requests remain available
-for a later resolver to reject or support. Its undecided “compare or forecast” case
-is ambiguity, distinct from explicitly accepted alternatives. Requirement and
-profile-side assertions from that specification are not interpreter outputs.
+The follow-up corrects the trajectory card's former use of `fixture_literal_v1` to
+map “every year” to `complete_grid`. Literal extraction is now separate from
+`derive_explicit_group_time_grid_v1`, a declarative grounding derivation. It requires
+resolved groups, a finite temporal domain, explicit grain, exhaustive temporal
+coverage, and unambiguous scope over every requested group. The example cites all
+five kinds of evidence and explicitly says “each of France and Spain” and an
+inclusive range. `available_observations` remains a separately registered proposal
+system policy, never user evidence. Neither rule is imported into the interpreter;
+its two normalization rules and schema are unchanged.
 
-The companion examples explicitly call the endpoint interpretation an annotated
-assumption and require alternatives for ambiguous real inputs, clarifying the
-specification's review-table shorthand. Their three positive cards have matching
-source spans, but fixture-specific normalization includes manual country typing,
-year-grain assumptions, range expansion, and a system coverage default. In the
-trajectory card, `every year` maps to `complete_grid` under `fixture_literal_v1`,
-whose documented preserve-literal transformation does not support that result.
-AB-M1 does not import these normalization rules or card judgments. It preserves
-literal constraints for future binding and permits only its two checked rules.
+The original “between 2019 and 2021” card assumed endpoints and year grain. It is
+now a non-grounded ambiguity case. Positive time comparison instead explicitly
+contrasts annual observations in 2019 versus 2021. All positive examples now state
+annual granularity rather than silently inferring cadence from year labels. A date
+range or “annual” alone does not imply a complete grid. The preserved root copies
+record the pre-correction assumptions; the canonical specification, catalogue and
+cards agree on the corrected semantics.
+
+Still unresolved for later work: authorized external context (the interpreter
+currently accepts exact-input evidence only), semantic scope/entailment review,
+range disambiguation, and operationalizing the draft's binding and inheritance
+rules. The Compare route's inference/transformation exclusions do not narrow the
+interpreter's general analytical scope. Historical generic statistical thresholds
+are not imported into the descriptive proposal.
 
 ## Contract and validation
 
@@ -188,3 +185,37 @@ requirement-satisfaction judgments. Relevance labels are not automatically inten
 action usefulness labels. Existing labels need a provenance audit before use as
 trusted ground truth. Dataset choice and acquisition remain a subsequent milestone;
 none is chosen or prepared by AB-M1.
+
+
+## Proposal follow-up verification
+
+Entry state: `feat/ab-m1-interpreter-contract` at
+`9dad49297da1b7f5db1be53c8044ad2a331a1b6c`, with only the three untracked root proposal
+files. No applicable AGENTS.md was found. Follow-up branch:
+`fix/ab-proposal-coverage`, based on fetched `origin/main` at
+`ec2a4e444da51b1ec60e701cb464fdcb0033519c` (same file contents as the entry commit).
+Runtime KB, interpreter code/schema/rules, and historical results are untouched.
+
+The standard-library consistency check parses both canonical JSON files and checks
+parent cycles/references, predicates, templates, rule references, source spans,
+propagated evidence, and the complete-grid rule's declared structure. It validates
+manual activation certificates, rejects missing evidence or unresolved conditions,
+and checks five underspecified coverage annotations. It does not execute grounding
+or prove that manual semantic annotations are correct. Existing CI discovers these
+tests without a workflow change.
+
+Commands from the repository root:
+
+```sh
+.venv/bin/python -m unittest discover -s tests -p test_ab_proposal.py -v
+.venv/bin/python -m unittest discover -s tests -v
+.venv/bin/python -m intention_grounding.interpreter.demo
+git diff --check
+```
+
+Observed on Python 3.13: the focused proposal check passed all 4 test methods;
+the complete suite passed all 15 methods (11 existing interpreter tests run once);
+the standalone demo matched all 13 expected outcomes. The existing interpreter
+network-isolation test also runs its own temporary replay demo. A trailing blank
+line found by diff --check was removed before commit. No live LLM calls, dataset
+downloads, new grounding implementation, or scientific validation occurred.

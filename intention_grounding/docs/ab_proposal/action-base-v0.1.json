@@ -1,0 +1,456 @@
+{
+  "ab_version": "0.1.0-draft",
+  "status": "proposed_unvalidated",
+  "representation": "declarative_catalogue_not_executable_dsl",
+  "scope": "single_table_direct_observed_numeric_descriptive_comparison",
+  "axes": [
+    "sem",
+    "str",
+    "cov",
+    "qual",
+    "aff"
+  ],
+  "roles": {
+    "measure": {
+      "type": "concept_reference"
+    },
+    "group_dimension": {
+      "type": "concept_reference"
+    },
+    "groups": {
+      "type": "array[entity_reference]",
+      "min_items": 2,
+      "unique": true
+    },
+    "subject": {
+      "type": "entity_reference"
+    },
+    "time_points": {
+      "type": "array[time_point]",
+      "min_items": 1,
+      "unique": true
+    },
+    "time_grain": {
+      "type": "temporal_granularity"
+    },
+    "coverage_policy": {
+      "type": "enum",
+      "values": [
+        "available_observations",
+        "complete_grid"
+      ],
+      "default": "available_observations",
+      "default_origin": "system_policy",
+      "complete_grid_requires_explicit_evidence": true,
+      "default_rule_id": "default_available_observations_v1",
+      "derivation_rule_id": "derive_explicit_group_time_grid_v1"
+    }
+  },
+  "actions": {
+    "compare": {
+      "parent": null,
+      "abstract": true,
+      "definition": "Descriptively contrast comparable observations of one numerical measure.",
+      "required_roles": [
+        "measure"
+      ],
+      "requirements": [
+        "measure_semantics",
+        "observation_binding",
+        "usable_numeric_observations",
+        "comparable_measure_definition",
+        "time_coverage"
+      ],
+      "selection": "Comparison goal; insufficient specificity is preserved rather than forced into a child."
+    },
+    "compare.groups": {
+      "parent": "compare",
+      "abstract": false,
+      "definition": "Compare a numerical measure across specified groups.",
+      "required_roles": [
+        "group_dimension",
+        "groups"
+      ],
+      "requirements": [
+        "group_coverage",
+        "complete_requested_grid"
+      ],
+      "selection": "At least two groups and a measure; a time filter alone does not imply trajectories."
+    },
+    "compare.groups.trajectories": {
+      "parent": "compare.groups",
+      "abstract": false,
+      "definition": "Compare temporal change of the same measure across groups.",
+      "required_roles": [
+        "time_points",
+        "time_grain"
+      ],
+      "minimum_cardinalities": {
+        "time_points": 2
+      },
+      "requirements": [
+        "paired_temporal_support"
+      ],
+      "selection": "Explicit temporal change or trajectory comparison across groups, with resolvable time points and grain."
+    },
+    "compare.time": {
+      "parent": "compare",
+      "abstract": false,
+      "definition": "Compare one subject across explicit time points.",
+      "required_roles": [
+        "subject",
+        "time_points",
+        "time_grain"
+      ],
+      "minimum_cardinalities": {
+        "time_points": 2
+      },
+      "requirements": [],
+      "selection": "One subject and a measure, explicitly contrasted across time."
+    }
+  },
+  "predicates": {
+    "measure_semantics": {
+      "axis": "sem",
+      "definition": "Requested concept matches the bound measure, supported by semantic evidence.",
+      "argument_roles": [
+        "measure"
+      ],
+      "shared_variables": [
+        "m",
+        "o"
+      ],
+      "evidence_contract": "Bound profile claims with provenance, inspection completeness and scope. Missing evidence is unknown."
+    },
+    "observation_binding": {
+      "axis": "str",
+      "definition": "All supplied roles refer to the same logical observation relation and measure.",
+      "argument_roles": [
+        "group_dimension",
+        "groups",
+        "subject",
+        "time_points",
+        "time_grain"
+      ],
+      "shared_variables": [
+        "m",
+        "o"
+      ],
+      "evidence_contract": "Bound profile claims with provenance, inspection completeness and scope. Missing evidence is unknown."
+    },
+    "group_coverage": {
+      "axis": "cov",
+      "definition": "Every requested group occurs in the bound relation within requested context.",
+      "argument_roles": [
+        "group_dimension",
+        "groups",
+        "time_points",
+        "time_grain"
+      ],
+      "shared_variables": [
+        "m",
+        "o"
+      ],
+      "evidence_contract": "Bound profile claims with provenance, inspection completeness and scope. Missing evidence is unknown."
+    },
+    "time_coverage": {
+      "axis": "cov",
+      "definition": "Every requested time point occurs within supplied group or subject scope and grain.",
+      "argument_roles": [
+        "groups",
+        "subject",
+        "time_points",
+        "time_grain"
+      ],
+      "shared_variables": [
+        "m",
+        "o"
+      ],
+      "evidence_contract": "Bound profile claims with provenance, inspection completeness and scope. Missing evidence is unknown."
+    },
+    "paired_temporal_support": {
+      "axis": "str",
+      "definition": "At least two shared time points have observations for every requested group.",
+      "argument_roles": [
+        "group_dimension",
+        "groups",
+        "time_points",
+        "time_grain"
+      ],
+      "shared_variables": [
+        "m",
+        "o"
+      ],
+      "evidence_contract": "Bound profile claims with provenance, inspection completeness and scope. Missing evidence is unknown."
+    },
+    "complete_requested_grid": {
+      "axis": "cov",
+      "definition": "Every requested group-time cell is represented.",
+      "argument_roles": [
+        "group_dimension",
+        "groups",
+        "time_points",
+        "time_grain"
+      ],
+      "shared_variables": [
+        "m",
+        "o"
+      ],
+      "evidence_contract": "Bound profile claims with provenance, inspection completeness and scope. Missing evidence is unknown."
+    },
+    "usable_numeric_observations": {
+      "axis": "qual",
+      "definition": "Required observations have finite usable numeric values, without unresolved conflicting duplicates.",
+      "argument_roles": [
+        "groups",
+        "subject",
+        "time_points",
+        "time_grain",
+        "coverage_policy"
+      ],
+      "shared_variables": [
+        "m",
+        "o"
+      ],
+      "evidence_contract": "Bound profile claims with provenance, inspection completeness and scope. Missing evidence is unknown."
+    },
+    "comparable_measure_definition": {
+      "axis": "aff",
+      "definition": "Units, measure definitions and applicable population/denominator definitions are documented as compatible across compared observations.",
+      "argument_roles": [
+        "groups",
+        "subject",
+        "time_points",
+        "time_grain"
+      ],
+      "shared_variables": [
+        "m",
+        "o"
+      ],
+      "evidence_contract": "Bound profile claims with provenance, inspection completeness and scope. Missing evidence is unknown."
+    }
+  },
+  "requirement_templates": {
+    "measure_semantics": {
+      "predicate": "measure_semantics",
+      "axis": "sem",
+      "modality": "required",
+      "scope": "table",
+      "bind_present_roles": [
+        "measure"
+      ],
+      "shared_variables": {
+        "measure": "m",
+        "observations": "o"
+      }
+    },
+    "observation_binding": {
+      "predicate": "observation_binding",
+      "axis": "str",
+      "modality": "required",
+      "scope": "table",
+      "bind_present_roles": [
+        "group_dimension",
+        "groups",
+        "subject",
+        "time_points",
+        "time_grain"
+      ],
+      "shared_variables": {
+        "measure": "m",
+        "observations": "o"
+      }
+    },
+    "group_coverage": {
+      "predicate": "group_coverage",
+      "axis": "cov",
+      "modality": "required",
+      "scope": "table",
+      "bind_present_roles": [
+        "group_dimension",
+        "groups",
+        "time_points",
+        "time_grain"
+      ],
+      "shared_variables": {
+        "measure": "m",
+        "observations": "o"
+      }
+    },
+    "time_coverage": {
+      "predicate": "time_coverage",
+      "axis": "cov",
+      "modality": "required",
+      "scope": "table",
+      "bind_present_roles": [
+        "groups",
+        "subject",
+        "time_points",
+        "time_grain"
+      ],
+      "shared_variables": {
+        "measure": "m",
+        "observations": "o"
+      },
+      "activation": "time_points_present"
+    },
+    "paired_temporal_support": {
+      "predicate": "paired_temporal_support",
+      "axis": "str",
+      "modality": "required",
+      "scope": "table",
+      "bind_present_roles": [
+        "group_dimension",
+        "groups",
+        "time_points",
+        "time_grain"
+      ],
+      "shared_variables": {
+        "measure": "m",
+        "observations": "o"
+      }
+    },
+    "complete_requested_grid": {
+      "predicate": "complete_requested_grid",
+      "axis": "cov",
+      "modality": "required",
+      "scope": "table",
+      "bind_present_roles": [
+        "group_dimension",
+        "groups",
+        "time_points",
+        "time_grain"
+      ],
+      "shared_variables": {
+        "measure": "m",
+        "observations": "o"
+      },
+      "activation": {
+        "coverage_policy": "complete_grid",
+        "derivation_rule_id": "derive_explicit_group_time_grid_v1"
+      }
+    },
+    "usable_numeric_observations": {
+      "predicate": "usable_numeric_observations",
+      "axis": "qual",
+      "modality": "required",
+      "scope": "table",
+      "bind_present_roles": [
+        "groups",
+        "subject",
+        "time_points",
+        "time_grain",
+        "coverage_policy"
+      ],
+      "shared_variables": {
+        "measure": "m",
+        "observations": "o"
+      }
+    },
+    "comparable_measure_definition": {
+      "predicate": "comparable_measure_definition",
+      "axis": "aff",
+      "modality": "required",
+      "scope": "table",
+      "bind_present_roles": [
+        "groups",
+        "subject",
+        "time_points",
+        "time_grain"
+      ],
+      "shared_variables": {
+        "measure": "m",
+        "observations": "o"
+      }
+    }
+  },
+  "grounding_statuses": [
+    "grounded",
+    "ambiguous",
+    "insufficient_input",
+    "unsupported",
+    "inconsistent_input"
+  ],
+  "alignment_states": [
+    "satisfied",
+    "violated",
+    "unknown"
+  ],
+  "inheritance_policy": "additive_no_override",
+  "scoring_policy": null,
+  "constraints": [
+    "Shared bindings must be consistent across requirements.",
+    "Complete-grid activation requires derive_explicit_group_time_grid_v1 with all activation conditions supported, including exhaustive coverage scoped to every requested group.",
+    "Time points require a declared time grain.",
+    "No silent transformations, invented roles, thresholds or AB IDs.",
+    "Between X and Y remains ambiguous between endpoints and an interval unless context resolves it; never infer cadence silently."
+  ],
+  "provenance": {
+    "authoring_basis": "Design proposal in current conversation; not extracted verbatim from a published taxonomy.",
+    "empirically_validated": false
+  },
+  "grounding_rules": {
+    "derive_explicit_group_time_grid_v1": {
+      "stage": "grounding",
+      "kind": "request_specific_coverage_derivation",
+      "version": 1,
+      "inputs": {
+        "groups": "Resolved group bindings and provenance.",
+        "time_domain": "Resolved finite time points/domain and provenance.",
+        "time_grain": "Explicit granularity and provenance.",
+        "coverage_expression": "Literal coverage expression and provenance.",
+        "coverage_scope": "Reviewed relation of exhaustive coverage to all requested groups."
+      },
+      "activation": {
+        "operator": "all_of",
+        "conditions": {
+          "groups": "At least two distinct requested groups are resolved with source evidence.",
+          "time_domain": "A finite temporal domain is resolved with explicit endpoint/inclusion semantics; preserve unresolved range readings.",
+          "time_grain": "The requested temporal granularity is explicit, not inferred from a range or bare year labels.",
+          "exhaustive_coverage": "The request explicitly requires every temporal position in that domain at that granularity.",
+          "all_groups_scope": "The exhaustive temporal requirement unambiguously applies to every requested group under the same action and temporal domain."
+        }
+      },
+      "output": {
+        "role": "coverage_policy",
+        "value": "complete_grid"
+      },
+      "required_evidence": [
+        "groups",
+        "time_domain",
+        "time_grain",
+        "exhaustive_coverage",
+        "all_groups_scope"
+      ],
+      "provenance": {
+        "source": "grounding_derivation",
+        "required": [
+          "rule_id",
+          "binding_refs",
+          "evidence_refs",
+          "reviewed_conditions"
+        ],
+        "evidence_refs": "Map every activation condition to one or more exact-input evidence IDs; overlapping spans are allowed. Record the source input, action instance, literal coverage expression, resolved bindings, and manual scope review in the example card."
+      },
+      "on_unresolved": "Do not derive complete_grid or activate its template. Preserve ambiguity/missing roles; the system default does not repair unresolved required bindings.",
+      "limitations": [
+        "Declarative research proposal; no executable natural-language grounding is implemented.",
+        "Every year alone supplies neither groups, finite domain, nor all-groups scope.",
+        "Annual or a date range alone is not exhaustive coverage.",
+        "Matching spans and reviewed-condition annotations do not prove semantic entailment.",
+        "This is not an AB-M1 interpreter normalization or a table-satisfaction claim."
+      ]
+    }
+  },
+  "system_policies": {
+    "default_available_observations_v1": {
+      "stage": "grounding",
+      "source": "system_policy",
+      "output": {
+        "role": "coverage_policy",
+        "value": "available_observations"
+      },
+      "activation": "Default in this proposal when no supported explicit coverage policy is derived; never evidence of user intent and never a remedy for unresolved bindings."
+    }
+  }
+}
