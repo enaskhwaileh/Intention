@@ -34,8 +34,10 @@ All three requested proposal files are absent:
 Paths above are relative to `intention_grounding`. The untracked root JSON was read
 as a partial draft reference, not copied into runtime or committed. A root-level
 `AB-Specification-v0.1.md` appeared during implementation and was also read, preserved,
-and excluded from commits. The canonical proposal paths remain absent; the companion
-examples remain unseen, so full proposal conformance cannot be claimed. That draft describes Compare
+and excluded from commits. Root-level `grounded-card-examples-v0.1.json` then
+appeared and was read as well. All three root drafts are preserved untracked; the
+requested canonical proposal paths remain absent. These are research references,
+not executable AB-M1 schemas, validated taxonomies, or live model results. That draft describes Compare
 specializations, additive inheritance, role binding, and explicit complete-grid
 activation. Its global requirement for time grain alongside time points is stricter
 than extraction of a bare year; extraction preserves the year without inventing a
@@ -55,6 +57,16 @@ future Compare route, not interpreter scope: recognizable requests remain availa
 for a later resolver to reject or support. Its undecided “compare or forecast” case
 is ambiguity, distinct from explicitly accepted alternatives. Requirement and
 profile-side assertions from that specification are not interpreter outputs.
+
+The companion examples explicitly call the endpoint interpretation an annotated
+assumption and require alternatives for ambiguous real inputs, clarifying the
+specification's review-table shorthand. Their three positive cards have matching
+source spans, but fixture-specific normalization includes manual country typing,
+year-grain assumptions, range expansion, and a system coverage default. In the
+trajectory card, `every year` maps to `complete_grid` under `fixture_literal_v1`,
+whose documented preserve-literal transformation does not support that result.
+AB-M1 does not import these normalization rules or card judgments. It preserves
+literal constraints for future binding and permits only its two checked rules.
 
 ## Contract and validation
 
