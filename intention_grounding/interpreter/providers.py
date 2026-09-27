@@ -1,9 +1,11 @@
 """Optional live adapter and explicitly manually authored replay provider."""
 import json
 import os
+import re
 from dataclasses import dataclass
 
 from .core import SCHEMA
+from ..provider_errors import MissingGroqCredentialError
 
 PROMPT_VERSION = 'ab-m1-v1'
 SYSTEM_PROMPT = '''Extract analytical requests for dataset discovery in English.
@@ -75,7 +77,7 @@ class GroqProvider:
     def invoke(self, input_id, original_input):
         key = os.environ.get('GROQ_API_KEY')
         if not key:
-            raise RuntimeError('missing provider credential')
+            raise MissingGroqCredentialError
         factory = self.client_factory
         if factory is None:
             from groq import Groq
@@ -87,3 +89,23 @@ class GroqProvider:
                 messages=[{'role':'system','content':SYSTEM_PROMPT},
                           {'role':'user','content':json.dumps({'input_id':input_id,'original_input':original_input}, ensure_ascii=False)}])
             return response.choices[0].message.content
+
+
+def list_available_models(*, client_factory=None):
+    """Read only model IDs from the authenticated account's model list."""
+    key = os.environ.get('GROQ_API_KEY')
+    if not key:
+        raise MissingGroqCredentialError
+    factory = client_factory
+    if factory is None:
+        from groq import Groq
+        factory = Groq
+    with factory(api_key=key, timeout=30.0, max_retries=0) as client:
+        response = client.models.list()
+    ids = []
+    for model in response.data:
+        model_id = model.id
+        if type(model_id) is not str or not re.fullmatch(r'[A-Za-z0-9][A-Za-z0-9._/+:\-]{0,127}', model_id):
+            raise ValueError('INVALID_MODEL_ID_RESPONSE')
+        ids.append(model_id)
+    return sorted(set(ids))

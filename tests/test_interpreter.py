@@ -9,7 +9,8 @@ import unittest
 from unittest.mock import MagicMock, patch
 
 from intention_grounding.interpreter.core import SCHEMA, VALIDATOR, interpret
-from intention_grounding.interpreter.providers import GroqProvider, ReplayProvider, SYSTEM_PROMPT
+from intention_grounding.interpreter.providers import GroqProvider, ReplayProvider, SYSTEM_PROMPT, list_available_models
+from intention_grounding.provider_errors import provider_diagnostic
 from intention_grounding.scripts.grounder_production import ground_intent, load_action_base
 
 FIXTURES = json.loads(importlib.resources.files('intention_grounding.interpreter').joinpath('fixtures/replay.json').read_text())
@@ -159,6 +160,42 @@ class ContractTests(unittest.TestCase):
             self.assertEqual('PROVIDER_FAILURE',interpret('x','text',provider)['failure'])
         for kwargs in [{'model':''},{'model':'x','timeout':float('nan')},{'model':'x','max_retries':3}]:
             with self.assertRaises(ValueError):GroqProvider(**kwargs)
+
+    def test_safe_provider_diagnostics_and_missing_configuration(self):
+        class FakeStatusError(Exception):
+            status_code = 401
+            code = 'invalid_api_key'
+            def __str__(self):
+                return 'secret-value Authorization: Bearer secret-value'
+        FakeStatusError.__module__ = 'groq._exceptions'
+        factory = MagicMock()
+        factory.return_value.__enter__.return_value.chat.completions.create.side_effect = FakeStatusError()
+        provider = GroqProvider(model='explicit-test-model', client_factory=factory)
+        with patch.dict(os.environ, {'GROQ_API_KEY': 'secret-value'}):
+            result = interpret(self.doc['input_id'], self.doc['original_input'], provider)
+        self.assertEqual('PROVIDER_FAILURE', result['failure'])
+        self.assertEqual({'exception_type': 'ProviderError', 'http_status': 401,
+                          'error_code': 'invalid_api_key'}, result['provider_error'])
+        self.assertNotIn('secret-value', json.dumps(result))
+        with patch.dict(os.environ, {}, clear=True):
+            missing = interpret(self.doc['input_id'], self.doc['original_input'], provider)
+        self.assertEqual({'exception_type': 'MissingGroqCredentialError',
+                          'error_code': 'MISSING_GROQ_API_KEY'}, missing['provider_error'])
+        self.assertEqual({'exception_type': 'ProviderError'},
+                         provider_diagnostic(type('SecretKey', (Exception,), {})('secret-value')))
+
+    def test_model_listing_is_ids_only_and_requires_key(self):
+        from types import SimpleNamespace
+        factory = MagicMock()
+        factory.return_value.__enter__.return_value.models.list.return_value = SimpleNamespace(
+            data=[SimpleNamespace(id='z-model'), SimpleNamespace(id='a/model')])
+        with patch.dict(os.environ, {}, clear=True):
+            with self.assertRaises(Exception):
+                list_available_models(client_factory=factory)
+        factory.assert_not_called()
+        with patch.dict(os.environ, {'GROQ_API_KEY': 'secret-value'}):
+            self.assertEqual(['a/model', 'z-model'], list_available_models(client_factory=factory))
+        factory.assert_called_once_with(api_key='secret-value', timeout=30.0, max_retries=0)
 
     def test_no_optional_sdks_credentials_or_network(self):
         code='''

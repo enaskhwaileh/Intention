@@ -4,6 +4,8 @@ from importlib.resources import files
 
 from jsonschema import Draft202012Validator
 
+from ..provider_errors import provider_diagnostic
+
 SCHEMA_VERSION = '1.0'
 NORMALIZATION_VERSION = '1.0'
 SCHEMA = json.loads(files(__package__).joinpath('schema.json').read_text())
@@ -116,15 +118,17 @@ def interpret(input_id, original_input, provider):
     """Return an execution envelope; interpretation status exists only on success."""
     result = {'metadata': {'schema_version': SCHEMA_VERSION,
                            'normalization_version': NORMALIZATION_VERSION},
-              'raw_response': None, 'interpretation': None, 'failure': None}
+              'raw_response': None, 'interpretation': None, 'failure': None,
+              'provider_error': None}
     if not isinstance(input_id, str) or not input_id.strip() or not isinstance(original_input, str) or not original_input.strip():
         result['failure'] = 'INVALID_INPUT'
         return result
     try:
         result['metadata'].update(provider.metadata)
         raw = provider.invoke(input_id, original_input)
-    except Exception:
+    except Exception as exc:
         result['failure'] = 'PROVIDER_FAILURE'
+        result['provider_error'] = provider_diagnostic(exc)
         return result
     result['raw_response'] = raw if isinstance(raw, str) else None
     try:

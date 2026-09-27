@@ -5,6 +5,7 @@ from dataclasses import dataclass
 
 from .action_base import ancestry
 from .interpreter.core import parse_response, ContractError
+from .provider_errors import MissingGroqCredentialError, provider_diagnostic
 
 CARD_SCHEMA_VERSION = "1.0"
 GROUNDING_PROMPT_VERSION = "canonical-ab-v0.1-grounder-v1"
@@ -39,7 +40,7 @@ class GroqGrounderProvider:
     def invoke(self, interpretation, ab):
         key = os.environ.get("GROQ_API_KEY")
         if not key:
-            raise RuntimeError("missing provider credential")
+            raise MissingGroqCredentialError
         catalogue = {key: {field: value for field, value in action.items()
                            if field in {"parent", "abstract", "definition", "required_roles",
                                         "minimum_cardinalities", "selection"}}
@@ -63,9 +64,10 @@ class GroqGrounderProvider:
             return response.choices[0].message.content
 
 
-def _non_grounded(status, reason, raw=None, proposal=None, metadata=None):
+def _non_grounded(status, reason, raw=None, proposal=None, metadata=None, provider_error=None):
     return {"metadata": metadata or {}, "raw_response": raw, "model_proposal": proposal,
-            "grounded_card": None, "status": status, "reasons": [reason]}
+            "grounded_card": None, "status": status, "reasons": [reason],
+            "provider_error": provider_error}
 
 
 def _validate_proposal(proposal, interpretation, ab):
@@ -155,7 +157,12 @@ def _build_card(proposal, resolved, interpretation, ab, run_id):
 
 
 def ground(interpreter_envelope, ab, provider, *, run_id):
-    metadata = {"ab_version": ab["ab_version"], **provider.metadata}
+    metadata = {"ab_version": ab["ab_version"]}
+    try:
+        metadata.update(provider.metadata)
+    except Exception as exc:
+        return _non_grounded("provider_failure", "PROVIDER_FAILURE", metadata=metadata,
+                             provider_error=provider_diagnostic(exc))
     if interpreter_envelope.get("failure"):
         return _non_grounded("invalid_interpretation", interpreter_envelope["failure"], metadata=metadata)
     interpretation = interpreter_envelope.get("interpretation")
@@ -166,8 +173,9 @@ def ground(interpreter_envelope, ab, provider, *, run_id):
         return _non_grounded(status_map[interpretation["status"]], "INTERPRETER_" + interpretation["status"].upper(), metadata=metadata)
     try:
         raw = provider.invoke(interpretation, ab)
-    except Exception:
-        return _non_grounded("provider_failure", "PROVIDER_FAILURE", metadata=metadata)
+    except Exception as exc:
+        return _non_grounded("provider_failure", "PROVIDER_FAILURE", metadata=metadata,
+                             provider_error=provider_diagnostic(exc))
     if not isinstance(raw, str):
         return _non_grounded("invalid_model_response", "NON_TEXT_RESPONSE", metadata=metadata)
     try:
@@ -178,4 +186,5 @@ def ground(interpreter_envelope, ab, provider, *, run_id):
         return _non_grounded("invalid_model_response", str(exc), raw=raw,
                              proposal=proposal if "proposal" in locals() else None, metadata=metadata)
     return {"metadata": metadata, "raw_response": raw, "model_proposal": proposal,
-            "grounded_card": card, "status": "grounded", "reasons": []}
+            "grounded_card": card, "status": "grounded", "reasons": [],
+            "provider_error": None}

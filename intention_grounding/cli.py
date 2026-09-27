@@ -10,7 +10,8 @@ from .action_base import CANONICAL_AB_PATH, load_action_base
 from .aligner import compare_card
 from .grounder import GroqGrounderProvider, ReplayGrounderProvider, ground
 from .interpreter.core import interpret
-from .interpreter.providers import GroqProvider, ReplayProvider
+from .interpreter.providers import GroqProvider, ReplayProvider, list_available_models
+from .provider_errors import provider_diagnostic
 from .profiler import profile_paths
 
 
@@ -37,12 +38,25 @@ def main(argv=None):
     parser.add_argument("--input-id", default="live-input-1")
     parser.add_argument("--input", help="Natural-language request; required in groq mode")
     parser.add_argument("--model", help="Explicit Groq model name; required in groq mode")
+    parser.add_argument("--list-models", action="store_true",
+                        help="List model IDs visible to GROQ_API_KEY; makes one authenticated API call")
     parser.add_argument("--dataset", action="append", type=Path, help="Local CSV/JSON table (repeatable)")
     parser.add_argument("--dataset-metadata", type=Path, help="JSON provenance record for supplied tables")
     parser.add_argument("--max-tables", type=int, default=None)
     parser.add_argument("--output", type=Path, default=Path("outputs/pipeline"))
     parser.add_argument("--ab", type=Path, default=CANONICAL_AB_PATH)
     args = parser.parse_args(argv)
+    if args.list_models:
+        try:
+            for model_id in list_available_models():
+                print(model_id)
+        except Exception as exc:
+            diagnostic = provider_diagnostic(exc)
+            label = diagnostic.get("error_code", diagnostic["exception_type"])
+            status = diagnostic.get("http_status")
+            print(f"model_list_error={label}" + (f" http_status={status}" if status else ""))
+            return 2
+        return 0
     if args.mode == "groq" and (not args.input or not args.model):
         parser.error("--input and --model are required in groq mode")
     if args.max_tables is not None and args.max_tables < 1:
@@ -84,6 +98,12 @@ def main(argv=None):
     print(f"run_id={run_id} interpretation={interpreted['failure'] or interpreted['interpretation']['status']} "
           f"grounding={grounded['status']} tables={len(profiles)} alignment={','.join(sorted(states)) or 'not_run'}")
     print(f"artifacts={output}")
+    for stage, result in (("interpreter", interpreted), ("grounder", grounded)):
+        diagnostic = result.get("provider_error")
+        if diagnostic:
+            label = diagnostic.get("error_code", diagnostic["exception_type"])
+            status = diagnostic.get("http_status")
+            print(f"{stage}_provider_error={label}" + (f" http_status={status}" if status else ""))
     return 0 if grounded["status"] == "grounded" else 2
 
 

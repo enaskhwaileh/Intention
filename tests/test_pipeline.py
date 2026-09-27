@@ -4,11 +4,15 @@ import json
 from pathlib import Path
 import tempfile
 import unittest
+import contextlib
+import io
+import os
+from unittest.mock import patch
 
 from intention_grounding.action_base import ActionBaseError, load_action_base, validate_action_base
 from intention_grounding.aligner import compare_card
 from intention_grounding.cli import main
-from intention_grounding.grounder import ReplayGrounderProvider, ground
+from intention_grounding.grounder import GroqGrounderProvider, ReplayGrounderProvider, ground
 from intention_grounding.interpreter.core import interpret
 from intention_grounding.interpreter.providers import ReplayProvider
 from intention_grounding.profiler import profile_table
@@ -71,6 +75,28 @@ class PipelineTests(unittest.TestCase):
         result = ground(self.interpreted, self.ab, Broken(), run_id="x")
         self.assertEqual("provider_failure", result["status"])
         self.assertNotIn("secret", json.dumps(result))
+        self.assertEqual({"exception_type": "RuntimeError"}, result["provider_error"])
+
+    def test_grounder_provider_status_is_sanitized(self):
+        with self.assertRaisesRegex(ValueError, "explicit model required"):
+            GroqGrounderProvider(model="")
+        class FailingProvider:
+            metadata = {"provider": "mock"}
+            def invoke(self, *_):
+                error = RuntimeError("secret-value in request headers")
+                error.status_code = 403
+                error.code = "untrusted-secret-value"
+                raise error
+        result = ground(self.interpreted, self.ab, FailingProvider(), run_id="x")
+        self.assertEqual("provider_failure", result["status"])
+        self.assertEqual({"exception_type": "RuntimeError", "http_status": 403},
+                         result["provider_error"])
+        self.assertNotIn("secret-value", json.dumps(result))
+        with patch.dict(os.environ, {}, clear=True):
+            missing = ground(self.interpreted, self.ab,
+                             GroqGrounderProvider(model="explicit-test-model"), run_id="x")
+        self.assertEqual({"exception_type": "MissingGroqCredentialError",
+                          "error_code": "MISSING_GROQ_API_KEY"}, missing["provider_error"])
 
     def test_action_base_validation(self):
         ab = copy.deepcopy(self.ab); ab["actions"]["compare.time"]["parent"] = "missing"
@@ -97,6 +123,78 @@ class PipelineTests(unittest.TestCase):
             self.assertEqual({"run.json", "interpreter.raw.txt", "interpretation.json", "grounder.raw.txt",
                               "grounding.json", "table-profiles.json", "comparison.json"},
                              {path.name for path in runs[0].iterdir()})
+
+    def test_live_cli_requires_model_and_sanitizes_provider_failure(self):
+        with contextlib.redirect_stderr(io.StringIO()):
+            with self.assertRaises(SystemExit):
+                main(["--mode", "groq", "--input", "Compare income."])
+
+        class FailingProvider:
+            metadata = {"provider": "mock", "model": "explicit-test-model"}
+            def invoke(self, *_):
+                error = RuntimeError("secret-value Authorization: Bearer secret-value")
+                error.status_code = 429
+                error.code = "rate_limit_exceeded"
+                raise error
+
+        with tempfile.TemporaryDirectory() as directory:
+            stream = io.StringIO()
+            with patch("intention_grounding.cli.GroqProvider", return_value=FailingProvider()), \
+                 patch("intention_grounding.cli.GroqGrounderProvider", return_value=FailingProvider()), \
+                 patch.dict(os.environ, {"GROQ_API_KEY": "secret-value"}), \
+                 contextlib.redirect_stdout(stream):
+                exit_code = main(["--mode", "groq", "--model", "explicit-test-model",
+                                  "--input", "Compare income.", "--output", directory])
+            self.assertEqual(2, exit_code)
+            run = next(Path(directory).iterdir())
+            interpretation = json.loads((run / "interpretation.json").read_text())
+            grounding = json.loads((run / "grounding.json").read_text())
+            self.assertEqual({"exception_type": "RuntimeError", "http_status": 429,
+                              "error_code": "rate_limit_exceeded"}, interpretation["provider_error"])
+            self.assertEqual("invalid_interpretation", grounding["status"])
+            self.assertNotIn("secret-value", stream.getvalue())
+            for path in run.iterdir():
+                self.assertNotIn("secret-value", path.read_text())
+
+    def test_model_list_cli_is_safe_and_offline_when_mocked(self):
+        stream = io.StringIO()
+        with patch("intention_grounding.cli.list_available_models", return_value=["a/model", "b-model"]) as mocked, \
+             contextlib.redirect_stdout(stream):
+            self.assertEqual(0, main(["--list-models"]))
+        mocked.assert_called_once_with()
+        self.assertEqual(["a/model", "b-model"], stream.getvalue().splitlines())
+
+    def test_missing_key_stays_in_safe_artifact_and_model_preflight(self):
+        with tempfile.TemporaryDirectory() as directory:
+            stream = io.StringIO()
+            with patch.dict(os.environ, {}, clear=True), contextlib.redirect_stdout(stream):
+                self.assertEqual(2, main(["--mode", "groq", "--model", "explicit-test-model",
+                                          "--input", "Compare income.", "--output", directory]))
+            run = next(Path(directory).iterdir())
+            interpretation = json.loads((run / "interpretation.json").read_text())
+            self.assertEqual({"exception_type": "MissingGroqCredentialError",
+                              "error_code": "MISSING_GROQ_API_KEY"}, interpretation["provider_error"])
+            self.assertIn("MISSING_GROQ_API_KEY", stream.getvalue())
+            self.assertNotIn("Authorization", (run / "interpretation.json").read_text())
+        stream = io.StringIO()
+        with patch.dict(os.environ, {}, clear=True), contextlib.redirect_stdout(stream):
+            self.assertEqual(2, main(["--list-models"]))
+        self.assertEqual("model_list_error=MISSING_GROQ_API_KEY", stream.getvalue().strip())
+
+    def test_notebook_live_cell_preflights_environment_without_calls(self):
+        notebook = json.loads((Path(__file__).parents[1] / "notebooks/pipeline_walkthrough.ipynb").read_text())
+        source = "".join(notebook["cells"][-1]["source"])
+        self.assertIn("RUN_LIVE_GROQ = False", source)
+        live_source = source.replace("RUN_LIVE_GROQ = False", "RUN_LIVE_GROQ = True", 1)
+        with patch.dict(os.environ, {}, clear=True):
+            with self.assertRaisesRegex(RuntimeError, "GROQ_MODEL_ID, GROQ_API_KEY"):
+                exec(live_source, {})
+        with patch.dict(os.environ, {"GROQ_API_KEY": "test-only-key"}, clear=True):
+            with self.assertRaisesRegex(RuntimeError, "GROQ_MODEL_ID"):
+                exec(live_source, {})
+        with patch.dict(os.environ, {"GROQ_MODEL_ID": "test-model"}, clear=True):
+            with self.assertRaisesRegex(RuntimeError, "GROQ_API_KEY"):
+                exec(live_source, {})
 
 
 if __name__ == "__main__":

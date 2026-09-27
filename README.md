@@ -1,78 +1,47 @@
-# Intended-Action Grounding for Dataset Discovery
+# Intention grounding
 
-This repository implements a fail-closed research pipeline:
+The current pipeline is `interpreter → canonical Action Base grounder → local table profiler → conservative axis comparison`. The CLI at `intention_grounding.cli:main` is the canonical entry point. It uses manually authored replay responses and a bundled synthetic CSV by default. These verify software contracts; they do not measure model accuracy or real dataset suitability.
 
-`interpreter -> canonical-AB grounder -> local table profiler -> axis comparison`
+## Environment and offline run
 
-The canonical Action Base is `intention_grounding/docs/ab_proposal/action-base-v0.1.json`, version
-`0.1.0-draft` (proposal dated 26 September 2026). Files in `intention_grounding/kb/` and
-`scripts/grounder_production.py` are legacy inputs and are not used by the new pipeline.
-
-## Install and verify offline
-
-Python 3.10 or newer is required.
+Python 3.10 or newer is required. This checkout has `./.venv` (Python 3.10 with the project and required dependencies) and a parent `../.venv` (Python 3.9, below the supported version). Use the existing repository environment; neither environment needs to be recreated or removed for this walkthrough. From the repository root:
 
 ```bash
-python -m venv .venv
-.venv/bin/python -m pip install -e '.[dev]'
-.venv/bin/python -m unittest discover -s tests -v
-.venv/bin/python -m intention_grounding.cli --mode offline --output outputs/pipeline
+./.venv/bin/python -m unittest discover -s tests -v
+./.venv/bin/python -m intention_grounding.cli --mode offline --output outputs/pipeline
 ```
 
-The offline replay fixtures are manually authored software-contract fixtures, not empirical model
-evaluation and not an accuracy measurement. The command prints a two-line summary and writes separate
-raw interpreter and grounder responses, validated interpretation, grounding/card, table profiles,
-comparison, and run manifest files beneath a unique run directory.
+The CLI creates a unique `outputs/pipeline/run-*/` directory containing raw provider responses, validated interpretation, grounding/card, table profiles, comparison, and a run manifest. `outputs/` is ignored by Git. To install into another existing Python 3.10+ environment, use `python -m pip install -e .` there. The installed `intention-grounding` console script is equivalent to `python -m intention_grounding.cli`.
 
-## WikiDBs-10k data
-
-No WikiDBs-10k archive or extracted WikiDBs tables were present in the inspected checkout on
-27 September 2026. The files under `intention_grounding/data/` are older project fixtures, contain
-asserted meanings/suitability, and are not treated as WikiDBs observations. Nothing is downloaded or
-duplicated automatically.
-
-The official WikiDBs-10k v1 record is `https://doi.org/10.5281/zenodo.8227452`, published
-29 August 2023 under CC BY 4.0. Zenodo lists `wikidbs_10k.zip` with MD5
-`71ebb739508f1a54b79c2112687d5d83`; this repository has not downloaded or independently checked that
-archive. After obtaining it, verify that checksum, record the actual acquisition date (and preferably a
-local SHA-256), then pass extracted CSV files or JSON arrays of row objects explicitly:
+For a step-by-step view, open [the offline walkthrough](notebooks/pipeline_walkthrough.ipynb) with a Python 3.10+ kernel using an environment where this project is installed. Jupyter is optional and is **not installed** in this checkout's `./.venv`; the parent `../.venv` has Jupyter but its Python 3.9 kernel is too old. If you want to use the existing repository environment for Jupyter, install the optional notebook dependencies into it, then launch from the root:
 
 ```bash
-.venv/bin/python -m intention_grounding.cli --mode offline \
-  --dataset /absolute/path/to/table-a.csv --dataset /absolute/path/to/table-b.json \
-  --dataset-metadata intention_grounding/fixtures/wikidbs10k-source-metadata.json \
-  --max-tables 2 --output outputs/wikidbs-smoke
+uv pip install --python .venv/bin/python -e '.[notebook]'
+./.venv/bin/python -m notebook notebooks/pipeline_walkthrough.ipynb
 ```
 
-Inputs are sorted by path and `--max-tables N` selects the first N, giving a reproducible subset.
-Content SHA-256-derived IDs remain stable table IDs. `wikidbs10k-source-metadata.json` records official release
-metadata separately from the deliberately unset local acquisition state; update the latter after retrieval.
-WikiDBs is a Wikidata-derived relational table corpus. It does not provide gold intended-action or table
-suitability labels; any future task labels must be clearly versioned project annotations.
+Select the Python kernel belonging to `./.venv` if Jupyter offers more than one. The notebook prints `sys.executable` in its first cell so you can verify the selected kernel. No new virtual environment is needed.
 
-The profiler performs a complete local scan for row counts, column names, observed primitive types,
-missingness, distinct counts, and finite numeric ranges, each with file SHA-256 evidence. It does not infer
-column meaning, units, relation bindings, or suitability. Consequently unsupported AB predicates remain
-`unknown`, never silently satisfied.
+## Data and scope
 
-## Opt-in live Groq run
+`intention_grounding/fixtures/offline_table.csv` is a four-row synthetic table. `intention_grounding/data/` contains older, asserted query labels and table descriptions for the legacy workflow; these are not observed table scans or verified suitability labels for the current pipeline. No WikiDBs-10k archive or extracted WikiDBs tables were found in this checkout. The WikiDBs source metadata file describes a possible future input, with local acquisition marked `not-acquired`; it is not proof of downloaded data. The current pipeline has no verified gold intended-action or table-suitability annotations for that corpus.
 
-Install the optional SDK, choose a currently available model explicitly, and provide the key only through
-the environment. Never commit `.env` or keys.
+The profiler records observed columns, primitive types, missingness, row counts, numeric ranges, and file SHA-256 evidence. It does not infer semantic column meaning, units, populations, or observation relations. The aligner therefore marks requirements `unknown` rather than claiming suitability. The draft Action Base supports direct-observation descriptive comparisons; its complete-grid derivation is documented but is not activated by the current grounder response format.
+
+## Optional live Groq use
+
+Live execution requires the optional `groq` package and `GROQ_API_KEY` in the **process environment**. `.env.example` contains names only; the application does not load `.env` automatically. Keep the key in your shell or secret manager, never in a command argument, notebook, or tracked file. In a supported environment with the SDK installed (`uv pip install --python .venv/bin/python -e '.[groq]'` if needed), list the model IDs available to your authenticated account:
 
 ```bash
-.venv/bin/python -m pip install -e '.[groq]'
-export GROQ_API_KEY='...'
-.venv/bin/python -m intention_grounding.cli --mode groq --model YOUR_GROQ_MODEL \
+./.venv/bin/python -m intention_grounding.cli --list-models
+```
+
+That command makes one authenticated model-list API call and prints IDs only. Set `GROQ_MODEL_ID` in the process environment to one of those IDs, then run:
+
+```bash
+./.venv/bin/python -m intention_grounding.cli --mode groq --model "$GROQ_MODEL_ID" \
   --input-id request-1 --input 'Compare annual income in France in 2019 versus 2021.' \
-  --dataset /absolute/path/to/wikidbs-table.csv --output outputs/live
+  --dataset /absolute/path/to/local-table.csv --output outputs/live
 ```
 
-Live execution is never used by default tests or CI. Both model stages use constrained JSON responses;
-all IDs, argument references, evidence references, inherited roles, cardinalities, and AB versions are
-then validated locally. Provider failures and malformed/unsupported/ambiguous/insufficient results do not
-emit a grounded card.
-
-Known limitations: the canonical AB only supports direct-observation descriptive comparison; the first
-grounder response format does not activate the AB's manually reviewed complete-grid derivation; and the
-local profiler cannot yet establish semantic, unit/population, or logical observation-relation predicates.
+The CLI requires an explicit `--model` and never switches models automatically. Live mode makes up to two Groq calls. Provider failures write only a fixed exception label and, when available, a numeric HTTP status or allowlisted error code to the run artifact. Raw exception text, request headers, and credentials are never saved. The notebook remains offline unless its opt-in flag is deliberately enabled. Tests and CI use no live calls. See [repository map](docs/REPOSITORY_MAP.md) for file roles and cleanup candidates.
