@@ -9,6 +9,7 @@ import uuid
 from .action_base import CANONICAL_AB_PATH, load_action_base
 from .aligner import compare_card
 from .grounder import GroqGrounderProvider, ReplayGrounderProvider, ground
+from .groq_config import groq_model_id
 from .interpreter.core import interpret
 from .interpreter.providers import GroqProvider, ReplayProvider, list_available_models
 from .provider_errors import provider_diagnostic
@@ -37,7 +38,7 @@ def main(argv=None):
     parser.add_argument("--mode", choices=("offline", "groq"), default="offline")
     parser.add_argument("--input-id", default="live-input-1")
     parser.add_argument("--input", help="Natural-language request; required in groq mode")
-    parser.add_argument("--model", help="Explicit Groq model name; required in groq mode")
+    parser.add_argument("--model", help="Groq model ID; overrides GROQ_MODEL_ID")
     parser.add_argument("--list-models", action="store_true",
                         help="List model IDs visible to GROQ_API_KEY; makes one authenticated API call")
     parser.add_argument("--dataset", action="append", type=Path, help="Local CSV/JSON table (repeatable)")
@@ -57,8 +58,15 @@ def main(argv=None):
             print(f"model_list_error={label}" + (f" http_status={status}" if status else ""))
             return 2
         return 0
-    if args.mode == "groq" and (not args.input or not args.model):
-        parser.error("--input and --model are required in groq mode")
+    if args.mode == "groq" and not args.input:
+        parser.error("--input is required in groq mode")
+    if args.mode == "groq":
+        try:
+            model = groq_model_id(args.model)
+        except Exception as exc:
+            diagnostic = provider_diagnostic(exc)
+            print(f"configuration_error={diagnostic.get('error_code', diagnostic['exception_type'])}")
+            return 2
     if args.max_tables is not None and args.max_tables < 1:
         parser.error("--max-tables must be positive")
     ab = load_action_base(args.ab)
@@ -66,7 +74,7 @@ def main(argv=None):
         input_id, user_input, interpreter_provider, grounder_provider = _offline_inputs()
     else:
         input_id, user_input = args.input_id, args.input
-        interpreter_provider, grounder_provider = GroqProvider(model=args.model), GroqGrounderProvider(model=args.model)
+        interpreter_provider, grounder_provider = GroqProvider(model=model), GroqGrounderProvider(model=model)
     run_id = "run-" + uuid.uuid4().hex[:12]
     output = args.output / run_id
     output.mkdir(parents=True, exist_ok=False)

@@ -1,11 +1,11 @@
 """AB-constrained model proposal followed by deterministic card construction."""
 import json
-import os
 from dataclasses import dataclass
 
 from .action_base import ancestry
 from .interpreter.core import parse_response, ContractError
-from .provider_errors import MissingGroqCredentialError, provider_diagnostic
+from .groq_config import groq_api_key, groq_model_id
+from .provider_errors import provider_diagnostic
 
 CARD_SCHEMA_VERSION = "1.0"
 GROUNDING_PROMPT_VERSION = "canonical-ab-v0.1-grounder-v1"
@@ -24,11 +24,9 @@ class ReplayGrounderProvider:
 
 
 class GroqGrounderProvider:
-    def __init__(self, *, model, temperature=0.0, max_tokens=4096, timeout=30.0,
+    def __init__(self, *, model=None, temperature=0.0, max_tokens=4096, timeout=30.0,
                  max_retries=0, client_factory=None):
-        if not isinstance(model, str) or not model.strip():
-            raise ValueError("explicit model required")
-        self.model, self.temperature, self.max_tokens = model, temperature, max_tokens
+        self.model, self.temperature, self.max_tokens = groq_model_id(model), temperature, max_tokens
         self.timeout, self.max_retries, self.client_factory = timeout, max_retries, client_factory
 
     @property
@@ -38,9 +36,7 @@ class GroqGrounderProvider:
                                         "response_format": {"type": "json_object"}}}
 
     def invoke(self, interpretation, ab):
-        key = os.environ.get("GROQ_API_KEY")
-        if not key:
-            raise MissingGroqCredentialError
+        key = groq_api_key()
         catalogue = {key: {field: value for field, value in action.items()
                            if field in {"parent", "abstract", "definition", "required_roles",
                                         "minimum_cardinalities", "selection"}}

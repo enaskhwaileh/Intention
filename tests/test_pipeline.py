@@ -19,6 +19,13 @@ from intention_grounding.profiler import profile_table
 
 
 class PipelineTests(unittest.TestCase):
+    def setUp(self):
+        env_dir = tempfile.TemporaryDirectory()
+        self.addCleanup(env_dir.cleanup)
+        env_patch = patch('intention_grounding.groq_config.ENV_PATH', Path(env_dir.name) / '.env')
+        env_patch.start()
+        self.addCleanup(env_patch.stop)
+
     @classmethod
     def setUpClass(cls):
         fixtures = json.loads(importlib.resources.files("intention_grounding.interpreter").joinpath("fixtures/replay.json").read_text())
@@ -78,7 +85,7 @@ class PipelineTests(unittest.TestCase):
         self.assertEqual({"exception_type": "RuntimeError"}, result["provider_error"])
 
     def test_grounder_provider_status_is_sanitized(self):
-        with self.assertRaisesRegex(ValueError, "explicit model required"):
+        with self.assertRaisesRegex(RuntimeError, "GROQ_MODEL_ID"):
             GroqGrounderProvider(model="")
         class FailingProvider:
             metadata = {"provider": "mock"}
@@ -125,9 +132,10 @@ class PipelineTests(unittest.TestCase):
                              {path.name for path in runs[0].iterdir()})
 
     def test_live_cli_requires_model_and_sanitizes_provider_failure(self):
-        with contextlib.redirect_stderr(io.StringIO()):
-            with self.assertRaises(SystemExit):
-                main(["--mode", "groq", "--input", "Compare income."])
+        stream = io.StringIO()
+        with patch.dict(os.environ, {}, clear=True), contextlib.redirect_stdout(stream):
+            self.assertEqual(2, main(["--mode", "groq", "--input", "Compare income."]))
+        self.assertEqual("configuration_error=MISSING_GROQ_MODEL_ID", stream.getvalue().strip())
 
         class FailingProvider:
             metadata = {"provider": "mock", "model": "explicit-test-model"}
@@ -187,7 +195,7 @@ class PipelineTests(unittest.TestCase):
         self.assertIn("RUN_LIVE_GROQ = False", source)
         live_source = source.replace("RUN_LIVE_GROQ = False", "RUN_LIVE_GROQ = True", 1)
         with patch.dict(os.environ, {}, clear=True):
-            with self.assertRaisesRegex(RuntimeError, "GROQ_MODEL_ID, GROQ_API_KEY"):
+            with self.assertRaisesRegex(RuntimeError, "GROQ_MODEL_ID"):
                 exec(live_source, {})
         with patch.dict(os.environ, {"GROQ_API_KEY": "test-only-key"}, clear=True):
             with self.assertRaisesRegex(RuntimeError, "GROQ_MODEL_ID"):

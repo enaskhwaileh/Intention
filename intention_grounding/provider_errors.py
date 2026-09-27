@@ -5,6 +5,10 @@ class MissingGroqCredentialError(RuntimeError):
     """The process has no GROQ_API_KEY."""
 
 
+class MissingGroqModelError(RuntimeError):
+    """The process has no valid GROQ_MODEL_ID."""
+
+
 _SAFE_TYPES = {
     "RuntimeError", "ImportError", "ModuleNotFoundError", "TimeoutError",
     "ConnectionError", "APIError", "APIConnectionError", "APITimeoutError",
@@ -25,6 +29,9 @@ def provider_diagnostic(exc):
     if isinstance(exc, MissingGroqCredentialError):
         return {"exception_type": "MissingGroqCredentialError",
                 "error_code": "MISSING_GROQ_API_KEY"}
+    if isinstance(exc, MissingGroqModelError):
+        return {"exception_type": "MissingGroqModelError",
+                "error_code": "MISSING_GROQ_MODEL_ID"}
 
     kind = type(exc)
     trusted_module = kind.__module__ == "builtins" or kind.__module__.startswith("groq.")

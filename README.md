@@ -30,18 +30,25 @@ The profiler records observed columns, primitive types, missingness, row counts,
 
 ## Optional live Groq use
 
-Live execution requires the optional `groq` package and `GROQ_API_KEY` in the **process environment**. `.env.example` contains names only; the application does not load `.env` automatically. Keep the key in your shell or secret manager, never in a command argument, notebook, or tracked file. In a supported environment with the SDK installed (`uv pip install --python .venv/bin/python -e '.[groq]'` if needed), list the model IDs available to your authenticated account:
+Live execution requires the optional `groq` package. Install it into the existing environment if needed with `uv pip install --python .venv/bin/python -e '.[groq]'`. Copy the names-only template to the ignored project configuration file and open it in an editor. The copy command preserves an existing `.env` file:
+
+```bash
+cp -n .env.example intention_grounding/.env
+${EDITOR:-vi} intention_grounding/.env
+```
+
+Use `KEY=value` syntax with no spaces around `=`. Set `GROQ_API_KEY` there, then list the model IDs available to your authenticated account:
 
 ```bash
 ./.venv/bin/python -m intention_grounding.cli --list-models
 ```
 
-That command makes one authenticated model-list API call and prints IDs only. Set `GROQ_MODEL_ID` in the process environment to one of those IDs, then run:
+That command makes one authenticated model-list API call and prints IDs only. Set `GROQ_MODEL_ID` in the same `.env` file to one of those IDs, then run:
 
 ```bash
-./.venv/bin/python -m intention_grounding.cli --mode groq --model "$GROQ_MODEL_ID" \
+./.venv/bin/python -m intention_grounding.cli --mode groq \
   --input-id request-1 --input 'Compare annual income in France in 2019 versus 2021.' \
   --dataset /absolute/path/to/local-table.csv --output outputs/live
 ```
 
-The CLI requires an explicit `--model` and never switches models automatically. Live mode makes up to two Groq calls. Provider failures write only a fixed exception label and, when available, a numeric HTTP status or allowlisted error code to the run artifact. Raw exception text, request headers, and credentials are never saved. The notebook remains offline unless its opt-in flag is deliberately enabled. Tests and CI use no live calls. See [repository map](docs/REPOSITORY_MAP.md) for file roles and cleanup candidates.
+The application reads `intention_grounding/.env` from the package path, regardless of the working directory. Already exported process variables take precedence, and `--model` can override `GROQ_MODEL_ID`. Keep the file local and never put a key in a command argument, notebook, or tracked file. Live mode makes up to two Groq calls. Provider failures write only a fixed exception label and, when available, a numeric HTTP status or allowlisted error code to the run artifact. Raw exception text, request headers, and credentials are never saved. The notebook remains offline unless its opt-in flag is deliberately enabled. Tests and CI use no live calls. See [repository map](docs/REPOSITORY_MAP.md) for file roles and cleanup candidates.

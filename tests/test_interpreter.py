@@ -5,6 +5,7 @@ import os
 from pathlib import Path
 import subprocess
 import sys
+import tempfile
 import unittest
 from unittest.mock import MagicMock, patch
 
@@ -18,6 +19,11 @@ FIXTURES = json.loads(importlib.resources.files('intention_grounding.interpreter
 
 class ContractTests(unittest.TestCase):
     def setUp(self):
+        env_dir = tempfile.TemporaryDirectory()
+        self.addCleanup(env_dir.cleanup)
+        env_patch = patch('intention_grounding.groq_config.ENV_PATH', Path(env_dir.name) / '.env')
+        env_patch.start()
+        self.addCleanup(env_patch.stop)
         self.doc = json.loads(FIXTURES[0]['raw_response'])
 
     def run_doc(self, d):
@@ -159,7 +165,7 @@ class ContractTests(unittest.TestCase):
         with patch.dict(os.environ,{},clear=True):
             self.assertEqual('PROVIDER_FAILURE',interpret('x','text',provider)['failure'])
         for kwargs in [{'model':''},{'model':'x','timeout':float('nan')},{'model':'x','max_retries':3}]:
-            with self.assertRaises(ValueError):GroqProvider(**kwargs)
+            with self.assertRaises((ValueError, RuntimeError)):GroqProvider(**kwargs)
 
     def test_safe_provider_diagnostics_and_missing_configuration(self):
         class FakeStatusError(Exception):
@@ -202,7 +208,7 @@ class ContractTests(unittest.TestCase):
 import sys, os, socket
 class Block:
  def find_spec(self, fullname, *args):
-  if fullname.split('.')[0] in {'groq','dotenv'}: raise ImportError('blocked optional SDK')
+  if fullname.split('.')[0] == 'groq': raise ImportError('blocked optional SDK')
 sys.meta_path.insert(0,Block())
 def audit(event,args):
  if event in {'socket.connect','socket.getaddrinfo'}: raise AssertionError('network forbidden')

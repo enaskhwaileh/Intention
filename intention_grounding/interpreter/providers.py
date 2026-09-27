@@ -1,11 +1,10 @@
 """Optional live adapter and explicitly manually authored replay provider."""
 import json
-import os
 import re
 from dataclasses import dataclass
 
 from .core import SCHEMA
-from ..provider_errors import MissingGroqCredentialError
+from ..groq_config import groq_api_key, groq_model_id
 
 PROMPT_VERSION = 'ab-m1-v1'
 SYSTEM_PROMPT = '''Extract analytical requests for dataset discovery in English.
@@ -51,10 +50,8 @@ class ReplayProvider:
 
 class GroqProvider:
     """No import/credential access until invoke; injected factory supports offline tests."""
-    def __init__(self, *, model, temperature=0.0, max_tokens=4096,
+    def __init__(self, *, model=None, temperature=0.0, max_tokens=4096,
                  timeout=30.0, max_retries=0, client_factory=None):
-        if not isinstance(model, str) or not model.strip():
-            raise ValueError('explicit model required')
         if type(timeout) not in (int, float) or not 0 < timeout <= 120:
             raise ValueError('timeout must be in (0,120]')
         if type(max_retries) is not int or not 0 <= max_retries <= 2:
@@ -63,7 +60,7 @@ class GroqProvider:
             raise ValueError('temperature must be 0..2')
         if type(max_tokens) is not int or not 1 <= max_tokens <= 32768:
             raise ValueError('max_tokens must be 1..32768')
-        self.model, self.temperature, self.max_tokens = model, temperature, max_tokens
+        self.model, self.temperature, self.max_tokens = groq_model_id(model), temperature, max_tokens
         self.timeout, self.max_retries = timeout, max_retries
         self.client_factory = client_factory
 
@@ -75,9 +72,7 @@ class GroqProvider:
                 'timeout_seconds': self.timeout, 'max_retries': self.max_retries}
 
     def invoke(self, input_id, original_input):
-        key = os.environ.get('GROQ_API_KEY')
-        if not key:
-            raise MissingGroqCredentialError
+        key = groq_api_key()
         factory = self.client_factory
         if factory is None:
             from groq import Groq
@@ -93,9 +88,7 @@ class GroqProvider:
 
 def list_available_models(*, client_factory=None):
     """Read only model IDs from the authenticated account's model list."""
-    key = os.environ.get('GROQ_API_KEY')
-    if not key:
-        raise MissingGroqCredentialError
+    key = groq_api_key()
     factory = client_factory
     if factory is None:
         from groq import Groq
