@@ -1,0 +1,5502 @@
+{
+  "ab_version": "0.2.0-draft",
+  "status": "proposed_unvalidated",
+  "representation": "declarative_catalogue_not_executable_dsl",
+  "scope": "extensible_table_centered_analytical_intentions",
+  "axes": [
+    "sem",
+    "str",
+    "cov",
+    "qual",
+    "aff"
+  ],
+  "roles": {
+    "measure": {
+      "type": "concept_reference"
+    },
+    "group_dimension": {
+      "type": "concept_reference"
+    },
+    "groups": {
+      "type": "array[entity_reference]",
+      "min_items": 2,
+      "unique": true
+    },
+    "subject": {
+      "type": "entity_reference"
+    },
+    "time_points": {
+      "type": "array[time_point]",
+      "min_items": 1,
+      "unique": true
+    },
+    "time_grain": {
+      "type": "temporal_granularity"
+    },
+    "coverage_policy": {
+      "type": "enum",
+      "values": [
+        "available_observations",
+        "complete_grid"
+      ],
+      "default": "available_observations",
+      "default_origin": "system_policy",
+      "complete_grid_requires_explicit_evidence": true,
+      "default_rule_id": "default_available_observations_v1",
+      "derivation_rule_id": "derive_explicit_group_time_grid_v1"
+    },
+    "variables": {
+      "type": "array[concept_reference]",
+      "description": "Named variables whose meaning must be bound to table evidence.",
+      "min_items": 1,
+      "unique": true
+    },
+    "population": {
+      "type": "specification_reference",
+      "description": "Population and inclusion scope of the requested analysis."
+    },
+    "unit": {
+      "type": "specification_reference",
+      "description": "Logical observational unit, such as person, transaction or day."
+    },
+    "target": {
+      "type": "specification_reference",
+      "description": "Outcome concept to predict, explain or estimate."
+    },
+    "features": {
+      "type": "array[concept_reference]",
+      "description": "Predictors or descriptive features with a declared information-availability policy.",
+      "min_items": 1,
+      "unique": true
+    },
+    "prediction_time": {
+      "type": "specification_reference",
+      "description": "Point at which the prediction would be made; not necessarily a time-series column."
+    },
+    "time_axis": {
+      "type": "specification_reference",
+      "description": "Temporal ordering field and its meaning."
+    },
+    "horizon": {
+      "type": "specification_reference",
+      "description": "Requested forecast distance from the prediction origin."
+    },
+    "event": {
+      "type": "specification_reference",
+      "description": "Defined event of interest."
+    },
+    "duration": {
+      "type": "specification_reference",
+      "description": "Time origin and event/censoring duration definition."
+    },
+    "method": {
+      "type": "specification_reference",
+      "description": "Explicit or separately reviewed procedure choice; never inferred solely from keywords."
+    },
+    "statistic": {
+      "type": "specification_reference",
+      "description": "Requested descriptive statistic or aggregation function."
+    },
+    "condition": {
+      "type": "specification_reference",
+      "description": "Explicit row-selection predicate and its null semantics."
+    },
+    "order": {
+      "type": "specification_reference",
+      "description": "Sort direction, tie policy and ordering semantics."
+    },
+    "count": {
+      "type": "specification_reference",
+      "description": "Requested number of outputs, not a statistical adequacy threshold."
+    },
+    "reference": {
+      "type": "specification_reference",
+      "description": "Reference population, period, distribution, rule or baseline."
+    },
+    "hypothesis": {
+      "type": "specification_reference",
+      "description": "Null/alternative or estimand being evaluated."
+    },
+    "confidence_level": {
+      "type": "specification_reference",
+      "description": "Declared uncertainty-interval level; no default invented."
+    },
+    "design": {
+      "type": "specification_reference",
+      "description": "Sampling, dependence or experimental design and supporting documentation."
+    },
+    "treatment": {
+      "type": "specification_reference",
+      "description": "Intervention or exposure, including control contrast."
+    },
+    "adjustment": {
+      "type": "specification_reference",
+      "description": "Adjustment/identification specification justified by domain evidence."
+    },
+    "model": {
+      "type": "specification_reference",
+      "description": "Identified model artifact, version, task and preprocessing contract."
+    },
+    "objective": {
+      "type": "specification_reference",
+      "description": "Decision objective with direction and interpretation."
+    },
+    "constraints": {
+      "type": "specification_reference",
+      "description": "Explicit feasibility constraints."
+    },
+    "decision_variables": {
+      "type": "array[concept_reference]",
+      "description": "Controllable quantities and allowed domains.",
+      "min_items": 1,
+      "unique": true
+    },
+    "utility": {
+      "type": "specification_reference",
+      "description": "Declared preference or utility criterion."
+    },
+    "user": {
+      "type": "specification_reference",
+      "description": "Recommendation recipient or context."
+    },
+    "items": {
+      "type": "array[concept_reference]",
+      "description": "Candidate item universe and eligibility.",
+      "min_items": 1,
+      "unique": true
+    },
+    "keys": {
+      "type": "array[concept_reference]",
+      "description": "Key/entity binding and null/duplicate semantics.",
+      "min_items": 1,
+      "unique": true
+    },
+    "tables": {
+      "type": "array[concept_reference]",
+      "description": "Identified input table set; unresolved references require clarification.",
+      "min_items": 1,
+      "unique": true
+    },
+    "mapping": {
+      "type": "specification_reference",
+      "description": "Schema, entity, unit or field mapping with provenance."
+    },
+    "rules": {
+      "type": "specification_reference",
+      "description": "Validation or transformation rules with provenance."
+    },
+    "missing_policy": {
+      "type": "specification_reference",
+      "description": "Explicit handling of missing values and its assumptions."
+    },
+    "expression": {
+      "type": "specification_reference",
+      "description": "Declared derived-value expression and unit semantics."
+    },
+    "shape": {
+      "type": "specification_reference",
+      "description": "Requested long/wide representation and value/key roles."
+    },
+    "sample_design": {
+      "type": "specification_reference",
+      "description": "Sampling unit, selection scheme and size/precision objective."
+    },
+    "geometry": {
+      "type": "specification_reference",
+      "description": "Coordinates/geometries and their reference system."
+    },
+    "region": {
+      "type": "specification_reference",
+      "description": "Named spatial area or boundary geometry."
+    },
+    "distance": {
+      "type": "specification_reference",
+      "description": "Distance metric, units and requested bound."
+    },
+    "nodes": {
+      "type": "array[concept_reference]",
+      "description": "Graph entity identities.",
+      "min_items": 1,
+      "unique": true
+    },
+    "edges": {
+      "type": "array[concept_reference]",
+      "description": "Graph relation identities, direction and weights.",
+      "min_items": 1,
+      "unique": true
+    },
+    "source_node": {
+      "type": "specification_reference",
+      "description": "Path origin node."
+    },
+    "destination_node": {
+      "type": "specification_reference",
+      "description": "Path destination node."
+    },
+    "text_field": {
+      "type": "specification_reference",
+      "description": "Text-bearing column and language/context."
+    },
+    "labels": {
+      "type": "array[concept_reference]",
+      "description": "Explicit label set and meanings.",
+      "min_items": 1,
+      "unique": true
+    },
+    "entities": {
+      "type": "array[concept_reference]",
+      "description": "Entity types or mentions requested for extraction.",
+      "min_items": 1,
+      "unique": true
+    },
+    "display": {
+      "type": "specification_reference",
+      "description": "Requested visual encoding, audience or presentation constraint."
+    },
+    "scenario": {
+      "type": "specification_reference",
+      "description": "Assumed scenario or intervention settings."
+    },
+    "generative_model": {
+      "type": "specification_reference",
+      "description": "Specified simulator or structural model with assumptions."
+    }
+  },
+  "actions": {
+    "compare": {
+      "parent": null,
+      "abstract": true,
+      "definition": "Descriptively contrast comparable observations of one numerical measure.",
+      "required_roles": [
+        "measure"
+      ],
+      "requirements": [
+        "measure_semantics",
+        "observation_binding",
+        "usable_numeric_observations",
+        "comparable_measure_definition",
+        "time_coverage"
+      ],
+      "selection": "Comparison goal; insufficient specificity is preserved rather than forced into a child.",
+      "runtime_support": "abstract",
+      "scientific_status": "proposed_unvalidated",
+      "procedure_ids": []
+    },
+    "compare.groups": {
+      "parent": "compare",
+      "abstract": false,
+      "definition": "Compare a numerical measure across specified groups.",
+      "required_roles": [
+        "group_dimension",
+        "groups"
+      ],
+      "requirements": [
+        "group_coverage",
+        "complete_requested_grid"
+      ],
+      "selection": "At least two groups and a measure; a time filter alone does not imply trajectories.",
+      "runtime_support": "grounding_only",
+      "scientific_status": "proposed_unvalidated",
+      "exclusions": [
+        "Direct observed numerical comparison only; no aggregation, joins, statistical inference or causal claims."
+      ],
+      "examples": [
+        "Compare the annual recorded income of France and Spain in 2021."
+      ],
+      "procedure_ids": [
+        "compare.groups.direct"
+      ]
+    },
+    "compare.groups.trajectories": {
+      "parent": "compare.groups",
+      "abstract": false,
+      "definition": "Compare temporal change of the same measure across groups.",
+      "required_roles": [
+        "time_points",
+        "time_grain"
+      ],
+      "minimum_cardinalities": {
+        "time_points": 2
+      },
+      "requirements": [
+        "paired_temporal_support"
+      ],
+      "selection": "Explicit temporal change or trajectory comparison across groups, with resolvable time points and grain.",
+      "runtime_support": "grounding_only",
+      "scientific_status": "proposed_unvalidated",
+      "exclusions": [
+        "Direct observed numerical comparison only; no aggregation, joins, statistical inference or causal claims."
+      ],
+      "examples": [
+        "Compare annual income trajectories of France and Spain at 2019 and 2021."
+      ],
+      "procedure_ids": [
+        "compare.groups.trajectories.direct"
+      ]
+    },
+    "compare.time": {
+      "parent": "compare",
+      "abstract": false,
+      "definition": "Compare one subject across explicit time points.",
+      "required_roles": [
+        "subject",
+        "time_points",
+        "time_grain"
+      ],
+      "minimum_cardinalities": {
+        "time_points": 2
+      },
+      "requirements": [],
+      "selection": "One subject and a measure, explicitly contrasted across time.",
+      "runtime_support": "grounding_only",
+      "scientific_status": "proposed_unvalidated",
+      "exclusions": [
+        "Direct observed numerical comparison only; no aggregation, joins, statistical inference or causal claims."
+      ],
+      "examples": [
+        "Compare annual income in France in 2019 versus 2021."
+      ],
+      "procedure_ids": [
+        "compare.time.direct"
+      ]
+    },
+    "retrieve": {
+      "parent": null,
+      "abstract": true,
+      "definition": "Look up or select existing observations.",
+      "required_roles": [],
+      "requirements": [
+        "concept_binding",
+        "unit_binding",
+        "scope_coverage",
+        "usable_values"
+      ],
+      "selection": "Family only: preserve ambiguity until a concrete subtype and its required arguments are resolved.",
+      "runtime_support": "abstract",
+      "scientific_status": "proposed_unvalidated",
+      "procedure_ids": []
+    },
+    "summarize": {
+      "parent": null,
+      "abstract": true,
+      "definition": "Describe observed data without inferential or causal claims.",
+      "required_roles": [],
+      "requirements": [
+        "concept_binding",
+        "unit_binding",
+        "scope_coverage",
+        "usable_values"
+      ],
+      "selection": "Family only: preserve ambiguity until a concrete subtype and its required arguments are resolved.",
+      "runtime_support": "abstract",
+      "scientific_status": "proposed_unvalidated",
+      "procedure_ids": []
+    },
+    "aggregate": {
+      "parent": null,
+      "abstract": true,
+      "definition": "Compute explicitly specified statistics over observations.",
+      "required_roles": [],
+      "requirements": [
+        "concept_binding",
+        "unit_binding",
+        "scope_coverage",
+        "usable_values",
+        "aggregation_valid"
+      ],
+      "selection": "Family only: preserve ambiguity until a concrete subtype and its required arguments are resolved.",
+      "runtime_support": "abstract",
+      "scientific_status": "proposed_unvalidated",
+      "procedure_ids": []
+    },
+    "associate": {
+      "parent": null,
+      "abstract": true,
+      "definition": "Describe statistical relationships without causal interpretation.",
+      "required_roles": [],
+      "requirements": [
+        "concept_binding",
+        "unit_binding",
+        "scope_coverage",
+        "usable_values",
+        "paired_values",
+        "procedure_assumptions"
+      ],
+      "selection": "Family only: preserve ambiguity until a concrete subtype and its required arguments are resolved.",
+      "runtime_support": "abstract",
+      "scientific_status": "proposed_unvalidated",
+      "procedure_ids": []
+    },
+    "predict": {
+      "parent": null,
+      "abstract": true,
+      "definition": "Predict unknown outcomes under an explicit task and information policy.",
+      "required_roles": [],
+      "requirements": [
+        "concept_binding",
+        "unit_binding",
+        "scope_coverage",
+        "usable_values",
+        "target_observed",
+        "leakage_control",
+        "procedure_assumptions"
+      ],
+      "selection": "Family only: preserve ambiguity until a concrete subtype and its required arguments are resolved.",
+      "runtime_support": "abstract",
+      "scientific_status": "proposed_unvalidated",
+      "procedure_ids": []
+    },
+    "cluster": {
+      "parent": null,
+      "abstract": true,
+      "definition": "Discover groups under a declared representation and similarity policy.",
+      "required_roles": [],
+      "requirements": [
+        "concept_binding",
+        "unit_binding",
+        "scope_coverage",
+        "usable_values",
+        "distance_representation"
+      ],
+      "selection": "Family only: preserve ambiguity until a concrete subtype and its required arguments are resolved.",
+      "runtime_support": "abstract",
+      "scientific_status": "proposed_unvalidated",
+      "procedure_ids": []
+    },
+    "detect": {
+      "parent": null,
+      "abstract": true,
+      "definition": "Identify unusual observations or changes relative to a specified reference.",
+      "required_roles": [],
+      "requirements": [
+        "concept_binding",
+        "unit_binding",
+        "scope_coverage",
+        "usable_values",
+        "reference_available",
+        "procedure_assumptions"
+      ],
+      "selection": "Family only: preserve ambiguity until a concrete subtype and its required arguments are resolved.",
+      "runtime_support": "abstract",
+      "scientific_status": "proposed_unvalidated",
+      "procedure_ids": []
+    },
+    "explain": {
+      "parent": null,
+      "abstract": true,
+      "definition": "Explain associations, model behavior or causation with distinct evidence contracts.",
+      "required_roles": [],
+      "requirements": [
+        "concept_binding",
+        "unit_binding",
+        "scope_coverage",
+        "usable_values"
+      ],
+      "selection": "Family only: preserve ambiguity until a concrete subtype and its required arguments are resolved.",
+      "runtime_support": "abstract",
+      "scientific_status": "proposed_unvalidated",
+      "procedure_ids": []
+    },
+    "test": {
+      "parent": null,
+      "abstract": true,
+      "definition": "Evaluate a stated statistical hypothesis with a justified design.",
+      "required_roles": [],
+      "requirements": [
+        "concept_binding",
+        "unit_binding",
+        "scope_coverage",
+        "usable_values",
+        "procedure_assumptions"
+      ],
+      "selection": "Family only: preserve ambiguity until a concrete subtype and its required arguments are resolved.",
+      "runtime_support": "abstract",
+      "scientific_status": "proposed_unvalidated",
+      "procedure_ids": []
+    },
+    "estimate": {
+      "parent": null,
+      "abstract": true,
+      "definition": "Estimate population quantities and uncertainty under a stated design.",
+      "required_roles": [],
+      "requirements": [
+        "concept_binding",
+        "unit_binding",
+        "scope_coverage",
+        "usable_values",
+        "procedure_assumptions"
+      ],
+      "selection": "Family only: preserve ambiguity until a concrete subtype and its required arguments are resolved.",
+      "runtime_support": "abstract",
+      "scientific_status": "proposed_unvalidated",
+      "procedure_ids": []
+    },
+    "monitor": {
+      "parent": null,
+      "abstract": true,
+      "definition": "Track indicators or distribution changes against a declared baseline.",
+      "required_roles": [],
+      "requirements": [
+        "concept_binding",
+        "unit_binding",
+        "scope_coverage",
+        "usable_values",
+        "reference_available"
+      ],
+      "selection": "Family only: preserve ambiguity until a concrete subtype and its required arguments are resolved.",
+      "runtime_support": "abstract",
+      "scientific_status": "proposed_unvalidated",
+      "procedure_ids": []
+    },
+    "integrate": {
+      "parent": null,
+      "abstract": true,
+      "definition": "Combine or align table evidence with explicit multi-table semantics.",
+      "required_roles": [],
+      "requirements": [
+        "concept_binding",
+        "scope_coverage"
+      ],
+      "selection": "Family only: preserve ambiguity until a concrete subtype and its required arguments are resolved.",
+      "runtime_support": "abstract",
+      "scientific_status": "proposed_unvalidated",
+      "procedure_ids": []
+    },
+    "prepare": {
+      "parent": null,
+      "abstract": true,
+      "definition": "Prepare tabular observations using explicit, provenance-preserving rules.",
+      "required_roles": [],
+      "requirements": [
+        "concept_binding",
+        "unit_binding",
+        "scope_coverage",
+        "usable_values",
+        "transformation_defined"
+      ],
+      "selection": "Family only: preserve ambiguity until a concrete subtype and its required arguments are resolved.",
+      "runtime_support": "abstract",
+      "scientific_status": "proposed_unvalidated",
+      "procedure_ids": []
+    },
+    "validate": {
+      "parent": null,
+      "abstract": true,
+      "definition": "Assess data validity against explicit rules.",
+      "required_roles": [],
+      "requirements": [
+        "concept_binding",
+        "validation_defined"
+      ],
+      "selection": "Family only: preserve ambiguity until a concrete subtype and its required arguments are resolved.",
+      "runtime_support": "abstract",
+      "scientific_status": "proposed_unvalidated",
+      "procedure_ids": []
+    },
+    "visualize": {
+      "parent": null,
+      "abstract": true,
+      "definition": "Present observed data through a declared visual encoding.",
+      "required_roles": [],
+      "requirements": [
+        "concept_binding",
+        "unit_binding",
+        "scope_coverage",
+        "usable_values",
+        "visual_encoding_valid"
+      ],
+      "selection": "Family only: preserve ambiguity until a concrete subtype and its required arguments are resolved.",
+      "runtime_support": "abstract",
+      "scientific_status": "proposed_unvalidated",
+      "procedure_ids": []
+    },
+    "recommend": {
+      "parent": null,
+      "abstract": true,
+      "definition": "Suggest eligible items under a stated preference objective.",
+      "required_roles": [],
+      "requirements": [
+        "concept_binding",
+        "unit_binding",
+        "scope_coverage",
+        "usable_values",
+        "preference_evidence"
+      ],
+      "selection": "Family only: preserve ambiguity until a concrete subtype and its required arguments are resolved.",
+      "runtime_support": "abstract",
+      "scientific_status": "proposed_unvalidated",
+      "procedure_ids": []
+    },
+    "optimize": {
+      "parent": null,
+      "abstract": true,
+      "definition": "Choose feasible decisions against declared objectives.",
+      "required_roles": [],
+      "requirements": [
+        "concept_binding",
+        "decision_model"
+      ],
+      "selection": "Family only: preserve ambiguity until a concrete subtype and its required arguments are resolved.",
+      "runtime_support": "abstract",
+      "scientific_status": "proposed_unvalidated",
+      "procedure_ids": []
+    },
+    "simulate": {
+      "parent": null,
+      "abstract": true,
+      "definition": "Explore conditional scenarios using an explicit model.",
+      "required_roles": [],
+      "requirements": [
+        "concept_binding",
+        "simulation_model"
+      ],
+      "selection": "Family only: preserve ambiguity until a concrete subtype and its required arguments are resolved.",
+      "runtime_support": "abstract",
+      "scientific_status": "proposed_unvalidated",
+      "procedure_ids": []
+    },
+    "spatial": {
+      "parent": null,
+      "abstract": true,
+      "definition": "Analyze spatial relations using defined coordinate and distance semantics.",
+      "required_roles": [],
+      "requirements": [
+        "concept_binding",
+        "unit_binding",
+        "scope_coverage",
+        "usable_values",
+        "spatial_reference"
+      ],
+      "selection": "Family only: preserve ambiguity until a concrete subtype and its required arguments are resolved.",
+      "runtime_support": "abstract",
+      "scientific_status": "proposed_unvalidated",
+      "procedure_ids": []
+    },
+    "network": {
+      "parent": null,
+      "abstract": true,
+      "definition": "Analyze graph structure represented by tables.",
+      "required_roles": [],
+      "requirements": [
+        "concept_binding",
+        "unit_binding",
+        "scope_coverage",
+        "usable_values",
+        "graph_structure"
+      ],
+      "selection": "Family only: preserve ambiguity until a concrete subtype and its required arguments are resolved.",
+      "runtime_support": "abstract",
+      "scientific_status": "proposed_unvalidated",
+      "procedure_ids": []
+    },
+    "text": {
+      "parent": null,
+      "abstract": true,
+      "definition": "Analyze text-valued table fields under explicit language and task definitions.",
+      "required_roles": [],
+      "requirements": [
+        "concept_binding",
+        "unit_binding",
+        "scope_coverage",
+        "usable_values",
+        "text_interpretation"
+      ],
+      "selection": "Family only: preserve ambiguity until a concrete subtype and its required arguments are resolved.",
+      "runtime_support": "abstract",
+      "scientific_status": "proposed_unvalidated",
+      "procedure_ids": []
+    },
+    "discover": {
+      "parent": null,
+      "abstract": true,
+      "definition": "Find tables or compatible data assets for a stated information need.",
+      "required_roles": [],
+      "requirements": [
+        "concept_binding",
+        "scope_coverage"
+      ],
+      "selection": "Family only: preserve ambiguity until a concrete subtype and its required arguments are resolved.",
+      "runtime_support": "abstract",
+      "scientific_status": "proposed_unvalidated",
+      "procedure_ids": []
+    },
+    "retrieve.lookup": {
+      "parent": "retrieve",
+      "abstract": false,
+      "definition": "Retrieve values for identified observational units.",
+      "required_roles": [
+        "variables",
+        "condition"
+      ],
+      "requirements": [
+        "selection_evaluable"
+      ],
+      "selection": "Retrieve values for identified observational units. Resolve all required roles before choosing this subtype.",
+      "exclusions": [
+        "Do not infer missing values or perform unstated aggregation."
+      ],
+      "examples": [
+        "Find the recorded revenue for shop A on 2024-01-01."
+      ],
+      "runtime_support": "catalog_only",
+      "scientific_status": "proposed_unvalidated",
+      "procedure_ids": [
+        "retrieve.lookup.direct"
+      ]
+    },
+    "retrieve.filter": {
+      "parent": "retrieve",
+      "abstract": false,
+      "definition": "Select rows satisfying explicit conditions.",
+      "required_roles": [
+        "condition"
+      ],
+      "requirements": [
+        "selection_evaluable"
+      ],
+      "selection": "Select rows satisfying explicit conditions. Resolve all required roles before choosing this subtype.",
+      "exclusions": [
+        "Filtering is not a claim about an unobserved population."
+      ],
+      "examples": [
+        "Select transactions above 100 euros with known payment status."
+      ],
+      "runtime_support": "catalog_only",
+      "scientific_status": "proposed_unvalidated",
+      "procedure_ids": [
+        "retrieve.filter.direct"
+      ]
+    },
+    "retrieve.sort": {
+      "parent": "retrieve",
+      "abstract": false,
+      "definition": "Order observed records using declared ordering and ties.",
+      "required_roles": [
+        "variables",
+        "order"
+      ],
+      "requirements": [
+        "ordering_evaluable"
+      ],
+      "selection": "Order observed records using declared ordering and ties. Resolve all required roles before choosing this subtype.",
+      "exclusions": [
+        "Do not compare incompatible units."
+      ],
+      "examples": [
+        "Sort recorded deliveries by duration ascending, retaining ties."
+      ],
+      "runtime_support": "catalog_only",
+      "scientific_status": "proposed_unvalidated",
+      "procedure_ids": [
+        "retrieve.sort.direct"
+      ]
+    },
+    "retrieve.top_k": {
+      "parent": "retrieve",
+      "abstract": false,
+      "definition": "Find extrema or top-k observations under a specified order.",
+      "required_roles": [
+        "variables",
+        "order",
+        "count"
+      ],
+      "requirements": [
+        "ordering_evaluable"
+      ],
+      "selection": "Find extrema or top-k observations under a specified order. Resolve all required roles before choosing this subtype.",
+      "exclusions": [
+        "No unstated utility function or statistical significance."
+      ],
+      "examples": [
+        "Find the five highest recorded daily sales, retaining boundary ties."
+      ],
+      "runtime_support": "catalog_only",
+      "scientific_status": "proposed_unvalidated",
+      "procedure_ids": [
+        "retrieve.top_k.direct"
+      ]
+    },
+    "summarize.profile": {
+      "parent": "summarize",
+      "abstract": false,
+      "definition": "Describe schema, missingness and observed field properties.",
+      "required_roles": [
+        "variables"
+      ],
+      "requirements": [],
+      "selection": "Describe schema, missingness and observed field properties. Resolve all required roles before choosing this subtype.",
+      "exclusions": [
+        "A profile does not establish fitness for an analytical use."
+      ],
+      "examples": [
+        "Profile the types and missing values of age and income."
+      ],
+      "runtime_support": "catalog_only",
+      "scientific_status": "proposed_unvalidated",
+      "procedure_ids": [
+        "summarize.profile.direct"
+      ]
+    },
+    "summarize.distribution": {
+      "parent": "summarize",
+      "abstract": false,
+      "definition": "Describe an observed distribution and its support.",
+      "required_roles": [
+        "variables"
+      ],
+      "requirements": [],
+      "selection": "Describe an observed distribution and its support. Resolve all required roles before choosing this subtype.",
+      "exclusions": [
+        "No population generalization without a sampling design."
+      ],
+      "examples": [
+        "Describe the observed distribution of delivery times."
+      ],
+      "runtime_support": "catalog_only",
+      "scientific_status": "proposed_unvalidated",
+      "procedure_ids": [
+        "summarize.distribution.direct"
+      ]
+    },
+    "summarize.statistics": {
+      "parent": "summarize",
+      "abstract": false,
+      "definition": "Compute specified descriptive statistics on observed values.",
+      "required_roles": [
+        "variables",
+        "statistic"
+      ],
+      "requirements": [
+        "aggregation_valid"
+      ],
+      "selection": "Compute specified descriptive statistics on observed values. Resolve all required roles before choosing this subtype.",
+      "exclusions": [
+        "Do not silently substitute mean for median."
+      ],
+      "examples": [
+        "Report the median observed transaction amount."
+      ],
+      "runtime_support": "catalog_only",
+      "scientific_status": "proposed_unvalidated",
+      "procedure_ids": [
+        "summarize.statistics.direct"
+      ]
+    },
+    "aggregate.grouped": {
+      "parent": "aggregate",
+      "abstract": false,
+      "definition": "Compute a specified measure statistic within explicit groups.",
+      "required_roles": [
+        "measure",
+        "statistic",
+        "group_dimension"
+      ],
+      "requirements": [
+        "aggregation_valid"
+      ],
+      "selection": "Compute a specified measure statistic within explicit groups. Resolve all required roles before choosing this subtype.",
+      "exclusions": [
+        "Does not enable aggregate-then-compare in the current runtime."
+      ],
+      "examples": [
+        "Compute total recorded sales by store."
+      ],
+      "runtime_support": "catalog_only",
+      "scientific_status": "proposed_unvalidated",
+      "procedure_ids": [
+        "aggregate.grouped.direct"
+      ]
+    },
+    "aggregate.count": {
+      "parent": "aggregate",
+      "abstract": false,
+      "definition": "Count records or entities using a declared counting unit.",
+      "required_roles": [
+        "unit",
+        "condition"
+      ],
+      "requirements": [
+        "aggregation_valid"
+      ],
+      "selection": "Count records or entities using a declared counting unit. Resolve all required roles before choosing this subtype.",
+      "exclusions": [
+        "Row counts and distinct-entity counts are different tasks."
+      ],
+      "examples": [
+        "Count distinct customers with purchases during 2024."
+      ],
+      "runtime_support": "catalog_only",
+      "scientific_status": "proposed_unvalidated",
+      "procedure_ids": [
+        "aggregate.count.direct"
+      ]
+    },
+    "aggregate.temporal": {
+      "parent": "aggregate",
+      "abstract": false,
+      "definition": "Aggregate a measure to an explicit temporal grain.",
+      "required_roles": [
+        "measure",
+        "statistic",
+        "time_axis",
+        "time_grain"
+      ],
+      "requirements": [
+        "aggregation_valid",
+        "temporal_observations"
+      ],
+      "selection": "Aggregate a measure to an explicit temporal grain. Resolve all required roles before choosing this subtype.",
+      "exclusions": [
+        "Missing periods and partial periods must be explicit."
+      ],
+      "examples": [
+        "Compute total recorded sales for each calendar month."
+      ],
+      "runtime_support": "catalog_only",
+      "scientific_status": "proposed_unvalidated",
+      "procedure_ids": [
+        "aggregate.temporal.direct"
+      ]
+    },
+    "associate.correlation": {
+      "parent": "associate",
+      "abstract": false,
+      "definition": "Measure association between paired numerical variables.",
+      "required_roles": [
+        "variables",
+        "unit",
+        "method"
+      ],
+      "requirements": [
+        "numeric_variables"
+      ],
+      "selection": "Measure association between paired numerical variables. Resolve all required roles before choosing this subtype.",
+      "exclusions": [
+        "Correlation is not causation; constant-variable handling is method-specific."
+      ],
+      "examples": [
+        "Measure Pearson correlation between height and weight for the same adults."
+      ],
+      "runtime_support": "catalog_only",
+      "scientific_status": "proposed_unvalidated",
+      "procedure_ids": [
+        "associate.correlation.direct"
+      ],
+      "minimum_cardinalities": {
+        "variables": 2
+      }
+    },
+    "associate.categorical": {
+      "parent": "associate",
+      "abstract": false,
+      "definition": "Assess observed association between categorical variables.",
+      "required_roles": [
+        "variables",
+        "unit",
+        "method"
+      ],
+      "requirements": [
+        "observed_category_domain"
+      ],
+      "selection": "Assess observed association between categorical variables. Resolve all required roles before choosing this subtype.",
+      "exclusions": [
+        "Do not infer causal effects from contingency counts."
+      ],
+      "examples": [
+        "Describe association between product category and return status."
+      ],
+      "runtime_support": "catalog_only",
+      "scientific_status": "proposed_unvalidated",
+      "procedure_ids": [
+        "associate.categorical.direct"
+      ],
+      "minimum_cardinalities": {
+        "variables": 2
+      }
+    },
+    "associate.conditional": {
+      "parent": "associate",
+      "abstract": false,
+      "definition": "Describe association conditional on specified variables.",
+      "required_roles": [
+        "variables",
+        "features",
+        "unit",
+        "method"
+      ],
+      "requirements": [],
+      "selection": "Describe association conditional on specified variables. Resolve all required roles before choosing this subtype.",
+      "exclusions": [
+        "Adjustment alone does not establish causal identification."
+      ],
+      "examples": [
+        "Describe the income-education association conditional on age."
+      ],
+      "runtime_support": "catalog_only",
+      "scientific_status": "proposed_unvalidated",
+      "procedure_ids": [
+        "associate.conditional.direct"
+      ]
+    },
+    "predict.classification": {
+      "parent": "predict",
+      "abstract": false,
+      "definition": "Predict a categorical outcome for new observational units.",
+      "required_roles": [
+        "target",
+        "features",
+        "unit",
+        "population",
+        "prediction_time"
+      ],
+      "requirements": [
+        "categorical_target",
+        "feature_availability"
+      ],
+      "selection": "Predict a categorical outcome for new observational units. Resolve all required roles before choosing this subtype.",
+      "exclusions": [
+        "Do not require a time-series column or imply predictive accuracy."
+      ],
+      "examples": [
+        "Predict customer churn status from information available at signup."
+      ],
+      "runtime_support": "catalog_only",
+      "scientific_status": "proposed_unvalidated",
+      "procedure_ids": [
+        "predict.classification.linear_classifier",
+        "predict.classification.tree_classifier"
+      ]
+    },
+    "predict.regression": {
+      "parent": "predict",
+      "abstract": false,
+      "definition": "Predict a numerical outcome for new observational units.",
+      "required_roles": [
+        "target",
+        "features",
+        "unit",
+        "population",
+        "prediction_time"
+      ],
+      "requirements": [
+        "numeric_target",
+        "feature_availability"
+      ],
+      "selection": "Predict a numerical outcome for new observational units. Resolve all required roles before choosing this subtype.",
+      "exclusions": [
+        "Post-sale fields and target-derived features are leakage."
+      ],
+      "examples": [
+        "Predict sale price from property features available before listing."
+      ],
+      "runtime_support": "catalog_only",
+      "scientific_status": "proposed_unvalidated",
+      "procedure_ids": [
+        "predict.regression.linear_regression",
+        "predict.regression.tree_regression"
+      ]
+    },
+    "predict.forecasting": {
+      "parent": "predict",
+      "abstract": false,
+      "definition": "Forecast a numerical series beyond an explicit prediction origin.",
+      "required_roles": [
+        "target",
+        "time_axis",
+        "time_grain",
+        "horizon",
+        "population",
+        "prediction_time"
+      ],
+      "requirements": [
+        "numeric_target",
+        "temporal_observations"
+      ],
+      "selection": "Forecast a numerical series beyond an explicit prediction origin. Resolve all required roles before choosing this subtype.",
+      "exclusions": [
+        "Forecasting is distinct from generic supervised prediction; no silent cadence."
+      ],
+      "examples": [
+        "Forecast daily rental counts for the next seven days from history ending yesterday."
+      ],
+      "runtime_support": "catalog_only",
+      "scientific_status": "proposed_unvalidated",
+      "procedure_ids": [
+        "predict.forecasting.univariate",
+        "predict.forecasting.with_covariates"
+      ]
+    },
+    "predict.survival": {
+      "parent": "predict",
+      "abstract": false,
+      "definition": "Predict time to a defined event with censoring-aware follow-up.",
+      "required_roles": [
+        "event",
+        "duration",
+        "features",
+        "population",
+        "prediction_time"
+      ],
+      "requirements": [
+        "event_followup",
+        "feature_availability"
+      ],
+      "selection": "Predict time to a defined event with censoring-aware follow-up. Resolve all required roles before choosing this subtype.",
+      "exclusions": [
+        "Do not treat censored times as observed failure times."
+      ],
+      "examples": [
+        "Predict time to equipment failure using installation-time features and censored follow-up."
+      ],
+      "runtime_support": "catalog_only",
+      "scientific_status": "proposed_unvalidated",
+      "procedure_ids": [
+        "predict.survival.direct"
+      ]
+    },
+    "cluster.partition": {
+      "parent": "cluster",
+      "abstract": false,
+      "definition": "Partition observations under a declared feature representation.",
+      "required_roles": [
+        "features",
+        "unit",
+        "method"
+      ],
+      "requirements": [
+        "distance_representation"
+      ],
+      "selection": "Partition observations under a declared feature representation. Resolve all required roles before choosing this subtype.",
+      "exclusions": [
+        "Clusters are not pre-existing labeled classes."
+      ],
+      "examples": [
+        "Group customers by purchase behavior using a reviewed scaled feature representation."
+      ],
+      "runtime_support": "catalog_only",
+      "scientific_status": "proposed_unvalidated",
+      "procedure_ids": [
+        "cluster.partition.direct"
+      ]
+    },
+    "cluster.density": {
+      "parent": "cluster",
+      "abstract": false,
+      "definition": "Identify dense groups and noise under a declared neighborhood policy.",
+      "required_roles": [
+        "features",
+        "unit",
+        "method"
+      ],
+      "requirements": [
+        "distance_representation"
+      ],
+      "selection": "Identify dense groups and noise under a declared neighborhood policy. Resolve all required roles before choosing this subtype.",
+      "exclusions": [
+        "Noise labels are not automatically erroneous records."
+      ],
+      "examples": [
+        "Find dense spatial groups of incidents using a specified distance policy."
+      ],
+      "runtime_support": "catalog_only",
+      "scientific_status": "proposed_unvalidated",
+      "procedure_ids": [
+        "cluster.density.direct"
+      ]
+    },
+    "detect.anomaly": {
+      "parent": "detect",
+      "abstract": false,
+      "definition": "Identify observations unusual relative to a declared reference.",
+      "required_roles": [
+        "variables",
+        "unit",
+        "reference",
+        "method"
+      ],
+      "requirements": [],
+      "selection": "Identify observations unusual relative to a declared reference. Resolve all required roles before choosing this subtype.",
+      "exclusions": [
+        "An outlier is not proof of fraud or error."
+      ],
+      "examples": [
+        "Flag transactions unusual relative to a reviewed historical reference."
+      ],
+      "runtime_support": "catalog_only",
+      "scientific_status": "proposed_unvalidated",
+      "procedure_ids": [
+        "detect.anomaly.direct"
+      ]
+    },
+    "detect.change": {
+      "parent": "detect",
+      "abstract": false,
+      "definition": "Identify changes in an ordered process relative to a reference.",
+      "required_roles": [
+        "variables",
+        "time_axis",
+        "reference",
+        "method"
+      ],
+      "requirements": [
+        "temporal_observations"
+      ],
+      "selection": "Identify changes in an ordered process relative to a reference. Resolve all required roles before choosing this subtype.",
+      "exclusions": [
+        "Do not infer the cause of a detected change."
+      ],
+      "examples": [
+        "Find changes in the daily demand process relative to last year's baseline."
+      ],
+      "runtime_support": "catalog_only",
+      "scientific_status": "proposed_unvalidated",
+      "procedure_ids": [
+        "detect.change.direct"
+      ]
+    },
+    "explain.association": {
+      "parent": "explain",
+      "abstract": false,
+      "definition": "Describe observed factors associated with an outcome.",
+      "required_roles": [
+        "target",
+        "features",
+        "population",
+        "method"
+      ],
+      "requirements": [
+        "paired_values",
+        "procedure_assumptions"
+      ],
+      "selection": "Describe observed factors associated with an outcome. Resolve all required roles before choosing this subtype.",
+      "exclusions": [
+        "Associational explanation must not be called causal."
+      ],
+      "examples": [
+        "Describe which recorded features are associated with churn."
+      ],
+      "runtime_support": "catalog_only",
+      "scientific_status": "proposed_unvalidated",
+      "procedure_ids": [
+        "explain.association.direct"
+      ]
+    },
+    "explain.model": {
+      "parent": "explain",
+      "abstract": false,
+      "definition": "Explain outputs of an identified predictive model.",
+      "required_roles": [
+        "model",
+        "target",
+        "features",
+        "method"
+      ],
+      "requirements": [
+        "model_available"
+      ],
+      "selection": "Explain outputs of an identified predictive model. Resolve all required roles before choosing this subtype.",
+      "exclusions": [
+        "Model attribution is not a causal explanation of the world."
+      ],
+      "examples": [
+        "Explain which features influence this versioned model's churn predictions."
+      ],
+      "runtime_support": "catalog_only",
+      "scientific_status": "proposed_unvalidated",
+      "procedure_ids": [
+        "explain.model.direct"
+      ]
+    },
+    "explain.causal": {
+      "parent": "explain",
+      "abstract": false,
+      "definition": "Estimate an explicitly defined causal contrast under a reviewed design.",
+      "required_roles": [
+        "target",
+        "treatment",
+        "population",
+        "design",
+        "adjustment"
+      ],
+      "requirements": [
+        "causal_identification",
+        "procedure_assumptions"
+      ],
+      "selection": "Estimate an explicitly defined causal contrast under a reviewed design. Resolve all required roles before choosing this subtype.",
+      "exclusions": [
+        "Columns and correlations alone cannot establish identification."
+      ],
+      "examples": [
+        "Estimate the effect of randomized treatment assignment on the stated outcome."
+      ],
+      "runtime_support": "catalog_only",
+      "scientific_status": "proposed_unvalidated",
+      "procedure_ids": [
+        "explain.causal.randomized_design",
+        "explain.causal.observational_identification"
+      ]
+    },
+    "test.difference": {
+      "parent": "test",
+      "abstract": false,
+      "definition": "Test a stated difference under a declared sampling/dependence design.",
+      "required_roles": [
+        "hypothesis",
+        "measure",
+        "groups",
+        "design",
+        "method"
+      ],
+      "requirements": [],
+      "selection": "Test a stated difference under a declared sampling/dependence design. Resolve all required roles before choosing this subtype.",
+      "exclusions": [
+        "Descriptive Compare does not imply this inferential procedure."
+      ],
+      "examples": [
+        "Test the predeclared difference in mean response between two randomized groups."
+      ],
+      "runtime_support": "catalog_only",
+      "scientific_status": "proposed_unvalidated",
+      "procedure_ids": [
+        "test.difference.direct"
+      ],
+      "minimum_cardinalities": {
+        "groups": 2
+      }
+    },
+    "test.independence": {
+      "parent": "test",
+      "abstract": false,
+      "definition": "Test a stated independence hypothesis for paired variables.",
+      "required_roles": [
+        "hypothesis",
+        "variables",
+        "unit",
+        "design",
+        "method"
+      ],
+      "requirements": [
+        "paired_values"
+      ],
+      "selection": "Test a stated independence hypothesis for paired variables. Resolve all required roles before choosing this subtype.",
+      "exclusions": [
+        "Do not choose the hypothesis after inspecting significance."
+      ],
+      "examples": [
+        "Test the predeclared independence of category and outcome for sampled units."
+      ],
+      "runtime_support": "catalog_only",
+      "scientific_status": "proposed_unvalidated",
+      "procedure_ids": [
+        "test.independence.direct"
+      ]
+    },
+    "test.goodness_of_fit": {
+      "parent": "test",
+      "abstract": false,
+      "definition": "Test compatibility with a stated reference distribution.",
+      "required_roles": [
+        "hypothesis",
+        "variables",
+        "reference",
+        "design",
+        "method"
+      ],
+      "requirements": [
+        "reference_available"
+      ],
+      "selection": "Test compatibility with a stated reference distribution. Resolve all required roles before choosing this subtype.",
+      "exclusions": [
+        "Failure to reject is not proof of distributional identity."
+      ],
+      "examples": [
+        "Test the predeclared fit of waiting times to a specified distribution."
+      ],
+      "runtime_support": "catalog_only",
+      "scientific_status": "proposed_unvalidated",
+      "procedure_ids": [
+        "test.goodness_of_fit.direct"
+      ]
+    },
+    "estimate.parameter": {
+      "parent": "estimate",
+      "abstract": false,
+      "definition": "Estimate a specified population quantity under a sampling design.",
+      "required_roles": [
+        "target",
+        "population",
+        "statistic",
+        "design"
+      ],
+      "requirements": [],
+      "selection": "Estimate a specified population quantity under a sampling design. Resolve all required roles before choosing this subtype.",
+      "exclusions": [
+        "No unsupported extrapolation to a different population."
+      ],
+      "examples": [
+        "Estimate mean commute duration for the sampled population using declared weights."
+      ],
+      "runtime_support": "catalog_only",
+      "scientific_status": "proposed_unvalidated",
+      "procedure_ids": [
+        "estimate.parameter.direct"
+      ]
+    },
+    "estimate.interval": {
+      "parent": "estimate",
+      "abstract": false,
+      "definition": "Quantify uncertainty for a specified estimand and interval level.",
+      "required_roles": [
+        "target",
+        "population",
+        "statistic",
+        "design",
+        "confidence_level",
+        "method"
+      ],
+      "requirements": [],
+      "selection": "Quantify uncertainty for a specified estimand and interval level. Resolve all required roles before choosing this subtype.",
+      "exclusions": [
+        "A confidence interval is not a predictive interval for an individual."
+      ],
+      "examples": [
+        "Estimate a 95 percent interval for the stated population mean."
+      ],
+      "runtime_support": "catalog_only",
+      "scientific_status": "proposed_unvalidated",
+      "procedure_ids": [
+        "estimate.interval.direct"
+      ]
+    },
+    "monitor.threshold": {
+      "parent": "monitor",
+      "abstract": false,
+      "definition": "Track a defined indicator against an explicit threshold rule.",
+      "required_roles": [
+        "measure",
+        "time_axis",
+        "reference",
+        "condition"
+      ],
+      "requirements": [],
+      "selection": "Track a defined indicator against an explicit threshold rule. Resolve all required roles before choosing this subtype.",
+      "exclusions": [
+        "No silent alert threshold or guarantee of future service."
+      ],
+      "examples": [
+        "Monitor recorded daily error rate against the declared service threshold."
+      ],
+      "runtime_support": "catalog_only",
+      "scientific_status": "proposed_unvalidated",
+      "procedure_ids": [
+        "monitor.threshold.direct"
+      ]
+    },
+    "monitor.drift": {
+      "parent": "monitor",
+      "abstract": false,
+      "definition": "Track distribution changes between reference and current windows.",
+      "required_roles": [
+        "variables",
+        "time_axis",
+        "reference",
+        "method"
+      ],
+      "requirements": [],
+      "selection": "Track distribution changes between reference and current windows. Resolve all required roles before choosing this subtype.",
+      "exclusions": [
+        "Input drift alone does not prove performance degradation."
+      ],
+      "examples": [
+        "Monitor feature-distribution drift against the frozen training window."
+      ],
+      "runtime_support": "catalog_only",
+      "scientific_status": "proposed_unvalidated",
+      "procedure_ids": [
+        "monitor.drift.direct"
+      ]
+    },
+    "integrate.join": {
+      "parent": "integrate",
+      "abstract": false,
+      "definition": "Combine tables through a specified relational join.",
+      "required_roles": [
+        "tables",
+        "keys",
+        "mapping"
+      ],
+      "requirements": [
+        "join_compatibility"
+      ],
+      "selection": "Combine tables through a specified relational join. Resolve all required roles before choosing this subtype.",
+      "exclusions": [
+        "Multi-table operation; a single table cannot certify the other side."
+      ],
+      "examples": [
+        "Join orders to customers by the documented customer key."
+      ],
+      "runtime_support": "catalog_only",
+      "scientific_status": "proposed_unvalidated",
+      "procedure_ids": [
+        "integrate.join.direct"
+      ]
+    },
+    "integrate.union": {
+      "parent": "integrate",
+      "abstract": false,
+      "definition": "Append compatible rows from mapped source schemas.",
+      "required_roles": [
+        "tables",
+        "mapping"
+      ],
+      "requirements": [
+        "union_compatibility"
+      ],
+      "selection": "Append compatible rows from mapped source schemas. Resolve all required roles before choosing this subtype.",
+      "exclusions": [
+        "Matching column names alone do not prove compatibility."
+      ],
+      "examples": [
+        "Append monthly exports after verifying matching columns and units."
+      ],
+      "runtime_support": "catalog_only",
+      "scientific_status": "proposed_unvalidated",
+      "procedure_ids": [
+        "integrate.union.direct"
+      ]
+    },
+    "integrate.entity_resolution": {
+      "parent": "integrate",
+      "abstract": false,
+      "definition": "Link records referring to the same real-world entities.",
+      "required_roles": [
+        "tables",
+        "keys",
+        "mapping"
+      ],
+      "requirements": [
+        "entity_resolution_evidence"
+      ],
+      "selection": "Link records referring to the same real-world entities. Resolve all required roles before choosing this subtype.",
+      "exclusions": [
+        "Similarity alone is not verified identity."
+      ],
+      "examples": [
+        "Link organization records using reviewed identifiers and linkage rules."
+      ],
+      "runtime_support": "catalog_only",
+      "scientific_status": "proposed_unvalidated",
+      "procedure_ids": [
+        "integrate.entity_resolution.direct"
+      ]
+    },
+    "prepare.clean": {
+      "parent": "prepare",
+      "abstract": false,
+      "definition": "Apply declared correction or normalization rules.",
+      "required_roles": [
+        "variables",
+        "rules"
+      ],
+      "requirements": [],
+      "selection": "Apply declared correction or normalization rules. Resolve all required roles before choosing this subtype.",
+      "exclusions": [
+        "Do not silently change meanings or invent corrected values."
+      ],
+      "examples": [
+        "Normalize country codes using a versioned mapping."
+      ],
+      "runtime_support": "catalog_only",
+      "scientific_status": "proposed_unvalidated",
+      "procedure_ids": [
+        "prepare.clean.direct"
+      ]
+    },
+    "prepare.deduplicate": {
+      "parent": "prepare",
+      "abstract": false,
+      "definition": "Resolve duplicates under a declared entity and retention policy.",
+      "required_roles": [
+        "keys",
+        "rules"
+      ],
+      "requirements": [],
+      "selection": "Resolve duplicates under a declared entity and retention policy. Resolve all required roles before choosing this subtype.",
+      "exclusions": [
+        "Equal rows are not always duplicate real-world events."
+      ],
+      "examples": [
+        "Deduplicate customer records by verified IDs and an explicit retention rule."
+      ],
+      "runtime_support": "catalog_only",
+      "scientific_status": "proposed_unvalidated",
+      "procedure_ids": [
+        "prepare.deduplicate.direct"
+      ]
+    },
+    "prepare.impute": {
+      "parent": "prepare",
+      "abstract": false,
+      "definition": "Handle missing values using a declared imputation policy.",
+      "required_roles": [
+        "variables",
+        "missing_policy",
+        "method"
+      ],
+      "requirements": [
+        "procedure_assumptions"
+      ],
+      "selection": "Handle missing values using a declared imputation policy. Resolve all required roles before choosing this subtype.",
+      "exclusions": [
+        "Imputed values remain inferred, not observed facts."
+      ],
+      "examples": [
+        "Impute missing predictors using the specified training-only procedure."
+      ],
+      "runtime_support": "catalog_only",
+      "scientific_status": "proposed_unvalidated",
+      "procedure_ids": [
+        "prepare.impute.direct"
+      ]
+    },
+    "prepare.derive": {
+      "parent": "prepare",
+      "abstract": false,
+      "definition": "Compute derived fields using an explicit expression.",
+      "required_roles": [
+        "variables",
+        "expression"
+      ],
+      "requirements": [],
+      "selection": "Compute derived fields using an explicit expression. Resolve all required roles before choosing this subtype.",
+      "exclusions": [
+        "Guard units, zero denominators and propagated missingness."
+      ],
+      "examples": [
+        "Derive unit price from documented revenue and quantity columns."
+      ],
+      "runtime_support": "catalog_only",
+      "scientific_status": "proposed_unvalidated",
+      "procedure_ids": [
+        "prepare.derive.direct"
+      ]
+    },
+    "prepare.reshape": {
+      "parent": "prepare",
+      "abstract": false,
+      "definition": "Reshape tables while preserving keys and measure meaning.",
+      "required_roles": [
+        "keys",
+        "shape",
+        "mapping"
+      ],
+      "requirements": [],
+      "selection": "Reshape tables while preserving keys and measure meaning. Resolve all required roles before choosing this subtype.",
+      "exclusions": [
+        "No silent aggregation of duplicate key cells."
+      ],
+      "examples": [
+        "Reshape annual columns into a long year-value table using the declared keys."
+      ],
+      "runtime_support": "catalog_only",
+      "scientific_status": "proposed_unvalidated",
+      "procedure_ids": [
+        "prepare.reshape.direct"
+      ]
+    },
+    "prepare.sample": {
+      "parent": "prepare",
+      "abstract": false,
+      "definition": "Select observations under an explicit sampling design.",
+      "required_roles": [
+        "unit",
+        "population",
+        "sample_design"
+      ],
+      "requirements": [
+        "procedure_assumptions"
+      ],
+      "selection": "Select observations under an explicit sampling design. Resolve all required roles before choosing this subtype.",
+      "exclusions": [
+        "Convenience samples do not become representative by size alone."
+      ],
+      "examples": [
+        "Select a stratified sample using the stated strata and inclusion scheme."
+      ],
+      "runtime_support": "catalog_only",
+      "scientific_status": "proposed_unvalidated",
+      "procedure_ids": [
+        "prepare.sample.direct"
+      ]
+    },
+    "validate.schema": {
+      "parent": "validate",
+      "abstract": false,
+      "definition": "Check a table against a specified schema contract.",
+      "required_roles": [
+        "rules",
+        "variables"
+      ],
+      "requirements": [],
+      "selection": "Check a table against a specified schema contract. Resolve all required roles before choosing this subtype.",
+      "exclusions": [
+        "Schema validity is not analytical usefulness."
+      ],
+      "examples": [
+        "Check required columns and declared data types."
+      ],
+      "runtime_support": "catalog_only",
+      "scientific_status": "proposed_unvalidated",
+      "procedure_ids": [
+        "validate.schema.direct"
+      ]
+    },
+    "validate.quality": {
+      "parent": "validate",
+      "abstract": false,
+      "definition": "Check declared data-quality rules in their scope.",
+      "required_roles": [
+        "rules",
+        "variables"
+      ],
+      "requirements": [],
+      "selection": "Check declared data-quality rules in their scope. Resolve all required roles before choosing this subtype.",
+      "exclusions": [
+        "Do not invent acceptable missingness thresholds."
+      ],
+      "examples": [
+        "Check uniqueness and missingness against the supplied validation rules."
+      ],
+      "runtime_support": "catalog_only",
+      "scientific_status": "proposed_unvalidated",
+      "procedure_ids": [
+        "validate.quality.direct"
+      ]
+    },
+    "visualize.distribution": {
+      "parent": "visualize",
+      "abstract": false,
+      "definition": "Display observed values using an appropriate distribution encoding.",
+      "required_roles": [
+        "variables",
+        "display"
+      ],
+      "requirements": [],
+      "selection": "Display observed values using an appropriate distribution encoding. Resolve all required roles before choosing this subtype.",
+      "exclusions": [
+        "Do not silently transform or omit outliers."
+      ],
+      "examples": [
+        "Plot the distribution of observed delivery durations with declared bins."
+      ],
+      "runtime_support": "catalog_only",
+      "scientific_status": "proposed_unvalidated",
+      "procedure_ids": [
+        "visualize.distribution.direct"
+      ]
+    },
+    "visualize.relationship": {
+      "parent": "visualize",
+      "abstract": false,
+      "definition": "Display relationships between bound observed variables.",
+      "required_roles": [
+        "variables",
+        "display"
+      ],
+      "requirements": [
+        "paired_values"
+      ],
+      "selection": "Display relationships between bound observed variables. Resolve all required roles before choosing this subtype.",
+      "exclusions": [
+        "Visual association is not causal evidence."
+      ],
+      "examples": [
+        "Plot height against weight for the same sampled adults."
+      ],
+      "runtime_support": "catalog_only",
+      "scientific_status": "proposed_unvalidated",
+      "procedure_ids": [
+        "visualize.relationship.direct"
+      ]
+    },
+    "visualize.temporal": {
+      "parent": "visualize",
+      "abstract": false,
+      "definition": "Display observations over an explicit temporal axis.",
+      "required_roles": [
+        "variables",
+        "time_axis",
+        "time_grain",
+        "display"
+      ],
+      "requirements": [
+        "temporal_observations"
+      ],
+      "selection": "Display observations over an explicit temporal axis. Resolve all required roles before choosing this subtype.",
+      "exclusions": [
+        "Do not interpolate missing observations without disclosure."
+      ],
+      "examples": [
+        "Plot recorded daily counts with missing dates shown explicitly."
+      ],
+      "runtime_support": "catalog_only",
+      "scientific_status": "proposed_unvalidated",
+      "procedure_ids": [
+        "visualize.temporal.direct"
+      ]
+    },
+    "recommend.items": {
+      "parent": "recommend",
+      "abstract": false,
+      "definition": "Rank eligible items for a recipient under a preference objective.",
+      "required_roles": [
+        "user",
+        "items",
+        "utility",
+        "reference"
+      ],
+      "requirements": [],
+      "selection": "Rank eligible items for a recipient under a preference objective. Resolve all required roles before choosing this subtype.",
+      "exclusions": [
+        "Predicted preference is not guaranteed benefit or causal uplift."
+      ],
+      "examples": [
+        "Recommend eligible products using reviewed preference evidence."
+      ],
+      "runtime_support": "catalog_only",
+      "scientific_status": "proposed_unvalidated",
+      "procedure_ids": [
+        "recommend.items.direct"
+      ]
+    },
+    "optimize.allocation": {
+      "parent": "optimize",
+      "abstract": false,
+      "definition": "Choose feasible resource allocations for a declared objective.",
+      "required_roles": [
+        "objective",
+        "decision_variables",
+        "constraints"
+      ],
+      "requirements": [],
+      "selection": "Choose feasible resource allocations for a declared objective. Resolve all required roles before choosing this subtype.",
+      "exclusions": [
+        "Observed correlations do not identify controllable interventions."
+      ],
+      "examples": [
+        "Allocate staffing subject to explicit capacity and coverage constraints."
+      ],
+      "runtime_support": "catalog_only",
+      "scientific_status": "proposed_unvalidated",
+      "procedure_ids": [
+        "optimize.allocation.direct"
+      ]
+    },
+    "optimize.multiobjective": {
+      "parent": "optimize",
+      "abstract": false,
+      "definition": "Identify tradeoffs among multiple explicit objectives.",
+      "required_roles": [
+        "objective",
+        "decision_variables",
+        "constraints",
+        "utility"
+      ],
+      "requirements": [],
+      "selection": "Identify tradeoffs among multiple explicit objectives. Resolve all required roles before choosing this subtype.",
+      "exclusions": [
+        "No hidden objective weights or universally best solution."
+      ],
+      "examples": [
+        "Find feasible cost-service tradeoffs under declared constraints."
+      ],
+      "runtime_support": "catalog_only",
+      "scientific_status": "proposed_unvalidated",
+      "procedure_ids": [
+        "optimize.multiobjective.direct"
+      ]
+    },
+    "simulate.scenario": {
+      "parent": "simulate",
+      "abstract": false,
+      "definition": "Generate outcomes conditional on a model and scenario assumptions.",
+      "required_roles": [
+        "scenario",
+        "generative_model"
+      ],
+      "requirements": [],
+      "selection": "Generate outcomes conditional on a model and scenario assumptions. Resolve all required roles before choosing this subtype.",
+      "exclusions": [
+        "Scenario output is conditional, not an observed outcome or proven causal effect."
+      ],
+      "examples": [
+        "Simulate demand under a stated scenario using the supplied model."
+      ],
+      "runtime_support": "catalog_only",
+      "scientific_status": "proposed_unvalidated",
+      "procedure_ids": [
+        "simulate.scenario.direct"
+      ]
+    },
+    "simulate.sensitivity": {
+      "parent": "simulate",
+      "abstract": false,
+      "definition": "Assess output sensitivity to explicitly varied model inputs.",
+      "required_roles": [
+        "scenario",
+        "generative_model",
+        "variables"
+      ],
+      "requirements": [],
+      "selection": "Assess output sensitivity to explicitly varied model inputs. Resolve all required roles before choosing this subtype.",
+      "exclusions": [
+        "Sensitivity is not identification or predictive validation."
+      ],
+      "examples": [
+        "Vary the declared model inputs over specified ranges and inspect sensitivity."
+      ],
+      "runtime_support": "catalog_only",
+      "scientific_status": "proposed_unvalidated",
+      "procedure_ids": [
+        "simulate.sensitivity.direct"
+      ]
+    },
+    "spatial.proximity": {
+      "parent": "spatial",
+      "abstract": false,
+      "definition": "Evaluate distances or proximity with explicit spatial semantics.",
+      "required_roles": [
+        "geometry",
+        "distance"
+      ],
+      "requirements": [
+        "spatial_reference"
+      ],
+      "selection": "Evaluate distances or proximity with explicit spatial semantics. Resolve all required roles before choosing this subtype.",
+      "exclusions": [
+        "Latitude-longitude degree distance is not automatically metric distance."
+      ],
+      "examples": [
+        "Find facilities within five kilometers using the declared coordinate system."
+      ],
+      "runtime_support": "catalog_only",
+      "scientific_status": "proposed_unvalidated",
+      "procedure_ids": [
+        "spatial.proximity.direct"
+      ]
+    },
+    "spatial.region": {
+      "parent": "spatial",
+      "abstract": false,
+      "definition": "Select or summarize observations within defined spatial boundaries.",
+      "required_roles": [
+        "geometry",
+        "region"
+      ],
+      "requirements": [
+        "spatial_reference"
+      ],
+      "selection": "Select or summarize observations within defined spatial boundaries. Resolve all required roles before choosing this subtype.",
+      "exclusions": [
+        "Boundary and point-in-polygon conventions must be explicit."
+      ],
+      "examples": [
+        "Find observations inside the versioned municipal boundary."
+      ],
+      "runtime_support": "catalog_only",
+      "scientific_status": "proposed_unvalidated",
+      "procedure_ids": [
+        "spatial.region.direct"
+      ]
+    },
+    "network.paths": {
+      "parent": "network",
+      "abstract": false,
+      "definition": "Find paths under declared edge direction and cost semantics.",
+      "required_roles": [
+        "nodes",
+        "edges",
+        "source_node",
+        "destination_node",
+        "method"
+      ],
+      "requirements": [],
+      "selection": "Find paths under declared edge direction and cost semantics. Resolve all required roles before choosing this subtype.",
+      "exclusions": [
+        "Connectivity is not proof of physical or causal reachability."
+      ],
+      "examples": [
+        "Find the shortest route under the supplied edge-cost definition."
+      ],
+      "runtime_support": "catalog_only",
+      "scientific_status": "proposed_unvalidated",
+      "procedure_ids": [
+        "network.paths.direct"
+      ]
+    },
+    "network.communities": {
+      "parent": "network",
+      "abstract": false,
+      "definition": "Describe graph communities under a declared method.",
+      "required_roles": [
+        "nodes",
+        "edges",
+        "method"
+      ],
+      "requirements": [],
+      "selection": "Describe graph communities under a declared method. Resolve all required roles before choosing this subtype.",
+      "exclusions": [
+        "Algorithmic communities are not verified social categories."
+      ],
+      "examples": [
+        "Find communities in the stated interaction graph."
+      ],
+      "runtime_support": "catalog_only",
+      "scientific_status": "proposed_unvalidated",
+      "procedure_ids": [
+        "network.communities.direct"
+      ]
+    },
+    "text.classification": {
+      "parent": "text",
+      "abstract": false,
+      "definition": "Assign declared semantic categories to text-valued observations.",
+      "required_roles": [
+        "text_field",
+        "labels",
+        "method"
+      ],
+      "requirements": [],
+      "selection": "Assign declared semantic categories to text-valued observations. Resolve all required roles before choosing this subtype.",
+      "exclusions": [
+        "Labels require language/context validation and are model predictions."
+      ],
+      "examples": [
+        "Categorize feedback using the supplied category definitions."
+      ],
+      "runtime_support": "catalog_only",
+      "scientific_status": "proposed_unvalidated",
+      "procedure_ids": [
+        "text.classification.direct"
+      ]
+    },
+    "text.extraction": {
+      "parent": "text",
+      "abstract": false,
+      "definition": "Extract declared entity or attribute types from text fields.",
+      "required_roles": [
+        "text_field",
+        "entities",
+        "method"
+      ],
+      "requirements": [],
+      "selection": "Extract declared entity or attribute types from text fields. Resolve all required roles before choosing this subtype.",
+      "exclusions": [
+        "Extracted mentions are not verified external facts."
+      ],
+      "examples": [
+        "Extract product mentions with spans from feedback text."
+      ],
+      "runtime_support": "catalog_only",
+      "scientific_status": "proposed_unvalidated",
+      "procedure_ids": [
+        "text.extraction.direct"
+      ]
+    },
+    "text.summary": {
+      "parent": "text",
+      "abstract": false,
+      "definition": "Summarize text-valued observations with source traceability.",
+      "required_roles": [
+        "text_field",
+        "population",
+        "method"
+      ],
+      "requirements": [],
+      "selection": "Summarize text-valued observations with source traceability. Resolve all required roles before choosing this subtype.",
+      "exclusions": [
+        "A summary must not invent evidence or imply representativeness."
+      ],
+      "examples": [
+        "Summarize recurring feedback themes with cited source records."
+      ],
+      "runtime_support": "catalog_only",
+      "scientific_status": "proposed_unvalidated",
+      "procedure_ids": [
+        "text.summary.direct"
+      ]
+    },
+    "discover.topical": {
+      "parent": "discover",
+      "abstract": false,
+      "definition": "Find tables related to an explicit information need.",
+      "required_roles": [
+        "variables",
+        "population"
+      ],
+      "requirements": [],
+      "selection": "Find tables related to an explicit information need. Resolve all required roles before choosing this subtype.",
+      "exclusions": [
+        "Topical relevance alone does not establish intended usefulness."
+      ],
+      "examples": [
+        "Find tables describing municipal transport usage."
+      ],
+      "runtime_support": "catalog_only",
+      "scientific_status": "proposed_unvalidated",
+      "procedure_ids": [
+        "discover.topical.direct"
+      ]
+    },
+    "discover.compatible": {
+      "parent": "discover",
+      "abstract": false,
+      "definition": "Find candidate tables compatible with a declared integration need.",
+      "required_roles": [
+        "tables",
+        "keys",
+        "mapping"
+      ],
+      "requirements": [
+        "join_compatibility"
+      ],
+      "selection": "Find candidate tables compatible with a declared integration need. Resolve all required roles before choosing this subtype.",
+      "exclusions": [
+        "Candidate compatibility requires both sides' evidence, not schema-name similarity."
+      ],
+      "examples": [
+        "Find tables that can join to the specified orders table by customer identity."
+      ],
+      "runtime_support": "catalog_only",
+      "scientific_status": "proposed_unvalidated",
+      "procedure_ids": [
+        "discover.compatible.direct"
+      ]
+    }
+  },
+  "predicates": {
+    "measure_semantics": {
+      "axis": "sem",
+      "definition": "Requested concept matches the bound measure, supported by semantic evidence.",
+      "argument_roles": [
+        "measure"
+      ],
+      "shared_variables": [
+        "m",
+        "o"
+      ],
+      "evidence_contract": "Bound profile claims with provenance, inspection completeness and scope. Missing evidence is unknown."
+    },
+    "observation_binding": {
+      "axis": "str",
+      "definition": "All supplied roles refer to the same logical observation relation and measure.",
+      "argument_roles": [
+        "group_dimension",
+        "groups",
+        "subject",
+        "time_points",
+        "time_grain"
+      ],
+      "shared_variables": [
+        "m",
+        "o"
+      ],
+      "evidence_contract": "Bound profile claims with provenance, inspection completeness and scope. Missing evidence is unknown."
+    },
+    "group_coverage": {
+      "axis": "cov",
+      "definition": "Every requested group occurs in the bound relation within requested context.",
+      "argument_roles": [
+        "group_dimension",
+        "groups",
+        "time_points",
+        "time_grain"
+      ],
+      "shared_variables": [
+        "m",
+        "o"
+      ],
+      "evidence_contract": "Bound profile claims with provenance, inspection completeness and scope. Missing evidence is unknown."
+    },
+    "time_coverage": {
+      "axis": "cov",
+      "definition": "Every requested time point occurs within supplied group or subject scope and grain.",
+      "argument_roles": [
+        "groups",
+        "subject",
+        "time_points",
+        "time_grain"
+      ],
+      "shared_variables": [
+        "m",
+        "o"
+      ],
+      "evidence_contract": "Bound profile claims with provenance, inspection completeness and scope. Missing evidence is unknown."
+    },
+    "paired_temporal_support": {
+      "axis": "str",
+      "definition": "At least two shared time points have observations for every requested group.",
+      "argument_roles": [
+        "group_dimension",
+        "groups",
+        "time_points",
+        "time_grain"
+      ],
+      "shared_variables": [
+        "m",
+        "o"
+      ],
+      "evidence_contract": "Bound profile claims with provenance, inspection completeness and scope. Missing evidence is unknown."
+    },
+    "complete_requested_grid": {
+      "axis": "cov",
+      "definition": "Every requested group-time cell is represented.",
+      "argument_roles": [
+        "group_dimension",
+        "groups",
+        "time_points",
+        "time_grain"
+      ],
+      "shared_variables": [
+        "m",
+        "o"
+      ],
+      "evidence_contract": "Bound profile claims with provenance, inspection completeness and scope. Missing evidence is unknown."
+    },
+    "usable_numeric_observations": {
+      "axis": "qual",
+      "definition": "Required observations have finite usable numeric values, without unresolved conflicting duplicates.",
+      "argument_roles": [
+        "groups",
+        "subject",
+        "time_points",
+        "time_grain",
+        "coverage_policy"
+      ],
+      "shared_variables": [
+        "m",
+        "o"
+      ],
+      "evidence_contract": "Bound profile claims with provenance, inspection completeness and scope. Missing evidence is unknown."
+    },
+    "comparable_measure_definition": {
+      "axis": "aff",
+      "definition": "Units, measure definitions and applicable population/denominator definitions are documented as compatible across compared observations.",
+      "argument_roles": [
+        "groups",
+        "subject",
+        "time_points",
+        "time_grain"
+      ],
+      "shared_variables": [
+        "m",
+        "o"
+      ],
+      "evidence_contract": "Bound profile claims with provenance, inspection completeness and scope. Missing evidence is unknown."
+    },
+    "concept_binding": {
+      "axis": "sem",
+      "definition": "Requested variables and concepts have documented table bindings.",
+      "argument_roles": [
+        "measure",
+        "group_dimension",
+        "groups",
+        "subject",
+        "time_points",
+        "time_grain",
+        "variables",
+        "population",
+        "unit",
+        "target",
+        "features",
+        "prediction_time",
+        "time_axis",
+        "horizon",
+        "event",
+        "duration",
+        "method",
+        "statistic",
+        "condition",
+        "order",
+        "count",
+        "reference",
+        "hypothesis",
+        "confidence_level",
+        "design",
+        "treatment",
+        "adjustment",
+        "model",
+        "objective",
+        "constraints",
+        "decision_variables",
+        "utility",
+        "user",
+        "items",
+        "keys",
+        "tables",
+        "mapping",
+        "rules",
+        "missing_policy",
+        "expression",
+        "shape",
+        "sample_design",
+        "geometry",
+        "region",
+        "distance",
+        "nodes",
+        "edges",
+        "source_node",
+        "destination_node",
+        "text_field",
+        "labels",
+        "entities",
+        "display",
+        "scenario",
+        "generative_model"
+      ],
+      "shared_variables": [
+        "o"
+      ],
+      "evidence_contract": {
+        "supported": "Cited schema/data dictionary and scoped values support each bound concept.",
+        "violated": "Authoritative definitions establish a different concept or population.",
+        "unresolved": "Missing, sampled-only negative, ambiguous or conflicting evidence remains unresolved.",
+        "required_fields": [
+          "id",
+          "source",
+          "scope",
+          "method",
+          "completeness",
+          "bindings"
+        ],
+        "verdict_evidence_refs": "Every verdict cites inspected evidence or an explicit missing-evidence record."
+      }
+    },
+    "unit_binding": {
+      "axis": "str",
+      "definition": "Fields refer to the same declared observational units or explicitly related units.",
+      "argument_roles": [
+        "measure",
+        "group_dimension",
+        "groups",
+        "subject",
+        "time_points",
+        "time_grain",
+        "variables",
+        "population",
+        "unit",
+        "target",
+        "features",
+        "prediction_time",
+        "time_axis",
+        "horizon",
+        "event",
+        "duration",
+        "method",
+        "statistic",
+        "condition",
+        "order",
+        "count",
+        "reference",
+        "hypothesis",
+        "confidence_level",
+        "design",
+        "treatment",
+        "adjustment",
+        "model",
+        "objective",
+        "constraints",
+        "decision_variables",
+        "utility",
+        "user",
+        "items",
+        "keys",
+        "tables",
+        "mapping",
+        "rules",
+        "missing_policy",
+        "expression",
+        "shape",
+        "sample_design",
+        "geometry",
+        "region",
+        "distance",
+        "nodes",
+        "edges",
+        "source_node",
+        "destination_node",
+        "text_field",
+        "labels",
+        "entities",
+        "display",
+        "scenario",
+        "generative_model"
+      ],
+      "shared_variables": [
+        "o"
+      ],
+      "evidence_contract": {
+        "supported": "Row identity and documented keys establish the requested relation.",
+        "violated": "Documented grain or pairing conflicts with the requested unit.",
+        "unresolved": "Missing, sampled-only negative, ambiguous or conflicting evidence remains unresolved.",
+        "required_fields": [
+          "id",
+          "source",
+          "scope",
+          "method",
+          "completeness",
+          "bindings"
+        ],
+        "verdict_evidence_refs": "Every verdict cites inspected evidence or an explicit missing-evidence record."
+      }
+    },
+    "scope_coverage": {
+      "axis": "cov",
+      "definition": "Evidence covers the requested population and analysis scope.",
+      "argument_roles": [
+        "measure",
+        "group_dimension",
+        "groups",
+        "subject",
+        "time_points",
+        "time_grain",
+        "variables",
+        "population",
+        "unit",
+        "target",
+        "features",
+        "prediction_time",
+        "time_axis",
+        "horizon",
+        "event",
+        "duration",
+        "method",
+        "statistic",
+        "condition",
+        "order",
+        "count",
+        "reference",
+        "hypothesis",
+        "confidence_level",
+        "design",
+        "treatment",
+        "adjustment",
+        "model",
+        "objective",
+        "constraints",
+        "decision_variables",
+        "utility",
+        "user",
+        "items",
+        "keys",
+        "tables",
+        "mapping",
+        "rules",
+        "missing_policy",
+        "expression",
+        "shape",
+        "sample_design",
+        "geometry",
+        "region",
+        "distance",
+        "nodes",
+        "edges",
+        "source_node",
+        "destination_node",
+        "text_field",
+        "labels",
+        "entities",
+        "display",
+        "scenario",
+        "generative_model"
+      ],
+      "shared_variables": [
+        "o"
+      ],
+      "evidence_contract": {
+        "supported": "A complete scoped scan and source documentation establish requested coverage.",
+        "violated": "Complete inspection or authoritative documentation establishes incompatible coverage.",
+        "unresolved": "Missing, sampled-only negative, ambiguous or conflicting evidence remains unresolved.",
+        "required_fields": [
+          "id",
+          "source",
+          "scope",
+          "method",
+          "completeness",
+          "bindings"
+        ],
+        "verdict_evidence_refs": "Every verdict cites inspected evidence or an explicit missing-evidence record."
+      }
+    },
+    "usable_values": {
+      "axis": "qual",
+      "definition": "Values are usable under the declared procedure and missing-value policy.",
+      "argument_roles": [
+        "measure",
+        "group_dimension",
+        "groups",
+        "subject",
+        "time_points",
+        "time_grain",
+        "variables",
+        "population",
+        "unit",
+        "target",
+        "features",
+        "prediction_time",
+        "time_axis",
+        "horizon",
+        "event",
+        "duration",
+        "method",
+        "statistic",
+        "condition",
+        "order",
+        "count",
+        "reference",
+        "hypothesis",
+        "confidence_level",
+        "design",
+        "treatment",
+        "adjustment",
+        "model",
+        "objective",
+        "constraints",
+        "decision_variables",
+        "utility",
+        "user",
+        "items",
+        "keys",
+        "tables",
+        "mapping",
+        "rules",
+        "missing_policy",
+        "expression",
+        "shape",
+        "sample_design",
+        "geometry",
+        "region",
+        "distance",
+        "nodes",
+        "edges",
+        "source_node",
+        "destination_node",
+        "text_field",
+        "labels",
+        "entities",
+        "display",
+        "scenario",
+        "generative_model"
+      ],
+      "shared_variables": [
+        "o"
+      ],
+      "evidence_contract": {
+        "supported": "Relevant values, types and missingness meet the declared procedure contract.",
+        "violated": "Observed invalid values contradict the declared handling contract.",
+        "unresolved": "Missing, sampled-only negative, ambiguous or conflicting evidence remains unresolved.",
+        "required_fields": [
+          "id",
+          "source",
+          "scope",
+          "method",
+          "completeness",
+          "bindings"
+        ],
+        "verdict_evidence_refs": "Every verdict cites inspected evidence or an explicit missing-evidence record."
+      }
+    },
+    "procedure_assumptions": {
+      "axis": "aff",
+      "definition": "Procedure-specific assumptions and design are reviewed with explicit evidence.",
+      "argument_roles": [
+        "method",
+        "design",
+        "reference"
+      ],
+      "shared_variables": [
+        "o"
+      ],
+      "evidence_contract": {
+        "supported": "Documented procedure/design checks support applicability; no universal sample minimum is assumed.",
+        "violated": "A documented design or assumption conflict rules out this procedure.",
+        "unresolved": "Missing, sampled-only negative, ambiguous or conflicting evidence remains unresolved.",
+        "required_fields": [
+          "id",
+          "source",
+          "scope",
+          "method",
+          "completeness",
+          "bindings"
+        ],
+        "verdict_evidence_refs": "Every verdict cites inspected evidence or an explicit missing-evidence record."
+      }
+    },
+    "selection_evaluable": {
+      "axis": "str",
+      "definition": "Selection predicates resolve to fields and explicit null/comparison semantics.",
+      "argument_roles": [
+        "condition",
+        "variables"
+      ],
+      "shared_variables": [
+        "o"
+      ],
+      "evidence_contract": {
+        "supported": "Bindings, domains and null policy permit evaluating the complete predicate.",
+        "violated": "The predicate cannot be evaluated under the documented schema or domain.",
+        "unresolved": "Missing, sampled-only negative, ambiguous or conflicting evidence remains unresolved.",
+        "required_fields": [
+          "id",
+          "source",
+          "scope",
+          "method",
+          "completeness",
+          "bindings"
+        ],
+        "verdict_evidence_refs": "Every verdict cites inspected evidence or an explicit missing-evidence record."
+      }
+    },
+    "ordering_evaluable": {
+      "axis": "str",
+      "definition": "Ordering and ties are defined over comparable values.",
+      "argument_roles": [
+        "variables",
+        "order",
+        "count"
+      ],
+      "shared_variables": [
+        "o"
+      ],
+      "evidence_contract": {
+        "supported": "Comparable domains and explicit order/tie policy support ranking.",
+        "violated": "Mixed incompatible units or domains contradict the requested ordering.",
+        "unresolved": "Missing, sampled-only negative, ambiguous or conflicting evidence remains unresolved.",
+        "required_fields": [
+          "id",
+          "source",
+          "scope",
+          "method",
+          "completeness",
+          "bindings"
+        ],
+        "verdict_evidence_refs": "Every verdict cites inspected evidence or an explicit missing-evidence record."
+      }
+    },
+    "aggregation_valid": {
+      "axis": "aff",
+      "definition": "Aggregation function matches measure semantics, units and grouping grain.",
+      "argument_roles": [
+        "measure",
+        "statistic",
+        "group_dimension",
+        "groups"
+      ],
+      "shared_variables": [
+        "o"
+      ],
+      "evidence_contract": {
+        "supported": "Documented additive/nonadditive meaning and group keys justify the requested statistic.",
+        "violated": "The requested operation contradicts measure semantics or combines incompatible groups.",
+        "unresolved": "Missing, sampled-only negative, ambiguous or conflicting evidence remains unresolved.",
+        "required_fields": [
+          "id",
+          "source",
+          "scope",
+          "method",
+          "completeness",
+          "bindings"
+        ],
+        "verdict_evidence_refs": "Every verdict cites inspected evidence or an explicit missing-evidence record."
+      }
+    },
+    "paired_values": {
+      "axis": "str",
+      "definition": "Association variables are paired on the same units within scope.",
+      "argument_roles": [
+        "variables",
+        "unit"
+      ],
+      "shared_variables": [
+        "o"
+      ],
+      "evidence_contract": {
+        "supported": "A common row/key relation binds all variables without spurious pairing.",
+        "violated": "Different populations or unmatched units invalidate the proposed pairing.",
+        "unresolved": "Missing, sampled-only negative, ambiguous or conflicting evidence remains unresolved.",
+        "required_fields": [
+          "id",
+          "source",
+          "scope",
+          "method",
+          "completeness",
+          "bindings"
+        ],
+        "verdict_evidence_refs": "Every verdict cites inspected evidence or an explicit missing-evidence record."
+      }
+    },
+    "target_observed": {
+      "axis": "cov",
+      "definition": "Learning target outcomes and label definitions are observed for the learning task.",
+      "argument_roles": [
+        "target",
+        "population",
+        "event",
+        "duration"
+      ],
+      "shared_variables": [
+        "o"
+      ],
+      "evidence_contract": {
+        "supported": "Target observations, provenance and target definitions are available in training evidence.",
+        "violated": "Documented absence of the target throughout complete training data prevents supervised fitting.",
+        "unresolved": "Missing, sampled-only negative, ambiguous or conflicting evidence remains unresolved.",
+        "required_fields": [
+          "id",
+          "source",
+          "scope",
+          "method",
+          "completeness",
+          "bindings"
+        ],
+        "verdict_evidence_refs": "Every verdict cites inspected evidence or an explicit missing-evidence record."
+      }
+    },
+    "categorical_target": {
+      "axis": "str",
+      "definition": "The target has the declared class semantics.",
+      "argument_roles": [
+        "target",
+        "labels"
+      ],
+      "shared_variables": [
+        "o"
+      ],
+      "evidence_contract": {
+        "supported": "A documented finite class domain matches the requested classification task.",
+        "violated": "Target meaning is continuous quantity rather than the requested class definition.",
+        "unresolved": "Missing, sampled-only negative, ambiguous or conflicting evidence remains unresolved.",
+        "required_fields": [
+          "id",
+          "source",
+          "scope",
+          "method",
+          "completeness",
+          "bindings"
+        ],
+        "verdict_evidence_refs": "Every verdict cites inspected evidence or an explicit missing-evidence record."
+      }
+    },
+    "numeric_target": {
+      "axis": "str",
+      "definition": "The target is the requested numerical outcome with meaningful units.",
+      "argument_roles": [
+        "target"
+      ],
+      "shared_variables": [
+        "o"
+      ],
+      "evidence_contract": {
+        "supported": "Target definitions and finite observations establish the numerical quantity.",
+        "violated": "A categorical identifier or incompatible measure is being used as a numerical target.",
+        "unresolved": "Missing, sampled-only negative, ambiguous or conflicting evidence remains unresolved.",
+        "required_fields": [
+          "id",
+          "source",
+          "scope",
+          "method",
+          "completeness",
+          "bindings"
+        ],
+        "verdict_evidence_refs": "Every verdict cites inspected evidence or an explicit missing-evidence record."
+      }
+    },
+    "feature_availability": {
+      "axis": "cov",
+      "definition": "Predictor information is available at the declared prediction point.",
+      "argument_roles": [
+        "features",
+        "prediction_time",
+        "horizon"
+      ],
+      "shared_variables": [
+        "o"
+      ],
+      "evidence_contract": {
+        "supported": "Timestamp/provenance or domain documentation establishes pre-prediction availability.",
+        "violated": "A predictor is determined only after the outcome or uses held-out target values.",
+        "unresolved": "Missing, sampled-only negative, ambiguous or conflicting evidence remains unresolved.",
+        "required_fields": [
+          "id",
+          "source",
+          "scope",
+          "method",
+          "completeness",
+          "bindings"
+        ],
+        "verdict_evidence_refs": "Every verdict cites inspected evidence or an explicit missing-evidence record."
+      }
+    },
+    "leakage_control": {
+      "axis": "qual",
+      "definition": "Evaluation separation prevents entity, temporal and target-derived leakage.",
+      "argument_roles": [
+        "target",
+        "features",
+        "unit",
+        "design",
+        "prediction_time"
+      ],
+      "shared_variables": [
+        "o"
+      ],
+      "evidence_contract": {
+        "supported": "Split manifests and feature lineage verify appropriate separation and preprocessing boundaries.",
+        "violated": "Observed target-derived features or split overlap contradict the declared evaluation boundary.",
+        "unresolved": "Missing, sampled-only negative, ambiguous or conflicting evidence remains unresolved.",
+        "required_fields": [
+          "id",
+          "source",
+          "scope",
+          "method",
+          "completeness",
+          "bindings"
+        ],
+        "verdict_evidence_refs": "Every verdict cites inspected evidence or an explicit missing-evidence record."
+      }
+    },
+    "temporal_observations": {
+      "axis": "str",
+      "definition": "Observations have explicit temporal ordering, grain, identity and missing-period information.",
+      "argument_roles": [
+        "target",
+        "time_axis",
+        "time_grain",
+        "horizon"
+      ],
+      "shared_variables": [
+        "o"
+      ],
+      "evidence_contract": {
+        "supported": "Time values, grain metadata and scoped history identify a valid temporal series.",
+        "violated": "Known order/grain contradictions prevent the requested forecast interpretation.",
+        "unresolved": "Missing, sampled-only negative, ambiguous or conflicting evidence remains unresolved.",
+        "required_fields": [
+          "id",
+          "source",
+          "scope",
+          "method",
+          "completeness",
+          "bindings"
+        ],
+        "verdict_evidence_refs": "Every verdict cites inspected evidence or an explicit missing-evidence record."
+      }
+    },
+    "event_followup": {
+      "axis": "cov",
+      "definition": "Event and censoring observations have compatible time origins and follow-up definitions.",
+      "argument_roles": [
+        "event",
+        "duration",
+        "population"
+      ],
+      "shared_variables": [
+        "o"
+      ],
+      "evidence_contract": {
+        "supported": "Documented event indicators, durations and censoring semantics match the requested outcome.",
+        "violated": "Incompatible origins or absent event/censoring distinction invalidate this survival procedure.",
+        "unresolved": "Missing, sampled-only negative, ambiguous or conflicting evidence remains unresolved.",
+        "required_fields": [
+          "id",
+          "source",
+          "scope",
+          "method",
+          "completeness",
+          "bindings"
+        ],
+        "verdict_evidence_refs": "Every verdict cites inspected evidence or an explicit missing-evidence record."
+      }
+    },
+    "distance_representation": {
+      "axis": "str",
+      "definition": "A meaningful feature representation and distance/similarity are specified.",
+      "argument_roles": [
+        "features",
+        "variables",
+        "method"
+      ],
+      "shared_variables": [
+        "o"
+      ],
+      "evidence_contract": {
+        "supported": "Scale/domain metadata and method choice justify the representation and distance.",
+        "violated": "Known incompatible scales or nonmeaningful identifiers invalidate the declared distance.",
+        "unresolved": "Missing, sampled-only negative, ambiguous or conflicting evidence remains unresolved.",
+        "required_fields": [
+          "id",
+          "source",
+          "scope",
+          "method",
+          "completeness",
+          "bindings"
+        ],
+        "verdict_evidence_refs": "Every verdict cites inspected evidence or an explicit missing-evidence record."
+      }
+    },
+    "reference_available": {
+      "axis": "cov",
+      "definition": "The stated reference or baseline exists in the relevant scope.",
+      "argument_roles": [
+        "reference",
+        "time_axis",
+        "population"
+      ],
+      "shared_variables": [
+        "o"
+      ],
+      "evidence_contract": {
+        "supported": "Cited reference observations or authoritative baseline definitions are accessible.",
+        "violated": "Complete evidence establishes that the requested reference scope is incompatible.",
+        "unresolved": "Missing, sampled-only negative, ambiguous or conflicting evidence remains unresolved.",
+        "required_fields": [
+          "id",
+          "source",
+          "scope",
+          "method",
+          "completeness",
+          "bindings"
+        ],
+        "verdict_evidence_refs": "Every verdict cites inspected evidence or an explicit missing-evidence record."
+      }
+    },
+    "model_available": {
+      "axis": "str",
+      "definition": "The referenced model and its input/output/preprocessing contract are identified.",
+      "argument_roles": [
+        "model",
+        "features",
+        "target"
+      ],
+      "shared_variables": [
+        "o"
+      ],
+      "evidence_contract": {
+        "supported": "Versioned model identity and accessible input/output metadata are provided.",
+        "violated": "Model contract contradicts the specified target or available inputs.",
+        "unresolved": "Missing, sampled-only negative, ambiguous or conflicting evidence remains unresolved.",
+        "required_fields": [
+          "id",
+          "source",
+          "scope",
+          "method",
+          "completeness",
+          "bindings"
+        ],
+        "verdict_evidence_refs": "Every verdict cites inspected evidence or an explicit missing-evidence record."
+      }
+    },
+    "causal_identification": {
+      "axis": "aff",
+      "definition": "A causal estimand and identification strategy have explicit design/domain support.",
+      "argument_roles": [
+        "treatment",
+        "target",
+        "adjustment",
+        "design",
+        "population"
+      ],
+      "shared_variables": [
+        "o"
+      ],
+      "evidence_contract": {
+        "supported": "Reviewed intervention/design or identification assumptions support this specific estimand; raw columns alone cannot.",
+        "violated": "Known design/identification contradictions prevent the proposed causal interpretation.",
+        "unresolved": "Missing, sampled-only negative, ambiguous or conflicting evidence remains unresolved.",
+        "required_fields": [
+          "id",
+          "source",
+          "scope",
+          "method",
+          "completeness",
+          "bindings"
+        ],
+        "verdict_evidence_refs": "Every verdict cites inspected evidence or an explicit missing-evidence record."
+      }
+    },
+    "join_compatibility": {
+      "axis": "str",
+      "definition": "Join keys, grain, relationship cardinality and semantics are compatible.",
+      "argument_roles": [
+        "tables",
+        "keys",
+        "mapping"
+      ],
+      "shared_variables": [
+        "o"
+      ],
+      "evidence_contract": {
+        "supported": "Key definitions, nulls, overlap and cardinality checks support the specified relationship.",
+        "violated": "Observed incompatible key meanings or cardinality contradict the requested join.",
+        "unresolved": "Missing, sampled-only negative, ambiguous or conflicting evidence remains unresolved.",
+        "required_fields": [
+          "id",
+          "source",
+          "scope",
+          "method",
+          "completeness",
+          "bindings"
+        ],
+        "verdict_evidence_refs": "Every verdict cites inspected evidence or an explicit missing-evidence record."
+      }
+    },
+    "union_compatibility": {
+      "axis": "str",
+      "definition": "Rows from source tables have compatible schema, units and population semantics.",
+      "argument_roles": [
+        "tables",
+        "mapping"
+      ],
+      "shared_variables": [
+        "o"
+      ],
+      "evidence_contract": {
+        "supported": "Documented column mappings and unit/grain compatibility support concatenation.",
+        "violated": "Conflicting field definitions or units prohibit the proposed unconverted union.",
+        "unresolved": "Missing, sampled-only negative, ambiguous or conflicting evidence remains unresolved.",
+        "required_fields": [
+          "id",
+          "source",
+          "scope",
+          "method",
+          "completeness",
+          "bindings"
+        ],
+        "verdict_evidence_refs": "Every verdict cites inspected evidence or an explicit missing-evidence record."
+      }
+    },
+    "entity_resolution_evidence": {
+      "axis": "aff",
+      "definition": "Entity matches have disambiguating attributes and an explicit linkage policy.",
+      "argument_roles": [
+        "tables",
+        "keys",
+        "mapping"
+      ],
+      "shared_variables": [
+        "o"
+      ],
+      "evidence_contract": {
+        "supported": "Reviewed identifying evidence and linkage policy support matches and uncertainty handling.",
+        "violated": "Known distinct entities or incompatible identifiers contradict a proposed match.",
+        "unresolved": "Missing, sampled-only negative, ambiguous or conflicting evidence remains unresolved.",
+        "required_fields": [
+          "id",
+          "source",
+          "scope",
+          "method",
+          "completeness",
+          "bindings"
+        ],
+        "verdict_evidence_refs": "Every verdict cites inspected evidence or an explicit missing-evidence record."
+      }
+    },
+    "transformation_defined": {
+      "axis": "aff",
+      "definition": "Transformation rules, affected fields and output semantics are explicit.",
+      "argument_roles": [
+        "rules",
+        "expression",
+        "mapping",
+        "shape",
+        "missing_policy"
+      ],
+      "shared_variables": [
+        "o"
+      ],
+      "evidence_contract": {
+        "supported": "Documented transformation and lineage establish intended changes and limitations.",
+        "violated": "The transformation violates declared constraints, units or preservation rules.",
+        "unresolved": "Missing, sampled-only negative, ambiguous or conflicting evidence remains unresolved.",
+        "required_fields": [
+          "id",
+          "source",
+          "scope",
+          "method",
+          "completeness",
+          "bindings"
+        ],
+        "verdict_evidence_refs": "Every verdict cites inspected evidence or an explicit missing-evidence record."
+      }
+    },
+    "validation_defined": {
+      "axis": "str",
+      "definition": "A testable validation rule and scope are identified.",
+      "argument_roles": [
+        "rules",
+        "variables"
+      ],
+      "shared_variables": [
+        "o"
+      ],
+      "evidence_contract": {
+        "supported": "Rule definitions and accessible data permit the specified validation.",
+        "violated": "Documented schema incompatibility makes the claimed rule application invalid.",
+        "unresolved": "Missing, sampled-only negative, ambiguous or conflicting evidence remains unresolved.",
+        "required_fields": [
+          "id",
+          "source",
+          "scope",
+          "method",
+          "completeness",
+          "bindings"
+        ],
+        "verdict_evidence_refs": "Every verdict cites inspected evidence or an explicit missing-evidence record."
+      }
+    },
+    "visual_encoding_valid": {
+      "axis": "aff",
+      "definition": "Visual encoding matches data semantics and declared display constraints.",
+      "argument_roles": [
+        "variables",
+        "display",
+        "time_axis"
+      ],
+      "shared_variables": [
+        "o"
+      ],
+      "evidence_contract": {
+        "supported": "Scale/type/grain metadata justify the requested encoding and aggregation disclosure.",
+        "violated": "Known misleading axis/unit/grain mismatch contradicts the encoding contract.",
+        "unresolved": "Missing, sampled-only negative, ambiguous or conflicting evidence remains unresolved.",
+        "required_fields": [
+          "id",
+          "source",
+          "scope",
+          "method",
+          "completeness",
+          "bindings"
+        ],
+        "verdict_evidence_refs": "Every verdict cites inspected evidence or an explicit missing-evidence record."
+      }
+    },
+    "preference_evidence": {
+      "axis": "cov",
+      "definition": "Preference or interaction evidence matches the recommendation population and task.",
+      "argument_roles": [
+        "user",
+        "items",
+        "utility"
+      ],
+      "shared_variables": [
+        "o"
+      ],
+      "evidence_contract": {
+        "supported": "Documented interactions/preferences and candidate eligibility support the requested task.",
+        "violated": "Known exposure/recipient mismatch or missing eligible items invalidates the stated task.",
+        "unresolved": "Missing, sampled-only negative, ambiguous or conflicting evidence remains unresolved.",
+        "required_fields": [
+          "id",
+          "source",
+          "scope",
+          "method",
+          "completeness",
+          "bindings"
+        ],
+        "verdict_evidence_refs": "Every verdict cites inspected evidence or an explicit missing-evidence record."
+      }
+    },
+    "decision_model": {
+      "axis": "aff",
+      "definition": "Objective, controllable variables and constraints form a justified decision model.",
+      "argument_roles": [
+        "objective",
+        "decision_variables",
+        "constraints",
+        "utility"
+      ],
+      "shared_variables": [
+        "o"
+      ],
+      "evidence_contract": {
+        "supported": "Domain-backed decision variables, feasible constraints and objective are specified.",
+        "violated": "Known infeasibility or noncontrollable variables contradict the decision model.",
+        "unresolved": "Missing, sampled-only negative, ambiguous or conflicting evidence remains unresolved.",
+        "required_fields": [
+          "id",
+          "source",
+          "scope",
+          "method",
+          "completeness",
+          "bindings"
+        ],
+        "verdict_evidence_refs": "Every verdict cites inspected evidence or an explicit missing-evidence record."
+      }
+    },
+    "simulation_model": {
+      "axis": "aff",
+      "definition": "Scenario outputs are conditional on an identified simulator and assumptions.",
+      "argument_roles": [
+        "scenario",
+        "generative_model"
+      ],
+      "shared_variables": [
+        "o"
+      ],
+      "evidence_contract": {
+        "supported": "Versioned model, scenario inputs and documented assumptions permit conditional simulation.",
+        "violated": "Scenario values violate model domains or documented model constraints.",
+        "unresolved": "Missing, sampled-only negative, ambiguous or conflicting evidence remains unresolved.",
+        "required_fields": [
+          "id",
+          "source",
+          "scope",
+          "method",
+          "completeness",
+          "bindings"
+        ],
+        "verdict_evidence_refs": "Every verdict cites inspected evidence or an explicit missing-evidence record."
+      }
+    },
+    "spatial_reference": {
+      "axis": "str",
+      "definition": "Geometries, units and coordinate reference systems are compatible.",
+      "argument_roles": [
+        "geometry",
+        "region",
+        "distance"
+      ],
+      "shared_variables": [
+        "o"
+      ],
+      "evidence_contract": {
+        "supported": "Valid geometries and explicit compatible coordinate/distance definitions are present.",
+        "violated": "Known coordinate-system or distance-unit mismatch prevents the spatial operation.",
+        "unresolved": "Missing, sampled-only negative, ambiguous or conflicting evidence remains unresolved.",
+        "required_fields": [
+          "id",
+          "source",
+          "scope",
+          "method",
+          "completeness",
+          "bindings"
+        ],
+        "verdict_evidence_refs": "Every verdict cites inspected evidence or an explicit missing-evidence record."
+      }
+    },
+    "graph_structure": {
+      "axis": "str",
+      "definition": "Node and edge identities, direction and weighting define the requested graph.",
+      "argument_roles": [
+        "nodes",
+        "edges",
+        "source_node",
+        "destination_node"
+      ],
+      "shared_variables": [
+        "o"
+      ],
+      "evidence_contract": {
+        "supported": "Referential integrity and graph semantics support the requested analysis.",
+        "violated": "Dangling/incompatible entity references or directedness contradict the graph task.",
+        "unresolved": "Missing, sampled-only negative, ambiguous or conflicting evidence remains unresolved.",
+        "required_fields": [
+          "id",
+          "source",
+          "scope",
+          "method",
+          "completeness",
+          "bindings"
+        ],
+        "verdict_evidence_refs": "Every verdict cites inspected evidence or an explicit missing-evidence record."
+      }
+    },
+    "text_interpretation": {
+      "axis": "sem",
+      "definition": "Text language, meaning, context and annotation definitions support the requested task.",
+      "argument_roles": [
+        "text_field",
+        "labels",
+        "entities"
+      ],
+      "shared_variables": [
+        "o"
+      ],
+      "evidence_contract": {
+        "supported": "Cited language/context and reviewed label/entity definitions support interpretation.",
+        "violated": "Known incompatible language/context or label definitions invalidate the proposed task.",
+        "unresolved": "Missing, sampled-only negative, ambiguous or conflicting evidence remains unresolved.",
+        "required_fields": [
+          "id",
+          "source",
+          "scope",
+          "method",
+          "completeness",
+          "bindings"
+        ],
+        "verdict_evidence_refs": "Every verdict cites inspected evidence or an explicit missing-evidence record."
+      }
+    },
+    "numeric_variables": {
+      "axis": "str",
+      "definition": "Variables have numerical semantics appropriate to the declared association method.",
+      "argument_roles": [
+        "variables",
+        "method"
+      ],
+      "shared_variables": [
+        "o"
+      ],
+      "evidence_contract": {
+        "supported": "Documented quantity definitions and usable paired values meet the method contract.",
+        "violated": "Identifiers, constant variables or incompatible scales contradict the declared method.",
+        "unresolved": "Missing, sampled-only negative or conflicting evidence remains unresolved.",
+        "required_fields": [
+          "id",
+          "source",
+          "scope",
+          "method",
+          "completeness",
+          "bindings"
+        ],
+        "verdict_evidence_refs": "Cite inspected evidence or an explicit missing-evidence record."
+      }
+    },
+    "observed_category_domain": {
+      "axis": "str",
+      "definition": "Variables have documented categorical domains appropriate to the association method.",
+      "argument_roles": [
+        "variables",
+        "method"
+      ],
+      "shared_variables": [
+        "o"
+      ],
+      "evidence_contract": {
+        "supported": "Documented category meanings and observed combinations support the method contract.",
+        "violated": "Conflicting category definitions invalidate the proposed association table.",
+        "unresolved": "Missing, sampled-only negative or conflicting evidence remains unresolved.",
+        "required_fields": [
+          "id",
+          "source",
+          "scope",
+          "method",
+          "completeness",
+          "bindings"
+        ],
+        "verdict_evidence_refs": "Cite inspected evidence or an explicit missing-evidence record."
+      }
+    }
+  },
+  "requirement_templates": {
+    "measure_semantics": {
+      "predicate": "measure_semantics",
+      "axis": "sem",
+      "modality": "required",
+      "scope": "table",
+      "bind_present_roles": [
+        "measure"
+      ],
+      "shared_variables": {
+        "measure": "m",
+        "observations": "o"
+      }
+    },
+    "observation_binding": {
+      "predicate": "observation_binding",
+      "axis": "str",
+      "modality": "required",
+      "scope": "table",
+      "bind_present_roles": [
+        "group_dimension",
+        "groups",
+        "subject",
+        "time_points",
+        "time_grain"
+      ],
+      "shared_variables": {
+        "measure": "m",
+        "observations": "o"
+      }
+    },
+    "group_coverage": {
+      "predicate": "group_coverage",
+      "axis": "cov",
+      "modality": "required",
+      "scope": "table",
+      "bind_present_roles": [
+        "group_dimension",
+        "groups",
+        "time_points",
+        "time_grain"
+      ],
+      "shared_variables": {
+        "measure": "m",
+        "observations": "o"
+      }
+    },
+    "time_coverage": {
+      "predicate": "time_coverage",
+      "axis": "cov",
+      "modality": "required",
+      "scope": "table",
+      "bind_present_roles": [
+        "groups",
+        "subject",
+        "time_points",
+        "time_grain"
+      ],
+      "shared_variables": {
+        "measure": "m",
+        "observations": "o"
+      },
+      "activation": "time_points_present"
+    },
+    "paired_temporal_support": {
+      "predicate": "paired_temporal_support",
+      "axis": "str",
+      "modality": "required",
+      "scope": "table",
+      "bind_present_roles": [
+        "group_dimension",
+        "groups",
+        "time_points",
+        "time_grain"
+      ],
+      "shared_variables": {
+        "measure": "m",
+        "observations": "o"
+      }
+    },
+    "complete_requested_grid": {
+      "predicate": "complete_requested_grid",
+      "axis": "cov",
+      "modality": "required",
+      "scope": "table",
+      "bind_present_roles": [
+        "group_dimension",
+        "groups",
+        "time_points",
+        "time_grain"
+      ],
+      "shared_variables": {
+        "measure": "m",
+        "observations": "o"
+      },
+      "activation": {
+        "coverage_policy": "complete_grid",
+        "derivation_rule_id": "derive_explicit_group_time_grid_v1"
+      }
+    },
+    "usable_numeric_observations": {
+      "predicate": "usable_numeric_observations",
+      "axis": "qual",
+      "modality": "required",
+      "scope": "table",
+      "bind_present_roles": [
+        "groups",
+        "subject",
+        "time_points",
+        "time_grain",
+        "coverage_policy"
+      ],
+      "shared_variables": {
+        "measure": "m",
+        "observations": "o"
+      }
+    },
+    "comparable_measure_definition": {
+      "predicate": "comparable_measure_definition",
+      "axis": "aff",
+      "modality": "required",
+      "scope": "table",
+      "bind_present_roles": [
+        "groups",
+        "subject",
+        "time_points",
+        "time_grain"
+      ],
+      "shared_variables": {
+        "measure": "m",
+        "observations": "o"
+      }
+    },
+    "concept_binding": {
+      "predicate": "concept_binding",
+      "axis": "sem",
+      "modality": "required",
+      "scope": "procedure_inputs",
+      "bind_present_roles": [
+        "measure",
+        "group_dimension",
+        "groups",
+        "subject",
+        "time_points",
+        "time_grain",
+        "variables",
+        "population",
+        "unit",
+        "target",
+        "features",
+        "prediction_time",
+        "time_axis",
+        "horizon",
+        "event",
+        "duration",
+        "method",
+        "statistic",
+        "condition",
+        "order",
+        "count",
+        "reference",
+        "hypothesis",
+        "confidence_level",
+        "design",
+        "treatment",
+        "adjustment",
+        "model",
+        "objective",
+        "constraints",
+        "decision_variables",
+        "utility",
+        "user",
+        "items",
+        "keys",
+        "tables",
+        "mapping",
+        "rules",
+        "missing_policy",
+        "expression",
+        "shape",
+        "sample_design",
+        "geometry",
+        "region",
+        "distance",
+        "nodes",
+        "edges",
+        "source_node",
+        "destination_node",
+        "text_field",
+        "labels",
+        "entities",
+        "display",
+        "scenario",
+        "generative_model"
+      ],
+      "shared_variables": {
+        "observations": "o"
+      }
+    },
+    "unit_binding": {
+      "predicate": "unit_binding",
+      "axis": "str",
+      "modality": "required",
+      "scope": "procedure_inputs",
+      "bind_present_roles": [
+        "measure",
+        "group_dimension",
+        "groups",
+        "subject",
+        "time_points",
+        "time_grain",
+        "variables",
+        "population",
+        "unit",
+        "target",
+        "features",
+        "prediction_time",
+        "time_axis",
+        "horizon",
+        "event",
+        "duration",
+        "method",
+        "statistic",
+        "condition",
+        "order",
+        "count",
+        "reference",
+        "hypothesis",
+        "confidence_level",
+        "design",
+        "treatment",
+        "adjustment",
+        "model",
+        "objective",
+        "constraints",
+        "decision_variables",
+        "utility",
+        "user",
+        "items",
+        "keys",
+        "tables",
+        "mapping",
+        "rules",
+        "missing_policy",
+        "expression",
+        "shape",
+        "sample_design",
+        "geometry",
+        "region",
+        "distance",
+        "nodes",
+        "edges",
+        "source_node",
+        "destination_node",
+        "text_field",
+        "labels",
+        "entities",
+        "display",
+        "scenario",
+        "generative_model"
+      ],
+      "shared_variables": {
+        "observations": "o"
+      }
+    },
+    "scope_coverage": {
+      "predicate": "scope_coverage",
+      "axis": "cov",
+      "modality": "required",
+      "scope": "procedure_inputs",
+      "bind_present_roles": [
+        "measure",
+        "group_dimension",
+        "groups",
+        "subject",
+        "time_points",
+        "time_grain",
+        "variables",
+        "population",
+        "unit",
+        "target",
+        "features",
+        "prediction_time",
+        "time_axis",
+        "horizon",
+        "event",
+        "duration",
+        "method",
+        "statistic",
+        "condition",
+        "order",
+        "count",
+        "reference",
+        "hypothesis",
+        "confidence_level",
+        "design",
+        "treatment",
+        "adjustment",
+        "model",
+        "objective",
+        "constraints",
+        "decision_variables",
+        "utility",
+        "user",
+        "items",
+        "keys",
+        "tables",
+        "mapping",
+        "rules",
+        "missing_policy",
+        "expression",
+        "shape",
+        "sample_design",
+        "geometry",
+        "region",
+        "distance",
+        "nodes",
+        "edges",
+        "source_node",
+        "destination_node",
+        "text_field",
+        "labels",
+        "entities",
+        "display",
+        "scenario",
+        "generative_model"
+      ],
+      "shared_variables": {
+        "observations": "o"
+      }
+    },
+    "usable_values": {
+      "predicate": "usable_values",
+      "axis": "qual",
+      "modality": "required",
+      "scope": "procedure_inputs",
+      "bind_present_roles": [
+        "measure",
+        "group_dimension",
+        "groups",
+        "subject",
+        "time_points",
+        "time_grain",
+        "variables",
+        "population",
+        "unit",
+        "target",
+        "features",
+        "prediction_time",
+        "time_axis",
+        "horizon",
+        "event",
+        "duration",
+        "method",
+        "statistic",
+        "condition",
+        "order",
+        "count",
+        "reference",
+        "hypothesis",
+        "confidence_level",
+        "design",
+        "treatment",
+        "adjustment",
+        "model",
+        "objective",
+        "constraints",
+        "decision_variables",
+        "utility",
+        "user",
+        "items",
+        "keys",
+        "tables",
+        "mapping",
+        "rules",
+        "missing_policy",
+        "expression",
+        "shape",
+        "sample_design",
+        "geometry",
+        "region",
+        "distance",
+        "nodes",
+        "edges",
+        "source_node",
+        "destination_node",
+        "text_field",
+        "labels",
+        "entities",
+        "display",
+        "scenario",
+        "generative_model"
+      ],
+      "shared_variables": {
+        "observations": "o"
+      }
+    },
+    "procedure_assumptions": {
+      "predicate": "procedure_assumptions",
+      "axis": "aff",
+      "modality": "required",
+      "scope": "procedure_inputs",
+      "bind_present_roles": [
+        "method",
+        "design",
+        "reference"
+      ],
+      "shared_variables": {
+        "observations": "o"
+      }
+    },
+    "selection_evaluable": {
+      "predicate": "selection_evaluable",
+      "axis": "str",
+      "modality": "required",
+      "scope": "procedure_inputs",
+      "bind_present_roles": [
+        "condition",
+        "variables"
+      ],
+      "shared_variables": {
+        "observations": "o"
+      }
+    },
+    "ordering_evaluable": {
+      "predicate": "ordering_evaluable",
+      "axis": "str",
+      "modality": "required",
+      "scope": "procedure_inputs",
+      "bind_present_roles": [
+        "variables",
+        "order",
+        "count"
+      ],
+      "shared_variables": {
+        "observations": "o"
+      }
+    },
+    "aggregation_valid": {
+      "predicate": "aggregation_valid",
+      "axis": "aff",
+      "modality": "required",
+      "scope": "procedure_inputs",
+      "bind_present_roles": [
+        "measure",
+        "statistic",
+        "group_dimension",
+        "groups"
+      ],
+      "shared_variables": {
+        "observations": "o"
+      }
+    },
+    "paired_values": {
+      "predicate": "paired_values",
+      "axis": "str",
+      "modality": "required",
+      "scope": "procedure_inputs",
+      "bind_present_roles": [
+        "variables",
+        "unit"
+      ],
+      "shared_variables": {
+        "observations": "o"
+      }
+    },
+    "target_observed": {
+      "predicate": "target_observed",
+      "axis": "cov",
+      "modality": "required",
+      "scope": "procedure_inputs",
+      "bind_present_roles": [
+        "target",
+        "population",
+        "event",
+        "duration"
+      ],
+      "shared_variables": {
+        "observations": "o"
+      }
+    },
+    "categorical_target": {
+      "predicate": "categorical_target",
+      "axis": "str",
+      "modality": "required",
+      "scope": "procedure_inputs",
+      "bind_present_roles": [
+        "target",
+        "labels"
+      ],
+      "shared_variables": {
+        "observations": "o"
+      }
+    },
+    "numeric_target": {
+      "predicate": "numeric_target",
+      "axis": "str",
+      "modality": "required",
+      "scope": "procedure_inputs",
+      "bind_present_roles": [
+        "target"
+      ],
+      "shared_variables": {
+        "observations": "o"
+      }
+    },
+    "feature_availability": {
+      "predicate": "feature_availability",
+      "axis": "cov",
+      "modality": "required",
+      "scope": "procedure_inputs",
+      "bind_present_roles": [
+        "features",
+        "prediction_time",
+        "horizon"
+      ],
+      "shared_variables": {
+        "observations": "o"
+      }
+    },
+    "leakage_control": {
+      "predicate": "leakage_control",
+      "axis": "qual",
+      "modality": "required",
+      "scope": "procedure_inputs",
+      "bind_present_roles": [
+        "target",
+        "features",
+        "unit",
+        "design",
+        "prediction_time"
+      ],
+      "shared_variables": {
+        "observations": "o"
+      }
+    },
+    "temporal_observations": {
+      "predicate": "temporal_observations",
+      "axis": "str",
+      "modality": "required",
+      "scope": "procedure_inputs",
+      "bind_present_roles": [
+        "target",
+        "time_axis",
+        "time_grain",
+        "horizon"
+      ],
+      "shared_variables": {
+        "observations": "o"
+      }
+    },
+    "event_followup": {
+      "predicate": "event_followup",
+      "axis": "cov",
+      "modality": "required",
+      "scope": "procedure_inputs",
+      "bind_present_roles": [
+        "event",
+        "duration",
+        "population"
+      ],
+      "shared_variables": {
+        "observations": "o"
+      }
+    },
+    "distance_representation": {
+      "predicate": "distance_representation",
+      "axis": "str",
+      "modality": "required",
+      "scope": "procedure_inputs",
+      "bind_present_roles": [
+        "features",
+        "variables",
+        "method"
+      ],
+      "shared_variables": {
+        "observations": "o"
+      }
+    },
+    "reference_available": {
+      "predicate": "reference_available",
+      "axis": "cov",
+      "modality": "required",
+      "scope": "procedure_inputs",
+      "bind_present_roles": [
+        "reference",
+        "time_axis",
+        "population"
+      ],
+      "shared_variables": {
+        "observations": "o"
+      }
+    },
+    "model_available": {
+      "predicate": "model_available",
+      "axis": "str",
+      "modality": "required",
+      "scope": "procedure_inputs",
+      "bind_present_roles": [
+        "model",
+        "features",
+        "target"
+      ],
+      "shared_variables": {
+        "observations": "o"
+      }
+    },
+    "causal_identification": {
+      "predicate": "causal_identification",
+      "axis": "aff",
+      "modality": "required",
+      "scope": "procedure_inputs",
+      "bind_present_roles": [
+        "treatment",
+        "target",
+        "adjustment",
+        "design",
+        "population"
+      ],
+      "shared_variables": {
+        "observations": "o"
+      }
+    },
+    "join_compatibility": {
+      "predicate": "join_compatibility",
+      "axis": "str",
+      "modality": "required",
+      "scope": "procedure_inputs",
+      "bind_present_roles": [
+        "tables",
+        "keys",
+        "mapping"
+      ],
+      "shared_variables": {
+        "observations": "o"
+      }
+    },
+    "union_compatibility": {
+      "predicate": "union_compatibility",
+      "axis": "str",
+      "modality": "required",
+      "scope": "procedure_inputs",
+      "bind_present_roles": [
+        "tables",
+        "mapping"
+      ],
+      "shared_variables": {
+        "observations": "o"
+      }
+    },
+    "entity_resolution_evidence": {
+      "predicate": "entity_resolution_evidence",
+      "axis": "aff",
+      "modality": "required",
+      "scope": "procedure_inputs",
+      "bind_present_roles": [
+        "tables",
+        "keys",
+        "mapping"
+      ],
+      "shared_variables": {
+        "observations": "o"
+      }
+    },
+    "transformation_defined": {
+      "predicate": "transformation_defined",
+      "axis": "aff",
+      "modality": "required",
+      "scope": "procedure_inputs",
+      "bind_present_roles": [
+        "rules",
+        "expression",
+        "mapping",
+        "shape",
+        "missing_policy"
+      ],
+      "shared_variables": {
+        "observations": "o"
+      }
+    },
+    "validation_defined": {
+      "predicate": "validation_defined",
+      "axis": "str",
+      "modality": "required",
+      "scope": "procedure_inputs",
+      "bind_present_roles": [
+        "rules",
+        "variables"
+      ],
+      "shared_variables": {
+        "observations": "o"
+      }
+    },
+    "visual_encoding_valid": {
+      "predicate": "visual_encoding_valid",
+      "axis": "aff",
+      "modality": "required",
+      "scope": "procedure_inputs",
+      "bind_present_roles": [
+        "variables",
+        "display",
+        "time_axis"
+      ],
+      "shared_variables": {
+        "observations": "o"
+      }
+    },
+    "preference_evidence": {
+      "predicate": "preference_evidence",
+      "axis": "cov",
+      "modality": "required",
+      "scope": "procedure_inputs",
+      "bind_present_roles": [
+        "user",
+        "items",
+        "utility"
+      ],
+      "shared_variables": {
+        "observations": "o"
+      }
+    },
+    "decision_model": {
+      "predicate": "decision_model",
+      "axis": "aff",
+      "modality": "required",
+      "scope": "procedure_inputs",
+      "bind_present_roles": [
+        "objective",
+        "decision_variables",
+        "constraints",
+        "utility"
+      ],
+      "shared_variables": {
+        "observations": "o"
+      }
+    },
+    "simulation_model": {
+      "predicate": "simulation_model",
+      "axis": "aff",
+      "modality": "required",
+      "scope": "procedure_inputs",
+      "bind_present_roles": [
+        "scenario",
+        "generative_model"
+      ],
+      "shared_variables": {
+        "observations": "o"
+      }
+    },
+    "spatial_reference": {
+      "predicate": "spatial_reference",
+      "axis": "str",
+      "modality": "required",
+      "scope": "procedure_inputs",
+      "bind_present_roles": [
+        "geometry",
+        "region",
+        "distance"
+      ],
+      "shared_variables": {
+        "observations": "o"
+      }
+    },
+    "graph_structure": {
+      "predicate": "graph_structure",
+      "axis": "str",
+      "modality": "required",
+      "scope": "procedure_inputs",
+      "bind_present_roles": [
+        "nodes",
+        "edges",
+        "source_node",
+        "destination_node"
+      ],
+      "shared_variables": {
+        "observations": "o"
+      }
+    },
+    "text_interpretation": {
+      "predicate": "text_interpretation",
+      "axis": "sem",
+      "modality": "required",
+      "scope": "procedure_inputs",
+      "bind_present_roles": [
+        "text_field",
+        "labels",
+        "entities"
+      ],
+      "shared_variables": {
+        "observations": "o"
+      }
+    },
+    "numeric_variables": {
+      "predicate": "numeric_variables",
+      "axis": "str",
+      "modality": "required",
+      "scope": "procedure_inputs",
+      "bind_present_roles": [
+        "variables",
+        "method"
+      ],
+      "shared_variables": {
+        "observations": "o"
+      }
+    },
+    "observed_category_domain": {
+      "predicate": "observed_category_domain",
+      "axis": "str",
+      "modality": "required",
+      "scope": "procedure_inputs",
+      "bind_present_roles": [
+        "variables",
+        "method"
+      ],
+      "shared_variables": {
+        "observations": "o"
+      }
+    }
+  },
+  "grounding_statuses": [
+    "grounded",
+    "ambiguous",
+    "insufficient_input",
+    "unsupported",
+    "inconsistent_input"
+  ],
+  "alignment_states": [
+    "satisfied",
+    "violated",
+    "unknown"
+  ],
+  "inheritance_policy": "additive_no_override",
+  "scoring_policy": null,
+  "constraints": [
+    "Shared bindings must be consistent across requirements.",
+    "Complete-grid activation requires derive_explicit_group_time_grid_v1 with all activation conditions supported, including exhaustive coverage scoped to every requested group.",
+    "Time points require a declared time grain.",
+    "No silent transformations, invented roles, thresholds or AB IDs.",
+    "Between X and Y remains ambiguous between endpoints and an interval unless context resolves it; never infer cadence silently.",
+    "All new families are catalog definitions, not implemented analytical executors.",
+    "Missing evidence remains unresolved; no universal sample-size, class-balance or axis-weight defaults.",
+    "Do not interpret associational or model explanations as causal identification.",
+    "An unknown request remains unmapped for review; the catalog is not exhaustive.",
+    "Two variables/groups is a structural arity requirement, not an empirical sample-size guarantee."
+  ],
+  "provenance": {
+    "authoring_basis": "Author-designed extension requested by the researcher; conceptual task-taxonomy references are not validation of these predicates.",
+    "empirically_validated": false,
+    "sources": [
+      "https://www.cs.ubc.ca/labs/imager/tr/2013/MultiLevelTaskTypology/",
+      "https://sites.cc.gatech.edu/gvu/ii/vistasks/"
+    ]
+  },
+  "grounding_rules": {
+    "derive_explicit_group_time_grid_v1": {
+      "stage": "grounding",
+      "kind": "request_specific_coverage_derivation",
+      "version": 1,
+      "inputs": {
+        "groups": "Resolved group bindings and provenance.",
+        "time_domain": "Resolved finite time points/domain and provenance.",
+        "time_grain": "Explicit granularity and provenance.",
+        "coverage_expression": "Literal coverage expression and provenance.",
+        "coverage_scope": "Reviewed relation of exhaustive coverage to all requested groups."
+      },
+      "activation": {
+        "operator": "all_of",
+        "conditions": {
+          "groups": "At least two distinct requested groups are resolved with source evidence.",
+          "time_domain": "A finite temporal domain is resolved with explicit endpoint/inclusion semantics; preserve unresolved range readings.",
+          "time_grain": "The requested temporal granularity is explicit, not inferred from a range or bare year labels.",
+          "exhaustive_coverage": "The request explicitly requires every temporal position in that domain at that granularity.",
+          "all_groups_scope": "The exhaustive temporal requirement unambiguously applies to every requested group under the same action and temporal domain."
+        }
+      },
+      "output": {
+        "role": "coverage_policy",
+        "value": "complete_grid"
+      },
+      "required_evidence": [
+        "groups",
+        "time_domain",
+        "time_grain",
+        "exhaustive_coverage",
+        "all_groups_scope"
+      ],
+      "provenance": {
+        "source": "grounding_derivation",
+        "required": [
+          "rule_id",
+          "binding_refs",
+          "evidence_refs",
+          "reviewed_conditions"
+        ],
+        "evidence_refs": "Map every activation condition to one or more exact-input evidence IDs; overlapping spans are allowed. Record the source input, action instance, literal coverage expression, resolved bindings, and manual scope review in the example card."
+      },
+      "on_unresolved": "Do not derive complete_grid or activate its template. Preserve ambiguity/missing roles; the system default does not repair unresolved required bindings.",
+      "limitations": [
+        "Declarative research proposal; no executable natural-language grounding is implemented.",
+        "Every year alone supplies neither groups, finite domain, nor all-groups scope.",
+        "Annual or a date range alone is not exhaustive coverage.",
+        "Matching spans and reviewed-condition annotations do not prove semantic entailment.",
+        "This is not an AB-M1 interpreter normalization or a table-satisfaction claim."
+      ]
+    }
+  },
+  "system_policies": {
+    "default_available_observations_v1": {
+      "stage": "grounding",
+      "source": "system_policy",
+      "output": {
+        "role": "coverage_policy",
+        "value": "available_observations"
+      },
+      "activation": "Default in this proposal when no supported explicit coverage policy is derived; never evidence of user intent and never a remedy for unresolved bindings."
+    }
+  },
+  "library_schema_version": "1.0",
+  "exhaustive": false,
+  "runtime_policy": {
+    "groundable_action_ids": [
+      "compare.groups",
+      "compare.groups.trajectories",
+      "compare.time"
+    ],
+    "assessment": "unknown_only",
+    "execution": "not_implemented",
+    "new_action_policy": "catalog_only_until_explicit_runtime_integration",
+    "unknown_intention_policy": "preserve_unmapped_request_for_review_never_force_nearest_label"
+  },
+  "composition_policy": {
+    "joint_goals": "all_of",
+    "accepted_alternatives": "any_of",
+    "competing_interpretations": "ambiguous_not_any_of",
+    "alternative_procedures": "retain_separate_bindings_and_requirement_branches",
+    "execution_order": "explicit_step_dependencies_not_action_inheritance",
+    "aggregate_then_compare": "catalogued_steps_only_not_enabled_by_this_extension"
+  },
+  "verdict_contract": {
+    "states": [
+      "supported",
+      "violated",
+      "unresolved"
+    ],
+    "legacy_mapping": {
+      "satisfied": "supported",
+      "violated": "violated",
+      "unknown": "unresolved"
+    },
+    "missing_evidence": "unresolved",
+    "support_or_violation_requires": "resolvable_scoped_evidence_refs",
+    "negative_evidence_requires": "complete_relevant_inspection_or_authoritative_counterevidence",
+    "gold_access": "forbidden_to_runtime"
+  },
+  "procedures": {
+    "compare.groups.direct": {
+      "action_id": "compare.groups",
+      "definition": "Compare a numerical measure across specified groups.",
+      "selection": "At least two groups and a measure; a time filter alone does not imply trajectories.",
+      "additional_required_roles": [],
+      "additional_requirements": [],
+      "input_scope": "single_table",
+      "output_contract": {
+        "kind": "compare_groups_result",
+        "provenance": "Preserve input identities, role bindings, method/version and evidence references.",
+        "limitations": [
+          "Direct observed numerical comparison only; no aggregation, joins, statistical inference or causal claims."
+        ]
+      },
+      "runtime_support": "grounding_only",
+      "evidence_policy": "scoped_three_valued_v1"
+    },
+    "compare.groups.trajectories.direct": {
+      "action_id": "compare.groups.trajectories",
+      "definition": "Compare temporal change of the same measure across groups.",
+      "selection": "Explicit temporal change or trajectory comparison across groups, with resolvable time points and grain.",
+      "additional_required_roles": [],
+      "additional_requirements": [],
+      "input_scope": "single_table",
+      "output_contract": {
+        "kind": "compare_groups_trajectories_result",
+        "provenance": "Preserve input identities, role bindings, method/version and evidence references.",
+        "limitations": [
+          "Direct observed numerical comparison only; no aggregation, joins, statistical inference or causal claims."
+        ]
+      },
+      "runtime_support": "grounding_only",
+      "evidence_policy": "scoped_three_valued_v1"
+    },
+    "compare.time.direct": {
+      "action_id": "compare.time",
+      "definition": "Compare one subject across explicit time points.",
+      "selection": "One subject and a measure, explicitly contrasted across time.",
+      "additional_required_roles": [],
+      "additional_requirements": [],
+      "input_scope": "single_table",
+      "output_contract": {
+        "kind": "compare_time_result",
+        "provenance": "Preserve input identities, role bindings, method/version and evidence references.",
+        "limitations": [
+          "Direct observed numerical comparison only; no aggregation, joins, statistical inference or causal claims."
+        ]
+      },
+      "runtime_support": "grounding_only",
+      "evidence_policy": "scoped_three_valued_v1"
+    },
+    "retrieve.lookup.direct": {
+      "action_id": "retrieve.lookup",
+      "definition": "Retrieve values for identified observational units.",
+      "selection": "Retrieve values for identified observational units. Resolve all required roles before choosing this subtype.",
+      "additional_required_roles": [],
+      "additional_requirements": [],
+      "input_scope": "single_table",
+      "output_contract": {
+        "kind": "retrieve_lookup_result",
+        "provenance": "Preserve input identities, role bindings, method/version and evidence references.",
+        "limitations": [
+          "Do not infer missing values or perform unstated aggregation."
+        ]
+      },
+      "runtime_support": "catalog_only",
+      "evidence_policy": "scoped_three_valued_v1"
+    },
+    "retrieve.filter.direct": {
+      "action_id": "retrieve.filter",
+      "definition": "Select rows satisfying explicit conditions.",
+      "selection": "Select rows satisfying explicit conditions. Resolve all required roles before choosing this subtype.",
+      "additional_required_roles": [],
+      "additional_requirements": [],
+      "input_scope": "single_table",
+      "output_contract": {
+        "kind": "retrieve_filter_result",
+        "provenance": "Preserve input identities, role bindings, method/version and evidence references.",
+        "limitations": [
+          "Filtering is not a claim about an unobserved population."
+        ]
+      },
+      "runtime_support": "catalog_only",
+      "evidence_policy": "scoped_three_valued_v1"
+    },
+    "retrieve.sort.direct": {
+      "action_id": "retrieve.sort",
+      "definition": "Order observed records using declared ordering and ties.",
+      "selection": "Order observed records using declared ordering and ties. Resolve all required roles before choosing this subtype.",
+      "additional_required_roles": [],
+      "additional_requirements": [],
+      "input_scope": "single_table",
+      "output_contract": {
+        "kind": "retrieve_sort_result",
+        "provenance": "Preserve input identities, role bindings, method/version and evidence references.",
+        "limitations": [
+          "Do not compare incompatible units."
+        ]
+      },
+      "runtime_support": "catalog_only",
+      "evidence_policy": "scoped_three_valued_v1"
+    },
+    "retrieve.top_k.direct": {
+      "action_id": "retrieve.top_k",
+      "definition": "Find extrema or top-k observations under a specified order.",
+      "selection": "Find extrema or top-k observations under a specified order. Resolve all required roles before choosing this subtype.",
+      "additional_required_roles": [],
+      "additional_requirements": [],
+      "input_scope": "single_table",
+      "output_contract": {
+        "kind": "retrieve_top_k_result",
+        "provenance": "Preserve input identities, role bindings, method/version and evidence references.",
+        "limitations": [
+          "No unstated utility function or statistical significance."
+        ]
+      },
+      "runtime_support": "catalog_only",
+      "evidence_policy": "scoped_three_valued_v1"
+    },
+    "summarize.profile.direct": {
+      "action_id": "summarize.profile",
+      "definition": "Describe schema, missingness and observed field properties.",
+      "selection": "Describe schema, missingness and observed field properties. Resolve all required roles before choosing this subtype.",
+      "additional_required_roles": [],
+      "additional_requirements": [],
+      "input_scope": "single_table",
+      "output_contract": {
+        "kind": "summarize_profile_result",
+        "provenance": "Preserve input identities, role bindings, method/version and evidence references.",
+        "limitations": [
+          "A profile does not establish fitness for an analytical use."
+        ]
+      },
+      "runtime_support": "catalog_only",
+      "evidence_policy": "scoped_three_valued_v1"
+    },
+    "summarize.distribution.direct": {
+      "action_id": "summarize.distribution",
+      "definition": "Describe an observed distribution and its support.",
+      "selection": "Describe an observed distribution and its support. Resolve all required roles before choosing this subtype.",
+      "additional_required_roles": [],
+      "additional_requirements": [],
+      "input_scope": "single_table",
+      "output_contract": {
+        "kind": "summarize_distribution_result",
+        "provenance": "Preserve input identities, role bindings, method/version and evidence references.",
+        "limitations": [
+          "No population generalization without a sampling design."
+        ]
+      },
+      "runtime_support": "catalog_only",
+      "evidence_policy": "scoped_three_valued_v1"
+    },
+    "summarize.statistics.direct": {
+      "action_id": "summarize.statistics",
+      "definition": "Compute specified descriptive statistics on observed values.",
+      "selection": "Compute specified descriptive statistics on observed values. Resolve all required roles before choosing this subtype.",
+      "additional_required_roles": [],
+      "additional_requirements": [],
+      "input_scope": "single_table",
+      "output_contract": {
+        "kind": "summarize_statistics_result",
+        "provenance": "Preserve input identities, role bindings, method/version and evidence references.",
+        "limitations": [
+          "Do not silently substitute mean for median."
+        ]
+      },
+      "runtime_support": "catalog_only",
+      "evidence_policy": "scoped_three_valued_v1"
+    },
+    "aggregate.grouped.direct": {
+      "action_id": "aggregate.grouped",
+      "definition": "Compute a specified measure statistic within explicit groups.",
+      "selection": "Compute a specified measure statistic within explicit groups. Resolve all required roles before choosing this subtype.",
+      "additional_required_roles": [],
+      "additional_requirements": [],
+      "input_scope": "single_table",
+      "output_contract": {
+        "kind": "aggregate_grouped_result",
+        "provenance": "Preserve input identities, role bindings, method/version and evidence references.",
+        "limitations": [
+          "Does not enable aggregate-then-compare in the current runtime."
+        ]
+      },
+      "runtime_support": "catalog_only",
+      "evidence_policy": "scoped_three_valued_v1"
+    },
+    "aggregate.count.direct": {
+      "action_id": "aggregate.count",
+      "definition": "Count records or entities using a declared counting unit.",
+      "selection": "Count records or entities using a declared counting unit. Resolve all required roles before choosing this subtype.",
+      "additional_required_roles": [],
+      "additional_requirements": [],
+      "input_scope": "single_table",
+      "output_contract": {
+        "kind": "aggregate_count_result",
+        "provenance": "Preserve input identities, role bindings, method/version and evidence references.",
+        "limitations": [
+          "Row counts and distinct-entity counts are different tasks."
+        ]
+      },
+      "runtime_support": "catalog_only",
+      "evidence_policy": "scoped_three_valued_v1"
+    },
+    "aggregate.temporal.direct": {
+      "action_id": "aggregate.temporal",
+      "definition": "Aggregate a measure to an explicit temporal grain.",
+      "selection": "Aggregate a measure to an explicit temporal grain. Resolve all required roles before choosing this subtype.",
+      "additional_required_roles": [],
+      "additional_requirements": [],
+      "input_scope": "single_table",
+      "output_contract": {
+        "kind": "aggregate_temporal_result",
+        "provenance": "Preserve input identities, role bindings, method/version and evidence references.",
+        "limitations": [
+          "Missing periods and partial periods must be explicit."
+        ]
+      },
+      "runtime_support": "catalog_only",
+      "evidence_policy": "scoped_three_valued_v1"
+    },
+    "associate.correlation.direct": {
+      "action_id": "associate.correlation",
+      "definition": "Measure association between paired numerical variables.",
+      "selection": "Measure association between paired numerical variables. Resolve all required roles before choosing this subtype.",
+      "additional_required_roles": [],
+      "additional_requirements": [],
+      "input_scope": "single_table",
+      "output_contract": {
+        "kind": "associate_correlation_result",
+        "provenance": "Preserve input identities, role bindings, method/version and evidence references.",
+        "limitations": [
+          "Correlation is not causation; constant-variable handling is method-specific."
+        ]
+      },
+      "runtime_support": "catalog_only",
+      "evidence_policy": "scoped_three_valued_v1"
+    },
+    "associate.categorical.direct": {
+      "action_id": "associate.categorical",
+      "definition": "Assess observed association between categorical variables.",
+      "selection": "Assess observed association between categorical variables. Resolve all required roles before choosing this subtype.",
+      "additional_required_roles": [],
+      "additional_requirements": [],
+      "input_scope": "single_table",
+      "output_contract": {
+        "kind": "associate_categorical_result",
+        "provenance": "Preserve input identities, role bindings, method/version and evidence references.",
+        "limitations": [
+          "Do not infer causal effects from contingency counts."
+        ]
+      },
+      "runtime_support": "catalog_only",
+      "evidence_policy": "scoped_three_valued_v1"
+    },
+    "associate.conditional.direct": {
+      "action_id": "associate.conditional",
+      "definition": "Describe association conditional on specified variables.",
+      "selection": "Describe association conditional on specified variables. Resolve all required roles before choosing this subtype.",
+      "additional_required_roles": [],
+      "additional_requirements": [],
+      "input_scope": "single_table",
+      "output_contract": {
+        "kind": "associate_conditional_result",
+        "provenance": "Preserve input identities, role bindings, method/version and evidence references.",
+        "limitations": [
+          "Adjustment alone does not establish causal identification."
+        ]
+      },
+      "runtime_support": "catalog_only",
+      "evidence_policy": "scoped_three_valued_v1"
+    },
+    "predict.survival.direct": {
+      "action_id": "predict.survival",
+      "definition": "Predict time to a defined event with censoring-aware follow-up.",
+      "selection": "Predict time to a defined event with censoring-aware follow-up. Resolve all required roles before choosing this subtype.",
+      "additional_required_roles": [],
+      "additional_requirements": [],
+      "input_scope": "single_table",
+      "output_contract": {
+        "kind": "predict_survival_result",
+        "provenance": "Preserve input identities, role bindings, method/version and evidence references.",
+        "limitations": [
+          "Do not treat censored times as observed failure times."
+        ]
+      },
+      "runtime_support": "catalog_only",
+      "evidence_policy": "scoped_three_valued_v1"
+    },
+    "cluster.partition.direct": {
+      "action_id": "cluster.partition",
+      "definition": "Partition observations under a declared feature representation.",
+      "selection": "Partition observations under a declared feature representation. Resolve all required roles before choosing this subtype.",
+      "additional_required_roles": [],
+      "additional_requirements": [],
+      "input_scope": "single_table",
+      "output_contract": {
+        "kind": "cluster_partition_result",
+        "provenance": "Preserve input identities, role bindings, method/version and evidence references.",
+        "limitations": [
+          "Clusters are not pre-existing labeled classes."
+        ]
+      },
+      "runtime_support": "catalog_only",
+      "evidence_policy": "scoped_three_valued_v1"
+    },
+    "cluster.density.direct": {
+      "action_id": "cluster.density",
+      "definition": "Identify dense groups and noise under a declared neighborhood policy.",
+      "selection": "Identify dense groups and noise under a declared neighborhood policy. Resolve all required roles before choosing this subtype.",
+      "additional_required_roles": [],
+      "additional_requirements": [],
+      "input_scope": "single_table",
+      "output_contract": {
+        "kind": "cluster_density_result",
+        "provenance": "Preserve input identities, role bindings, method/version and evidence references.",
+        "limitations": [
+          "Noise labels are not automatically erroneous records."
+        ]
+      },
+      "runtime_support": "catalog_only",
+      "evidence_policy": "scoped_three_valued_v1"
+    },
+    "detect.anomaly.direct": {
+      "action_id": "detect.anomaly",
+      "definition": "Identify observations unusual relative to a declared reference.",
+      "selection": "Identify observations unusual relative to a declared reference. Resolve all required roles before choosing this subtype.",
+      "additional_required_roles": [],
+      "additional_requirements": [],
+      "input_scope": "single_table",
+      "output_contract": {
+        "kind": "detect_anomaly_result",
+        "provenance": "Preserve input identities, role bindings, method/version and evidence references.",
+        "limitations": [
+          "An outlier is not proof of fraud or error."
+        ]
+      },
+      "runtime_support": "catalog_only",
+      "evidence_policy": "scoped_three_valued_v1"
+    },
+    "detect.change.direct": {
+      "action_id": "detect.change",
+      "definition": "Identify changes in an ordered process relative to a reference.",
+      "selection": "Identify changes in an ordered process relative to a reference. Resolve all required roles before choosing this subtype.",
+      "additional_required_roles": [],
+      "additional_requirements": [],
+      "input_scope": "single_table",
+      "output_contract": {
+        "kind": "detect_change_result",
+        "provenance": "Preserve input identities, role bindings, method/version and evidence references.",
+        "limitations": [
+          "Do not infer the cause of a detected change."
+        ]
+      },
+      "runtime_support": "catalog_only",
+      "evidence_policy": "scoped_three_valued_v1"
+    },
+    "explain.association.direct": {
+      "action_id": "explain.association",
+      "definition": "Describe observed factors associated with an outcome.",
+      "selection": "Describe observed factors associated with an outcome. Resolve all required roles before choosing this subtype.",
+      "additional_required_roles": [],
+      "additional_requirements": [],
+      "input_scope": "single_table",
+      "output_contract": {
+        "kind": "explain_association_result",
+        "provenance": "Preserve input identities, role bindings, method/version and evidence references.",
+        "limitations": [
+          "Associational explanation must not be called causal."
+        ]
+      },
+      "runtime_support": "catalog_only",
+      "evidence_policy": "scoped_three_valued_v1"
+    },
+    "explain.model.direct": {
+      "action_id": "explain.model",
+      "definition": "Explain outputs of an identified predictive model.",
+      "selection": "Explain outputs of an identified predictive model. Resolve all required roles before choosing this subtype.",
+      "additional_required_roles": [],
+      "additional_requirements": [],
+      "input_scope": "model_and_table",
+      "output_contract": {
+        "kind": "explain_model_result",
+        "provenance": "Preserve input identities, role bindings, method/version and evidence references.",
+        "limitations": [
+          "Model attribution is not a causal explanation of the world."
+        ]
+      },
+      "runtime_support": "catalog_only",
+      "evidence_policy": "scoped_three_valued_v1"
+    },
+    "test.difference.direct": {
+      "action_id": "test.difference",
+      "definition": "Test a stated difference under a declared sampling/dependence design.",
+      "selection": "Test a stated difference under a declared sampling/dependence design. Resolve all required roles before choosing this subtype.",
+      "additional_required_roles": [],
+      "additional_requirements": [],
+      "input_scope": "single_table",
+      "output_contract": {
+        "kind": "test_difference_result",
+        "provenance": "Preserve input identities, role bindings, method/version and evidence references.",
+        "limitations": [
+          "Descriptive Compare does not imply this inferential procedure."
+        ]
+      },
+      "runtime_support": "catalog_only",
+      "evidence_policy": "scoped_three_valued_v1"
+    },
+    "test.independence.direct": {
+      "action_id": "test.independence",
+      "definition": "Test a stated independence hypothesis for paired variables.",
+      "selection": "Test a stated independence hypothesis for paired variables. Resolve all required roles before choosing this subtype.",
+      "additional_required_roles": [],
+      "additional_requirements": [],
+      "input_scope": "single_table",
+      "output_contract": {
+        "kind": "test_independence_result",
+        "provenance": "Preserve input identities, role bindings, method/version and evidence references.",
+        "limitations": [
+          "Do not choose the hypothesis after inspecting significance."
+        ]
+      },
+      "runtime_support": "catalog_only",
+      "evidence_policy": "scoped_three_valued_v1"
+    },
+    "test.goodness_of_fit.direct": {
+      "action_id": "test.goodness_of_fit",
+      "definition": "Test compatibility with a stated reference distribution.",
+      "selection": "Test compatibility with a stated reference distribution. Resolve all required roles before choosing this subtype.",
+      "additional_required_roles": [],
+      "additional_requirements": [],
+      "input_scope": "single_table",
+      "output_contract": {
+        "kind": "test_goodness_of_fit_result",
+        "provenance": "Preserve input identities, role bindings, method/version and evidence references.",
+        "limitations": [
+          "Failure to reject is not proof of distributional identity."
+        ]
+      },
+      "runtime_support": "catalog_only",
+      "evidence_policy": "scoped_three_valued_v1"
+    },
+    "estimate.parameter.direct": {
+      "action_id": "estimate.parameter",
+      "definition": "Estimate a specified population quantity under a sampling design.",
+      "selection": "Estimate a specified population quantity under a sampling design. Resolve all required roles before choosing this subtype.",
+      "additional_required_roles": [],
+      "additional_requirements": [],
+      "input_scope": "single_table",
+      "output_contract": {
+        "kind": "estimate_parameter_result",
+        "provenance": "Preserve input identities, role bindings, method/version and evidence references.",
+        "limitations": [
+          "No unsupported extrapolation to a different population."
+        ]
+      },
+      "runtime_support": "catalog_only",
+      "evidence_policy": "scoped_three_valued_v1"
+    },
+    "estimate.interval.direct": {
+      "action_id": "estimate.interval",
+      "definition": "Quantify uncertainty for a specified estimand and interval level.",
+      "selection": "Quantify uncertainty for a specified estimand and interval level. Resolve all required roles before choosing this subtype.",
+      "additional_required_roles": [],
+      "additional_requirements": [],
+      "input_scope": "single_table",
+      "output_contract": {
+        "kind": "estimate_interval_result",
+        "provenance": "Preserve input identities, role bindings, method/version and evidence references.",
+        "limitations": [
+          "A confidence interval is not a predictive interval for an individual."
+        ]
+      },
+      "runtime_support": "catalog_only",
+      "evidence_policy": "scoped_three_valued_v1"
+    },
+    "monitor.threshold.direct": {
+      "action_id": "monitor.threshold",
+      "definition": "Track a defined indicator against an explicit threshold rule.",
+      "selection": "Track a defined indicator against an explicit threshold rule. Resolve all required roles before choosing this subtype.",
+      "additional_required_roles": [],
+      "additional_requirements": [],
+      "input_scope": "single_table",
+      "output_contract": {
+        "kind": "monitor_threshold_result",
+        "provenance": "Preserve input identities, role bindings, method/version and evidence references.",
+        "limitations": [
+          "No silent alert threshold or guarantee of future service."
+        ]
+      },
+      "runtime_support": "catalog_only",
+      "evidence_policy": "scoped_three_valued_v1"
+    },
+    "monitor.drift.direct": {
+      "action_id": "monitor.drift",
+      "definition": "Track distribution changes between reference and current windows.",
+      "selection": "Track distribution changes between reference and current windows. Resolve all required roles before choosing this subtype.",
+      "additional_required_roles": [],
+      "additional_requirements": [],
+      "input_scope": "single_table",
+      "output_contract": {
+        "kind": "monitor_drift_result",
+        "provenance": "Preserve input identities, role bindings, method/version and evidence references.",
+        "limitations": [
+          "Input drift alone does not prove performance degradation."
+        ]
+      },
+      "runtime_support": "catalog_only",
+      "evidence_policy": "scoped_three_valued_v1"
+    },
+    "integrate.join.direct": {
+      "action_id": "integrate.join",
+      "definition": "Combine tables through a specified relational join.",
+      "selection": "Combine tables through a specified relational join. Resolve all required roles before choosing this subtype.",
+      "additional_required_roles": [],
+      "additional_requirements": [],
+      "input_scope": "table_set",
+      "output_contract": {
+        "kind": "integrate_join_result",
+        "provenance": "Preserve input identities, role bindings, method/version and evidence references.",
+        "limitations": [
+          "Multi-table operation; a single table cannot certify the other side."
+        ]
+      },
+      "runtime_support": "catalog_only",
+      "evidence_policy": "scoped_three_valued_v1"
+    },
+    "integrate.union.direct": {
+      "action_id": "integrate.union",
+      "definition": "Append compatible rows from mapped source schemas.",
+      "selection": "Append compatible rows from mapped source schemas. Resolve all required roles before choosing this subtype.",
+      "additional_required_roles": [],
+      "additional_requirements": [],
+      "input_scope": "table_set",
+      "output_contract": {
+        "kind": "integrate_union_result",
+        "provenance": "Preserve input identities, role bindings, method/version and evidence references.",
+        "limitations": [
+          "Matching column names alone do not prove compatibility."
+        ]
+      },
+      "runtime_support": "catalog_only",
+      "evidence_policy": "scoped_three_valued_v1"
+    },
+    "integrate.entity_resolution.direct": {
+      "action_id": "integrate.entity_resolution",
+      "definition": "Link records referring to the same real-world entities.",
+      "selection": "Link records referring to the same real-world entities. Resolve all required roles before choosing this subtype.",
+      "additional_required_roles": [],
+      "additional_requirements": [],
+      "input_scope": "table_set",
+      "output_contract": {
+        "kind": "integrate_entity_resolution_result",
+        "provenance": "Preserve input identities, role bindings, method/version and evidence references.",
+        "limitations": [
+          "Similarity alone is not verified identity."
+        ]
+      },
+      "runtime_support": "catalog_only",
+      "evidence_policy": "scoped_three_valued_v1"
+    },
+    "prepare.clean.direct": {
+      "action_id": "prepare.clean",
+      "definition": "Apply declared correction or normalization rules.",
+      "selection": "Apply declared correction or normalization rules. Resolve all required roles before choosing this subtype.",
+      "additional_required_roles": [],
+      "additional_requirements": [],
+      "input_scope": "single_table",
+      "output_contract": {
+        "kind": "prepare_clean_result",
+        "provenance": "Preserve input identities, role bindings, method/version and evidence references.",
+        "limitations": [
+          "Do not silently change meanings or invent corrected values."
+        ]
+      },
+      "runtime_support": "catalog_only",
+      "evidence_policy": "scoped_three_valued_v1"
+    },
+    "prepare.deduplicate.direct": {
+      "action_id": "prepare.deduplicate",
+      "definition": "Resolve duplicates under a declared entity and retention policy.",
+      "selection": "Resolve duplicates under a declared entity and retention policy. Resolve all required roles before choosing this subtype.",
+      "additional_required_roles": [],
+      "additional_requirements": [],
+      "input_scope": "single_table",
+      "output_contract": {
+        "kind": "prepare_deduplicate_result",
+        "provenance": "Preserve input identities, role bindings, method/version and evidence references.",
+        "limitations": [
+          "Equal rows are not always duplicate real-world events."
+        ]
+      },
+      "runtime_support": "catalog_only",
+      "evidence_policy": "scoped_three_valued_v1"
+    },
+    "prepare.impute.direct": {
+      "action_id": "prepare.impute",
+      "definition": "Handle missing values using a declared imputation policy.",
+      "selection": "Handle missing values using a declared imputation policy. Resolve all required roles before choosing this subtype.",
+      "additional_required_roles": [],
+      "additional_requirements": [],
+      "input_scope": "single_table",
+      "output_contract": {
+        "kind": "prepare_impute_result",
+        "provenance": "Preserve input identities, role bindings, method/version and evidence references.",
+        "limitations": [
+          "Imputed values remain inferred, not observed facts."
+        ]
+      },
+      "runtime_support": "catalog_only",
+      "evidence_policy": "scoped_three_valued_v1"
+    },
+    "prepare.derive.direct": {
+      "action_id": "prepare.derive",
+      "definition": "Compute derived fields using an explicit expression.",
+      "selection": "Compute derived fields using an explicit expression. Resolve all required roles before choosing this subtype.",
+      "additional_required_roles": [],
+      "additional_requirements": [],
+      "input_scope": "single_table",
+      "output_contract": {
+        "kind": "prepare_derive_result",
+        "provenance": "Preserve input identities, role bindings, method/version and evidence references.",
+        "limitations": [
+          "Guard units, zero denominators and propagated missingness."
+        ]
+      },
+      "runtime_support": "catalog_only",
+      "evidence_policy": "scoped_three_valued_v1"
+    },
+    "prepare.reshape.direct": {
+      "action_id": "prepare.reshape",
+      "definition": "Reshape tables while preserving keys and measure meaning.",
+      "selection": "Reshape tables while preserving keys and measure meaning. Resolve all required roles before choosing this subtype.",
+      "additional_required_roles": [],
+      "additional_requirements": [],
+      "input_scope": "single_table",
+      "output_contract": {
+        "kind": "prepare_reshape_result",
+        "provenance": "Preserve input identities, role bindings, method/version and evidence references.",
+        "limitations": [
+          "No silent aggregation of duplicate key cells."
+        ]
+      },
+      "runtime_support": "catalog_only",
+      "evidence_policy": "scoped_three_valued_v1"
+    },
+    "prepare.sample.direct": {
+      "action_id": "prepare.sample",
+      "definition": "Select observations under an explicit sampling design.",
+      "selection": "Select observations under an explicit sampling design. Resolve all required roles before choosing this subtype.",
+      "additional_required_roles": [],
+      "additional_requirements": [],
+      "input_scope": "single_table",
+      "output_contract": {
+        "kind": "prepare_sample_result",
+        "provenance": "Preserve input identities, role bindings, method/version and evidence references.",
+        "limitations": [
+          "Convenience samples do not become representative by size alone."
+        ]
+      },
+      "runtime_support": "catalog_only",
+      "evidence_policy": "scoped_three_valued_v1"
+    },
+    "validate.schema.direct": {
+      "action_id": "validate.schema",
+      "definition": "Check a table against a specified schema contract.",
+      "selection": "Check a table against a specified schema contract. Resolve all required roles before choosing this subtype.",
+      "additional_required_roles": [],
+      "additional_requirements": [],
+      "input_scope": "single_table",
+      "output_contract": {
+        "kind": "validate_schema_result",
+        "provenance": "Preserve input identities, role bindings, method/version and evidence references.",
+        "limitations": [
+          "Schema validity is not analytical usefulness."
+        ]
+      },
+      "runtime_support": "catalog_only",
+      "evidence_policy": "scoped_three_valued_v1"
+    },
+    "validate.quality.direct": {
+      "action_id": "validate.quality",
+      "definition": "Check declared data-quality rules in their scope.",
+      "selection": "Check declared data-quality rules in their scope. Resolve all required roles before choosing this subtype.",
+      "additional_required_roles": [],
+      "additional_requirements": [],
+      "input_scope": "single_table",
+      "output_contract": {
+        "kind": "validate_quality_result",
+        "provenance": "Preserve input identities, role bindings, method/version and evidence references.",
+        "limitations": [
+          "Do not invent acceptable missingness thresholds."
+        ]
+      },
+      "runtime_support": "catalog_only",
+      "evidence_policy": "scoped_three_valued_v1"
+    },
+    "visualize.distribution.direct": {
+      "action_id": "visualize.distribution",
+      "definition": "Display observed values using an appropriate distribution encoding.",
+      "selection": "Display observed values using an appropriate distribution encoding. Resolve all required roles before choosing this subtype.",
+      "additional_required_roles": [],
+      "additional_requirements": [],
+      "input_scope": "single_table",
+      "output_contract": {
+        "kind": "visualize_distribution_result",
+        "provenance": "Preserve input identities, role bindings, method/version and evidence references.",
+        "limitations": [
+          "Do not silently transform or omit outliers."
+        ]
+      },
+      "runtime_support": "catalog_only",
+      "evidence_policy": "scoped_three_valued_v1"
+    },
+    "visualize.relationship.direct": {
+      "action_id": "visualize.relationship",
+      "definition": "Display relationships between bound observed variables.",
+      "selection": "Display relationships between bound observed variables. Resolve all required roles before choosing this subtype.",
+      "additional_required_roles": [],
+      "additional_requirements": [],
+      "input_scope": "single_table",
+      "output_contract": {
+        "kind": "visualize_relationship_result",
+        "provenance": "Preserve input identities, role bindings, method/version and evidence references.",
+        "limitations": [
+          "Visual association is not causal evidence."
+        ]
+      },
+      "runtime_support": "catalog_only",
+      "evidence_policy": "scoped_three_valued_v1"
+    },
+    "visualize.temporal.direct": {
+      "action_id": "visualize.temporal",
+      "definition": "Display observations over an explicit temporal axis.",
+      "selection": "Display observations over an explicit temporal axis. Resolve all required roles before choosing this subtype.",
+      "additional_required_roles": [],
+      "additional_requirements": [],
+      "input_scope": "single_table",
+      "output_contract": {
+        "kind": "visualize_temporal_result",
+        "provenance": "Preserve input identities, role bindings, method/version and evidence references.",
+        "limitations": [
+          "Do not interpolate missing observations without disclosure."
+        ]
+      },
+      "runtime_support": "catalog_only",
+      "evidence_policy": "scoped_three_valued_v1"
+    },
+    "recommend.items.direct": {
+      "action_id": "recommend.items",
+      "definition": "Rank eligible items for a recipient under a preference objective.",
+      "selection": "Rank eligible items for a recipient under a preference objective. Resolve all required roles before choosing this subtype.",
+      "additional_required_roles": [],
+      "additional_requirements": [],
+      "input_scope": "single_table",
+      "output_contract": {
+        "kind": "recommend_items_result",
+        "provenance": "Preserve input identities, role bindings, method/version and evidence references.",
+        "limitations": [
+          "Predicted preference is not guaranteed benefit or causal uplift."
+        ]
+      },
+      "runtime_support": "catalog_only",
+      "evidence_policy": "scoped_three_valued_v1"
+    },
+    "optimize.allocation.direct": {
+      "action_id": "optimize.allocation",
+      "definition": "Choose feasible resource allocations for a declared objective.",
+      "selection": "Choose feasible resource allocations for a declared objective. Resolve all required roles before choosing this subtype.",
+      "additional_required_roles": [],
+      "additional_requirements": [],
+      "input_scope": "model_and_table",
+      "output_contract": {
+        "kind": "optimize_allocation_result",
+        "provenance": "Preserve input identities, role bindings, method/version and evidence references.",
+        "limitations": [
+          "Observed correlations do not identify controllable interventions."
+        ]
+      },
+      "runtime_support": "catalog_only",
+      "evidence_policy": "scoped_three_valued_v1"
+    },
+    "optimize.multiobjective.direct": {
+      "action_id": "optimize.multiobjective",
+      "definition": "Identify tradeoffs among multiple explicit objectives.",
+      "selection": "Identify tradeoffs among multiple explicit objectives. Resolve all required roles before choosing this subtype.",
+      "additional_required_roles": [],
+      "additional_requirements": [],
+      "input_scope": "model_and_table",
+      "output_contract": {
+        "kind": "optimize_multiobjective_result",
+        "provenance": "Preserve input identities, role bindings, method/version and evidence references.",
+        "limitations": [
+          "No hidden objective weights or universally best solution."
+        ]
+      },
+      "runtime_support": "catalog_only",
+      "evidence_policy": "scoped_three_valued_v1"
+    },
+    "simulate.scenario.direct": {
+      "action_id": "simulate.scenario",
+      "definition": "Generate outcomes conditional on a model and scenario assumptions.",
+      "selection": "Generate outcomes conditional on a model and scenario assumptions. Resolve all required roles before choosing this subtype.",
+      "additional_required_roles": [],
+      "additional_requirements": [],
+      "input_scope": "model_and_table",
+      "output_contract": {
+        "kind": "simulate_scenario_result",
+        "provenance": "Preserve input identities, role bindings, method/version and evidence references.",
+        "limitations": [
+          "Scenario output is conditional, not an observed outcome or proven causal effect."
+        ]
+      },
+      "runtime_support": "catalog_only",
+      "evidence_policy": "scoped_three_valued_v1"
+    },
+    "simulate.sensitivity.direct": {
+      "action_id": "simulate.sensitivity",
+      "definition": "Assess output sensitivity to explicitly varied model inputs.",
+      "selection": "Assess output sensitivity to explicitly varied model inputs. Resolve all required roles before choosing this subtype.",
+      "additional_required_roles": [],
+      "additional_requirements": [],
+      "input_scope": "model_and_table",
+      "output_contract": {
+        "kind": "simulate_sensitivity_result",
+        "provenance": "Preserve input identities, role bindings, method/version and evidence references.",
+        "limitations": [
+          "Sensitivity is not identification or predictive validation."
+        ]
+      },
+      "runtime_support": "catalog_only",
+      "evidence_policy": "scoped_three_valued_v1"
+    },
+    "spatial.proximity.direct": {
+      "action_id": "spatial.proximity",
+      "definition": "Evaluate distances or proximity with explicit spatial semantics.",
+      "selection": "Evaluate distances or proximity with explicit spatial semantics. Resolve all required roles before choosing this subtype.",
+      "additional_required_roles": [],
+      "additional_requirements": [],
+      "input_scope": "single_table",
+      "output_contract": {
+        "kind": "spatial_proximity_result",
+        "provenance": "Preserve input identities, role bindings, method/version and evidence references.",
+        "limitations": [
+          "Latitude-longitude degree distance is not automatically metric distance."
+        ]
+      },
+      "runtime_support": "catalog_only",
+      "evidence_policy": "scoped_three_valued_v1"
+    },
+    "spatial.region.direct": {
+      "action_id": "spatial.region",
+      "definition": "Select or summarize observations within defined spatial boundaries.",
+      "selection": "Select or summarize observations within defined spatial boundaries. Resolve all required roles before choosing this subtype.",
+      "additional_required_roles": [],
+      "additional_requirements": [],
+      "input_scope": "single_table",
+      "output_contract": {
+        "kind": "spatial_region_result",
+        "provenance": "Preserve input identities, role bindings, method/version and evidence references.",
+        "limitations": [
+          "Boundary and point-in-polygon conventions must be explicit."
+        ]
+      },
+      "runtime_support": "catalog_only",
+      "evidence_policy": "scoped_three_valued_v1"
+    },
+    "network.paths.direct": {
+      "action_id": "network.paths",
+      "definition": "Find paths under declared edge direction and cost semantics.",
+      "selection": "Find paths under declared edge direction and cost semantics. Resolve all required roles before choosing this subtype.",
+      "additional_required_roles": [],
+      "additional_requirements": [],
+      "input_scope": "single_table",
+      "output_contract": {
+        "kind": "network_paths_result",
+        "provenance": "Preserve input identities, role bindings, method/version and evidence references.",
+        "limitations": [
+          "Connectivity is not proof of physical or causal reachability."
+        ]
+      },
+      "runtime_support": "catalog_only",
+      "evidence_policy": "scoped_three_valued_v1"
+    },
+    "network.communities.direct": {
+      "action_id": "network.communities",
+      "definition": "Describe graph communities under a declared method.",
+      "selection": "Describe graph communities under a declared method. Resolve all required roles before choosing this subtype.",
+      "additional_required_roles": [],
+      "additional_requirements": [],
+      "input_scope": "single_table",
+      "output_contract": {
+        "kind": "network_communities_result",
+        "provenance": "Preserve input identities, role bindings, method/version and evidence references.",
+        "limitations": [
+          "Algorithmic communities are not verified social categories."
+        ]
+      },
+      "runtime_support": "catalog_only",
+      "evidence_policy": "scoped_three_valued_v1"
+    },
+    "text.classification.direct": {
+      "action_id": "text.classification",
+      "definition": "Assign declared semantic categories to text-valued observations.",
+      "selection": "Assign declared semantic categories to text-valued observations. Resolve all required roles before choosing this subtype.",
+      "additional_required_roles": [],
+      "additional_requirements": [],
+      "input_scope": "single_table",
+      "output_contract": {
+        "kind": "text_classification_result",
+        "provenance": "Preserve input identities, role bindings, method/version and evidence references.",
+        "limitations": [
+          "Labels require language/context validation and are model predictions."
+        ]
+      },
+      "runtime_support": "catalog_only",
+      "evidence_policy": "scoped_three_valued_v1"
+    },
+    "text.extraction.direct": {
+      "action_id": "text.extraction",
+      "definition": "Extract declared entity or attribute types from text fields.",
+      "selection": "Extract declared entity or attribute types from text fields. Resolve all required roles before choosing this subtype.",
+      "additional_required_roles": [],
+      "additional_requirements": [],
+      "input_scope": "single_table",
+      "output_contract": {
+        "kind": "text_extraction_result",
+        "provenance": "Preserve input identities, role bindings, method/version and evidence references.",
+        "limitations": [
+          "Extracted mentions are not verified external facts."
+        ]
+      },
+      "runtime_support": "catalog_only",
+      "evidence_policy": "scoped_three_valued_v1"
+    },
+    "text.summary.direct": {
+      "action_id": "text.summary",
+      "definition": "Summarize text-valued observations with source traceability.",
+      "selection": "Summarize text-valued observations with source traceability. Resolve all required roles before choosing this subtype.",
+      "additional_required_roles": [],
+      "additional_requirements": [],
+      "input_scope": "single_table",
+      "output_contract": {
+        "kind": "text_summary_result",
+        "provenance": "Preserve input identities, role bindings, method/version and evidence references.",
+        "limitations": [
+          "A summary must not invent evidence or imply representativeness."
+        ]
+      },
+      "runtime_support": "catalog_only",
+      "evidence_policy": "scoped_three_valued_v1"
+    },
+    "discover.topical.direct": {
+      "action_id": "discover.topical",
+      "definition": "Find tables related to an explicit information need.",
+      "selection": "Find tables related to an explicit information need. Resolve all required roles before choosing this subtype.",
+      "additional_required_roles": [],
+      "additional_requirements": [],
+      "input_scope": "single_table",
+      "output_contract": {
+        "kind": "discover_topical_result",
+        "provenance": "Preserve input identities, role bindings, method/version and evidence references.",
+        "limitations": [
+          "Topical relevance alone does not establish intended usefulness."
+        ]
+      },
+      "runtime_support": "catalog_only",
+      "evidence_policy": "scoped_three_valued_v1"
+    },
+    "discover.compatible.direct": {
+      "action_id": "discover.compatible",
+      "definition": "Find candidate tables compatible with a declared integration need.",
+      "selection": "Find candidate tables compatible with a declared integration need. Resolve all required roles before choosing this subtype.",
+      "additional_required_roles": [],
+      "additional_requirements": [],
+      "input_scope": "table_set",
+      "output_contract": {
+        "kind": "discover_compatible_result",
+        "provenance": "Preserve input identities, role bindings, method/version and evidence references.",
+        "limitations": [
+          "Candidate compatibility requires both sides' evidence, not schema-name similarity."
+        ]
+      },
+      "runtime_support": "catalog_only",
+      "evidence_policy": "scoped_three_valued_v1"
+    },
+    "predict.classification.linear_classifier": {
+      "action_id": "predict.classification",
+      "definition": "A reviewed linear classification procedure.",
+      "selection": "A reviewed linear classification procedure. Requires explicit method/design review; alternatives are not interchangeable defaults.",
+      "additional_required_roles": [
+        "method"
+      ],
+      "additional_requirements": [
+        "procedure_assumptions"
+      ],
+      "input_scope": "single_table",
+      "output_contract": {
+        "kind": "predict_classification_result",
+        "provenance": "Preserve input identities, role bindings, method/version and evidence references.",
+        "limitations": [
+          "Do not require a time-series column or imply predictive accuracy."
+        ]
+      },
+      "runtime_support": "catalog_only",
+      "evidence_policy": "scoped_three_valued_v1"
+    },
+    "predict.classification.tree_classifier": {
+      "action_id": "predict.classification",
+      "definition": "A reviewed tree-based classification procedure.",
+      "selection": "A reviewed tree-based classification procedure. Requires explicit method/design review; alternatives are not interchangeable defaults.",
+      "additional_required_roles": [
+        "method"
+      ],
+      "additional_requirements": [
+        "procedure_assumptions"
+      ],
+      "input_scope": "single_table",
+      "output_contract": {
+        "kind": "predict_classification_result",
+        "provenance": "Preserve input identities, role bindings, method/version and evidence references.",
+        "limitations": [
+          "Do not require a time-series column or imply predictive accuracy."
+        ]
+      },
+      "runtime_support": "catalog_only",
+      "evidence_policy": "scoped_three_valued_v1"
+    },
+    "predict.regression.linear_regression": {
+      "action_id": "predict.regression",
+      "definition": "A reviewed linear regression procedure.",
+      "selection": "A reviewed linear regression procedure. Requires explicit method/design review; alternatives are not interchangeable defaults.",
+      "additional_required_roles": [
+        "method"
+      ],
+      "additional_requirements": [
+        "procedure_assumptions"
+      ],
+      "input_scope": "single_table",
+      "output_contract": {
+        "kind": "predict_regression_result",
+        "provenance": "Preserve input identities, role bindings, method/version and evidence references.",
+        "limitations": [
+          "Post-sale fields and target-derived features are leakage."
+        ]
+      },
+      "runtime_support": "catalog_only",
+      "evidence_policy": "scoped_three_valued_v1"
+    },
+    "predict.regression.tree_regression": {
+      "action_id": "predict.regression",
+      "definition": "A reviewed tree-based regression procedure.",
+      "selection": "A reviewed tree-based regression procedure. Requires explicit method/design review; alternatives are not interchangeable defaults.",
+      "additional_required_roles": [
+        "method"
+      ],
+      "additional_requirements": [
+        "procedure_assumptions"
+      ],
+      "input_scope": "single_table",
+      "output_contract": {
+        "kind": "predict_regression_result",
+        "provenance": "Preserve input identities, role bindings, method/version and evidence references.",
+        "limitations": [
+          "Post-sale fields and target-derived features are leakage."
+        ]
+      },
+      "runtime_support": "catalog_only",
+      "evidence_policy": "scoped_three_valued_v1"
+    },
+    "predict.forecasting.univariate": {
+      "action_id": "predict.forecasting",
+      "definition": "A history-only forecasting procedure with explicit origin, grain and horizon.",
+      "selection": "A history-only forecasting procedure with explicit origin, grain and horizon. Requires explicit method/design review; alternatives are not interchangeable defaults.",
+      "additional_required_roles": [
+        "reference"
+      ],
+      "additional_requirements": [
+        "reference_available"
+      ],
+      "input_scope": "single_table",
+      "output_contract": {
+        "kind": "predict_forecasting_result",
+        "provenance": "Preserve input identities, role bindings, method/version and evidence references.",
+        "limitations": [
+          "Forecasting is distinct from generic supervised prediction; no silent cadence."
+        ]
+      },
+      "runtime_support": "catalog_only",
+      "evidence_policy": "scoped_three_valued_v1"
+    },
+    "predict.forecasting.with_covariates": {
+      "action_id": "predict.forecasting",
+      "definition": "A forecast using additional covariates available at the forecast origin.",
+      "selection": "A forecast using additional covariates available at the forecast origin. Requires explicit method/design review; alternatives are not interchangeable defaults.",
+      "additional_required_roles": [
+        "features",
+        "prediction_time"
+      ],
+      "additional_requirements": [
+        "feature_availability"
+      ],
+      "input_scope": "single_table",
+      "output_contract": {
+        "kind": "predict_forecasting_result",
+        "provenance": "Preserve input identities, role bindings, method/version and evidence references.",
+        "limitations": [
+          "Forecasting is distinct from generic supervised prediction; no silent cadence."
+        ]
+      },
+      "runtime_support": "catalog_only",
+      "evidence_policy": "scoped_three_valued_v1"
+    },
+    "explain.causal.randomized_design": {
+      "action_id": "explain.causal",
+      "definition": "A causal contrast justified by a reviewed randomized assignment design.",
+      "selection": "A causal contrast justified by a reviewed randomized assignment design. Requires explicit method/design review; alternatives are not interchangeable defaults.",
+      "additional_required_roles": [
+        "method"
+      ],
+      "additional_requirements": [
+        "causal_identification"
+      ],
+      "input_scope": "single_table",
+      "output_contract": {
+        "kind": "explain_causal_result",
+        "provenance": "Preserve input identities, role bindings, method/version and evidence references.",
+        "limitations": [
+          "Columns and correlations alone cannot establish identification."
+        ]
+      },
+      "runtime_support": "catalog_only",
+      "evidence_policy": "scoped_three_valued_v1"
+    },
+    "explain.causal.observational_identification": {
+      "action_id": "explain.causal",
+      "definition": "A causal contrast with a reviewed observational identification argument.",
+      "selection": "A causal contrast with a reviewed observational identification argument. Requires explicit method/design review; alternatives are not interchangeable defaults.",
+      "additional_required_roles": [
+        "method"
+      ],
+      "additional_requirements": [
+        "causal_identification"
+      ],
+      "input_scope": "single_table",
+      "output_contract": {
+        "kind": "explain_causal_result",
+        "provenance": "Preserve input identities, role bindings, method/version and evidence references.",
+        "limitations": [
+          "Columns and correlations alone cannot establish identification."
+        ]
+      },
+      "runtime_support": "catalog_only",
+      "evidence_policy": "scoped_three_valued_v1"
+    }
+  }
+}

@@ -47,7 +47,7 @@ class PipelineTests(unittest.TestCase):
         result = self.run_proposal(self.proposal)
         self.assertEqual("grounded", result["status"])
         card = result["grounded_card"]
-        self.assertEqual("0.1.0-draft", card["ab_version"])
+        self.assertEqual(self.ab["ab_version"], card["ab_version"])
         self.assertEqual("compare", card["selected_parent_action_id"])
         self.assertEqual("compare.time", card["selected_child_action_id"])
         self.assertEqual({"measure_semantics", "observation_binding", "usable_numeric_observations",

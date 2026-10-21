@@ -1,6 +1,8 @@
 # Intended-action table discovery: evaluation contract
 
-> Current M0 refresh: preserves but excludes the separately authored local IL extension from this commit; classification, regression, forecasting and survival remain the requested Predict scope. This task performs audit, cleanup and planning only; no M1 implementation. See [the audit](REPOSITORY_AUDIT_M0.md) for current verification and compatibility inventory.
+> Supporting appendix. Start with the [main project guide](../README.md) for current architecture, demonstration, models and testing. Historical audit statements are dated records, not current capability claims.
+
+> Current M0 refresh: preserves the previously authorized IL extension (23 families, including classification, regression, forecasting and survival). This task performs audit, cleanup and planning only; no M1 implementation. See [the audit](REPOSITORY_AUDIT_M0.md) for current verification and compatibility inventory.
 
 Version: M0 proposal, 21 October 2026. This document fixes proposed measurement conventions before experiments; it does not assert an executed benchmark or approved scientific design. Open decisions are explicit. Scope initially Compare and Predict, with direct-observation Compare first, explicitly confirmed by the researcher after M0 delivery. Aggregate-then-compare is outside the initial scope.
 

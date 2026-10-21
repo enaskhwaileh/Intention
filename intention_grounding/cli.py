@@ -6,7 +6,8 @@ from importlib.resources import files
 from pathlib import Path
 import uuid
 
-from .action_base import CANONICAL_IL_PATH, load_intention_library
+from .action_base import (CANONICAL_IL_PATH, IntentionLibraryError, describe_intention,
+                          list_intentions, load_intention_library)
 from .aligner import compare_card
 from .grounder import GroqGrounderProvider, ReplayGrounderProvider, ground
 from .groq_config import groq_model_id
@@ -20,7 +21,7 @@ def _write(path, value):
     path.write_text(json.dumps(value, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
 
 
-def _offline_inputs():
+def _offline_inputs(ab_version=None):
     replay = json.loads(files("intention_grounding.interpreter").joinpath("fixtures/replay.json").read_text())
     case = replay[2]  # compare.time: complete canonical required roles and exact evidence.
     doc = json.loads(case["raw_response"])
@@ -28,7 +29,7 @@ def _offline_inputs():
     for index, argument in enumerate(doc["actions"][0]["arguments"]):
         refs.setdefault(argument["role"], []).append({"action_id": "a1", "argument_index": index})
         evidence.extend(argument["value"]["evidence"])
-    proposal = {"ab_version": "0.1.0-draft", "input_id": doc["input_id"],
+    proposal = {"ab_version": ab_version or load_intention_library()["ab_version"], "input_id": doc["input_id"],
                 "action_id": "compare.time", "bindings": refs, "evidence": list(dict.fromkeys(evidence))}
     return case["input_id"], case["input"], ReplayProvider(case["raw_response"]), ReplayGrounderProvider(json.dumps(proposal))
 
@@ -47,7 +48,19 @@ def main(argv=None):
     parser.add_argument("--output", type=Path, default=Path("outputs/pipeline"))
     parser.add_argument("--il", "--ab", dest="il", type=Path, default=CANONICAL_IL_PATH,
                         help="Intention Library JSON path (--ab is a compatibility alias)")
+    inspection = parser.add_mutually_exclusive_group()
+    inspection.add_argument("--list-intentions", action="store_true", help="List the IL offline as JSON")
+    inspection.add_argument("--intention", help="Inspect an intention and its separate procedure definitions offline")
     args = parser.parse_args(argv)
+    if args.list_intentions or args.intention is not None:
+        try:
+            ab = load_intention_library(args.il)
+            result = list_intentions(ab) if args.list_intentions else describe_intention(args.intention, ab)
+        except IntentionLibraryError as exc:
+            print(f"library_error={exc}")
+            return 2
+        print(json.dumps(result, indent=2, ensure_ascii=False))
+        return 0
     if args.list_models:
         try:
             for model_id in list_available_models():
@@ -72,7 +85,7 @@ def main(argv=None):
         parser.error("--max-tables must be positive")
     ab = load_intention_library(args.il)
     if args.mode == "offline":
-        input_id, user_input, interpreter_provider, grounder_provider = _offline_inputs()
+        input_id, user_input, interpreter_provider, grounder_provider = _offline_inputs(ab["ab_version"])
     else:
         input_id, user_input = args.input_id, args.input
         interpreter_provider, grounder_provider = GroqProvider(model=model), GroqGrounderProvider(model=model)

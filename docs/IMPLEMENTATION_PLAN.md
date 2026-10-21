@@ -1,6 +1,8 @@
 # Incremental implementation plan
 
-> Current M0 refresh: preserves but excludes the separately authored local IL extension from this commit; classification, regression, forecasting and survival remain the requested Predict scope. This task performs audit, cleanup and planning only; no M1 implementation. See [the audit](REPOSITORY_AUDIT_M0.md) for current verification and compatibility inventory.
+> Supporting appendix. Start with the [main project guide](../README.md) for current architecture, demonstration, models and testing. Historical audit statements are dated records, not current capability claims.
+
+> Current M0 refresh: preserves the previously authorized IL extension (23 families, including classification, regression, forecasting and survival). This task performs audit, cleanup and planning only; no M1 implementation. See [the audit](REPOSITORY_AUDIT_M0.md) for current verification and compatibility inventory.
 
 Milestone 0 delivery, 21 October 2026. Only M0 is performed in this task. All paths and commands in M1–M5 are explicit future targets; new test/config/module names do not claim existing functionality.
 
@@ -96,7 +98,7 @@ Output contract and all required run identities are defined in [evaluation contr
 
 **Deliverables:** verified branch/commit/status and remote-main relation; component matrix and reproducible gaps; source/baseline feasibility; data/annotation/split/metric contracts; exact staged plan. Existing outputs classified by provenance.
 
-**Verification:** commands and outcomes in audit §5; 33 offline tests, 13 replay cases, CLI smoke, compileall, documentation links/whitespace, `git diff --check` and final `git status --short --branch`.
+**Verification:** commands and outcomes in audit §5; 47 offline tests, 13 replay cases, CLI smoke, compileall, documentation links/whitespace, `git diff --check` and final `git status --short --branch`.
 
 **Acceptance:** three consistent documents; no unsupported accuracy/retrieval claims; scientific/access blockers explicit; existing files preserved; no M1 implementation, merge or push. This task stops when these conditions hold.
 
@@ -111,7 +113,7 @@ Output contract and all required run identities are defined in [evaluation contr
 - Add `intention_grounding/schemas/{corpus,request,judgment,discovery_split,prediction_row_split}.schema.json`.
 - Add `intention_grounding/benchmarks/{__init__,manifest,public_bundle,splits}.py` and evaluator-only `intention_grounding/evaluation/{__init__,judgments}.py`.
 - Add `configs/benchmarks/pilot_sources.json`; add `data/manifests/pilot-v1.jsonl`, `data/requests/pilot-v1.jsonl`, `data/splits/pilot-v1.json` **only after selection/validation**, and separate controlled-access `data/annotations/pilot-v1/` records as license/access permit. Raw/normalized data remain ignored per existing `.gitignore`.
-- Add `docs/ANNOTATION_PROTOCOL.md`, `docs/DATA_PROVENANCE.md`; update `docs/REPOSITORY_MAP.md`, `README.md` to fix environment instructions and link the current contracts.
+- Add `docs/ANNOTATION_PROTOCOL.md`, `docs/DATA_PROVENANCE.md`; update `README.md` (repository layout), `README.md` to fix environment instructions and link the current contracts.
 - Add `tests/test_benchmark_contracts.py`, `tests/test_split_isolation.py`, `tests/test_gold_isolation.py`; update package data in `pyproject.toml` for new schemas.
 
 **Deliverables:** closed schemas; truthful source/version/license and immutable hashes; independent label workflow; duplicate/source-family graph; public export free of labels; topic/family-disjoint manifests or an explicit development-only pilot designation. Audit each candidate's actual rows and metadata. Select no final dataset before these checks.
@@ -132,7 +134,7 @@ python -m unittest discover -s tests -v
 2. Independent requests and topical/usefulness judgments use useful/not-useful/unresolved evidence rubric; two-annotator/adjudication protocol is ready and at least a small pilot is independently reviewed. No generated gold from IL or model outputs.
 3. All IDs/references/hashes validate; duplicate IDs, missing files, corrupt hashes, split overlap and derived-source leakage fail. Public export contains no label/gold binding/candidate-positive fields.
 4. Development/validation/test topic and family sets are disjoint if a split is claimed. Insufficient independent groups produce a documented development-only dataset, not a fake holdout. Prediction row-split schema is distinct even if downstream experiments are deferred.
-5. Frozen metric/eligibility conventions are accepted before experiments; annotated unresolved/unjudged/no-positive cases survive round-trip loading. Existing 33-test behavior remains passing.
+5. Frozen metric/eligibility conventions are accepted before experiments; annotated unresolved/unjudged/no-positive cases survive round-trip loading. Existing 47-test behavior remains passing.
 
 No retrieval experiment is required for M1. Its acceptance does not imply final scientific sample size or publication readiness.
 
@@ -144,10 +146,10 @@ No retrieval experiment is required for M1. Its acceptance does not imply final 
 
 **Exact planned files:**
 
-- Modify `intention_grounding/{action_base,grounder,profiler,aligner,cli}.py` and canonical the versioned successor to `intention_grounding/docs/ab_proposal/action-base-v0.1.json` and its specification with version migration notes; preserve old replay compatibility.
+- Modify `intention_grounding/{action_base,grounder,profiler,aligner,cli}.py` and canonical `intention_grounding/docs/ab_proposal/action-base-v0.2.json` and `docs/INTENTION_LIBRARY.md` with version migration notes; preserve old replay compatibility.
 - Add `intention_grounding/schemas/{grounding,profile,verdict,ranking,experiment}.schema.json`.
 - Add `intention_grounding/{evidence,predicates,ranking,experiment}.py`, `intention_grounding/retrieval/{__init__,bm25,serialization}.py`, and `intention_grounding/experiment_config.py`.
-- Add `configs/experiments/compare_pilot.json`, `configs/experiments/compare_offline_smoke.json`, `configs/ranking/compare_v1.json`; update `pyproject.toml`, `README.md`, `docs/REPOSITORY_MAP.md`, and `notebooks/pipeline_walkthrough.ipynb` as necessary for the same pipeline.
+- Add `configs/experiments/compare_pilot.json`, `configs/experiments/compare_offline_smoke.json`, `configs/ranking/compare_v1.json`; update `pyproject.toml`, `README.md`, `README.md` (repository layout), and `notebooks/pipeline_walkthrough.ipynb` as necessary for the same pipeline.
 - Modify `tests/test_pipeline.py`; add `tests/test_grounding_procedures.py`, `tests/test_profile_evidence.py`, `tests/test_requirement_verdicts.py`, `tests/test_ranking.py`, `tests/test_experiment_artifacts.py`.
 
 **Deliverables:** strict nonabstract/multi-procedure grounding; explicit unhandled-goal/coverage outcomes; one real supported table representation; scoped relational/metadata evidence; three-state verdicts with locators; full-request BM25 candidate retrieval; deterministic ordinal ranking/abstention; config-driven unique run manifests and predictions. Port historical BM25 mechanics only after correctness review. Reuse current interpreter validation rather than adding a second extraction path.
@@ -177,7 +179,7 @@ python -m unittest discover -s tests -v
 - Add `intention_grounding/baselines/{__init__,registry,semantic_matching,taberta,qwen_embedding,qwen_reranker,direct_llm}.py`; reuse M2 BM25 as the BM25 adapter.
 - Add `intention_grounding/evaluation/{metrics,runner,statistics,followtable}.py` and `intention_grounding/benchmarks/followtable.py` after terms/protocol gates; extend `experiment.py`, `experiment_config.py`, `cli.py` for isolated evaluation and multi-method configs.
 - Add `configs/baselines/registry.json`, `configs/evaluation/pilot.json`, `configs/experiments/compare_controlled.json`, `configs/experiments/compare_end_to_end.json`; update optional dependencies in `pyproject.toml`, and add `requirements/experiments.lock` after environment resolution.
-- Add `tests/test_baseline_contracts.py`, `tests/test_metrics.py`, `tests/test_evaluation_runner.py`, `tests/test_followtable_adapter.py`; extend `tests/test_gold_isolation.py`, `tests/test_experiment_artifacts.py`; update `docs/REPOSITORY_MAP.md` and `README.md`.
+- Add `tests/test_baseline_contracts.py`, `tests/test_metrics.py`, `tests/test_evaluation_runner.py`, `tests/test_followtable_adapter.py`; extend `tests/test_gold_isolation.py`, `tests/test_experiment_artifacts.py`; update `README.md` (repository layout) and `README.md`.
 
 **Deliverables:** explicit available/requiring-integration/blocked registry; pinned pretrained adapters and reference-output parity for published methods; controlled candidate export/hash; full-request and evidence-matched comparisons; unjudged/unresolved-safe metrics, topic-level paired estimates, native FollowTable track kept distinct. No fine-tuning.
 
@@ -203,7 +205,7 @@ Last two commands are executed only after model/budget/data preflight; tests use
 
 **Dependencies:** M1–M3 contracts, researcher-approved task taxonomy and prediction-time information policy, independently annotated Predict requests, row/entity/time split design. Settle whether downstream utility means feasible supervised prediction, forecasting, or measured performance; do not equate them.
 
-**Exact planned files:** modify `intention_grounding/action_base.py`, `grounder.py`, `profiler.py`, `predicates.py`, `aligner.py`, and the canonical IL catalog/specification with a new version; modify `interpreter/schema.json` and `interpreter/providers.py` only if new explicit roles require a versioned migration. Add `intention_grounding/prediction/{__init__,diagnostics,row_splits,downstream}.py`, `configs/experiments/predict_pilot.json`, `configs/prediction/pilot.json`, `tests/test_predict_procedures.py`, `tests/test_prediction_leakage.py`, `tests/test_prediction_splits.py`; update `tests/test_grounding_procedures.py`, `docs/ANNOTATION_PROTOCOL.md`, `docs/REPOSITORY_MAP.md`, `README.md` and schema package data as needed.
+**Exact planned files:** modify `intention_grounding/action_base.py`, `grounder.py`, `profiler.py`, `predicates.py`, `aligner.py`, and the canonical IL catalog/specification with a new version; modify `interpreter/schema.json` and `interpreter/providers.py` only if new explicit roles require a versioned migration. Add `intention_grounding/prediction/{__init__,diagnostics,row_splits,downstream}.py`, `configs/experiments/predict_pilot.json`, `configs/prediction/pilot.json`, `tests/test_predict_procedures.py`, `tests/test_prediction_leakage.py`, `tests/test_prediction_splits.py`; update `tests/test_grounding_procedures.py`, `docs/ANNOTATION_PROTOCOL.md`, `README.md` (repository layout), `README.md` and schema package data as needed.
 
 **Deliverables:** separate procedures for approved prediction task(s), explicit target/features/unit/population/time/horizon bindings, target availability and leakage evidence, missingness/label-distribution diagnostics with no unjustified hard minimum-N rule, row-level split manifests separate from discovery partitions. Observational adequacy is not proof of predictive performance. Downstream fitting, if scientifically requested, is a separately budgeted experiment with frozen estimators/preprocessing; retrieval models remain pretrained. Do not train in M0 or make downstream fitting a hidden pilot dependency.
 
@@ -225,7 +227,7 @@ python -m unittest discover -s tests -v
 
 **Dependencies:** M1–M4 acceptance; clean frozen code/dependency/model/config versions; licensed data, locked untouched test partitions and judgments; sufficient independent test units/sample design; resolved baseline and protocol blockers. External FollowTable is optional until compatible and licensed.
 
-**Exact planned files:** add `configs/experiments/{compare_frozen,predict_frozen,followtable_external}.json`, `configs/evaluation/frozen.json`, `intention_grounding/evaluation/report.py`, `tests/test_report_reproducibility.py`, `docs/EXPERIMENT_REPORT.md`, `docs/REPRODUCIBILITY.md`, and small shareable `reports/frozen-v1/{artifact_manifest.json,metrics.json,per_topic.csv}`. Large source/model/run artifacts stay outside tracked source with hashes/authorized storage locations. Update `README.md`, `docs/REPOSITORY_MAP.md` and `.github/workflows/deterministic.yml` for offline artifact checks only.
+**Exact planned files:** add `configs/experiments/{compare_frozen,predict_frozen,followtable_external}.json`, `configs/evaluation/frozen.json`, `intention_grounding/evaluation/report.py`, `tests/test_report_reproducibility.py`, `docs/EXPERIMENT_REPORT.md`, `docs/REPRODUCIBILITY.md`, and small shareable `reports/frozen-v1/{artifact_manifest.json,metrics.json,per_topic.csv}`. Large source/model/run artifacts stay outside tracked source with hashes/authorized storage locations. Update `README.md`, `README.md` (repository layout) and `.github/workflows/deterministic.yml` for offline artifact checks only.
 
 **Deliverables:** versioned predictions, evidence and immutable run manifests; controlled and end-to-end tables; per-action/topic results, paired uncertainty where justified, candidate recall, verdict fidelity/false-support, coverage/failure rates, costs/timing, scope and contamination limitations; independently reproducible metrics and report. Report blocked/omitted methods explicitly and avoid stronger claims than the evidence permits.
 

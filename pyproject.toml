@@ -16,10 +16,11 @@ dev = [] # Tests use the Python standard library.
 
 [project.scripts]
 intention-grounding = "intention_grounding.cli:main"
+intention-demo = "intention_grounding.dashboard:main"
 
 [tool.setuptools.packages.find]
 include = ["intention_grounding*"]
 
 [tool.setuptools.package-data]
 "intention_grounding.interpreter" = ["schema.json", "fixtures/*.json"]
-"intention_grounding" = ["fixtures/*.csv", "fixtures/*.json", "docs/ab_proposal/*.json"]
+"intention_grounding" = ["fixtures/*.csv", "fixtures/*.json", "docs/ab_proposal/*.json", "ui/*.html", "ui/*.css", "ui/*.js"]
