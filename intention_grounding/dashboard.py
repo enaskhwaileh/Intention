@@ -15,7 +15,7 @@ from datetime import datetime, timezone
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from urllib.parse import urlsplit, parse_qs
 
-from .action_base import load_intention_library, list_intentions, describe_intention, ActionBaseError
+from .intention_library import load_intention_library, list_intentions, describe_intention, IntentionLibraryError
 from .cli import _offline_inputs
 from .interpreter.core import interpret
 from .interpreter.providers import ReplayProvider
@@ -66,14 +66,14 @@ def run_case(case_id):
 def demo():
     start = time.perf_counter()
     il = load_intention_library()
-    input_id, request, interpreter_provider, grounder_provider = _offline_inputs(il['ab_version'])
+    input_id, request, interpreter_provider, grounder_provider = _offline_inputs(il['il_version'])
     interpreted = interpret(input_id, request, interpreter_provider)
     grounded = ground(interpreted, il, grounder_provider, run_id='dashboard-offline')
     metadata = json.loads((PACKAGE / 'fixtures/offline-source-metadata.json').read_text())
     path = PACKAGE / 'fixtures/offline_table.csv'
     profile = profile_table(path, dataset_id=metadata['dataset_id'], source_metadata=metadata)
-    comparison = compare_card(grounded['grounded_card'], [profile])
-    return {'request': request, 'mode': 'offline_manual_replay', 'il_version': il['ab_version'],
+    comparison = compare_card(grounded['grounded_intention'], [profile])
+    return {'request': request, 'mode': 'offline_manual_replay', 'il_version': il['il_version'],
             'interpretation': interpreted, 'grounding': grounded, 'profile': profile,
             'comparison': comparison, 'rows': list(csv.DictReader(io.StringIO(path.read_text()))),
             'elapsed_ms': round((time.perf_counter() - start) * 1000, 2), 'provenance': identity(),
@@ -147,7 +147,7 @@ class Handler(BaseHTTPRequestHandler):
             try:
                 aid = parse_qs(url.query).get('id', [''])[0]
                 return self.send(describe_intention(aid, load_intention_library()))
-            except ActionBaseError:
+            except IntentionLibraryError:
                 return self.send({'error': 'Unknown intention'}, 404)
         return self.send({'error': 'Not found'}, 404)
 

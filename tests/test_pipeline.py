@@ -9,7 +9,7 @@ import io
 import os
 from unittest.mock import patch
 
-from intention_grounding.action_base import ActionBaseError, load_action_base, validate_action_base
+from intention_grounding.intention_library import IntentionLibraryError, load_intention_library, validate_intention_library
 from intention_grounding.aligner import compare_card
 from intention_grounding.cli import main
 from intention_grounding.grounder import GroqGrounderProvider, ReplayGrounderProvider, ground
@@ -31,40 +31,40 @@ class PipelineTests(unittest.TestCase):
         fixtures = json.loads(importlib.resources.files("intention_grounding.interpreter").joinpath("fixtures/replay.json").read_text())
         cls.case = fixtures[2]
         cls.interpreted = interpret(cls.case["input_id"], cls.case["input"], ReplayProvider(cls.case["raw_response"]))
-        cls.ab = load_action_base()
+        cls.il = load_intention_library()
         doc = cls.interpreted["interpretation"]
-        cls.proposal = {"ab_version": cls.ab["ab_version"], "input_id": doc["input_id"],
-                        "action_id": "compare.time", "bindings": {}, "evidence": []}
-        for index, argument in enumerate(doc["actions"][0]["arguments"]):
-            cls.proposal["bindings"].setdefault(argument["role"], []).append({"action_id": "a1", "argument_index": index})
+        cls.proposal = {"il_version": cls.il["il_version"], "input_id": doc["input_id"],
+                        "intention_id": "compare.time", "bindings": {}, "evidence": []}
+        for index, argument in enumerate(doc["intentions"][0]["arguments"]):
+            cls.proposal["bindings"].setdefault(argument["role"], []).append({"intention_instance_id": "a1", "argument_index": index})
             cls.proposal["evidence"].extend(argument["value"]["evidence"])
         cls.proposal["evidence"] = list(dict.fromkeys(cls.proposal["evidence"]))
 
     def run_proposal(self, proposal):
-        return ground(self.interpreted, self.ab, ReplayGrounderProvider(json.dumps(proposal)), run_id="test-run")
+        return ground(self.interpreted, self.il, ReplayGrounderProvider(json.dumps(proposal)), run_id="test-run")
 
     def test_valid_grounding_and_inheritance(self):
         result = self.run_proposal(self.proposal)
         self.assertEqual("grounded", result["status"])
-        card = result["grounded_card"]
-        self.assertEqual(self.ab["ab_version"], card["ab_version"])
-        self.assertEqual("compare", card["selected_parent_action_id"])
-        self.assertEqual("compare.time", card["selected_child_action_id"])
+        card = result["grounded_intention"]
+        self.assertEqual(self.il["il_version"], card["il_version"])
+        self.assertEqual("compare", card["parent_intention_id"])
+        self.assertEqual("compare.time", card["intention_id"])
         self.assertEqual({"measure_semantics", "observation_binding", "usable_numeric_observations",
                           "comparable_measure_definition", "time_coverage"},
                          {r["id"] for r in card["requirements"]})
         self.assertTrue(card["deterministic_validation"]["valid"])
 
     def test_unknown_wrong_action_and_version(self):
-        for field, value, reason in [("action_id", "COMPARE", "UNKNOWN_ACTION_ID"),
-                                     ("ab_version", "9", "AB_VERSION_MISMATCH")]:
+        for field, value, reason in [("intention_id", "COMPARE", "UNKNOWN_INTENTION_ID"),
+                                     ("il_version", "9", "IL_VERSION_MISMATCH")]:
             proposal = copy.deepcopy(self.proposal); proposal[field] = value
             result = self.run_proposal(proposal)
             self.assertEqual("invalid_model_response", result["status"])
             self.assertIn(reason, result["reasons"][0])
 
     def test_malformed_missing_arguments_and_evidence(self):
-        malformed = ground(self.interpreted, self.ab, ReplayGrounderProvider("{"), run_id="x")
+        malformed = ground(self.interpreted, self.il, ReplayGrounderProvider("{"), run_id="x")
         self.assertEqual("invalid_model_response", malformed["status"])
         for mutate in [lambda p: p["bindings"].pop("measure"), lambda p: p.update(evidence=[])]:
             proposal = copy.deepcopy(self.proposal); mutate(proposal)
@@ -75,11 +75,11 @@ class PipelineTests(unittest.TestCase):
         for index, expected in [(6, "ambiguous"), (3, "insufficient_input"), (7, "unsupported")]:
             case = fixtures[index]
             envelope = interpret(case["input_id"], case["input"], ReplayProvider(case["raw_response"]))
-            self.assertEqual(expected, ground(envelope, self.ab, ReplayGrounderProvider("{}"), run_id="x")["status"])
+            self.assertEqual(expected, ground(envelope, self.il, ReplayGrounderProvider("{}"), run_id="x")["status"])
         class Broken:
             metadata = {"provider": "broken"}
             def invoke(self, *_): raise RuntimeError("secret")
-        result = ground(self.interpreted, self.ab, Broken(), run_id="x")
+        result = ground(self.interpreted, self.il, Broken(), run_id="x")
         self.assertEqual("provider_failure", result["status"])
         self.assertNotIn("secret", json.dumps(result))
         self.assertEqual({"exception_type": "RuntimeError"}, result["provider_error"])
@@ -94,30 +94,30 @@ class PipelineTests(unittest.TestCase):
                 error.status_code = 403
                 error.code = "untrusted-secret-value"
                 raise error
-        result = ground(self.interpreted, self.ab, FailingProvider(), run_id="x")
+        result = ground(self.interpreted, self.il, FailingProvider(), run_id="x")
         self.assertEqual("provider_failure", result["status"])
         self.assertEqual({"exception_type": "RuntimeError", "http_status": 403},
                          result["provider_error"])
         self.assertNotIn("secret-value", json.dumps(result))
         with patch.dict(os.environ, {}, clear=True):
-            missing = ground(self.interpreted, self.ab,
+            missing = ground(self.interpreted, self.il,
                              GroqGrounderProvider(model="explicit-test-model"), run_id="x")
         self.assertEqual({"exception_type": "MissingGroqCredentialError",
                           "error_code": "MISSING_GROQ_API_KEY"}, missing["provider_error"])
 
     def test_action_base_validation(self):
-        ab = copy.deepcopy(self.ab); ab["actions"]["compare.time"]["parent"] = "missing"
-        with self.assertRaises(ActionBaseError): validate_action_base(ab)
-        with self.assertRaises(ActionBaseError): load_action_base(expected_version="9")
+        il = copy.deepcopy(self.il); il["intentions"]["compare.time"]["parent"] = "missing"
+        with self.assertRaises(IntentionLibraryError): validate_intention_library(il)
+        with self.assertRaises(IntentionLibraryError): load_intention_library(expected_version="9")
 
     def test_profile_and_unknown_alignment(self):
         path = Path(importlib.resources.files("intention_grounding").joinpath("fixtures/offline_table.csv"))
         profile = profile_table(path)
         self.assertEqual(4, profile["row_count"])
         self.assertTrue(all(column["evidence_ref"] for column in profile["columns"]))
-        card = self.run_proposal(self.proposal)["grounded_card"]
+        card = self.run_proposal(self.proposal)["grounded_intention"]
         compared = compare_card(card, [profile])
-        self.assertTrue(all(r["state"] == "unknown" for r in compared["tables"][0]["requirements"]))
+        self.assertTrue(all(r["state"] == "unresolved" for r in compared["tables"][0]["requirements"]))
         broken = copy.deepcopy(profile); broken["evidence"] = []
         compared = compare_card(card, [broken])
         self.assertTrue(all(r["reason"] == "PROFILE_MISSING_EVIDENCE" for r in compared["tables"][0]["requirements"]))

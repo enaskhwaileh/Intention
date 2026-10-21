@@ -39,10 +39,10 @@ class DashboardTests(unittest.TestCase):
         self.assertEqual(200, status)
         result = json.loads(raw)
         self.assertEqual('offline_manual_replay', result['mode'])
-        self.assertEqual('compare.time', result['grounding']['grounded_card']['selected_child_action_id'])
+        self.assertEqual('compare.time', result['grounding']['grounded_intention']['intention_id'])
         self.assertEqual(4, len(result['rows']))
         self.assertEqual(4, result['profile']['row_count'])
-        self.assertEqual('unknown', result['comparison']['tables'][0]['overall_state'])
+        self.assertEqual('unresolved', result['comparison']['tables'][0]['overall_state'])
         self.assertTrue(result['provenance']['implementation_sha256'])
         self.assertIn('Synthetic', result['notice'])
 

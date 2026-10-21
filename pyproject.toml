@@ -23,4 +23,6 @@ include = ["intention_grounding*"]
 
 [tool.setuptools.package-data]
 "intention_grounding.interpreter" = ["schema.json", "fixtures/*.json"]
-"intention_grounding" = ["fixtures/*.csv", "fixtures/*.json", "docs/ab_proposal/*.json", "ui/*.html", "ui/*.css", "ui/*.js"]
+"intention_grounding" = ["fixtures/*.csv", "fixtures/*.json", "docs/ab_proposal/*.json", "library/*.json", "ui/*.html", "ui/*.css", "ui/*.js"]
+
+"intention_grounding.legacy" = ["*.json"]

@@ -2,12 +2,12 @@
 import json
 from dataclasses import dataclass
 
-from .action_base import ancestry, is_groundable
+from .intention_library import ancestry, is_groundable
 from .interpreter.core import parse_response, ContractError
 from .groq_config import groq_api_key, groq_model_id
 from .provider_errors import provider_diagnostic
 
-CARD_SCHEMA_VERSION = "1.0"
+CARD_SCHEMA_VERSION = "2.0"
 GROUNDING_PROMPT_VERSION = "canonical-il-v0.2-grounder-v2"
 
 
@@ -19,7 +19,7 @@ class ReplayGrounderProvider:
     def metadata(self):
         return {"provider": "manual-replay", "fixture_origin": "manually_authored"}
 
-    def invoke(self, interpretation, ab):
+    def invoke(self, interpretation, il):
         return self.raw_response
 
 
@@ -35,19 +35,19 @@ class GroqGrounderProvider:
                 "generation_settings": {"temperature": self.temperature, "max_tokens": self.max_tokens,
                                         "response_format": {"type": "json_object"}}}
 
-    def invoke(self, interpretation, ab):
+    def invoke(self, interpretation, il):
         key = groq_api_key()
-        catalogue = {key: {field: value for field, value in action.items()
+        catalogue = {key: {field: value for field, value in intention.items()
                            if field in {"parent", "abstract", "definition", "required_roles",
                                         "minimum_cardinalities", "selection"}}
-                     for key, action in ab["actions"].items()
-                     if is_groundable(key, ab) or key == "compare"}
+                     for key, intention in il["intentions"].items()
+                     if is_groundable(key, il) or key == "compare"}
         prompt = ("Select exactly one supported Intention Library intention ID. Do not invent IDs, values, or evidence. "
-                  "Return only JSON with keys ab_version,input_id,action_id,bindings,evidence. "
-                  "bindings maps each role to a nonempty list of {action_id,argument_index}; indices refer "
+                  "Return only JSON with keys il_version,input_id,intention_id,bindings,evidence. "
+                  "bindings maps each role to a nonempty list of {intention_instance_id,argument_index}; indices refer "
                   "to the structured intention record arguments. evidence is a nonempty list of interpreter evidence IDs. "
                   "Only select an intention when its meaning and inherited required roles are supported.\nIL=" +
-                  json.dumps({"ab_version": ab["ab_version"], "actions": catalogue}))
+                  json.dumps({"il_version": il["il_version"], "intentions": catalogue}))
         factory = self.client_factory
         if factory is None:
             from groq import Groq
@@ -63,45 +63,45 @@ class GroqGrounderProvider:
 
 def _non_grounded(status, reason, raw=None, proposal=None, metadata=None, provider_error=None):
     return {"metadata": metadata or {}, "raw_response": raw, "model_proposal": proposal,
-            "grounded_card": None, "status": status, "reasons": [reason],
+            "grounded_intention": None, "status": status, "reasons": [reason],
             "provider_error": provider_error}
 
 
-def _validate_proposal(proposal, interpretation, ab):
-    if not isinstance(proposal, dict) or set(proposal) != {"ab_version", "input_id", "action_id", "bindings", "evidence"}:
+def _validate_proposal(proposal, interpretation, il):
+    if not isinstance(proposal, dict) or set(proposal) != {"il_version", "input_id", "intention_id", "bindings", "evidence"}:
         raise ValueError("INVALID_MODEL_RESPONSE")
-    if proposal["ab_version"] != ab["ab_version"]:
-        raise ValueError("AB_VERSION_MISMATCH")
+    if proposal["il_version"] != il["il_version"]:
+        raise ValueError("IL_VERSION_MISMATCH")
     if proposal["input_id"] != interpretation["input_id"]:
         raise ValueError("INPUT_MISMATCH")
-    if not isinstance(proposal["action_id"], str) or proposal["action_id"] not in ab["actions"]:
-        raise ValueError("UNKNOWN_ACTION_ID")
-    if ab["actions"][proposal["action_id"]]["abstract"]:
-        raise ValueError("ABSTRACT_ACTION_NOT_GROUNDABLE")
-    if not is_groundable(proposal["action_id"], ab):
-        raise ValueError("ACTION_CATALOG_ONLY")
+    if not isinstance(proposal["intention_id"], str) or proposal["intention_id"] not in il["intentions"]:
+        raise ValueError("UNKNOWN_INTENTION_ID")
+    if il["intentions"][proposal["intention_id"]]["abstract"]:
+        raise ValueError("ABSTRACT_INTENTION_NOT_GROUNDABLE")
+    if not is_groundable(proposal["intention_id"], il):
+        raise ValueError("INTENTION_CATALOG_ONLY")
     if not isinstance(proposal["bindings"], dict) or not isinstance(proposal["evidence"], list) or not proposal["evidence"]:
         raise ValueError("MISSING_ARGUMENTS_OR_EVIDENCE")
     evidence_ids = {x["id"] for x in interpretation["evidence"]}
     if any(not isinstance(x, str) or x not in evidence_ids for x in proposal["evidence"]):
         raise ValueError("UNKNOWN_EVIDENCE")
-    actions = {x["id"]: x for x in interpretation["actions"]}
+    intentions = {x["id"]: x for x in interpretation["intentions"]}
     resolved = {}
     used_evidence = set()
     for role, refs in proposal["bindings"].items():
-        if role not in ab["roles"] or not isinstance(refs, list) or not refs:
+        if role not in il["roles"] or not isinstance(refs, list) or not refs:
             raise ValueError("INVALID_BINDING")
         resolved[role] = []
         for ref in refs:
-            if not isinstance(ref, dict) or set(ref) != {"action_id", "argument_index"}:
+            if not isinstance(ref, dict) or set(ref) != {"intention_instance_id", "argument_index"}:
                 raise ValueError("INVALID_BINDING")
-            if not isinstance(ref["action_id"], str):
+            if not isinstance(ref["intention_instance_id"], str):
                 raise ValueError("INVALID_BINDING")
-            action = actions.get(ref["action_id"])
+            intention = intentions.get(ref["intention_instance_id"])
             index = ref["argument_index"]
-            if action is None or type(index) is not int or not 0 <= index < len(action["arguments"]):
+            if intention is None or type(index) is not int or not 0 <= index < len(intention["arguments"]):
                 raise ValueError("INVALID_BINDING")
-            argument = action["arguments"][index]
+            argument = intention["arguments"][index]
             if argument["role"] != role:
                 raise ValueError("INVALID_BINDING")
             resolved[role].append({"value": argument["value"], "source": ref})
@@ -109,31 +109,31 @@ def _validate_proposal(proposal, interpretation, ab):
     if not used_evidence or not used_evidence <= set(proposal["evidence"]):
         raise ValueError("MISSING_ARGUMENT_EVIDENCE")
     required = []
-    for node in ancestry(proposal["action_id"], ab):
-        required.extend(ab["actions"][node].get("required_roles", []))
+    for node in ancestry(proposal["intention_id"], il):
+        required.extend(il["intentions"][node].get("required_roles", []))
     missing = [role for role in required if role not in resolved]
     if missing:
         raise ValueError("MISSING_REQUIRED_ROLE:" + ",".join(missing))
     for role in required:
-        spec = ab["roles"][role]
+        spec = il["roles"][role]
         values = [x["value"]["literal"] for x in resolved[role]]
         if len(values) < spec.get("min_items", 1) or (spec.get("unique") and len(set(values)) != len(values)):
             raise ValueError("ROLE_CARDINALITY:" + role)
-    for role, minimum in ab["actions"][proposal["action_id"]].get("minimum_cardinalities", {}).items():
+    for role, minimum in il["intentions"][proposal["intention_id"]].get("minimum_cardinalities", {}).items():
         if len(resolved.get(role, [])) < minimum:
             raise ValueError("ROLE_CARDINALITY:" + role)
     return resolved
 
 
-def _build_card(proposal, resolved, interpretation, ab, run_id):
+def _build_card(proposal, resolved, interpretation, il, run_id):
     bindings = {role: [item["value"] for item in items] for role, items in resolved.items()}
     binding_provenance = {role: [item["source"] for item in items] for role, items in resolved.items()}
     bindings["coverage_policy"] = ["available_observations"]
     binding_provenance["coverage_policy"] = [{"source": "system_policy", "rule_id": "default_available_observations_v1"}]
     requirement_ids = []
-    for node in ancestry(proposal["action_id"], ab):
-        for template_id in ab["actions"][node].get("requirements", []):
-            template = ab["requirement_templates"][template_id]
+    for node in ancestry(proposal["intention_id"], il):
+        for template_id in il["intentions"][node].get("requirements", []):
+            template = il["requirement_templates"][template_id]
             activation = template.get("activation")
             if activation == "time_points_present" and "time_points" not in resolved:
                 continue
@@ -143,24 +143,24 @@ def _build_card(proposal, resolved, interpretation, ab, run_id):
                 requirement_ids.append(template_id)
     requirements = []
     for template_id in requirement_ids:
-        template = ab["requirement_templates"][template_id]
+        template = il["requirement_templates"][template_id]
         bound = {role: bindings[role] for role in template["bind_present_roles"] if role in bindings}
         requirements.append({"id": template_id, "predicate": template["predicate"], "axis": template["axis"],
                              "modality": template["modality"], "scope": template["scope"], "bindings": bound,
-                             "origin": {"action_id": proposal["action_id"], "template_id": template_id,
-                                        "ab_version": ab["ab_version"]}})
+                             "origin": {"intention_id": proposal["intention_id"], "template_id": template_id,
+                                        "il_version": il["il_version"]}})
     return {"schema_version": CARD_SCHEMA_VERSION, "input_id": interpretation["input_id"], "run_id": run_id,
-            "ab_version": ab["ab_version"], "selected_parent_action_id": ab["actions"][proposal["action_id"]]["parent"],
-            "selected_child_action_id": proposal["action_id"], "bindings": bindings,
+            "il_version": il["il_version"], "parent_intention_id": il["intentions"][proposal["intention_id"]]["parent"],
+            "intention_id": proposal["intention_id"], "bindings": bindings,
             "binding_provenance": binding_provenance, "model_proposal": proposal,
-            "deterministic_validation": {"valid": True, "checks": ["known_action", "inherited_roles", "cardinality", "evidence_refs"]},
+            "deterministic_validation": {"valid": True, "checks": ["known_intention", "inherited_roles", "cardinality", "evidence_refs"]},
             "requirements": requirements, "requirement_logic": {"all_of": requirement_ids},
             "evidence_provenance": {item["id"]: item for item in interpretation["evidence"] if item["id"] in proposal["evidence"]},
             "unresolved_or_missing_requirements": [], "grounding_status": "grounded"}
 
 
-def ground(interpreter_envelope, ab, provider, *, run_id):
-    metadata = {"ab_version": ab["ab_version"]}
+def ground(interpreter_envelope, il, provider, *, run_id):
+    metadata = {"il_version": il["il_version"]}
     try:
         metadata.update(provider.metadata)
     except Exception as exc:
@@ -175,7 +175,7 @@ def ground(interpreter_envelope, ab, provider, *, run_id):
     if interpretation["status"] != "unambiguous":
         return _non_grounded(status_map[interpretation["status"]], "INTERPRETER_" + interpretation["status"].upper(), metadata=metadata)
     try:
-        raw = provider.invoke(interpretation, ab)
+        raw = provider.invoke(interpretation, il)
     except Exception as exc:
         return _non_grounded("provider_failure", "PROVIDER_FAILURE", metadata=metadata,
                              provider_error=provider_diagnostic(exc))
@@ -183,14 +183,14 @@ def ground(interpreter_envelope, ab, provider, *, run_id):
         return _non_grounded("invalid_model_response", "NON_TEXT_RESPONSE", metadata=metadata)
     try:
         proposal = parse_response(raw)
-        resolved = _validate_proposal(proposal, interpretation, ab)
-        card = _build_card(proposal, resolved, interpretation, ab, run_id)
+        resolved = _validate_proposal(proposal, interpretation, il)
+        card = _build_card(proposal, resolved, interpretation, il, run_id)
     except (ContractError, ValueError) as exc:
-        if str(exc) == "ACTION_CATALOG_ONLY":
-            return _non_grounded("unsupported", "ACTION_CATALOG_ONLY", raw=raw,
+        if str(exc) == "INTENTION_CATALOG_ONLY":
+            return _non_grounded("unsupported", "INTENTION_CATALOG_ONLY", raw=raw,
                                  proposal=proposal, metadata=metadata)
         return _non_grounded("invalid_model_response", str(exc), raw=raw,
                              proposal=proposal if "proposal" in locals() else None, metadata=metadata)
     return {"metadata": metadata, "raw_response": raw, "model_proposal": proposal,
-            "grounded_card": card, "status": "grounded", "reasons": [],
+            "grounded_intention": card, "status": "grounded", "reasons": [],
             "provider_error": None}

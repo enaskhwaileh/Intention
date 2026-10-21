@@ -6,7 +6,7 @@ from importlib.resources import files
 from pathlib import Path
 import uuid
 
-from .action_base import (CANONICAL_IL_PATH, IntentionLibraryError, describe_intention,
+from .intention_library import (CANONICAL_IL_PATH, IntentionLibraryError, describe_intention,
                           list_intentions, load_intention_library)
 from .aligner import compare_card
 from .grounder import GroqGrounderProvider, ReplayGrounderProvider, ground
@@ -21,16 +21,16 @@ def _write(path, value):
     path.write_text(json.dumps(value, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
 
 
-def _offline_inputs(ab_version=None):
+def _offline_inputs(il_version=None):
     replay = json.loads(files("intention_grounding.interpreter").joinpath("fixtures/replay.json").read_text())
     case = replay[2]  # compare.time: complete canonical required roles and exact evidence.
     doc = json.loads(case["raw_response"])
     refs, evidence = {}, []
-    for index, argument in enumerate(doc["actions"][0]["arguments"]):
-        refs.setdefault(argument["role"], []).append({"action_id": "a1", "argument_index": index})
+    for index, argument in enumerate(doc["intentions"][0]["arguments"]):
+        refs.setdefault(argument["role"], []).append({"intention_instance_id": "a1", "argument_index": index})
         evidence.extend(argument["value"]["evidence"])
-    proposal = {"ab_version": ab_version or load_intention_library()["ab_version"], "input_id": doc["input_id"],
-                "action_id": "compare.time", "bindings": refs, "evidence": list(dict.fromkeys(evidence))}
+    proposal = {"il_version": il_version or load_intention_library()["il_version"], "input_id": doc["input_id"],
+                "intention_id": "compare.time", "bindings": refs, "evidence": list(dict.fromkeys(evidence))}
     return case["input_id"], case["input"], ReplayProvider(case["raw_response"]), ReplayGrounderProvider(json.dumps(proposal))
 
 
@@ -46,16 +46,16 @@ def main(argv=None):
     parser.add_argument("--dataset-metadata", type=Path, help="JSON provenance record for supplied tables")
     parser.add_argument("--max-tables", type=int, default=None)
     parser.add_argument("--output", type=Path, default=Path("outputs/pipeline"))
-    parser.add_argument("--il", "--ab", dest="il", type=Path, default=CANONICAL_IL_PATH,
-                        help="Intention Library JSON path (--ab is a compatibility alias)")
+    parser.add_argument("--il", "--il", dest="il", type=Path, default=CANONICAL_IL_PATH,
+                        help="Intention Library JSON path (--il is a compatibility alias)")
     inspection = parser.add_mutually_exclusive_group()
     inspection.add_argument("--list-intentions", action="store_true", help="List the IL offline as JSON")
     inspection.add_argument("--intention", help="Inspect an intention and its separate procedure definitions offline")
     args = parser.parse_args(argv)
     if args.list_intentions or args.intention is not None:
         try:
-            ab = load_intention_library(args.il)
-            result = list_intentions(ab) if args.list_intentions else describe_intention(args.intention, ab)
+            il = load_intention_library(args.il)
+            result = list_intentions(il) if args.list_intentions else describe_intention(args.intention, il)
         except IntentionLibraryError as exc:
             print(f"library_error={exc}")
             return 2
@@ -83,9 +83,9 @@ def main(argv=None):
             return 2
     if args.max_tables is not None and args.max_tables < 1:
         parser.error("--max-tables must be positive")
-    ab = load_intention_library(args.il)
+    il = load_intention_library(args.il)
     if args.mode == "offline":
-        input_id, user_input, interpreter_provider, grounder_provider = _offline_inputs(ab["ab_version"])
+        input_id, user_input, interpreter_provider, grounder_provider = _offline_inputs(il["il_version"])
     else:
         input_id, user_input = args.input_id, args.input
         interpreter_provider, grounder_provider = GroqProvider(model=model), GroqGrounderProvider(model=model)
@@ -93,19 +93,19 @@ def main(argv=None):
     output = args.output / run_id
     output.mkdir(parents=True, exist_ok=False)
     interpreted = interpret(input_id, user_input, interpreter_provider)
-    grounded = ground(interpreted, ab, grounder_provider, run_id=run_id)
+    grounded = ground(interpreted, il, grounder_provider, run_id=run_id)
     paths = sorted(args.dataset or [Path(files("intention_grounding").joinpath("fixtures/offline_table.csv"))], key=str)
     if args.max_tables is not None:
         paths = paths[:args.max_tables]
     if args.dataset_metadata:
         source_metadata = json.loads(args.dataset_metadata.read_text(encoding="utf-8"))
     else:
-        metadata_name = "wikidbs10k-source-metadata.json" if args.dataset else "offline-source-metadata.json"
-        source_metadata = json.loads(files("intention_grounding").joinpath("fixtures", metadata_name).read_text())
+        source_metadata = ({"dataset_id": "local", "source_url": None, "license": None, "benchmark_eligible": False}
+                           if args.dataset else json.loads(files("intention_grounding").joinpath("fixtures/offline-source-metadata.json").read_text()))
     if not isinstance(source_metadata.get("dataset_id"), str) or not source_metadata["dataset_id"]:
         parser.error("dataset metadata must contain a nonempty dataset_id")
     profiles = profile_paths(paths, dataset_id=source_metadata["dataset_id"], source_metadata=source_metadata)
-    comparison = compare_card(grounded["grounded_card"], profiles)
+    comparison = compare_card(grounded["grounded_intention"], profiles)
     (output / "interpreter.raw.txt").write_text(interpreted["raw_response"] or "", encoding="utf-8")
     _write(output / "interpretation.json", {k: v for k, v in interpreted.items() if k != "raw_response"})
     (output / "grounder.raw.txt").write_text(grounded["raw_response"] or "", encoding="utf-8")
@@ -113,7 +113,7 @@ def main(argv=None):
     _write(output / "table-profiles.json", profiles)
     _write(output / "comparison.json", comparison)
     manifest = {"run_id": run_id, "created_at": datetime.now(timezone.utc).isoformat(), "mode": args.mode,
-                "ab_path": str(args.il), "ab_version": ab["ab_version"], "input_id": input_id,
+                "il_path": str(args.il), "il_version": il["il_version"], "input_id": input_id,
                 "tables": [str(path) for path in paths], "artifact_directory": str(output)}
     _write(output / "run.json", manifest)
     states = {table["overall_state"] for table in comparison["tables"]}
