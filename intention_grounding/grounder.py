@@ -1,14 +1,14 @@
-"""AB-constrained model proposal followed by deterministic card construction."""
+"""Intention Library-constrained model proposal followed by deterministic card construction."""
 import json
 from dataclasses import dataclass
 
-from .action_base import ancestry
+from .action_base import ancestry, is_groundable
 from .interpreter.core import parse_response, ContractError
 from .groq_config import groq_api_key, groq_model_id
 from .provider_errors import provider_diagnostic
 
 CARD_SCHEMA_VERSION = "1.0"
-GROUNDING_PROMPT_VERSION = "canonical-ab-v0.1-grounder-v1"
+GROUNDING_PROMPT_VERSION = "canonical-il-v0.2-grounder-v2"
 
 
 @dataclass
@@ -40,12 +40,13 @@ class GroqGrounderProvider:
         catalogue = {key: {field: value for field, value in action.items()
                            if field in {"parent", "abstract", "definition", "required_roles",
                                         "minimum_cardinalities", "selection"}}
-                     for key, action in ab["actions"].items()}
-        prompt = ("Select exactly one supported Action Base ID. Do not invent IDs, values, or evidence. "
+                     for key, action in ab["actions"].items()
+                     if is_groundable(key, ab) or key == "compare"}
+        prompt = ("Select exactly one supported Intention Library intention ID. Do not invent IDs, values, or evidence. "
                   "Return only JSON with keys ab_version,input_id,action_id,bindings,evidence. "
                   "bindings maps each role to a nonempty list of {action_id,argument_index}; indices refer "
-                  "to the interpreter action arguments. evidence is a nonempty list of interpreter evidence IDs. "
-                  "Only select an action when its meaning and inherited required roles are supported.\nAB=" +
+                  "to the structured intention record arguments. evidence is a nonempty list of interpreter evidence IDs. "
+                  "Only select an intention when its meaning and inherited required roles are supported.\nIL=" +
                   json.dumps({"ab_version": ab["ab_version"], "actions": catalogue}))
         factory = self.client_factory
         if factory is None:
@@ -73,12 +74,16 @@ def _validate_proposal(proposal, interpretation, ab):
         raise ValueError("AB_VERSION_MISMATCH")
     if proposal["input_id"] != interpretation["input_id"]:
         raise ValueError("INPUT_MISMATCH")
-    if proposal["action_id"] not in ab["actions"]:
+    if not isinstance(proposal["action_id"], str) or proposal["action_id"] not in ab["actions"]:
         raise ValueError("UNKNOWN_ACTION_ID")
+    if ab["actions"][proposal["action_id"]]["abstract"]:
+        raise ValueError("ABSTRACT_ACTION_NOT_GROUNDABLE")
+    if not is_groundable(proposal["action_id"], ab):
+        raise ValueError("ACTION_CATALOG_ONLY")
     if not isinstance(proposal["bindings"], dict) or not isinstance(proposal["evidence"], list) or not proposal["evidence"]:
         raise ValueError("MISSING_ARGUMENTS_OR_EVIDENCE")
     evidence_ids = {x["id"] for x in interpretation["evidence"]}
-    if any(x not in evidence_ids for x in proposal["evidence"]):
+    if any(not isinstance(x, str) or x not in evidence_ids for x in proposal["evidence"]):
         raise ValueError("UNKNOWN_EVIDENCE")
     actions = {x["id"]: x for x in interpretation["actions"]}
     resolved = {}
@@ -89,6 +94,8 @@ def _validate_proposal(proposal, interpretation, ab):
         resolved[role] = []
         for ref in refs:
             if not isinstance(ref, dict) or set(ref) != {"action_id", "argument_index"}:
+                raise ValueError("INVALID_BINDING")
+            if not isinstance(ref["action_id"], str):
                 raise ValueError("INVALID_BINDING")
             action = actions.get(ref["action_id"])
             index = ref["argument_index"]
@@ -179,6 +186,9 @@ def ground(interpreter_envelope, ab, provider, *, run_id):
         resolved = _validate_proposal(proposal, interpretation, ab)
         card = _build_card(proposal, resolved, interpretation, ab, run_id)
     except (ContractError, ValueError) as exc:
+        if str(exc) == "ACTION_CATALOG_ONLY":
+            return _non_grounded("unsupported", "ACTION_CATALOG_ONLY", raw=raw,
+                                 proposal=proposal, metadata=metadata)
         return _non_grounded("invalid_model_response", str(exc), raw=raw,
                              proposal=proposal if "proposal" in locals() else None, metadata=metadata)
     return {"metadata": metadata, "raw_response": raw, "model_proposal": proposal,

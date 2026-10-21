@@ -1,3 +1,5 @@
+> Historical record, retained for provenance. This is not current implementation guidance or a validated methodology. Start with the repository README; the current IL is v0.2. Claims and commands below describe the historical design.
+
 # AB-M1: interpreter foundation
 
 Starting state: branch `main`, commit `80c8b0c25595156eaa781b89d0b1d7471044d74a`.

@@ -1,13 +1,13 @@
 #!/usr/bin/env python3
 """
-GROUNDER - PRODUCTION VERSION
+HISTORICAL GROUNDER - COMPATIBILITY ONLY
 ==================================================================================
 Online Phase: Map interpreter intent tokens to evaluable conditions
 
 Input:  Interpreter output {query, query_semantic, intended_action, confidence}
 Output: Conditions for Ranker to evaluate against tables
 
-This is the PRODUCTION GROUNDER - use this for online requests.
+Historical compatibility implementation; use intention_grounding.cli for current requests.
 Design: O(1) lookup in Action Base, deterministic, NO LLM.
 All test/demo scripts are in the _archive/ folder.
 ==================================================================================
@@ -147,7 +147,7 @@ def ground_queries_batch(interpreter_results: List[Dict], action_base: Dict) -> 
 if __name__ == "__main__":
     
     print("\n" + "="*80)
-    print("GROUNDER - PRODUCTION VERSION")
+    print("HISTORICAL GROUNDER - COMPATIBILITY ONLY")
     print("="*80 + "\n")
     
     # Load knowledge base
