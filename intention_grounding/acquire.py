@@ -4,6 +4,8 @@ import csv
 from datetime import datetime, timezone
 import hashlib
 import io
+import html as html_module
+import re
 import json
 from pathlib import Path
 import urllib.request
@@ -65,6 +67,9 @@ def acquire(root=ROOT, *, offline=False):
         html = page.read_text(errors='replace')
         if 'creativecommons.org/licenses/by/4.0' not in html:
             raise ValueError('LICENSE_NOT_VERIFIED:' + page_url)
+        description_match=re.search(r'<p[^>]*class="[^"]*whitespace-pre-wrap[^"]*"[^>]*>(.*?)</p>',html,re.S)
+        description=html_module.unescape(re.sub(r'<[^>]+>',' ',description_match.group(1))).strip() if description_match else ''
+        title='Bike Sharing Dataset' if ident=='275' else 'Seoul Bike Sharing Demand'
         sources.append({'official_id': 'uci:' + ident, 'source_url': page_url, 'download_url': url,
                         'archive_path': str(archive_path.relative_to(root)), 'archive_sha256': sha256(archive_path),
                         'source_document_path': str(page.relative_to(root)), 'source_document_sha256': sha256(page),
@@ -101,7 +106,7 @@ def acquire(root=ROOT, *, offline=False):
                              'source_document': {'path': str(doc.relative_to(root)), 'sha256': sha256(doc),
                                                  'url': page_url, 'locator': locator},
                              'mapping_origin': 'project-authored mapping of inspected source documentation, not usefulness gold'}
-                tables.append({'table_id': tid, 'source_family': 'uci:' + ident, 'topic': 'urban_bicycle_rentals',
+                tables.append({'table_id': tid, 'title':title, 'description':description, 'source_family': 'uci:' + ident, 'topic': 'urban_bicycle_rentals',
                                'source_url': page_url, 'official_id': 'uci:' + ident, 'acquisition_date': acquired,
                                'license': 'CC BY 4.0', 'path': str(normalized.relative_to(root)),
                                'normalized_sha256': sha256(normalized), 'original_member': member,

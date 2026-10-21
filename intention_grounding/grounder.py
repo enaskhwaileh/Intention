@@ -208,7 +208,7 @@ def ground_request(record):
     library = json.loads((Path(__file__).parent/'library/compare-procedures-v1.json').read_text())
     base = {'schema_version':'2.0','request_id':record['request_id'],'il_version':library['il_version'],
             'input_mode':record['input_mode'],'intention_type':record['intention_type'],
-            'request_evidence':{'text':record['text'],'origin':'authored structured specification; not live NLP'},
+            'request_evidence':{'text':record['text'],'origin':record['input_mode']},
             'procedures':[], 'status':record['status']}
     if record['status'] != 'ready':
         base['reason']='REQUEST_'+record['status'].upper()
@@ -221,7 +221,7 @@ def ground_request(record):
         return base
     for pid,procedure in library['procedures'].items():
         if procedure['statistic']==record['roles']['statistic'] or record['roles']['statistic']=='documented_or_mean':
-            base['procedures'].append({'procedure_id':pid,**procedure,'bindings':record['roles']})
+            base['procedures'].append({'procedure_id':pid,**procedure,'bindings':record['roles'],'input_mode':record['input_mode']})
     base['procedure_relationship']='accepted_alternatives' if len(base['procedures'])>1 else 'single'
     base['status']='grounded' if base['procedures'] else 'unsupported'
     return base

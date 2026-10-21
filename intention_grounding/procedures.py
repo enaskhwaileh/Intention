@@ -61,6 +61,8 @@ def execute_readonly(rows, names, columns, procedure):
 
 def assess_procedure(table, profile, procedure, root, *, withhold_semantics=False, execute=True):
     """No header similarity is used as semantic proof. Every decision cites scoped evidence."""
+    from .semantic_bindings import bind
+    procedure, mapping_evidence = bind(procedure)
     roles=procedure['bindings'];semantics={} if withhold_semantics else table.get('semantics',{})
     document=semantics.get('source_document')
     evidence={item['id']:item for item in profile['evidence']}
@@ -72,16 +74,17 @@ def assess_procedure(table, profile, procedure, root, *, withhold_semantics=Fals
         evidence['source-document']={'id':'source-document','fact':'documented_table_semantics',
                                     'source':document,'semantics':semantics,'scope':table['table_id'],
                                     'limitation':'Project-authored source mapping, not independent usefulness gold.'}
+    if mapping_evidence: evidence['request-vocabulary']=mapping_evidence
     verdicts=[]
     def add(name,state,reason,refs):
         assert state in ('supported','violated','unresolved') and refs and all(r in evidence for r in refs)
-        verdicts.append({'requirement_id':name,'verdict':state,'reason':reason,'evidence_refs':refs})
+        verdicts.append({'requirement_id':name,'verdict':state,'reason':reason,'evidence_refs':refs+(['request-vocabulary'] if mapping_evidence else [])})
     add('documented_semantics','supported' if document else 'unresolved',
         'Source documentation and an explicit semantic mapping are available.' if document else 'Semantic documentation unavailable; column names do not prove meaning.',
         ['source-document'] if document else ['metadata-inspection'])
     for key in ('population','measure_concept','unit','grain'):
         value=semantics.get(key)
-        state='unresolved' if not document or value is None else 'supported' if value==roles[key] else 'violated'
+        state='unresolved' if not document or value is None or roles[key] is None else 'supported' if value==roles[key] else 'violated'
         add(key,state,f'Requested {roles[key]}; documented {value if document else "unresolved"}.',
             ['source-document'] if document else ['metadata-inspection'])
     kind=semantics.get('measure_kind')

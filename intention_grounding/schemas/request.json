@@ -29,7 +29,8 @@
     },
     "input_mode": {
       "enum": [
-        "authored_structured_request"
+        "authored_structured_request",
+        "validated_natural_language"
       ]
     },
     "status": {

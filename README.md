@@ -2,7 +2,7 @@
 
 **Main guide: runnable real-table Compare development pilot.** A full request and an explicit structured intention lead to IL procedures, BM25 candidates, source-backed table bindings, supported/violated/unresolved requirement verdicts, deterministic ranking and gated read-only SQL.
 
-The demo uses **real official UCI tables**. Requests and semantic mappings are authored demonstrations, **not live LLM interpretations or independent human usefulness gold**. Effectiveness evaluation remains pending; SQL success and passing software tests do not establish retrieval superiority.
+The demo uses **real official UCI tables**. Dashboard requests are authored demonstrations. The CLI also accepts natural-language input through the existing Groq Interpreter; live generation is budget-gated. Semantic mappings remain manually curated. Neither path supplies independent human usefulness gold. Effectiveness evaluation remains pending; SQL success and passing software tests do not establish retrieval superiority.
 
 ## Setup, acquire, launch
 
@@ -58,12 +58,12 @@ The existing dashboard and CLI share `discovery.run`, `grounder`, `profiler`, `a
 
 | Stage | What genuinely works | Limit |
 | --- | --- | --- |
-| Interpretation | Closed, validated authored structured requests; canonical schema-v2 interpreter also retains replay/optional Groq validation. | Real-data demo is not automatic NLP. Wording-to-role correctness requires review. No unbudgeted live inference. |
+| Interpretation | Natural-language CLI: one Groq call, exact-span validation, topical query and deterministic IL adapter. Explicit structured diagnostics remain. | Live verification blocked: no credentials, model ID or approved budget. Authored mock contract tests are not LLM accuracy. |
 | IL grounding | Table-independent semantic roles select direct values, explicit group means, or explicitly accepted alternatives. | Unspecified statistics remain ambiguous; Predict remains unsupported. |
-| Retrieval | Full exact request, BM25 with k1=1.2, b=0.75, lowercase alphanumeric tokenization; all three pilot tables remain candidates. | No dense model substitution; Qwen and other baselines remain unintegrated. |
+| Retrieval | Pinned MiniLM SBERT topical-query retrieval; full-request SBERT baseline uses identical table vectors. BM25 remains available. | MiniLM is an initial baseline, not an optimality claim. Qwen remains unintegrated. |
 | Table evidence | Truthful local provenance, full scans, preserved empty CSV headers, boolean identity, explicit missing tokens/parse failures, version/content/config cache. | Semantic facts require explicit inspected source mappings; headers alone do not prove meaning. |
 | Assessment | Per-procedure population, measure, unit, grain, observation kind, column binding, period, group coverage, numeric validity and uniqueness checks. | Narrow documented interval-count domain; no inferred causal or general predictive validity. |
-| Ranking | Supported → unresolved → violated; BM25 descending within state; table-ID tie-break; explicit ties and abstention. | Development policy, not a calibrated probability or validated optimum. |
+| Ranking | Supported → unresolved → violated; selected retrieval score descending within state; table-ID tie-break; explicit ties and abstention. | Development policy, not a calibrated probability or validated optimum. |
 | Execution | Quoted identifiers, parameterized values, in-memory SQLite, read-only authorizer; only supported procedures execute. | Observed intervals only; no imputation, complete-grid guarantee or causal claim. |
 | Evaluation | Closed formats, split validation, separate gold reader, prediction hashes, reviewed-label gate and hand-checked metrics. | No independently reviewed usefulness judgments yet; no effectiveness scores reported. |
 
@@ -123,7 +123,7 @@ Two source families within one topic are a **development-only pilot**. No credib
 ./.venv/bin/python -m intention_grounding.terminology
 ```
 
-For a custom **structured** request use `--request path/to/request.json`; its closed format is [request.json](intention_grounding/schemas/request.json). `--no-execute` disables SQL; `--withhold-semantics` is an explicit missing-documentation diagnostic. This is not a free-form chatbot. The legacy synthetic contract mode is `--mode offline` and is labeled synthetic.
+For a custom **structured** request use `--request path/to/request.json`; its closed format is [request.json](intention_grounding/schemas/request.json). `--no-execute` disables SQL; `--withhold-semantics` is an explicit missing-documentation diagnostic. Structured mode is an explicit diagnostic; use `--input` for the natural-language integration below. The legacy synthetic contract mode is `--mode offline` and is labeled synthetic.
 
 Each discovery run exclusively creates `outputs/discovery/<run-id>/predictions.json` and its SHA-256 sidecar. Reports include exact request/input mode, IL/config/corpus/request hashes, candidates, every procedure/binding/verdict/evidence item, SQL/results, failures, abstention, timing and code identity. Caches are reusable; predictions are not overwritten. UI runs use `outputs/dashboard/` and can be exported.
 
@@ -139,16 +139,40 @@ After genuine independent human review, use `--judgments /path/to/reviewed.json`
 
 Primary **usefulness nDCG@10** uses all useful tables in the fully judged corpus partition for IDCG. Also implemented: Success@1, Recall@10, candidate recall, coverage and failure counts. Unresolved/unjudged items make a request ineligible for primary metrics; they are never silently negative. Fully judged no-positive requests have undefined nDCG/recall and separate abstention/false-recommendation reporting. The runtime neither opens gold nor imports evaluation code; tests verify labels cannot affect predictions.
 
+## Natural-language discovery and SBERT
+
+Use a separate compatible environment (tested on this Intel Mac with Python 3.12); the existing `.venv` remains unchanged:
+
+```sh
+python3.12 -m venv .venv-sbert
+./.venv-sbert/bin/python -m pip install -e '.[sbert,groq]'
+./.venv-sbert/bin/python -m intention_grounding.acquire --offline
+./.venv-sbert/bin/python -m intention_grounding.cli --input "Contrast recorded values of daily bike rental counts in rentals for Capital Bikeshare Washington DC on 2011-01-01 versus 2011-01-02." --retrieval sbert --no-execute --output outputs/natural-language
+```
+
+Set `GROQ_API_KEY` and `GROQ_MODEL_ID` through the existing environment configuration. The command reuses an exact matching cached response. **Only after a spending budget is approved**, add `--allow-live-generation` to permit one attempt with zero retries. Missing configuration/budget/model produces an explicit failed report; there is no fallback to authored roles, BM25 or another model. This implementation run made **zero live generation attempts**. No actual generative model identity is claimed because none was configured.
+
+Omit `--no-execute` to allow SQL only for supported procedures. Select `--retrieval sbert-full` for full-request SBERT or `--retrieval bm25` for the lexical baseline. The natural-language default is topical-query SBERT. `--case` or `--request` selects an explicit structured diagnostic. `--mock-response PATH --input-id ID` explicitly supplies authored Interpreter output for contract testing; reports label that provenance. Input methods are mutually exclusive.
+
+The adapter reuses the canonical Interpreter schema and exact-span checks. It preserves argument candidates and scope restrictions, derives the topical query from source fragments, and maps explicit statistics deterministically. Missing units/statistics/grain and unsupported scope restrictions cause abstention. Table IDs/columns never enter the model prompt. Request-to-IL grounding retains literal semantic roles; the later table assessment uses a small **manually curated vocabulary** (`semantic_bindings.py`) and documented table mappings. Unknown vocabulary remains unresolved. Date normalization handles explicit ISO dates/ranges and calendar years only. This conservative adapter is not general language understanding.
+
+Table serialization `source-columns-semantics-first3-token-budgets-v2` includes source title/description, column names, documented semantics and the first three rows in immutable file order. Per-section budgets (16/32/48/64/64 tokens) prevent descriptions from consuming every input token. Reports record actual embedded text, section/model truncation, sample omissions, model revision and cache keys. Table vectors are normalized and cached by content hash, metadata hash, model/revision and serialization version; both SBERT query modes reuse those vectors. No profiles, requirement scores or judgment files enter embeddings. Similarity never certifies suitability.
+
+Ranking retains the pilot state order, using SBERT cosine within each state when selected, followed by table-ID ties. The effective policy and original configuration have separate hashes. This is **not the final paper scoring design**.
+
+Local verification used the real cached MiniLM model and real UCI tables with explicitly authored unseen-paraphrase mock interpretations: direct values 985/801, explicit hourly means 141.49195/144.85941, and abstention for unresolved input. These are integration/execution diagnostics, not live LLM accuracy or independently evaluated retrieval effectiveness. The dashboard remains the existing authored-case interface; this bounded integration is exposed through the CLI.
+
 ## Baselines, LLMs and Predict
 
 | Method | Actual status / requirements |
 | --- | --- |
 | BM25 | Runnable full-request baseline and candidate stage; no external model. |
+| SBERT MiniLM | Executed locally using cached `sentence-transformers/all-MiniLM-L6-v2`, revision `fa97f6e7cb1a59073dff9e6b13e2715cf7475ac9`; 384-dimensional normalized embeddings, CPU cosine similarity. Python 3.12 / torch 2.2.2 / sentence-transformers 3.0.1 / transformers 4.44.2 / numpy 1.26.4. |
 | Qwen3-Embedding-0.6B | Not integrated; hardware preflight found Intel x86_64/16 GiB and no installed inference stack. A dry-run dependency resolution found no compatible torch>=2.6 wheel for macOS x86_64/Python 3.13. No alternate encoder substituted. Model download needs a compatible PyTorch/Transformers environment and measured memory/latency. |
 | Qwen3 reranker | Not integrated; requires faithful pair formatting/scoring and identical candidates. |
 | Published semantic matching / TABERTA | Blocked for faithful integration until exact artifacts, checkpoints and serialization are established. Generic cosine scores are not substitutes. |
 | Direct LLM usefulness | Not implemented; would need matched public evidence, structured cited judgments, abstention and a declared spend budget. |
-| Existing Groq adapter | Retained for canonical interpreter/grounder contract mode. Requires optional SDK, permitted model ID, credentials, JSON-object compatibility and sufficient context. No live calls run in this work without a budget. |
+| Groq Interpreter | Connected to real discovery with one generation attempt and no retries; deterministic grounding makes no second call. Exact response, requested/returned model IDs, usage when available, evidence and timings are cached. No live calls executed: credentials, model ID and approved budget absent. |
 
 For role selection and resource requirements see official [Groq output documentation](https://console.groq.com/docs/structured-outputs), [Qwen embedding card](https://huggingface.co/Qwen/Qwen3-Embedding-0.6B), and [Qwen reranker card](https://huggingface.co/Qwen/Qwen3-Reranker-0.6B). JSON validity does not establish semantic correctness. Record model/prompt revisions, tokens, retries, truncation, latency and cost. There is no measured best LLM here.
 

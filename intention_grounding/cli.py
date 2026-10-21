@@ -46,16 +46,35 @@ def main(argv=None):
     parser.add_argument("--dataset-metadata", type=Path, help="JSON provenance record for supplied tables")
     parser.add_argument("--max-tables", type=int, default=None)
     parser.add_argument("--output", type=Path, default=Path("outputs/pipeline"))
-    parser.add_argument("--il", "--il", dest="il", type=Path, default=CANONICAL_IL_PATH,
-                        help="Intention Library JSON path (--il is a compatibility alias)")
+    parser.add_argument("--il", dest="il", type=Path, default=CANONICAL_IL_PATH,
+                        help="Canonical Intention Library JSON path")
     inspection = parser.add_mutually_exclusive_group()
     inspection.add_argument("--list-intentions", action="store_true", help="List the IL offline as JSON")
     inspection.add_argument("--intention", help="Inspect an intention and its separate procedure definitions offline")
-    parser.add_argument('--case', default='dc_daily', help='Authored real-data demonstration case ID')
+    parser.add_argument('--case', help='Authored real-data demonstration case ID')
     parser.add_argument('--request', type=Path, help='Closed structured request JSON for discovery mode')
     parser.add_argument('--withhold-semantics', action='store_true', help='Explicit missing-documentation diagnostic')
     parser.add_argument('--no-execute', action='store_true', help='Assess and rank without SQL execution')
+    parser.add_argument('--retrieval', choices=('bm25','sbert','sbert-full'), help='Natural-language default: SBERT topical query; structured default: BM25')
+    parser.add_argument('--allow-live-generation', action='store_true', help='Use only with an approved spending budget: at most one Groq attempt, no retries; cached responses reused')
+    parser.add_argument('--mock-response', type=Path, help='Explicit diagnostic: authored Interpreter JSON, never live model verification')
     args = parser.parse_args(argv)
+    if args.max_tables is not None and args.max_tables < 1:parser.error('--max-tables must be positive')
+    if args.mock_response and not args.input:parser.error('--mock-response requires --input')
+    if args.input and args.mode == 'offline': args.mode = 'discovery'
+    if args.mode == 'discovery' and sum(bool(x) for x in (args.input,args.request,args.case)) != 1:
+        parser.error('Discovery requires exactly one of --input, --request, or --case; no authored-role fallback')
+    if args.mode == 'discovery' and args.input:
+        from .discovery import run_text, save_report
+        provider = ReplayProvider(args.mock_response.read_text()) if args.mock_response else None
+        report = run_text(args.input,input_id=args.input_id,model=args.model,provider=provider,
+                          allow_live=args.allow_live_generation,retrieval_method=args.retrieval or 'sbert',
+                          execute=not args.no_execute,candidate_limit=args.max_tables)
+        path=save_report(report,args.output)
+        print('status='+report.get('status','completed')+' abstained='+str(report['abstained']))
+        if report.get('failure'): print('failure='+report['failure'])
+        print('predictions='+str(path))
+        return 2 if report.get('status')=='failed' else 0
     if args.mode == 'discovery':
         from .discovery import run, save_report, ROOT
         try:
@@ -68,9 +87,10 @@ def main(argv=None):
                 if case is None: parser.error('Unknown demonstration case')
                 request, options = case['request'], case['run_options']
             report = run(request, execute=not args.no_execute,
-                         withhold_semantics=args.withhold_semantics or options.get('withhold_semantics', False))
+                         withhold_semantics=args.withhold_semantics or options.get('withhold_semantics', False),
+                         retrieval_method=args.retrieval or 'bm25', topical_query=request['topic'],candidate_limit=args.max_tables)
             path = save_report(report, args.output)
-        except (OSError, ValueError) as exc:
+        except (OSError, ValueError, RuntimeError, ImportError) as exc:
             print('discovery_error=' + type(exc).__name__ + ': ' + str(exc))
             return 2
         print('input_mode=' + request['input_mode'] + ' grounding=' + report['grounded_intention']['status'])

@@ -30,7 +30,7 @@ class GroqConfigurationTests(unittest.TestCase):
         original = Path.cwd()
         self.addCleanup(os.chdir, original)
         with patch.dict(os.environ, {}, clear=True):
-            for directory in (Path(self.directory.name), self.env_path.parent, Path('/private/tmp')):
+            for directory in (Path(self.directory.name), self.env_path.parent, Path(tempfile.gettempdir())):
                 os.chdir(directory)
                 self.assertEqual('synthetic-key', groq_api_key())
                 self.assertEqual('synthetic-model', groq_model_id())

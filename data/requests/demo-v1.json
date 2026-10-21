@@ -131,16 +131,13 @@
         "roles": {
           "population": "capital_bikeshare_dc",
           "measure_concept": "bike_rental_count",
-          "unit": "rentals",
-          "grain": "day",
-          "group_role": "date",
           "groups": [
-            "2011-01-01",
-            "2011-01-02"
+            "working days",
+            "weekends"
           ],
           "period": [
             "2011-01-01",
-            "2011-01-02"
+            "2011-12-31"
           ],
           "statistic": "unspecified"
         },

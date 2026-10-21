@@ -26,3 +26,5 @@ data/normalized/
 data/runtime/
 *.parquet
 *.feather
+
+.venv-sbert/

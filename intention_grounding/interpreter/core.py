@@ -126,6 +126,8 @@ def interpret(input_id, original_input, provider):
     try:
         result['metadata'].update(provider.metadata)
         raw = provider.invoke(input_id, original_input)
+        result["metadata"].update(provider.metadata)
+        if hasattr(provider,"actual_model"): result["metadata"]["actual_model"] = provider.actual_model
     except Exception as exc:
         result['failure'] = 'PROVIDER_FAILURE'
         result['provider_error'] = provider_diagnostic(exc)

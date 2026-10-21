@@ -213,7 +213,8 @@
             "method",
             "threshold",
             "target",
-            "other"
+            "other",
+            "unit"
           ]
         },
         "value": {
@@ -310,7 +311,8 @@
                   "method",
                   "threshold",
                   "target",
-                  "other"
+                  "other",
+                  "unit"
                 ]
               },
               "reason": {

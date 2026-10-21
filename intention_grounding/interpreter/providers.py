@@ -1,5 +1,6 @@
 """Optional live adapter and explicitly manually authored replay provider."""
 import json
+import hashlib
 import re
 from dataclasses import dataclass
 
@@ -42,7 +43,7 @@ class ReplayProvider:
 
     @property
     def metadata(self):
-        return {'provider': 'manual-replay', 'fixture_origin': 'manually_authored'}
+        return {'provider': 'manual-replay', 'fixture_origin': 'manually_authored', 'response_sha256':hashlib.sha256(self.raw_response.encode()).hexdigest()}
 
     def invoke(self, input_id, original_input):
         return self.raw_response
@@ -51,7 +52,7 @@ class ReplayProvider:
 class GroqProvider:
     """No import/credential access until invoke; injected factory supports offline tests."""
     def __init__(self, *, model=None, temperature=0.0, max_tokens=4096,
-                 timeout=30.0, max_retries=0, client_factory=None):
+                 timeout=30.0, max_retries=0, client_factory=None, system_prompt=None, prompt_version=None):
         if type(timeout) not in (int, float) or not 0 < timeout <= 120:
             raise ValueError('timeout must be in (0,120]')
         if type(max_retries) is not int or not 0 <= max_retries <= 2:
@@ -63,13 +64,16 @@ class GroqProvider:
         self.model, self.temperature, self.max_tokens = groq_model_id(model), temperature, max_tokens
         self.timeout, self.max_retries = timeout, max_retries
         self.client_factory = client_factory
+        self.system_prompt = system_prompt or SYSTEM_PROMPT
+        self.prompt_version = prompt_version or PROMPT_VERSION
+        self.usage = None
 
     @property
     def metadata(self):
-        return {'provider': 'groq', 'model': self.model, 'prompt_version': PROMPT_VERSION,
+        return {'provider': 'groq', 'model': self.model, 'prompt_version': self.prompt_version,
                 'generation_settings': {'temperature': self.temperature, 'max_tokens': self.max_tokens,
                                         'response_format': {'type': 'json_object'}},
-                'timeout_seconds': self.timeout, 'max_retries': self.max_retries}
+                'timeout_seconds': self.timeout, 'max_retries': self.max_retries, 'usage': self.usage}
 
     def invoke(self, input_id, original_input):
         key = groq_api_key()
@@ -81,8 +85,12 @@ class GroqProvider:
             response = client.chat.completions.create(
                 model=self.model, temperature=self.temperature, max_tokens=self.max_tokens,
                 response_format={'type': 'json_object'},
-                messages=[{'role':'system','content':SYSTEM_PROMPT},
+                messages=[{'role':'system','content':self.system_prompt},
                           {'role':'user','content':json.dumps({'input_id':input_id,'original_input':original_input}, ensure_ascii=False)}])
+            usage = getattr(response, "usage", None)
+            self.usage = {k:(getattr(usage,k,None) if type(getattr(usage,k,None)) is int else None) for k in ("prompt_tokens","completion_tokens","total_tokens")} if usage else None
+            actual_model = getattr(response, "model", None)
+            self.actual_model = actual_model if isinstance(actual_model,str) else self.model
             return response.choices[0].message.content
 
 
