@@ -1,0 +1,278 @@
+{
+  "schema_version": "1.0",
+  "corpus_id": "uci-bikes-v1",
+  "partition": "development_only",
+  "acquisition_date": "2026-10-21T13:50:17.525236+00:00",
+  "sources": [
+    {
+      "official_id": "uci:275",
+      "source_url": "https://archive.ics.uci.edu/dataset/275/bike+sharing+dataset",
+      "download_url": "https://archive.ics.uci.edu/static/public/275/bike+sharing+dataset.zip",
+      "archive_path": "data/raw/uci-275.zip",
+      "archive_sha256": "b70182d0d0508e9abbb79306ce5c0cec34869000f8220175ac83d11dbe845401",
+      "source_document_path": "data/raw/uci-275-source.html",
+      "source_document_sha256": "3d8e8566cd22d3a4d98d4e8b73bac78a055516569848433f3dc45147f12a8cdd",
+      "acquisition_date": "2026-10-21T13:50:17.525236+00:00",
+      "license": "CC BY 4.0",
+      "redistribution": "Attribution required; retain source citation and indicate transformations."
+    },
+    {
+      "official_id": "uci:560",
+      "source_url": "https://archive.ics.uci.edu/dataset/560/seoul+bike+sharing+demand",
+      "download_url": "https://archive.ics.uci.edu/static/public/560/seoul+bike+sharing+demand.zip",
+      "archive_path": "data/raw/uci-560.zip",
+      "archive_sha256": "139e9908f0a3544bb222386855c9ce107e96467306bb8e4ce936aab59e7baac4",
+      "source_document_path": "data/raw/uci-560-source.html",
+      "source_document_sha256": "8f4545eb7b36b3385d5b5dc29cce123813a34c05bec117936863f4c96aa6dbc7",
+      "acquisition_date": "2026-10-21T13:50:17.525236+00:00",
+      "license": "CC BY 4.0",
+      "redistribution": "Attribution required; retain source citation and indicate transformations."
+    }
+  ],
+  "tables": [
+    {
+      "table_id": "uci-275-day",
+      "source_family": "uci:275",
+      "topic": "urban_bicycle_rentals",
+      "source_url": "https://archive.ics.uci.edu/dataset/275/bike+sharing+dataset",
+      "official_id": "uci:275",
+      "acquisition_date": "2026-10-21T13:50:17.525236+00:00",
+      "license": "CC BY 4.0",
+      "path": "data/normalized/uci-275-day.csv",
+      "normalized_sha256": "537e98e2c8b8f53e3094d953f847788b1dc224764a4a1e538b3e1ec4e30dac8a",
+      "original_member": "day.csv",
+      "original_member_sha256": "a6bcf826782d3c0fbfdcbeead17cd0884185a0dafe8ff10cd48a874ee7ba18be",
+      "archive_sha256": "b70182d0d0508e9abbb79306ce5c0cec34869000f8220175ac83d11dbe845401",
+      "row_count": 731,
+      "columns": [
+        "instant",
+        "dteday",
+        "season",
+        "yr",
+        "mnth",
+        "holiday",
+        "weekday",
+        "workingday",
+        "weathersit",
+        "temp",
+        "atemp",
+        "hum",
+        "windspeed",
+        "casual",
+        "registered",
+        "cnt"
+      ],
+      "period": [
+        "2011-01-01",
+        "2012-12-31"
+      ],
+      "attribute_documentation": {
+        "path": "data/raw/uci-275-Readme.txt",
+        "sha256": "b92c8628622948bf0828c43a1b315d1517c3d7fd63654730d0dea379b8e88175",
+        "url": "https://archive.ics.uci.edu/dataset/275/bike+sharing+dataset",
+        "locator": "Dataset characteristics: cnt, dteday, workingday, yr; Files: day.csv/hour.csv; Data Set: Washington D.C."
+      },
+      "semantics": {
+        "measure_concept": "bike_rental_count",
+        "unit": "rentals",
+        "population": "capital_bikeshare_dc",
+        "grain": "day",
+        "measure_kind": "interval_count",
+        "columns": {
+          "measure": "cnt",
+          "date": "dteday",
+          "workingday": "workingday"
+        },
+        "group_domains": {
+          "workingday": {
+            "0": "weekend_or_holiday",
+            "1": "neither_weekend_nor_holiday"
+          }
+        },
+        "source_document": {
+          "path": "data/raw/uci-275-Readme.txt",
+          "sha256": "b92c8628622948bf0828c43a1b315d1517c3d7fd63654730d0dea379b8e88175",
+          "url": "https://archive.ics.uci.edu/dataset/275/bike+sharing+dataset",
+          "locator": "Dataset characteristics: cnt, dteday, workingday, yr; Files: day.csv/hour.csv; Data Set: Washington D.C."
+        },
+        "mapping_origin": "project-authored mapping of inspected source documentation, not usefulness gold"
+      },
+      "normalization": [
+        "Decode UTF-8 and write UTF-8 CSV with LF newlines",
+        "Preserve values, columns and all observations"
+      ],
+      "related_tables": [
+        "uci-275-hour"
+      ],
+      "relationship": "shared underlying rental logs at different grains",
+      "why_selected": "Documented counts at day grain; same-topic candidates allow grain and population compatibility to be tested.",
+      "limitations": [
+        "Descriptive observed intervals only; no causal interpretation or complete-grid claim.",
+        "Temperature/season metadata conflict between UCI page and Readme; excluded from binding.",
+        "Mean of interval counts is not a mean of trip-level records. Missing intervals are not imputed."
+      ],
+      "retrieval_text": "Bike bicycle rental count day daily date Washington DC Capital Bikeshare workingday weekend holiday 2011 2012"
+    },
+    {
+      "table_id": "uci-275-hour",
+      "source_family": "uci:275",
+      "topic": "urban_bicycle_rentals",
+      "source_url": "https://archive.ics.uci.edu/dataset/275/bike+sharing+dataset",
+      "official_id": "uci:275",
+      "acquisition_date": "2026-10-21T13:50:17.525236+00:00",
+      "license": "CC BY 4.0",
+      "path": "data/normalized/uci-275-hour.csv",
+      "normalized_sha256": "b03a2d02e8c10f435c43c7f0b358b7e34a003afea53dbc37f0183f2763295133",
+      "original_member": "hour.csv",
+      "original_member_sha256": "e03de4ee4ef4dc376ac6e04bf829673c6269e8eba5c60fa121640fa2f829504f",
+      "archive_sha256": "b70182d0d0508e9abbb79306ce5c0cec34869000f8220175ac83d11dbe845401",
+      "row_count": 17379,
+      "columns": [
+        "instant",
+        "dteday",
+        "season",
+        "yr",
+        "mnth",
+        "hr",
+        "holiday",
+        "weekday",
+        "workingday",
+        "weathersit",
+        "temp",
+        "atemp",
+        "hum",
+        "windspeed",
+        "casual",
+        "registered",
+        "cnt"
+      ],
+      "period": [
+        "2011-01-01",
+        "2012-12-31"
+      ],
+      "attribute_documentation": {
+        "path": "data/raw/uci-275-Readme.txt",
+        "sha256": "b92c8628622948bf0828c43a1b315d1517c3d7fd63654730d0dea379b8e88175",
+        "url": "https://archive.ics.uci.edu/dataset/275/bike+sharing+dataset",
+        "locator": "Dataset characteristics: cnt, dteday, workingday, yr; Files: day.csv/hour.csv; Data Set: Washington D.C."
+      },
+      "semantics": {
+        "measure_concept": "bike_rental_count",
+        "unit": "rentals",
+        "population": "capital_bikeshare_dc",
+        "grain": "hour",
+        "measure_kind": "interval_count",
+        "columns": {
+          "measure": "cnt",
+          "date": "dteday",
+          "hour": "hr",
+          "workingday": "workingday"
+        },
+        "group_domains": {
+          "workingday": {
+            "0": "weekend_or_holiday",
+            "1": "neither_weekend_nor_holiday"
+          }
+        },
+        "source_document": {
+          "path": "data/raw/uci-275-Readme.txt",
+          "sha256": "b92c8628622948bf0828c43a1b315d1517c3d7fd63654730d0dea379b8e88175",
+          "url": "https://archive.ics.uci.edu/dataset/275/bike+sharing+dataset",
+          "locator": "Dataset characteristics: cnt, dteday, workingday, yr; Files: day.csv/hour.csv; Data Set: Washington D.C."
+        },
+        "mapping_origin": "project-authored mapping of inspected source documentation, not usefulness gold"
+      },
+      "normalization": [
+        "Decode UTF-8 and write UTF-8 CSV with LF newlines",
+        "Preserve values, columns and all observations"
+      ],
+      "related_tables": [
+        "uci-275-day"
+      ],
+      "relationship": "shared underlying rental logs at different grains",
+      "why_selected": "Documented counts at hour grain; same-topic candidates allow grain and population compatibility to be tested.",
+      "limitations": [
+        "Descriptive observed intervals only; no causal interpretation or complete-grid claim.",
+        "Temperature/season metadata conflict between UCI page and Readme; excluded from binding.",
+        "Mean of interval counts is not a mean of trip-level records. Missing intervals are not imputed."
+      ],
+      "retrieval_text": "Bike bicycle rental count hour hourly date Washington DC Capital Bikeshare workingday weekend holiday 2011 2012"
+    },
+    {
+      "table_id": "uci-560-hour",
+      "source_family": "uci:560",
+      "topic": "urban_bicycle_rentals",
+      "source_url": "https://archive.ics.uci.edu/dataset/560/seoul+bike+sharing+demand",
+      "official_id": "uci:560",
+      "acquisition_date": "2026-10-21T13:50:17.525236+00:00",
+      "license": "CC BY 4.0",
+      "path": "data/normalized/uci-560-hour.csv",
+      "normalized_sha256": "b17c3b771e991fad8c5b6d994bd0abec84cf624edb5739bbed5c8239893b5894",
+      "original_member": "SeoulBikeData.csv",
+      "original_member_sha256": "373339b71a8935d69e9af0abf26a70744632119862eeb3919efb389a7b749c60",
+      "archive_sha256": "139e9908f0a3544bb222386855c9ce107e96467306bb8e4ce936aab59e7baac4",
+      "row_count": 8760,
+      "columns": [
+        "Date",
+        "Rented Bike Count",
+        "Hour",
+        "Temperature(\u00b0C)",
+        "Humidity(%)",
+        "Wind speed (m/s)",
+        "Visibility (10m)",
+        "Dew point temperature(\u00b0C)",
+        "Solar Radiation (MJ/m2)",
+        "Rainfall(mm)",
+        "Snowfall (cm)",
+        "Seasons",
+        "Holiday",
+        "Functioning Day"
+      ],
+      "period": [
+        "2017-12-01",
+        "2018-11-30"
+      ],
+      "attribute_documentation": {
+        "path": "data/raw/uci-560-source.html",
+        "sha256": "8f4545eb7b36b3385d5b5dc29cce123813a34c05bec117936863f4c96aa6dbc7",
+        "url": "https://archive.ics.uci.edu/dataset/560/seoul+bike+sharing+demand",
+        "locator": "Additional Variable Information; dataset description: Seoul, count per hour"
+      },
+      "semantics": {
+        "measure_concept": "bike_rental_count",
+        "unit": "rentals",
+        "population": "seoul_bike_system",
+        "grain": "hour",
+        "measure_kind": "interval_count",
+        "columns": {
+          "measure": "Rented Bike Count",
+          "date": "Date",
+          "hour": "Hour"
+        },
+        "group_domains": {},
+        "source_document": {
+          "path": "data/raw/uci-560-source.html",
+          "sha256": "8f4545eb7b36b3385d5b5dc29cce123813a34c05bec117936863f4c96aa6dbc7",
+          "url": "https://archive.ics.uci.edu/dataset/560/seoul+bike+sharing+demand",
+          "locator": "Additional Variable Information; dataset description: Seoul, count per hour"
+        },
+        "mapping_origin": "project-authored mapping of inspected source documentation, not usefulness gold"
+      },
+      "normalization": [
+        "Decode Latin-1 and write UTF-8 CSV with LF newlines",
+        "Normalize Date from DD/MM/YYYY to ISO date"
+      ],
+      "related_tables": [],
+      "relationship": "distinct system and period; no mirror relationship asserted",
+      "why_selected": "Documented counts at hour grain; same-topic candidates allow grain and population compatibility to be tested.",
+      "limitations": [
+        "Descriptive observed intervals only; no causal interpretation or complete-grid claim.",
+        "Non-functioning hours retained; no extrapolation to operating-hour demand.",
+        "Mean of interval counts is not a mean of trip-level records. Missing intervals are not imputed."
+      ],
+      "retrieval_text": "Bike bicycle rental count hour hourly date Seoul 2017 2018 hourly weather"
+    }
+  ],
+  "independent_usefulness_judgments": false,
+  "notes": "Two source families in one topic; no held-out effectiveness claim."
+}
