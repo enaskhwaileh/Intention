@@ -2,7 +2,7 @@
   "type": "object",
   "properties": {
     "schema_version": {
-      "const": "1.0"
+      "const": "2.0"
     },
     "input_id": {
       "type": "string",
@@ -59,10 +59,10 @@
       ],
       "additionalProperties": false
     },
-    "actions": {
+    "intentions": {
       "type": "array",
       "items": {
-        "$ref": "#/$defs/action"
+        "$ref": "#/$defs/intention"
       },
       "minItems": 0
     },
@@ -100,7 +100,7 @@
     "original_input",
     "evidence",
     "query_profile",
-    "actions",
+    "intentions",
     "relationships",
     "status",
     "diagnostics"
@@ -275,7 +275,7 @@
       ],
       "additionalProperties": false
     },
-    "action": {
+    "intention": {
       "type": "object",
       "properties": {
         "id": {

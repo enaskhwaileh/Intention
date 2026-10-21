@@ -2,11 +2,17 @@
 
 > Supporting appendix. Start with the [main project guide](../README.md) for current architecture, demonstration, models and testing. Historical audit statements are dated records, not current capability claims.
 
-> Current M0 refresh: preserves the previously authorized IL extension (23 families, including classification, regression, forecasting and survival). This task performs audit, cleanup and planning only; no M1 implementation. See [the audit](REPOSITORY_AUDIT_M0.md) for current verification and compatibility inventory.
+## Current implementation boundary
 
-Version: M0 proposal, 21 October 2026. This document fixes proposed measurement conventions before experiments; it does not assert an executed benchmark or approved scientific design. Open decisions are explicit. Scope initially Compare and Predict, with direct-observation Compare first, explicitly confirmed by the researcher after M0 delivery. Aggregate-then-compare is outside the initial scope.
+This appendix preserves the earlier source-feasibility evidence and proposed broader study below. The [main guide](../README.md) and executable schemas are authoritative for current implementation. Direct documented values AND explicit means of observed interval counts are now implemented; the prior direct-only policy below is historical and superseded by explicit researcher authorization.
 
-Audit basis: [repository audit](REPOSITORY_AUDIT_M0.md). Delivery sequence: [implementation plan](IMPLEMENTATION_PLAN.md).
+Operational now: full-request BM25, the three-table official UCI development corpus, closed request/corpus/judgment/split formats, scoped per-procedure evidence assessment, deterministic pilot ranking, exclusively created prediction artifacts with hashes, and a separate evaluator. `request_metrics` implements strict complete-judgment nDCG@10/Success@1/Recall@10/candidate recall; `evaluate` reports coverage, failures and no-positive abstention. Incomplete or unresolved judgment universes are ineligible for primary metrics. Aggregate only eligible requests with denominators disclosed; the current CLI evaluates one request at a time. Paired uncertainty, requirement macro-F1 and false-support evaluation need independently annotated requirement judgments and are not yet implemented.
+
+No independent human usefulness gold exists. `--prepare-annotations` emits only unjudged candidates and never treats framework predicates as gold. Runtime cannot import this evaluator and has no gold-file argument. Reviewer declarations/evidence are checked structurally, not authenticated as human by software.
+
+The corpus has two source families in one topic and is explicitly development-only. Published semantic matching, TABERTA, Qwen embeddings/reranking and direct LLM comparisons remain unintegrated. An environment preflight found no compatible torch>=2.6 wheel for macOS x86_64/Python 3.13, so no dense model was downloaded or substituted. The broader evaluation design below remains a proposal, not an executed experiment.
+
+## Historical M0 source audit and broader proposed study
 
 ## 1. Question and claims
 

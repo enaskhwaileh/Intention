@@ -15,7 +15,7 @@ from datetime import datetime, timezone
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from urllib.parse import urlsplit, parse_qs
 
-from .action_base import load_intention_library, list_intentions, describe_intention, ActionBaseError
+from .intention_library import load_intention_library, list_intentions, describe_intention, IntentionLibraryError
 from .cli import _offline_inputs
 from .interpreter.core import interpret
 from .interpreter.providers import ReplayProvider
@@ -63,21 +63,48 @@ def run_case(case_id):
             'origin': 'manual replay; expected rejection can be a passing contract check'}
 
 
-def demo():
+def replay_demo():
     start = time.perf_counter()
     il = load_intention_library()
-    input_id, request, interpreter_provider, grounder_provider = _offline_inputs(il['ab_version'])
+    input_id, request, interpreter_provider, grounder_provider = _offline_inputs(il['il_version'])
     interpreted = interpret(input_id, request, interpreter_provider)
     grounded = ground(interpreted, il, grounder_provider, run_id='dashboard-offline')
     metadata = json.loads((PACKAGE / 'fixtures/offline-source-metadata.json').read_text())
     path = PACKAGE / 'fixtures/offline_table.csv'
     profile = profile_table(path, dataset_id=metadata['dataset_id'], source_metadata=metadata)
-    comparison = compare_card(grounded['grounded_card'], [profile])
-    return {'request': request, 'mode': 'offline_manual_replay', 'il_version': il['ab_version'],
+    comparison = compare_card(grounded['grounded_intention'], [profile])
+    return {'request': request, 'mode': 'offline_manual_replay', 'il_version': il['il_version'],
             'interpretation': interpreted, 'grounding': grounded, 'profile': profile,
             'comparison': comparison, 'rows': list(csv.DictReader(io.StringIO(path.read_text()))),
             'elapsed_ms': round((time.perf_counter() - start) * 1000, 2), 'provenance': identity(),
             'notice': 'Synthetic fixture. No LLM inference, retrieval, ranking or usefulness measurement was performed.'}
+
+
+def corpus_overview():
+    path = ROOT/'data/manifests/uci-bikes-v1.json'
+    if not path.exists():
+        return {'ready':False,'tables':[], 'message':'Run python -m intention_grounding.acquire first.'}
+    corpus=json.loads(path.read_text())
+    missing=[t['path'] for t in corpus['tables'] if not (ROOT/t['path']).exists()]
+    return {'ready':not missing,'tables':corpus['tables'],'sources':corpus['sources'],
+            'partition':corpus['partition'],'message':'Cached real data ready.' if not missing else 'Data not acquired. Run python -m intention_grounding.acquire.'}
+
+
+def real_cases():
+    return json.loads((ROOT/'data/requests/demo-v1.json').read_text())['cases']
+
+
+def real_demo(case_id):
+    from .discovery import run, save_report
+    case=next((c for c in real_cases() if c['request']['request_id']==case_id),None)
+    if case is None:raise ValueError('Unknown demonstration case')
+    if not corpus_overview()['ready']:
+        raise ValueError('DATA_NOT_ACQUIRED: run python -m intention_grounding.acquire')
+    report=run(case['request'],**case['run_options'])
+    path=save_report(report,ROOT/'outputs/dashboard')
+    report['saved_prediction_path']=str(path.relative_to(ROOT))
+    report['saved_prediction_sha256']=hashlib.sha256(path.read_bytes()).hexdigest()
+    return report
 
 
 def run_checks():
@@ -142,12 +169,12 @@ class Handler(BaseHTTPRequestHandler):
             il = load_intention_library()
             return self.send({'library': list_intentions(il), 'procedures': len(il.get('procedures', {})),
                               'cases': [{k: c[k] for k in ('input_id', 'input', 'expected')} for c in cases()],
-                              'provenance': identity()})
+                              'provenance': identity(), 'corpus':corpus_overview(), 'real_cases':real_cases()})
         if url.path == '/api/intention':
             try:
                 aid = parse_qs(url.query).get('id', [''])[0]
                 return self.send(describe_intention(aid, load_intention_library()))
-            except ActionBaseError:
+            except IntentionLibraryError:
                 return self.send({'error': 'Unknown intention'}, 404)
         return self.send({'error': 'Not found'}, 404)
 
@@ -162,13 +189,17 @@ class Handler(BaseHTTPRequestHandler):
             if not isinstance(payload, dict):
                 raise ValueError()
             if self.path == '/api/demo':
-                return self.send(demo())
+                return self.send(real_demo(payload.get('case_id','dc_daily')))
+            if self.path == '/api/replay-pipeline':
+                return self.send(replay_demo())
             if self.path == '/api/case':
                 return self.send(run_case(payload.get('id')))
             if self.path == '/api/tests':
                 return self.send(run_checks())
-        except (ValueError, TypeError):
-            return self.send({'error': 'Invalid request or unknown case'}, 400)
+        except (ValueError, TypeError) as exc:
+            message='Invalid request or unknown case'
+            if str(exc).startswith('DATA_NOT_ACQUIRED'): message=str(exc)
+            return self.send({'error': message}, 400)
         except Exception:
             return self.send({'error': 'Operation failed; no result claimed'}, 500)
         return self.send({'error': 'Not found'}, 404)

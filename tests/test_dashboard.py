@@ -35,16 +35,28 @@ class DashboardTests(unittest.TestCase):
 
     def test_demo_executes_existing_components_with_explicit_provenance(self):
         with patch('intention_grounding.groq_config.groq_api_key', side_effect=AssertionError('No credentials')):
-            status, _, raw = self.request('POST', '/api/demo', '{}', {'Content-Type': 'application/json'})
+            status, _, raw = self.request('POST', '/api/replay-pipeline', '{}', {'Content-Type': 'application/json'})
         self.assertEqual(200, status)
         result = json.loads(raw)
         self.assertEqual('offline_manual_replay', result['mode'])
-        self.assertEqual('compare.time', result['grounding']['grounded_card']['selected_child_action_id'])
+        self.assertEqual('compare.time', result['grounding']['grounded_intention']['intention_id'])
         self.assertEqual(4, len(result['rows']))
         self.assertEqual(4, result['profile']['row_count'])
-        self.assertEqual('unknown', result['comparison']['tables'][0]['overall_state'])
+        self.assertEqual('unresolved', result['comparison']['tables'][0]['overall_state'])
         self.assertTrue(result['provenance']['implementation_sha256'])
         self.assertIn('Synthetic', result['notice'])
+
+    def test_real_demo_route_and_missing_data_are_explicit(self):
+        report = {'request': {'request_id': 'dc_daily'}, 'abstained': False}
+        with patch.object(dashboard, 'real_demo', return_value=report) as run:
+            status, _, raw = self.request('POST', '/api/demo', '{"case_id":"dc_daily"}', {'Content-Type':'application/json'})
+        run.assert_called_once_with('dc_daily')
+        self.assertEqual(200, status)
+        self.assertEqual(report, json.loads(raw))
+        with patch.object(dashboard, 'corpus_overview', return_value={'ready':False}):
+            status, _, raw = self.request('POST', '/api/demo', '{}', {'Content-Type':'application/json'})
+        self.assertEqual(400, status)
+        self.assertIn('DATA_NOT_ACQUIRED', json.loads(raw)['error'])
 
     def test_all_replay_outcomes_and_unknown_case(self):
         for case in dashboard.cases():

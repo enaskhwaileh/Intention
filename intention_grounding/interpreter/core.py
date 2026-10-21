@@ -6,7 +6,7 @@ from jsonschema import Draft202012Validator
 
 from ..provider_errors import provider_diagnostic
 
-SCHEMA_VERSION = '1.0'
+SCHEMA_VERSION = '2.0'
 NORMALIZATION_VERSION = '1.0'
 SCHEMA = json.loads(files(__package__).joinpath('schema.json').read_text())
 VALIDATOR = Draft202012Validator(SCHEMA)
@@ -77,14 +77,14 @@ def validate(document, input_id, original_input):
             for child in node.values():
                 walk(child)
     walk(document)
-    actions = {a['id']: a for a in document['actions']}
-    require(len(actions) == len(document['actions']), 'DUPLICATE_ID')
+    intentions = {a['id']: a for a in document['intentions']}
+    require(len(intentions) == len(document['intentions']), 'DUPLICATE_ID')
     candidates = {}
-    for action in actions.values():
-        for candidate in action['candidates']:
-            require(candidate['id'] not in candidates and candidate['id'] not in actions, 'DUPLICATE_ID')
-            candidates[candidate['id']] = action['id']
-    covered_actions, covered_candidates = set(), set()
+    for intention in intentions.values():
+        for candidate in intention['candidates']:
+            require(candidate['id'] not in candidates and candidate['id'] not in intentions, 'DUPLICATE_ID')
+            candidates[candidate['id']] = intention['id']
+    covered_intentions, covered_candidates = set(), set()
     competing = False
     for rel in document['relationships']:
         members = rel['members']
@@ -95,22 +95,22 @@ def validate(document, input_id, original_input):
             covered_candidates.update(members)
             competing = True
         else:
-            require(all(m in actions for m in members), 'RELATIONSHIP_MEMBERS')
+            require(all(m in intentions for m in members), 'RELATIONSHIP_MEMBERS')
             require(len(members) == 1 if rel['kind'] == 'single' else len(members) >= 2,
                     'RELATIONSHIP_MEMBERS')
-            require(not covered_actions.intersection(members), 'RELATIONSHIP_CONFLICT')
-            covered_actions.update(members)
-    require(covered_actions == set(actions), 'RELATIONSHIP_COVERAGE')
-    for action in actions.values():
-        if len(action['candidates']) > 1:
-            require(all(c['id'] in covered_candidates for c in action['candidates']), 'AMBIGUITY_REQUIRED')
+            require(not covered_intentions.intersection(members), 'RELATIONSHIP_CONFLICT')
+            covered_intentions.update(members)
+    require(covered_intentions == set(intentions), 'RELATIONSHIP_COVERAGE')
+    for intention in intentions.values():
+        if len(intention['candidates']) > 1:
+            require(all(c['id'] in covered_candidates for c in intention['candidates']), 'AMBIGUITY_REQUIRED')
     status, codes = document['status'], set(document['diagnostics'])
-    missing = [m for a in actions.values() for m in a['missing']]
-    require(status != 'unambiguous' or (bool(actions) and not missing and not codes and not competing), 'STATUS_CONFLICT')
+    missing = [m for a in intentions.values() for m in a['missing']]
+    require(status != 'unambiguous' or (bool(intentions) and not missing and not codes and not competing), 'STATUS_CONFLICT')
     require(status != 'ambiguous' or (competing and 'COMPETING_INTERPRETATIONS' in codes), 'STATUS_CONFLICT')
     require(not competing or status == 'ambiguous', 'STATUS_CONFLICT')
     require(status != 'insufficient' or (bool(missing) and bool(codes & {'MISSING_ARGUMENT','UNRESOLVED_REFERENCE'})), 'STATUS_CONFLICT')
-    require(status != 'unsupported' or (not actions and codes == {'OUT_OF_SCOPE'}), 'STATUS_CONFLICT')
+    require(status != 'unsupported' or (not intentions and codes == {'OUT_OF_SCOPE'}), 'STATUS_CONFLICT')
     return document
 
 
@@ -136,3 +136,13 @@ def interpret(input_id, original_input, provider):
     except ContractError as exc:
         result['failure'] = str(exc)
     return result
+
+
+def interpret_structured(record):
+    """Explicit author-supplied semantic representation; no natural-language inference."""
+    from ..contracts import validate_request
+    import copy
+    validated = validate_request(copy.deepcopy(record))
+    return {'schema_version':'1.0','input_mode':'authored_structured_request',
+            'status':'validated','structured_intention_record':validated,
+            'notice':'Semantic roles supplied by the author, not extracted by a live LLM; wording-to-role correctness requires review.'}

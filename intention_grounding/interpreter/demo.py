@@ -11,7 +11,7 @@ from .providers import ReplayProvider
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument('--output-root', type=Path, default=Path('outputs/ab-m1'))
+    parser.add_argument('--output-root', type=Path, default=Path('outputs/il-m1'))
     args = parser.parse_args()
     args.output_root.mkdir(parents=True, exist_ok=True)
     output = Path(tempfile.mkdtemp(prefix='manual-replay-', dir=args.output_root))

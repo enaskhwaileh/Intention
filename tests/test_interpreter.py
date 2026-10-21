@@ -12,7 +12,6 @@ from unittest.mock import MagicMock, patch
 from intention_grounding.interpreter.core import SCHEMA, VALIDATOR, interpret
 from intention_grounding.interpreter.providers import GroqProvider, ReplayProvider, SYSTEM_PROMPT, list_available_models
 from intention_grounding.provider_errors import provider_diagnostic
-from intention_grounding.scripts.grounder_production import ground_intent, load_action_base
 
 FIXTURES = json.loads(importlib.resources.files('intention_grounding.interpreter').joinpath('fixtures/replay.json').read_text())
 
@@ -50,23 +49,23 @@ class ContractTests(unittest.TestCase):
     def test_independent_semantic_expectations(self):
         docs = {c['input_id']:self.run_doc(json.loads(c['raw_response']))['interpretation'] for c in FIXTURES[:10]}
         def roles(name):
-            return [(a['role'], a['value']['literal']) for a in docs[name]['actions'][0]['arguments']]
+            return [(a['role'], a['value']['literal']) for a in docs[name]['intentions'][0]['arguments']]
         self.assertIn(('time_points','2021'), roles('groups_year'))
         self.assertNotIn('time_grain', [r for r,v in roles('groups_year')])
         self.assertEqual('  Compare income in France and Germany in 2021.  ', docs['groups_year']['original_input'])
         self.assertIn(('time_range','between 2019 and 2021'), roles('trajectories'))
         self.assertNotIn('time_points', [r for r,v in roles('trajectories')])
         self.assertEqual(['2019','2021'], [v for r,v in roles('observations') if r=='time_points'])
-        self.assertEqual('unresolved_reference',docs['insufficient']['actions'][0]['missing'][0]['reason'])
+        self.assertEqual('unresolved_reference',docs['insufficient']['intentions'][0]['missing'][0]['reason'])
         self.assertEqual('joint', docs['joint']['relationships'][0]['kind'])
         self.assertEqual('accepted_alternatives', docs['alternatives']['relationships'][0]['kind'])
-        self.assertEqual(2,len(docs['ambiguous']['actions'][0]['candidates']))
-        self.assertEqual([],docs['unsupported']['actions'])
+        self.assertEqual(2,len(docs['ambiguous']['intentions'][0]['candidates']))
+        self.assertEqual([],docs['unsupported']['intentions'])
         goals=self.run_doc(json.loads(FIXTURES[-1]['raw_response']))['interpretation']
         self.assertEqual('ambiguous',goals['status'])
-        self.assertEqual(1,len(goals['actions']))
-        self.assertEqual(['Contrast income across countries.','Summarize income separately for each country.'],[c['reading']['description'] for c in goals['actions'][0]['candidates']])
-        self.assertEqual('Forecast',docs['non_compare']['actions'][0]['expression']['literal'])
+        self.assertEqual(1,len(goals['intentions']))
+        self.assertEqual(['Contrast income across countries.','Summarize income separately for each country.'],[c['reading']['description'] for c in goals['intentions'][0]['candidates']])
+        self.assertEqual('Forecast',docs['non_compare']['intentions'][0]['expression']['literal'])
 
     def test_unknown_fields_at_every_object_level(self):
         def paths(node, path=()):
@@ -81,21 +80,21 @@ class ContractTests(unittest.TestCase):
                 for key in path: d=d[key]
                 d['extra']=True
             with self.subTest(path=path): self.reject(mutate,'SCHEMA_VALIDATION',doc)
-        self.reject(lambda d:d.update(schema_version='2.0'),'SCHEMA_VALIDATION')
+        self.reject(lambda d:d.update(schema_version='999'),'SCHEMA_VALIDATION')
 
     def test_prohibited_claim_fields(self):
         for key in ['confidence','table_requirements','suitability','ab_action_id','system_defaults']:
-            self.reject(lambda d:d['actions'][0].update({key:0.9}),'SCHEMA_VALIDATION')
+            self.reject(lambda d:d['intentions'][0].update({key:0.9}),'SCHEMA_VALIDATION')
 
     def test_spans_and_references(self):
         for start in [True, 0.0, -1, 10000, '2']:
             self.reject(lambda d:d['evidence'][0].update(start=start))
         self.reject(lambda d:d['evidence'][0].update(end=d['evidence'][0]['start']))
         self.reject(lambda d:d['evidence'][0].update(text='Germany'),'SPAN_TEXT_MISMATCH')
-        self.reject(lambda d:d['actions'][0]['expression'].update(evidence=['missing']),'UNRESOLVED_EVIDENCE')
+        self.reject(lambda d:d['intentions'][0]['expression'].update(evidence=['missing']),'UNRESOLVED_EVIDENCE')
         self.reject(lambda d:d['relationships'][0].update(evidence=['missing']),'UNRESOLVED_EVIDENCE')
         self.reject(lambda d:d['evidence'].append(d['evidence'][0]),'DUPLICATE_ID')
-        self.reject(lambda d:d['actions'][0]['expression'].update(literal='invented'),'LITERAL_MISMATCH')
+        self.reject(lambda d:d['intentions'][0]['expression'].update(literal='invented'),'LITERAL_MISMATCH')
         doc=json.loads(FIXTURES[9]['raw_response'])
         spans=[e for e in doc['evidence'] if e['text']=='café']
         self.assertEqual([10,20], [e['start'] for e in spans])
@@ -104,15 +103,15 @@ class ContractTests(unittest.TestCase):
 
     def test_normalization(self):
         def normalize(d,rule,value):
-            v=d['actions'][0]['expression']
+            v=d['intentions'][0]['expression']
             v['normalized']={'rule_id':rule,'value':value,'evidence':v['evidence']}
         d=copy.deepcopy(self.doc);normalize(d,'casefold-v1','compare')
         self.assertIsNone(self.run_doc(d)['failure'])
         self.reject(lambda d:normalize(d,'unknown','compare'),'SCHEMA_VALIDATION')
         self.reject(lambda d:normalize(d,'casefold-v1','forecast'),'INVALID_NORMALIZATION')
         self.reject(lambda d:normalize(d,'annual-v1','year'),'INVALID_NORMALIZATION')
-        self.reject(lambda d:d['actions'][0]['expression'].update(normalized={'value':'compare'}),'SCHEMA_VALIDATION')
-        self.reject(lambda d:d['actions'][0]['expression']['normalized'].update(evidence=['missing']), 'UNRESOLVED_EVIDENCE',d)
+        self.reject(lambda d:d['intentions'][0]['expression'].update(normalized={'value':'compare'}),'SCHEMA_VALIDATION')
+        self.reject(lambda d:d['intentions'][0]['expression']['normalized'].update(evidence=['missing']), 'UNRESOLVED_EVIDENCE',d)
 
     def test_status_relationship_consistency(self):
         self.reject(lambda d:d.update(status='ambiguous'),'STATUS_CONFLICT')
@@ -139,10 +138,10 @@ class ContractTests(unittest.TestCase):
         self.assertEqual('INPUT_MISMATCH',interpret('wrong',self.doc['original_input'],ReplayProvider(json.dumps(self.doc)))['failure'])
 
     def test_legacy_boundary(self):
-        with self.assertRaisesRegex(ValueError,'incompatible'): ground_intent(self.doc,load_action_base())
-        with self.assertRaisesRegex(ValueError,'incompatible'): ground_intent(self.run_doc(self.doc),load_action_base())
-        ab=load_action_base()
-        self.assertEqual(ab['actions']['COMPARE']['conditions'],ground_intent({'intended_action':'COMPARE'},ab)['conditions'])
+        from intention_grounding.legacy.reader import read_interpretation_v1
+        old = json.loads((Path(__file__).resolve().parents[1] / 'intention_grounding/legacy/interpreter-v1.json').read_text())[0]
+        migrated = read_interpretation_v1(json.loads(old['raw_response']))
+        self.assertIsNone(self.run_doc(migrated)['failure'])
 
     def test_mocked_groq(self):
         factory=MagicMock()
