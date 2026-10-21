@@ -55,7 +55,7 @@ class PipelineTests(unittest.TestCase):
                          {r["id"] for r in card["requirements"]})
         self.assertTrue(card["deterministic_validation"]["valid"])
 
-    def test_unknown_wrong_action_and_version(self):
+    def test_unknown_wrong_intention_and_version(self):
         for field, value, reason in [("intention_id", "COMPARE", "UNKNOWN_INTENTION_ID"),
                                      ("il_version", "9", "IL_VERSION_MISMATCH")]:
             proposal = copy.deepcopy(self.proposal); proposal[field] = value
@@ -105,7 +105,7 @@ class PipelineTests(unittest.TestCase):
         self.assertEqual({"exception_type": "MissingGroqCredentialError",
                           "error_code": "MISSING_GROQ_API_KEY"}, missing["provider_error"])
 
-    def test_action_base_validation(self):
+    def test_intention_library_validation(self):
         il = copy.deepcopy(self.il); il["intentions"]["compare.time"]["parent"] = "missing"
         with self.assertRaises(IntentionLibraryError): validate_intention_library(il)
         with self.assertRaises(IntentionLibraryError): load_intention_library(expected_version="9")
