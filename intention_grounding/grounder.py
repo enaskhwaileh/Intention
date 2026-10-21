@@ -8,7 +8,7 @@ from .groq_config import groq_api_key, groq_model_id
 from .provider_errors import provider_diagnostic
 
 CARD_SCHEMA_VERSION = "2.0"
-GROUNDING_PROMPT_VERSION = "canonical-il-v0.2-grounder-v2"
+GROUNDING_PROMPT_VERSION = "canonical-il-v0.3-grounder-v3"
 
 
 @dataclass
@@ -194,3 +194,34 @@ def ground(interpreter_envelope, il, provider, *, run_id):
     return {"metadata": metadata, "raw_response": raw, "model_proposal": proposal,
             "grounded_intention": card, "status": "grounded", "reasons": [],
             "provider_error": None}
+
+
+def ground_request(record):
+    """Ground a validated authored structured request, before seeing any tables.
+
+    This is an explicit non-LLM input mode, not inferred natural-language accuracy.
+    The closed request supplies semantic roles, never table or column identifiers.
+    """
+    from pathlib import Path
+    from .contracts import validate_request
+    validate_request(record)
+    library = json.loads((Path(__file__).parent/'library/compare-procedures-v1.json').read_text())
+    base = {'schema_version':'2.0','request_id':record['request_id'],'il_version':library['il_version'],
+            'input_mode':record['input_mode'],'intention_type':record['intention_type'],
+            'request_evidence':{'text':record['text'],'origin':'authored structured specification; not live NLP'},
+            'procedures':[], 'status':record['status']}
+    if record['status'] != 'ready':
+        base['reason']='REQUEST_'+record['status'].upper()
+        return base
+    if record['intention_type'] != 'compare':
+        base.update(status='unsupported',reason='PREDICT_RUNTIME_NOT_IMPLEMENTED')
+        return base
+    if record['roles']['statistic']=='unspecified':
+        base.update(status='ambiguous',reason='STATISTIC_NOT_SPECIFIED_NO_AUTOMATIC_MEAN')
+        return base
+    for pid,procedure in library['procedures'].items():
+        if procedure['statistic']==record['roles']['statistic'] or record['roles']['statistic']=='documented_or_mean':
+            base['procedures'].append({'procedure_id':pid,**procedure,'bindings':record['roles']})
+    base['procedure_relationship']='accepted_alternatives' if len(base['procedures'])>1 else 'single'
+    base['status']='grounded' if base['procedures'] else 'unsupported'
+    return base

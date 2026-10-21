@@ -4313,10 +4313,11 @@
       "compare.groups.trajectories",
       "compare.time"
     ],
-    "assessment": "unknown_only",
-    "execution": "not_implemented",
+    "assessment": "scoped_compare_v1",
+    "execution": "scoped_compare_v1",
     "new_action_policy": "catalog_only_until_explicit_runtime_integration",
-    "unknown_intention_policy": "preserve_unmapped_request_for_review_never_force_nearest_label"
+    "unknown_intention_policy": "preserve_unmapped_request_for_review_never_force_nearest_label",
+    "procedure_contract": "compare-procedures-v1.json"
   },
   "composition_policy": {
     "joint_goals": "all_of",
@@ -4324,7 +4325,7 @@
     "competing_interpretations": "ambiguous_not_any_of",
     "alternative_procedures": "retain_separate_bindings_and_requirement_branches",
     "execution_order": "explicit_step_dependencies_not_action_inheritance",
-    "aggregate_then_compare": "catalogued_steps_only_not_enabled_by_this_extension"
+    "aggregate_then_compare": "explicit_group_mean_only"
   },
   "verdict_contract": {
     "states": [

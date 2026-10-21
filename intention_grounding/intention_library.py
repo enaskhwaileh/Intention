@@ -82,7 +82,7 @@ def _validate_library(il):
     policy = il.get("runtime_policy")
     _require(isinstance(policy, dict), "IL_RUNTIME_POLICY")
     enabled = _strings(policy.get("groundable_intention_ids"), "IL_RUNTIME_ACTION", allowed=GROUNDABLE_INTENTION_IDS)
-    _require(policy.get("assessment") == "unknown_only" and policy.get("execution") == "not_implemented", "IL_RUNTIME_CAPABILITY")
+    _require(policy.get("assessment") == "scoped_compare_v1" and policy.get("execution") == "scoped_compare_v1", "IL_RUNTIME_CAPABILITY")
     contract = il.get("verdict_contract")
     _require(isinstance(contract, dict), "IL_VERDICT_CONTRACT")
     _require(contract.get("states") == ["supported", "violated", "unresolved"] and contract.get("missing_evidence") == "unresolved", "IL_VERDICT_CONTRACT")

@@ -1,0 +1,11 @@
+{
+  "schema_version": "1.0",
+  "policy_id": "procedure_state_then_bm25_v1",
+  "state_order": ["supported", "unresolved", "violated"],
+  "within_state": ["bm25_descending", "table_id_ascending"],
+  "procedure_aggregation": "any_supported_else_all_violated_else_unresolved",
+  "abstain_unless_supported": true,
+  "interpretation_failure": "topical_fallback_with_abstention",
+  "probability": false,
+  "status": "versioned development-pilot policy, not scientifically calibrated"
+}

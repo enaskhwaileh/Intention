@@ -1,0 +1,99 @@
+{
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "designation",
+    "partitions"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "1.0"
+    },
+    "designation": {
+      "enum": [
+        "development_only",
+        "topic_family_disjoint"
+      ]
+    },
+    "partitions": {
+      "type": "object",
+      "minProperties": 1,
+      "additionalProperties": false,
+      "properties": {
+        "development": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "table_ids",
+            "request_ids"
+          ],
+          "properties": {
+            "table_ids": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "minLength": 1
+              }
+            },
+            "request_ids": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "minLength": 1
+              }
+            }
+          }
+        },
+        "validation": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "table_ids",
+            "request_ids"
+          ],
+          "properties": {
+            "table_ids": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "minLength": 1
+              }
+            },
+            "request_ids": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "minLength": 1
+              }
+            }
+          }
+        },
+        "test": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "table_ids",
+            "request_ids"
+          ],
+          "properties": {
+            "table_ids": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "minLength": 1
+              }
+            },
+            "request_ids": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "minLength": 1
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

@@ -20,3 +20,12 @@ def compare_card(card, profiles):
                        "requirements": results})
     return {"status": "completed", "policy": "all_of_three_valued_v1", "tables": tables,
             "notice": "Observable schema statistics do not establish semantic or relational suitability."}
+
+
+def assess_table(table, profile, grounding, root, **kwargs):
+    """Assess each grounded procedure separately; no evidence is shared as a verdict."""
+    from .procedures import assess_procedure
+    procedures=[assess_procedure(table,profile,p,root,**kwargs) for p in grounding['procedures']]
+    states=[p['outcome'] for p in procedures]
+    overall=('supported' if 'supported' in states else 'violated' if states and all(s=='violated' for s in states) else 'unresolved')
+    return {'table_id':table['table_id'],'overall_state':overall,'procedures':procedures}

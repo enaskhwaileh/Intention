@@ -136,3 +136,13 @@ def interpret(input_id, original_input, provider):
     except ContractError as exc:
         result['failure'] = str(exc)
     return result
+
+
+def interpret_structured(record):
+    """Explicit author-supplied semantic representation; no natural-language inference."""
+    from ..contracts import validate_request
+    import copy
+    validated = validate_request(copy.deepcopy(record))
+    return {'schema_version':'1.0','input_mode':'authored_structured_request',
+            'status':'validated','structured_intention_record':validated,
+            'notice':'Semantic roles supplied by the author, not extracted by a live LLM; wording-to-role correctness requires review.'}

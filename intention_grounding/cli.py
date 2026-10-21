@@ -36,7 +36,7 @@ def _offline_inputs(il_version=None):
 
 def main(argv=None):
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--mode", choices=("offline", "groq"), default="offline")
+    parser.add_argument("--mode", choices=("offline", "groq", "discovery"), default="offline")
     parser.add_argument("--input-id", default="live-input-1")
     parser.add_argument("--input", help="Natural-language request; required in groq mode")
     parser.add_argument("--model", help="Groq model ID; overrides GROQ_MODEL_ID")
@@ -51,7 +51,34 @@ def main(argv=None):
     inspection = parser.add_mutually_exclusive_group()
     inspection.add_argument("--list-intentions", action="store_true", help="List the IL offline as JSON")
     inspection.add_argument("--intention", help="Inspect an intention and its separate procedure definitions offline")
+    parser.add_argument('--case', default='dc_daily', help='Authored real-data demonstration case ID')
+    parser.add_argument('--request', type=Path, help='Closed structured request JSON for discovery mode')
+    parser.add_argument('--withhold-semantics', action='store_true', help='Explicit missing-documentation diagnostic')
+    parser.add_argument('--no-execute', action='store_true', help='Assess and rank without SQL execution')
     args = parser.parse_args(argv)
+    if args.mode == 'discovery':
+        from .discovery import run, save_report, ROOT
+        try:
+            options = {}
+            if args.request:
+                request = json.loads(args.request.read_text())
+            else:
+                cases = json.loads((ROOT/'data/requests/demo-v1.json').read_text())['cases']
+                case = next((c for c in cases if c['request']['request_id'] == args.case), None)
+                if case is None: parser.error('Unknown demonstration case')
+                request, options = case['request'], case['run_options']
+            report = run(request, execute=not args.no_execute,
+                         withhold_semantics=args.withhold_semantics or options.get('withhold_semantics', False))
+            path = save_report(report, args.output)
+        except (OSError, ValueError) as exc:
+            print('discovery_error=' + type(exc).__name__ + ': ' + str(exc))
+            return 2
+        print('input_mode=' + request['input_mode'] + ' grounding=' + report['grounded_intention']['status'])
+        for table in report['ranking']:
+            print(table['rank'], table['table_id'], table['overall_state'], round(table['retrieval_score'], 6))
+        print('abstained=' + str(report['abstained']) + ' effectiveness=pending_independent_judgments')
+        print('predictions=' + str(path))
+        return 0
     if args.list_intentions or args.intention is not None:
         try:
             il = load_intention_library(args.il)

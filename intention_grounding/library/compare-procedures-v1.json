@@ -1,0 +1,27 @@
+{
+  "schema_version": "1.0",
+  "il_version": "0.3.0-draft",
+  "scope": "Descriptive comparisons of documented interval counts; no causal inference",
+  "procedures": {
+    "compare.documented_values.v1": {
+      "intention_id": "compare.time",
+      "description": "Compare one documented value per requested group at the requested observation grain.",
+      "statistic": "documented",
+      "required_roles": ["population", "measure_concept", "unit", "grain", "group_role", "groups", "period"],
+      "operator": "select_one_observation_per_group",
+      "sql_template": "SELECT {group}, {measure} AS value FROM observations WHERE {date} BETWEEN ? AND ? AND {group} IN ({placeholders}) ORDER BY {group}",
+      "applicability": "The request asks for documented values, with exactly one valid observation per requested group in the full scoped table.",
+      "requirements": ["documented_semantics", "population", "measure_concept", "unit", "grain", "observation_kind", "role_binding", "period", "group_coverage", "usable_numeric_values", "one_value_per_group"]
+    },
+    "compare.group_mean.v1": {
+      "intention_id": "compare.groups",
+      "description": "Compute unweighted arithmetic means of observed interval counts within each requested group, then compare them.",
+      "statistic": "mean",
+      "required_roles": ["population", "measure_concept", "unit", "grain", "group_role", "groups", "period"],
+      "operator": "group_mean_of_observed_counts",
+      "sql_template": "SELECT {group}, AVG({measure}) AS value, COUNT(*) AS n FROM observations WHERE {date} BETWEEN ? AND ? AND {group} IN ({placeholders}) GROUP BY {group} ORDER BY {group}",
+      "applicability": "An explicit mean over observed intervals is requested. Inputs must be documented interval counts, not precomputed means. No missing interval is imputed; no population/generalization claim.",
+      "requirements": ["documented_semantics", "population", "measure_concept", "unit", "grain", "observation_kind", "role_binding", "period", "group_coverage", "usable_numeric_values"]
+    }
+  }
+}
