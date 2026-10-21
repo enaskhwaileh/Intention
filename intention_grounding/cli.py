@@ -6,7 +6,7 @@ from importlib.resources import files
 from pathlib import Path
 import uuid
 
-from .action_base import CANONICAL_AB_PATH, load_action_base
+from .action_base import CANONICAL_IL_PATH, load_intention_library
 from .aligner import compare_card
 from .grounder import GroqGrounderProvider, ReplayGrounderProvider, ground
 from .groq_config import groq_model_id
@@ -45,7 +45,8 @@ def main(argv=None):
     parser.add_argument("--dataset-metadata", type=Path, help="JSON provenance record for supplied tables")
     parser.add_argument("--max-tables", type=int, default=None)
     parser.add_argument("--output", type=Path, default=Path("outputs/pipeline"))
-    parser.add_argument("--ab", type=Path, default=CANONICAL_AB_PATH)
+    parser.add_argument("--il", "--ab", dest="il", type=Path, default=CANONICAL_IL_PATH,
+                        help="Intention Library JSON path (--ab is a compatibility alias)")
     args = parser.parse_args(argv)
     if args.list_models:
         try:
@@ -69,7 +70,7 @@ def main(argv=None):
             return 2
     if args.max_tables is not None and args.max_tables < 1:
         parser.error("--max-tables must be positive")
-    ab = load_action_base(args.ab)
+    ab = load_intention_library(args.il)
     if args.mode == "offline":
         input_id, user_input, interpreter_provider, grounder_provider = _offline_inputs()
     else:
@@ -99,7 +100,7 @@ def main(argv=None):
     _write(output / "table-profiles.json", profiles)
     _write(output / "comparison.json", comparison)
     manifest = {"run_id": run_id, "created_at": datetime.now(timezone.utc).isoformat(), "mode": args.mode,
-                "ab_path": str(args.ab), "ab_version": ab["ab_version"], "input_id": input_id,
+                "ab_path": str(args.il), "ab_version": ab["ab_version"], "input_id": input_id,
                 "tables": [str(path) for path in paths], "artifact_directory": str(output)}
     _write(output / "run.json", manifest)
     states = {table["overall_state"] for table in comparison["tables"]}

@@ -1,3 +1,5 @@
+> Historical record, retained for provenance. This is not current implementation guidance or a validated methodology. Start with the repository README; the committed IL is v0.1. Claims and commands below describe the historical design.
+
 # Rational Grounder Design (Test 4)
 
 **Date:** September 16, 2026  

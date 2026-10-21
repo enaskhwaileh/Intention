@@ -55,3 +55,10 @@ def ancestry(action_id, ab):
         chain.append(action_id)
         action_id = ab["actions"][action_id]["parent"]
     return list(reversed(chain))
+
+
+# Preferred terminology; compatibility names share the same implementation.
+CANONICAL_IL_PATH = CANONICAL_AB_PATH
+IntentionLibraryError = ActionBaseError
+load_intention_library = load_action_base
+validate_intention_library = validate_action_base

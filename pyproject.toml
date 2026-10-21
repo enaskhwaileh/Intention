@@ -5,7 +5,7 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "intention-grounding"
 version = "0.2.0"
-description = "Validated interpretation boundary for intended-action grounding"
+description = "Intention-grounded table discovery with validated intention grounding"
 requires-python = ">=3.10"
 dependencies = ["jsonschema==4.23.0", "python-dotenv>=1.0,<2"]
 

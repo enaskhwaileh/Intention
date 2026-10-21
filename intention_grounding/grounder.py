@@ -1,4 +1,4 @@
-"""AB-constrained model proposal followed by deterministic card construction."""
+"""Intention Library-constrained model proposal followed by deterministic card construction."""
 import json
 from dataclasses import dataclass
 
@@ -8,7 +8,7 @@ from .groq_config import groq_api_key, groq_model_id
 from .provider_errors import provider_diagnostic
 
 CARD_SCHEMA_VERSION = "1.0"
-GROUNDING_PROMPT_VERSION = "canonical-ab-v0.1-grounder-v1"
+GROUNDING_PROMPT_VERSION = "canonical-il-v0.1-grounder-v2"
 
 
 @dataclass
@@ -41,11 +41,11 @@ class GroqGrounderProvider:
                            if field in {"parent", "abstract", "definition", "required_roles",
                                         "minimum_cardinalities", "selection"}}
                      for key, action in ab["actions"].items()}
-        prompt = ("Select exactly one supported Action Base ID. Do not invent IDs, values, or evidence. "
+        prompt = ("Select exactly one supported Intention Library intention ID. Do not invent IDs, values, or evidence. "
                   "Return only JSON with keys ab_version,input_id,action_id,bindings,evidence. "
                   "bindings maps each role to a nonempty list of {action_id,argument_index}; indices refer "
-                  "to the interpreter action arguments. evidence is a nonempty list of interpreter evidence IDs. "
-                  "Only select an action when its meaning and inherited required roles are supported.\nAB=" +
+                  "to the structured intention record arguments. evidence is a nonempty list of interpreter evidence IDs. "
+                  "Only select an intention when its meaning and inherited required roles are supported.\nIL=" +
                   json.dumps({"ab_version": ab["ab_version"], "actions": catalogue}))
         factory = self.client_factory
         if factory is None:
