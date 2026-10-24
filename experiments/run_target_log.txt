@@ -1,0 +1,15 @@
+
+=== [22:08:18] TARGET datasets on the hub
+
+=== [22:08:18] TARGET bird-validation: import
+Fetching 104 files:   0%|          | 0/104 [00:00<?, ?it/s]Fetching 104 files: 100%|██████████| 104/104 [00:00<00:00, 4268.59it/s]
+target-benchmark/bird-corpus-validation: files by type {'.json': 1, '.csv': 75}; e.g. ['corpus-validation.json', 'validation_database/california_schools/database_description/frpm.csv', 'validation_database/california_schools/database_description/satscores.csv', 'validation_database/california_schools/database_description/schools.csv', 'validation_database/card_games/database_description/cards.csv', 'validation_database/card_games/database_description/foreign_data.csv']
+target-benchmark/bird-corpus-validation: 75 rows from 1 files; fields ['context', 'database_id', 'table', 'table_id']
+Fetching 3 files:   0%|          | 0/3 [00:00<?, ?it/s]Fetching 3 files: 100%|██████████| 3/3 [00:00<00:00, 2130.89it/s]
+target-benchmark/bird-queries-validation: files by type {'.json': 1}; e.g. ['bird-queries-validation.json']
+target-benchmark/bird-queries-validation: 1534 rows from 1 files; fields ['answer', 'database_id', 'difficulty', 'evidence', 'query', 'query_id', 'table_id']
+target-bird-validation: 75 tables; 1533 queries; operations {'total_or_count': 588, 'lookup': 655, 'extreme': 235, 'mean': 55}
+
+=== [22:08:37] TARGET bird-validation: experiments
+/Users/enaso/Desktop/play ground/Intention/.venv-sbert/lib/python3.12/site-packages/transformers/tokenization_utils_base.py:1601: FutureWarning: `clean_up_tokenization_spaces` was not set. It will be set to `True` by default. This behavior will be depracted in transformers v4.45, and will be then set to `False` by default. For more details check this issue: https://github.com/huggingface/transformers/issues/31884
+  warnings.warn(

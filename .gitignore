@@ -26,3 +26,17 @@ data/normalized/
 data/runtime/
 *.parquet
 *.feather
+
+.venv-sbert/
+
+# corpus tables are rebuilt from pinned sources (python -m intention_grounding.corpus fetch && build)
+data/corpus/*/tables/
+data/raw/owid
+data/raw/rdatasets
+# experiment run directories: keep summaries, not full prediction dumps
+experiments/results/*/predictions_*.jsonl
+experiments/results/scratch*/
+intention_grounding/.env
+
+# failed launcher attempts
+experiments/run_*attempt*.txt

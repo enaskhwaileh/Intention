@@ -1,227 +1,293 @@
-"""Intention Library-constrained model proposal followed by deterministic card construction."""
+"""Grounder: (g_u, Psi_u, s_G) = ground(iota_u, L)   (Algorithm 2).
+
+A resolver proposes a variant, role-to-entry references and scope references.
+Everything after the proposal is deterministic: contract validation, binding of
+referenced values, procedure applicability and requirement instantiation.
+"""
+import copy
 import json
-from dataclasses import dataclass
+import re
+import time
 
-from .intention_library import ancestry, is_groundable
-from .interpreter.core import parse_response, ContractError
-from .groq_config import groq_api_key, groq_model_id
-from .provider_errors import provider_diagnostic
+from . import il as il_module
+from .llm import ChatClient, parse_json_object
 
-CARD_SCHEMA_VERSION = "2.0"
-GROUNDING_PROMPT_VERSION = "canonical-il-v0.3-grounder-v3"
+GROUNDED, INSUFFICIENT, AMBIGUOUS, UNSUPPORTED, FAILURE, NOT_ATTEMPTED = (
+    "grounded", "insufficient", "ambiguous", "unsupported", "failure", "not_attempted")
+PROMPT_VERSION = "grounder-v3.0"
+PROPOSAL_KEYS = {"status", "variant_id", "bindings", "scope", "justification", "diagnostics"}
 
 
-@dataclass
-class ReplayGrounderProvider:
-    raw_response: str
+# ------------------------------------------------------------------ resolvers
+RESOLVER_PROMPT = """You map an extracted analytical intention to a registered Intention Library variant.
+Return ONLY one JSON object:
+{"status": "proposed"|"insufficient"|"ambiguous"|"unsupported",
+ "variant_id": str|null,
+ "bindings": {role: [entry_id, ...]},
+ "scope": [entry_id, ...],
+ "justification": str,
+ "diagnostics": [{"code": str, "role": str|null, "entry_refs": [entry_id, ...]}]}
+Rules:
+- Choose a variant whose outcome is what the input asks for. Use only variant ids and role
+  names from the library definitions below.
+- Every binding must reference ids of the extracted arguments; never write new values,
+  SQL, predicates or thresholds. The entry label must be admitted by the role contract.
+- Reference every extracted scope entry in "scope".
+- If a required role has no extracted entry, return "insufficient" and name the role in a
+  diagnostic (code MISSING_ROLE). Never select a statistic or prediction target merely
+  because it is plausible.
+- If two variants remain incompatible readings of the input, return "ambiguous".
+- If no registered variant fits, return "unsupported".
+Library definitions:
+"""
+
+
+class LLMResolver:
+    def __init__(self, client=None, **kwargs):
+        self.client = client or ChatClient(**kwargs)
 
     @property
     def metadata(self):
-        return {"provider": "manual-replay", "fixture_origin": "manually_authored"}
+        return {"resolver": "llm", "model": self.client.model, "prompt_version": PROMPT_VERSION}
 
-    def invoke(self, interpretation, il):
-        return self.raw_response
+    def propose(self, u, intention, definitions):
+        messages = [{"role": "system", "content": RESOLVER_PROMPT + json.dumps(definitions, ensure_ascii=False)},
+                    {"role": "user", "content": json.dumps({"input": u, "intention": intention}, ensure_ascii=False)}]
+        raw, record = self.client.complete_json(messages, prompt_version=PROMPT_VERSION)
+        return raw, {**self.metadata, **record}
 
 
-class GroqGrounderProvider:
-    def __init__(self, *, model=None, temperature=0.0, max_tokens=4096, timeout=30.0,
-                 max_retries=0, client_factory=None):
-        self.model, self.temperature, self.max_tokens = groq_model_id(model), temperature, max_tokens
-        self.timeout, self.max_retries, self.client_factory = timeout, max_retries, client_factory
+class ReplayResolver:
+    def __init__(self, records, origin="authored_gold"):
+        self.records = {k.casefold(): v for k, v in records.items()}
+        self.origin = origin
 
     @property
     def metadata(self):
-        return {"provider": "groq", "model": self.model, "prompt_version": GROUNDING_PROMPT_VERSION,
-                "generation_settings": {"temperature": self.temperature, "max_tokens": self.max_tokens,
-                                        "response_format": {"type": "json_object"}}}
+        return {"resolver": "replay", "origin": self.origin}
 
-    def invoke(self, interpretation, il):
-        key = groq_api_key()
-        catalogue = {key: {field: value for field, value in intention.items()
-                           if field in {"parent", "abstract", "definition", "required_roles",
-                                        "minimum_cardinalities", "selection"}}
-                     for key, intention in il["intentions"].items()
-                     if is_groundable(key, il) or key == "compare"}
-        prompt = ("Select exactly one supported Intention Library intention ID. Do not invent IDs, values, or evidence. "
-                  "Return only JSON with keys il_version,input_id,intention_id,bindings,evidence. "
-                  "bindings maps each role to a nonempty list of {intention_instance_id,argument_index}; indices refer "
-                  "to the structured intention record arguments. evidence is a nonempty list of interpreter evidence IDs. "
-                  "Only select an intention when its meaning and inherited required roles are supported.\nIL=" +
-                  json.dumps({"il_version": il["il_version"], "intentions": catalogue}))
-        factory = self.client_factory
-        if factory is None:
-            from groq import Groq
-            factory = Groq
-        with factory(api_key=key, timeout=self.timeout, max_retries=self.max_retries) as client:
-            response = client.chat.completions.create(
-                model=self.model, temperature=self.temperature, max_tokens=self.max_tokens,
-                response_format={"type": "json_object"},
-                messages=[{"role": "system", "content": prompt},
-                          {"role": "user", "content": json.dumps(interpretation, ensure_ascii=False)}])
-            return response.choices[0].message.content
+    def propose(self, u, intention, definitions):
+        if u.casefold() not in self.records:
+            raise KeyError("NO_RECORDED_PROPOSAL")
+        return json.dumps(self.records[u.casefold()]), self.metadata
 
 
-def _non_grounded(status, reason, raw=None, proposal=None, metadata=None, provider_error=None):
-    return {"metadata": metadata or {}, "raw_response": raw, "model_proposal": proposal,
-            "grounded_intention": None, "status": status, "reasons": [reason],
-            "provider_error": provider_error}
+_CLASSIFICATION_CUES = r"\b(whether|which|class|category|categories|type|survive[ds]?|survival|default|churn|diagnos\w*|yes or no|binary|presence|outcome)\b"
 
 
-def _validate_proposal(proposal, interpretation, il):
-    if not isinstance(proposal, dict) or set(proposal) != {"il_version", "input_id", "intention_id", "bindings", "evidence"}:
-        raise ValueError("INVALID_MODEL_RESPONSE")
-    if proposal["il_version"] != il["il_version"]:
-        raise ValueError("IL_VERSION_MISMATCH")
-    if proposal["input_id"] != interpretation["input_id"]:
-        raise ValueError("INPUT_MISMATCH")
-    if not isinstance(proposal["intention_id"], str) or proposal["intention_id"] not in il["intentions"]:
-        raise ValueError("UNKNOWN_INTENTION_ID")
-    if il["intentions"][proposal["intention_id"]]["abstract"]:
-        raise ValueError("ABSTRACT_INTENTION_NOT_GROUNDABLE")
-    if not is_groundable(proposal["intention_id"], il):
-        raise ValueError("INTENTION_CATALOG_ONLY")
-    if not isinstance(proposal["bindings"], dict) or not isinstance(proposal["evidence"], list) or not proposal["evidence"]:
-        raise ValueError("MISSING_ARGUMENTS_OR_EVIDENCE")
-    evidence_ids = {x["id"] for x in interpretation["evidence"]}
-    if any(not isinstance(x, str) or x not in evidence_ids for x in proposal["evidence"]):
-        raise ValueError("UNKNOWN_EVIDENCE")
-    intentions = {x["id"]: x for x in interpretation["intentions"]}
-    resolved = {}
-    used_evidence = set()
-    for role, refs in proposal["bindings"].items():
-        if role not in il["roles"] or not isinstance(refs, list) or not refs:
-            raise ValueError("INVALID_BINDING")
-        resolved[role] = []
+class IndexResolver:
+    """Deterministic baseline: expression index -> family, role labels -> variant and bindings."""
+    def __init__(self, library):
+        self.library = library
+
+    @property
+    def metadata(self):
+        return {"resolver": "index", "version": "index-resolver-v1"}
+
+    def propose(self, u, intention, definitions):
+        L = self.library
+        expression = (intention.get("expression") or "").casefold()
+        args, scope = intention["arguments"], intention["scope"]
+        by_label = {}
+        for entry in args:
+            by_label.setdefault(entry["label"], []).append(entry)
+        family, best = None, 0
+        for item in L["expression_index"]:
+            phrase = item["phrase"]
+            if re.search(r"\b" + re.escape(phrase) + r"\b", expression) and len(phrase) > best:
+                family, best = item["family"], len(phrase)
+        proposal = {"status": "proposed", "variant_id": None, "bindings": {}, "scope": [s["id"] for s in scope],
+                    "justification": "", "diagnostics": []}
+        if family is None:
+            proposal.update(status="unsupported", justification="Expression not in the expression index.",
+                            diagnostics=[{"code": "UNKNOWN_EXPRESSION", "role": None, "entry_refs": []}])
+            return json.dumps(proposal), self.metadata
+        stat = " ".join(e["value"].casefold() for e in by_label.get("statistic", []))
+        if family == "compare":
+            means = L["variants"]["compare.group_means"]["roles"]["statistic"]["admissible"]
+            many = len(by_label.get("groups", []) + by_label.get("time_points", [])) >= 2
+            if stat and any(term in stat for term in means):
+                variant = "compare.group_means"
+            elif many or by_label.get("group_dimension"):
+                variant = "compare.observed_values"
+            else:
+                variant = "compare.group_means"
+        elif family == "aggregate":
+            variant = "aggregate.group_totals"
+        elif family == "predict":
+            target = " ".join(e["value"] for e in by_label.get("target", []) + by_label.get("measure", []))
+            variant = "predict.classification" if re.search(_CLASSIFICATION_CUES, u + " " + target, re.I) else "predict.regression"
+        elif family == "explain":
+            variant = "explain.association"
+        else:
+            variant = "monitor.trend"
+        proposal["variant_id"] = variant
+        used = set()
+        for role, contract in L["variants"][variant]["roles"].items():
+            refs = []
+            for label in contract["labels"]:
+                for entry in by_label.get(label, []):
+                    if entry["id"] not in used:
+                        refs.append(entry["id"])
+                if refs:
+                    break
+            if contract["max"] is not None:
+                refs = refs[:contract["max"]]
+            if refs:
+                proposal["bindings"][role] = refs
+                used.update(refs)
+        missing = [r for r, c in L["variants"][variant]["roles"].items() if c["required"] and r not in proposal["bindings"]]
+        missing += ["|".join(g) for g in L["variants"][variant].get("requires_one_of", []) if not any(r in proposal["bindings"] for r in g)]
+        if missing:
+            proposal.update(status="insufficient",
+                            diagnostics=[{"code": "MISSING_ROLE", "role": r, "entry_refs": []} for r in missing])
+        proposal["justification"] = f"Index phrase -> family {family}; labels -> {variant}."
+        return json.dumps(proposal), self.metadata
+
+
+# --------------------------------------------------------------- validation
+class GroundingError(ValueError):
+    pass
+
+
+def _contract_valid(z, intention, library):
+    """Returns (status, diagnostics) for deterministic contract checks on a proposal."""
+    if not isinstance(z, dict) or set(z) != PROPOSAL_KEYS:
+        raise GroundingError("PROPOSAL_KEYS")
+    entries = {e["id"]: e for e in intention["arguments"]}
+    scope_entries = {e["id"]: e for e in intention["scope"]}
+    if z["status"] != "proposed":
+        if z["status"] not in (INSUFFICIENT, AMBIGUOUS, UNSUPPORTED):
+            raise GroundingError("UNKNOWN_STATUS")
+        for d in z.get("diagnostics") or []:
+            refs = d.get("entry_refs") or []
+            if any(r not in entries and r not in scope_entries for r in refs):
+                raise GroundingError("DIAGNOSTIC_REFERENCE")
+        return z["status"], z.get("diagnostics") or []
+    variant = library["variants"].get(z["variant_id"])
+    if variant is None:
+        raise GroundingError("UNKNOWN_VARIANT")
+    if not isinstance(z["bindings"], dict) or not isinstance(z["scope"], list):
+        raise GroundingError("BINDINGS_FORMAT")
+    for role, refs in z["bindings"].items():
+        contract = variant["roles"].get(role)
+        if contract is None:
+            raise GroundingError("UNKNOWN_ROLE:" + str(role))
+        if not isinstance(refs, list) or not refs:
+            raise GroundingError("EMPTY_BINDING:" + role)
         for ref in refs:
-            if not isinstance(ref, dict) or set(ref) != {"intention_instance_id", "argument_index"}:
-                raise ValueError("INVALID_BINDING")
-            if not isinstance(ref["intention_instance_id"], str):
-                raise ValueError("INVALID_BINDING")
-            intention = intentions.get(ref["intention_instance_id"])
-            index = ref["argument_index"]
-            if intention is None or type(index) is not int or not 0 <= index < len(intention["arguments"]):
-                raise ValueError("INVALID_BINDING")
-            argument = intention["arguments"][index]
-            if argument["role"] != role:
-                raise ValueError("INVALID_BINDING")
-            resolved[role].append({"value": argument["value"], "source": ref})
-            used_evidence.update(argument["value"]["evidence"])
-    if not used_evidence or not used_evidence <= set(proposal["evidence"]):
-        raise ValueError("MISSING_ARGUMENT_EVIDENCE")
-    required = []
-    for node in ancestry(proposal["intention_id"], il):
-        required.extend(il["intentions"][node].get("required_roles", []))
-    missing = [role for role in required if role not in resolved]
+            entry = entries.get(ref)
+            if entry is None:
+                raise GroundingError("UNKNOWN_REFERENCE:" + str(ref))
+            if entry["label"] not in contract["labels"]:
+                raise GroundingError(f"LABEL_NOT_ADMITTED:{role}:{entry['label']}")
+        if len(refs) < contract["min"] or (contract["max"] is not None and len(refs) > contract["max"]):
+            raise GroundingError("CARDINALITY:" + role)
+        admissible = contract.get("admissible")
+        if admissible:
+            for ref in refs:
+                value = entries[ref]["value"].casefold()
+                if not any(term in value for term in admissible):
+                    return UNSUPPORTED, [{"code": "INADMISSIBLE_VALUE", "role": role, "entry_refs": [ref]}]
+    if set(z["scope"]) != set(scope_entries):
+        raise GroundingError("SCOPE_NOT_PRESERVED")
+    missing = [r for r, c in variant["roles"].items() if c["required"] and r not in z["bindings"]]
+    for group in variant.get("requires_one_of", []):
+        if not any(r in z["bindings"] for r in group):
+            missing.append("|".join(group))
     if missing:
-        raise ValueError("MISSING_REQUIRED_ROLE:" + ",".join(missing))
-    for role in required:
-        spec = il["roles"][role]
-        values = [x["value"]["literal"] for x in resolved[role]]
-        if len(values) < spec.get("min_items", 1) or (spec.get("unique") and len(set(values)) != len(values)):
-            raise ValueError("ROLE_CARDINALITY:" + role)
-    for role, minimum in il["intentions"][proposal["intention_id"]].get("minimum_cardinalities", {}).items():
-        if len(resolved.get(role, [])) < minimum:
-            raise ValueError("ROLE_CARDINALITY:" + role)
-    return resolved
+        return INSUFFICIENT, [{"code": "MISSING_ROLE", "role": r, "entry_refs": []} for r in missing]
+    return "proposed", []
 
 
-def _build_card(proposal, resolved, interpretation, il, run_id):
-    bindings = {role: [item["value"] for item in items] for role, items in resolved.items()}
-    binding_provenance = {role: [item["source"] for item in items] for role, items in resolved.items()}
-    bindings["coverage_policy"] = ["available_observations"]
-    binding_provenance["coverage_policy"] = [{"source": "system_policy", "rule_id": "default_available_observations_v1"}]
-    requirement_ids = []
-    for node in ancestry(proposal["intention_id"], il):
-        for template_id in il["intentions"][node].get("requirements", []):
-            template = il["requirement_templates"][template_id]
-            activation = template.get("activation")
-            if activation == "time_points_present" and "time_points" not in resolved:
-                continue
-            if isinstance(activation, dict):  # complete_grid requires a certificate not proposed by this v1 response.
-                continue
-            if template_id not in requirement_ids:
-                requirement_ids.append(template_id)
-    requirements = []
-    for template_id in requirement_ids:
-        template = il["requirement_templates"][template_id]
-        bound = {role: bindings[role] for role in template["bind_present_roles"] if role in bindings}
-        requirements.append({"id": template_id, "predicate": template["predicate"], "axis": template["axis"],
-                             "modality": template["modality"], "scope": template["scope"], "bindings": bound,
-                             "origin": {"intention_id": proposal["intention_id"], "template_id": template_id,
-                                        "il_version": il["il_version"]}})
-    return {"schema_version": CARD_SCHEMA_VERSION, "input_id": interpretation["input_id"], "run_id": run_id,
-            "il_version": il["il_version"], "parent_intention_id": il["intentions"][proposal["intention_id"]]["parent"],
-            "intention_id": proposal["intention_id"], "bindings": bindings,
-            "binding_provenance": binding_provenance, "model_proposal": proposal,
-            "deterministic_validation": {"valid": True, "checks": ["known_intention", "inherited_roles", "cardinality", "evidence_refs"]},
-            "requirements": requirements, "requirement_logic": {"all_of": requirement_ids},
-            "evidence_provenance": {item["id"]: item for item in interpretation["evidence"] if item["id"] in proposal["evidence"]},
-            "unresolved_or_missing_requirements": [], "grounding_status": "grounded"}
+def _applicable(procedure, bound):
+    rule = procedure["applicability"]
+    if rule["rule"] == "always":
+        return "eligible"
+    if rule["rule"] == "excluded_if_statistic_mentions":
+        text = " ".join(v["value"] for v in bound.get("statistic", [])).casefold()
+        return "excluded" if any(re.search(r"\b" + re.escape(t) + r"\b", text) for t in rule["terms"]) else "eligible"
+    return "unresolved"
 
 
-def ground(interpreter_envelope, il, provider, *, run_id):
-    metadata = {"il_version": il["il_version"]}
+def _substitute(value, theta):
+    if isinstance(value, str) and value.startswith("$"):
+        return copy.deepcopy(theta.get(value[1:]))
+    if isinstance(value, list):
+        return [_substitute(v, theta) for v in value]
+    if isinstance(value, dict):
+        return {k: _substitute(v, theta) for k, v in value.items()}
+    return value
+
+
+def instantiate(library, variant_id, bound, scope):
+    """Psi_u = {(id(P), P^u, H^u_P, S^u_P) : P in P_u}  (Eq. 21)."""
+    theta = {role: [v["value"] for v in values] for role, values in bound.items()}
+    theta = {role: (values[0] if library["variants"][variant_id]["roles"][role]["max"] == 1 else values)
+             for role, values in theta.items()}
+    theta["scope"] = [{"label": s["label"], "value": s["value"]} for s in scope]
+    version = il_module.version(library)
+    psi, decisions = [], {}
+    for pid in library["variants"][variant_id]["procedures"]:
+        procedure = library["procedures"][pid]
+        decision = _applicable(procedure, bound)
+        decisions[pid] = decision
+        if decision != "eligible":
+            continue
+        reqs = {"hard": [], "soft": []}
+        for kind in ("hard", "soft"):
+            for rid in procedure[kind]:
+                record = library["requirements"][rid]
+                reqs[kind].append({"id": f"{pid}/{rid}", "requirement_id": rid, "pid": pid,
+                                   "origin": record["origin"], "axis": record["axis"], "kind": kind,
+                                   "predicate": record["predicate"], "params": _substitute(record["params"], theta),
+                                   "evidence_rule": record["evidence_rule"], "rationale": record["rationale"],
+                                   "provenance": {"il_version": version, "template": rid}})
+        psi.append({"procedure_id": pid, "expression": procedure["expression"], "sql": procedure.get("sql"),
+                    "hard": reqs["hard"], "soft": reqs["soft"]})
+    return psi, decisions, theta
+
+
+def ground(interpretation, library, resolver):
+    """Algorithm 2: returns dict(g_u, psi_u, status, diagnostics, provenance, elapsed_ms)."""
+    start = time.perf_counter()
+    result = {"g_u": None, "psi_u": [], "status": NOT_ATTEMPTED, "diagnostics": [], "resolver": {},
+              "raw_proposal": None, "il_version": il_module.version(library), "elapsed_ms": 0.0}
+
+    def done(status, **kw):
+        result.update(status=status, **kw)
+        result["elapsed_ms"] = round((time.perf_counter() - start) * 1000, 3)
+        return result
+
+    if interpretation["status"] != "extracted" or not interpretation.get("intention"):
+        return done(NOT_ATTEMPTED, diagnostics=[{"code": "NO_INTENTION_" + interpretation["status"].upper()}])
+    intention = interpretation["intention"]
+    definitions = il_module.definitions(library)
     try:
-        metadata.update(provider.metadata)
+        raw, meta = resolver.propose(interpretation["input"], intention, definitions)
+        result["resolver"], result["raw_proposal"] = meta, raw
+        z = parse_json_object(raw)
     except Exception as exc:
-        return _non_grounded("provider_failure", "PROVIDER_FAILURE", metadata=metadata,
-                             provider_error=provider_diagnostic(exc))
-    if interpreter_envelope.get("failure"):
-        return _non_grounded("invalid_interpretation", interpreter_envelope["failure"], metadata=metadata)
-    interpretation = interpreter_envelope.get("interpretation")
-    if not interpretation:
-        return _non_grounded("invalid_interpretation", "MISSING_INTERPRETATION", metadata=metadata)
-    status_map = {"ambiguous": "ambiguous", "insufficient": "insufficient_input", "unsupported": "unsupported"}
-    if interpretation["status"] != "unambiguous":
-        return _non_grounded(status_map[interpretation["status"]], "INTERPRETER_" + interpretation["status"].upper(), metadata=metadata)
+        code = exc.args[0] if exc.args and isinstance(exc.args[0], str) else type(exc).__name__
+        return done(FAILURE, diagnostics=[{"code": "RESOLVER_FAILURE:" + code}],
+                    resolver=getattr(resolver, "metadata", {}))
     try:
-        raw = provider.invoke(interpretation, il)
-    except Exception as exc:
-        return _non_grounded("provider_failure", "PROVIDER_FAILURE", metadata=metadata,
-                             provider_error=provider_diagnostic(exc))
-    if not isinstance(raw, str):
-        return _non_grounded("invalid_model_response", "NON_TEXT_RESPONSE", metadata=metadata)
-    try:
-        proposal = parse_response(raw)
-        resolved = _validate_proposal(proposal, interpretation, il)
-        card = _build_card(proposal, resolved, interpretation, il, run_id)
-    except (ContractError, ValueError) as exc:
-        if str(exc) == "INTENTION_CATALOG_ONLY":
-            return _non_grounded("unsupported", "INTENTION_CATALOG_ONLY", raw=raw,
-                                 proposal=proposal, metadata=metadata)
-        return _non_grounded("invalid_model_response", str(exc), raw=raw,
-                             proposal=proposal if "proposal" in locals() else None, metadata=metadata)
-    return {"metadata": metadata, "raw_response": raw, "model_proposal": proposal,
-            "grounded_intention": card, "status": "grounded", "reasons": [],
-            "provider_error": None}
-
-
-def ground_request(record):
-    """Ground a validated authored structured request, before seeing any tables.
-
-    This is an explicit non-LLM input mode, not inferred natural-language accuracy.
-    The closed request supplies semantic roles, never table or column identifiers.
-    """
-    from pathlib import Path
-    from .contracts import validate_request
-    validate_request(record)
-    library = json.loads((Path(__file__).parent/'library/compare-procedures-v1.json').read_text())
-    base = {'schema_version':'2.0','request_id':record['request_id'],'il_version':library['il_version'],
-            'input_mode':record['input_mode'],'intention_type':record['intention_type'],
-            'request_evidence':{'text':record['text'],'origin':'authored structured specification; not live NLP'},
-            'procedures':[], 'status':record['status']}
-    if record['status'] != 'ready':
-        base['reason']='REQUEST_'+record['status'].upper()
-        return base
-    if record['intention_type'] != 'compare':
-        base.update(status='unsupported',reason='PREDICT_RUNTIME_NOT_IMPLEMENTED')
-        return base
-    if record['roles']['statistic']=='unspecified':
-        base.update(status='ambiguous',reason='STATISTIC_NOT_SPECIFIED_NO_AUTOMATIC_MEAN')
-        return base
-    for pid,procedure in library['procedures'].items():
-        if procedure['statistic']==record['roles']['statistic'] or record['roles']['statistic']=='documented_or_mean':
-            base['procedures'].append({'procedure_id':pid,**procedure,'bindings':record['roles']})
-    base['procedure_relationship']='accepted_alternatives' if len(base['procedures'])>1 else 'single'
-    base['status']='grounded' if base['procedures'] else 'unsupported'
-    return base
+        status, diagnostics = _contract_valid(z, intention, library)
+    except GroundingError as exc:
+        return done(FAILURE, diagnostics=[{"code": "CONTRACT_INVALID:" + str(exc)}], proposal=z)
+    result["proposal"] = z
+    if status != "proposed":
+        return done(status, diagnostics=diagnostics)
+    entries = {e["id"]: e for e in intention["arguments"]}
+    bound = {role: [{"value": entries[r]["value"], "entry": r, "label": entries[r]["label"],
+                     "spans": entries[r]["spans"]} for r in refs] for role, refs in z["bindings"].items()}
+    scope = [e for e in intention["scope"] if e["id"] in z["scope"]]
+    psi, decisions, theta = instantiate(library, z["variant_id"], bound, scope)
+    if any(d == "unresolved" for d in decisions.values()):
+        return done(INSUFFICIENT, diagnostics=[{"code": "APPLICABILITY_UNRESOLVED"}])
+    if not psi or any(not p["hard"] for p in psi):
+        return done(FAILURE, diagnostics=[{"code": "NO_ELIGIBLE_PROCEDURE"}])
+    g_u = {"variant_id": z["variant_id"], "family": library["variants"][z["variant_id"]]["family"],
+           "bindings": bound, "scope": scope, "theta": theta, "procedure_decisions": decisions,
+           "il_version": il_module.version(library), "justification": z.get("justification", "")}
+    return done(GROUNDED, g_u=g_u, psi_u=psi)

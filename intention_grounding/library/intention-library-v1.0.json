@@ -1,0 +1,1568 @@
+{
+  "release": {
+    "il_version": "1.0.0",
+    "status": "development",
+    "review_status": "author_specified_unreviewed",
+    "inventory": {
+      "families": 5,
+      "variants": 7,
+      "procedures": 9,
+      "operators": 9,
+      "requirements": 55
+    },
+    "changes": [
+      "1.0.0: First release of the Intention Library (replaces the earlier Action Base). Structure follows L = (J, O, P, R, E, v): families and variants, operator contracts, procedure templates, requirement records, expression index and release.",
+      "Seven variants over five families (compare, aggregate, predict, explain, monitor); nine procedures; 55 requirement records over the axes sem, str, cov, qual, aff.",
+      "compare.observed_values: groups optional when a group dimension is given (documented default: all observed groups)."
+    ]
+  },
+  "axes": {
+    "sem": "Concept meaning: the bound attributes denote the requested concepts with compatible definitions.",
+    "str": "Table structure and observational unit: rows, keys, groupings and their association.",
+    "cov": "Scope and group coverage: the requested scope, groups and periods are present.",
+    "qual": "Data quality: completeness and validity of the bound values.",
+    "aff": "Affordance: the intermediate quantities required by the procedure can be obtained."
+  },
+  "vocabulary": {
+    "argument_labels": {
+      "measure": "A quantity the user wants to analyse (e.g. vaccination rate, wage).",
+      "second_measure": "A second quantity related to the first (e.g. in an association).",
+      "group_dimension": "The attribute along which observations are compared or grouped (e.g. country, age group).",
+      "groups": "Explicitly named groups or entities (e.g. Germany, France; men, women).",
+      "statistic": "An explicitly requested summary (e.g. mean, total, documented values).",
+      "target": "The outcome to be predicted.",
+      "predictor": "An attribute proposed as input to a prediction or explanation.",
+      "time_dimension": "An explicit reference to time as an axis (e.g. over time, by month).",
+      "time_grain": "An explicit observation grain (e.g. daily, weekly, yearly).",
+      "time_points": "Explicit dates or periods to be contrasted.",
+      "subject": "The entity whose values are of interest when no comparison dimension is given.",
+      "unassigned": "Relevant wording retained without a confident role."
+    },
+    "scope_labels": {
+      "geography": "Geographic restriction (e.g. in Europe).",
+      "period": "Temporal restriction (e.g. in 2021, between 2011 and 2012).",
+      "population": "Restriction on the observed population (e.g. adults, women).",
+      "condition": "Any other selection condition."
+    }
+  },
+  "families": {
+    "compare": {
+      "meaning": "Descriptively contrast a measure across groups, entities or time points.",
+      "variants": [
+        "compare.group_means",
+        "compare.observed_values"
+      ]
+    },
+    "aggregate": {
+      "meaning": "Combine observations of a measure into totals for the requested scope or groups.",
+      "variants": [
+        "aggregate.group_totals"
+      ]
+    },
+    "predict": {
+      "meaning": "Learn a model that predicts an outcome for unseen observations.",
+      "variants": [
+        "predict.classification",
+        "predict.regression"
+      ]
+    },
+    "explain": {
+      "meaning": "Describe how two attributes vary together, as a basis for explaining an outcome.",
+      "variants": [
+        "explain.association"
+      ]
+    },
+    "monitor": {
+      "meaning": "Follow a measure over time for the requested subject or scope.",
+      "variants": [
+        "monitor.trend"
+      ]
+    }
+  },
+  "variants": {
+    "compare.group_means": {
+      "family": "compare",
+      "outcome": "Comparable arithmetic means of measure m for each group of dimension g within scope.",
+      "roles": {
+        "measure": {
+          "labels": [
+            "measure"
+          ],
+          "required": true,
+          "min": 1,
+          "max": 1,
+          "value_type": "concept"
+        },
+        "group_dimension": {
+          "labels": [
+            "group_dimension"
+          ],
+          "required": true,
+          "min": 1,
+          "max": 1,
+          "value_type": "concept"
+        },
+        "statistic": {
+          "labels": [
+            "statistic"
+          ],
+          "required": true,
+          "min": 1,
+          "max": 1,
+          "value_type": "statistic",
+          "admissible": [
+            "mean",
+            "average",
+            "arithmetic mean",
+            "avg",
+            "mean of",
+            "on average"
+          ]
+        },
+        "groups": {
+          "labels": [
+            "groups"
+          ],
+          "required": false,
+          "min": 2,
+          "max": null,
+          "value_type": "value"
+        }
+      },
+      "procedures": [
+        "means.raw",
+        "means.stored"
+      ]
+    },
+    "compare.observed_values": {
+      "family": "compare",
+      "outcome": "One documented value of measure m for each requested entity or time point, or for each observed group of dimension g when no groups are named.",
+      "roles": {
+        "measure": {
+          "labels": [
+            "measure"
+          ],
+          "required": true,
+          "min": 1,
+          "max": 1,
+          "value_type": "concept"
+        },
+        "groups": {
+          "labels": [
+            "groups",
+            "time_points"
+          ],
+          "required": false,
+          "min": 2,
+          "max": null,
+          "value_type": "value"
+        },
+        "group_dimension": {
+          "labels": [
+            "group_dimension"
+          ],
+          "required": false,
+          "min": 1,
+          "max": 1,
+          "value_type": "concept"
+        },
+        "statistic": {
+          "labels": [
+            "statistic"
+          ],
+          "required": false,
+          "min": 1,
+          "max": 1,
+          "value_type": "statistic",
+          "admissible": [
+            "documented",
+            "reported",
+            "recorded",
+            "observed",
+            "value",
+            "values",
+            "level"
+          ]
+        }
+      },
+      "procedures": [
+        "values.lookup"
+      ],
+      "requires_one_of": [
+        [
+          "groups",
+          "group_dimension"
+        ]
+      ]
+    },
+    "aggregate.group_totals": {
+      "family": "aggregate",
+      "outcome": "The total of an additive measure m for the scope, or for each group of dimension g.",
+      "roles": {
+        "measure": {
+          "labels": [
+            "measure"
+          ],
+          "required": true,
+          "min": 1,
+          "max": 1,
+          "value_type": "concept"
+        },
+        "statistic": {
+          "labels": [
+            "statistic"
+          ],
+          "required": true,
+          "min": 1,
+          "max": 1,
+          "value_type": "statistic",
+          "admissible": [
+            "total",
+            "sum",
+            "number",
+            "count",
+            "how many",
+            "overall",
+            "combined",
+            "aggregate"
+          ]
+        },
+        "group_dimension": {
+          "labels": [
+            "group_dimension"
+          ],
+          "required": false,
+          "min": 1,
+          "max": 1,
+          "value_type": "concept"
+        },
+        "groups": {
+          "labels": [
+            "groups"
+          ],
+          "required": false,
+          "min": 1,
+          "max": null,
+          "value_type": "value"
+        }
+      },
+      "procedures": [
+        "totals.raw",
+        "totals.stored"
+      ]
+    },
+    "predict.classification": {
+      "family": "predict",
+      "outcome": "A model assigning a categorical outcome y to individual observations from features X.",
+      "roles": {
+        "target": {
+          "labels": [
+            "target",
+            "measure"
+          ],
+          "required": true,
+          "min": 1,
+          "max": 1,
+          "value_type": "concept"
+        },
+        "predictor": {
+          "labels": [
+            "predictor",
+            "group_dimension",
+            "second_measure"
+          ],
+          "required": false,
+          "min": 1,
+          "max": null,
+          "value_type": "concept"
+        }
+      },
+      "optional_role_policy": "Feature concepts are optional; candidate attributes are assessed later. The Grounder must not invent feature names.",
+      "procedures": [
+        "learn.classifier"
+      ]
+    },
+    "predict.regression": {
+      "family": "predict",
+      "outcome": "A model estimating a numerical outcome y for individual observations from features X.",
+      "roles": {
+        "target": {
+          "labels": [
+            "target",
+            "measure"
+          ],
+          "required": true,
+          "min": 1,
+          "max": 1,
+          "value_type": "concept"
+        },
+        "predictor": {
+          "labels": [
+            "predictor",
+            "group_dimension",
+            "second_measure"
+          ],
+          "required": false,
+          "min": 1,
+          "max": null,
+          "value_type": "concept"
+        }
+      },
+      "optional_role_policy": "Feature concepts are optional; candidate attributes are assessed later. The Grounder must not invent feature names.",
+      "procedures": [
+        "learn.regressor"
+      ]
+    },
+    "explain.association": {
+      "family": "explain",
+      "outcome": "A description of how measure m varies with attribute a over co-observed rows.",
+      "roles": {
+        "measure": {
+          "labels": [
+            "measure",
+            "target"
+          ],
+          "required": true,
+          "min": 1,
+          "max": 1,
+          "value_type": "concept"
+        },
+        "predictor": {
+          "labels": [
+            "predictor",
+            "second_measure",
+            "group_dimension"
+          ],
+          "required": true,
+          "min": 1,
+          "max": null,
+          "value_type": "concept"
+        }
+      },
+      "procedures": [
+        "assoc.pairwise"
+      ]
+    },
+    "monitor.trend": {
+      "family": "monitor",
+      "outcome": "The ordered series of measure m over time for the requested subject or scope.",
+      "roles": {
+        "measure": {
+          "labels": [
+            "measure"
+          ],
+          "required": true,
+          "min": 1,
+          "max": 1,
+          "value_type": "concept"
+        },
+        "time_dimension": {
+          "labels": [
+            "time_dimension"
+          ],
+          "required": false,
+          "min": 1,
+          "max": 1,
+          "value_type": "concept"
+        },
+        "time_grain": {
+          "labels": [
+            "time_grain"
+          ],
+          "required": false,
+          "min": 1,
+          "max": 1,
+          "value_type": "value"
+        },
+        "groups": {
+          "labels": [
+            "groups",
+            "subject"
+          ],
+          "required": false,
+          "min": 1,
+          "max": null,
+          "value_type": "value"
+        }
+      },
+      "procedures": [
+        "series.raw"
+      ]
+    }
+  },
+  "operators": {
+    "Filter": {
+      "inputs": "rows",
+      "outputs": "rows",
+      "slots": [
+        "F"
+      ],
+      "preconditions": [
+        "Every scope restriction is evaluable on the rows."
+      ],
+      "missing_value_policy": "Rows whose scope attribute is missing are excluded and counted."
+    },
+    "Group": {
+      "inputs": "rows",
+      "outputs": "groups of rows",
+      "slots": [
+        "g"
+      ],
+      "preconditions": [
+        "Rows carry a membership value for g."
+      ],
+      "missing_value_policy": "Rows with missing g are excluded and counted."
+    },
+    "Mean": {
+      "inputs": "numeric values per group",
+      "outputs": "one mean per group",
+      "slots": [
+        "m"
+      ],
+      "preconditions": [
+        "Values are numeric observations on a meaningful arithmetic scale.",
+        "At least one valid value per group."
+      ],
+      "missing_value_policy": "Available-case: declared missing values are excluded."
+    },
+    "Sum": {
+      "inputs": "numeric values per group",
+      "outputs": "one total per group",
+      "slots": [
+        "m"
+      ],
+      "preconditions": [
+        "Values are additive over rows (not rates, means or cumulative totals)."
+      ],
+      "missing_value_policy": "Missing values are excluded and counted; no imputation."
+    },
+    "Project": {
+      "inputs": "rows",
+      "outputs": "selected attributes",
+      "slots": [
+        "m",
+        "g"
+      ],
+      "preconditions": [
+        "Selected attributes exist."
+      ],
+      "missing_value_policy": "Missing documented values remain missing."
+    },
+    "Lookup": {
+      "inputs": "rows",
+      "outputs": "one value per requested key",
+      "slots": [
+        "m",
+        "G"
+      ],
+      "preconditions": [
+        "Exactly one valid value per requested key in scope."
+      ],
+      "missing_value_policy": "A missing value makes the key unresolved; duplicates are not aggregated."
+    },
+    "Order": {
+      "inputs": "rows",
+      "outputs": "rows ordered by time",
+      "slots": [
+        "t"
+      ],
+      "preconditions": [
+        "A parseable time attribute."
+      ],
+      "missing_value_policy": "Rows with missing time are excluded and counted."
+    },
+    "Fit": {
+      "inputs": "labelled rows (X, y)",
+      "outputs": "a fitted model",
+      "slots": [
+        "y",
+        "X"
+      ],
+      "preconditions": [
+        "Each row is one observation with an outcome label.",
+        "The outcome varies.",
+        "Features other than y exist."
+      ],
+      "missing_value_policy": "Rows with missing y are excluded; feature missingness is reported."
+    },
+    "Associate": {
+      "inputs": "co-observed pairs (m, a)",
+      "outputs": "an association statistic",
+      "slots": [
+        "m",
+        "a"
+      ],
+      "preconditions": [
+        "Both attributes are observed on the same rows and vary."
+      ],
+      "missing_value_policy": "Pairwise-complete rows."
+    }
+  },
+  "procedures": {
+    "means.raw": {
+      "variant": "compare.group_means",
+      "expression": "Mean_m . Group_g . Filter_F",
+      "operators": [
+        "Filter",
+        "Group",
+        "Mean"
+      ],
+      "applicability": {
+        "rule": "excluded_if_statistic_mentions",
+        "terms": [
+          "reported",
+          "documented",
+          "published",
+          "stored",
+          "official"
+        ]
+      },
+      "output": "Pairs (group, mean of m).",
+      "sql": "SELECT <group>, AVG(<measure>) AS group_mean FROM <table> WHERE <scope> AND <valid_measure> GROUP BY <group>;",
+      "hard": [
+        "compare.common.concept",
+        "compare.common.group_concept",
+        "compare.common.scope",
+        "compare.common.comparable",
+        "means.raw.observation",
+        "means.raw.membership",
+        "means.raw.association",
+        "means.raw.valid",
+        "compare.common.groups"
+      ],
+      "soft": [
+        "means.raw.completeness",
+        "common.size"
+      ]
+    },
+    "means.stored": {
+      "variant": "compare.group_means",
+      "expression": "Project_{g,m} . Filter_F",
+      "operators": [
+        "Filter",
+        "Project"
+      ],
+      "applicability": {
+        "rule": "excluded_if_statistic_mentions",
+        "terms": [
+          "raw",
+          "individual",
+          "observations",
+          "records",
+          "compute from"
+        ]
+      },
+      "output": "Pairs (group, documented mean of m).",
+      "sql": "SELECT <group>, <documented_mean> AS group_mean FROM <table> WHERE <scope> AND <valid_summary>;",
+      "hard": [
+        "compare.common.concept",
+        "compare.common.group_concept",
+        "compare.common.scope",
+        "compare.common.comparable",
+        "means.stored.summary",
+        "means.stored.association",
+        "means.stored.valid",
+        "compare.common.groups"
+      ],
+      "soft": [
+        "means.stored.completeness"
+      ]
+    },
+    "values.lookup": {
+      "variant": "compare.observed_values",
+      "expression": "Lookup_{m,G} . Filter_F",
+      "operators": [
+        "Filter",
+        "Lookup"
+      ],
+      "applicability": {
+        "rule": "always"
+      },
+      "output": "Pairs (requested key, documented value of m).",
+      "sql": "SELECT <key>, <measure> FROM <table> WHERE <scope> AND <key> IN (<groups>);",
+      "hard": [
+        "compare.common.concept",
+        "compare.common.scope",
+        "compare.common.comparable",
+        "values.lookup.keys",
+        "values.lookup.present",
+        "values.lookup.valid"
+      ],
+      "soft": [
+        "values.lookup.unique"
+      ]
+    },
+    "totals.raw": {
+      "variant": "aggregate.group_totals",
+      "expression": "Sum_m . Group_g . Filter_F",
+      "operators": [
+        "Filter",
+        "Group",
+        "Sum"
+      ],
+      "applicability": {
+        "rule": "excluded_if_statistic_mentions",
+        "terms": [
+          "reported",
+          "documented",
+          "published",
+          "official"
+        ]
+      },
+      "output": "Pairs (group, total of m), or one total for the scope.",
+      "sql": "SELECT <group>, SUM(<measure>) AS total FROM <table> WHERE <scope> AND <valid_measure> GROUP BY <group>;",
+      "hard": [
+        "aggregate.common.concept",
+        "aggregate.common.scope",
+        "totals.raw.additive",
+        "totals.raw.grouping",
+        "totals.raw.valid"
+      ],
+      "soft": [
+        "totals.raw.completeness",
+        "common.size"
+      ]
+    },
+    "totals.stored": {
+      "variant": "aggregate.group_totals",
+      "expression": "Project_{g,m} . Filter_F",
+      "operators": [
+        "Filter",
+        "Project"
+      ],
+      "applicability": {
+        "rule": "excluded_if_statistic_mentions",
+        "terms": [
+          "raw",
+          "individual",
+          "records",
+          "compute from"
+        ]
+      },
+      "output": "Pairs (group, documented total of m).",
+      "sql": "SELECT <group>, <documented_total> FROM <table> WHERE <scope> AND <valid_summary>;",
+      "hard": [
+        "aggregate.common.concept",
+        "aggregate.common.scope",
+        "totals.stored.summary",
+        "totals.stored.grouping",
+        "totals.stored.valid"
+      ],
+      "soft": []
+    },
+    "learn.classifier": {
+      "variant": "predict.classification",
+      "expression": "Fit_{y,X} . Filter_F",
+      "operators": [
+        "Filter",
+        "Fit"
+      ],
+      "applicability": {
+        "rule": "always"
+      },
+      "output": "A fitted classifier for y.",
+      "learning_contract": "Supervised classification over row-level observations; evaluation protocol is outside this release.",
+      "hard": [
+        "predict.common.target",
+        "predict.common.scope",
+        "classifier.target_categorical",
+        "predict.common.observation",
+        "predict.common.features",
+        "classifier.label_variation",
+        "predict.common.labelled"
+      ],
+      "soft": [
+        "predict.common.feature_completeness",
+        "classifier.balance",
+        "predict.common.size"
+      ]
+    },
+    "learn.regressor": {
+      "variant": "predict.regression",
+      "expression": "Fit_{y,X} . Filter_F",
+      "operators": [
+        "Filter",
+        "Fit"
+      ],
+      "applicability": {
+        "rule": "always"
+      },
+      "output": "A fitted regressor for y.",
+      "learning_contract": "Supervised regression over row-level observations; evaluation protocol is outside this release.",
+      "hard": [
+        "predict.common.target",
+        "predict.common.scope",
+        "regressor.target_numeric",
+        "predict.common.observation",
+        "predict.common.features",
+        "regressor.target_variation",
+        "predict.common.labelled"
+      ],
+      "soft": [
+        "predict.common.feature_completeness",
+        "predict.common.size"
+      ]
+    },
+    "assoc.pairwise": {
+      "variant": "explain.association",
+      "expression": "Associate_{m,a} . Filter_F",
+      "operators": [
+        "Filter",
+        "Associate"
+      ],
+      "applicability": {
+        "rule": "always"
+      },
+      "output": "Association statistics between m and each bound a.",
+      "hard": [
+        "explain.common.concept",
+        "explain.common.partner",
+        "explain.common.scope",
+        "assoc.numeric_outcome",
+        "assoc.co_observed",
+        "assoc.variation"
+      ],
+      "soft": [
+        "assoc.completeness",
+        "common.size"
+      ]
+    },
+    "series.raw": {
+      "variant": "monitor.trend",
+      "expression": "Order_t . Filter_F",
+      "operators": [
+        "Filter",
+        "Order"
+      ],
+      "applicability": {
+        "rule": "always"
+      },
+      "output": "Time-ordered values of m for the scope or each requested subject.",
+      "hard": [
+        "monitor.common.concept",
+        "monitor.common.scope",
+        "series.time",
+        "series.numeric",
+        "series.subjects",
+        "series.length"
+      ],
+      "soft": [
+        "series.grain",
+        "series.completeness"
+      ]
+    }
+  },
+  "requirements": {
+    "compare.common.concept": {
+      "origin": "intention",
+      "axis": "sem",
+      "predicate": "concept_bound",
+      "params": {
+        "concept": "$measure",
+        "slot": "measure"
+      },
+      "evidence_rule": "binding",
+      "rationale": "The comparison outcome is defined for the requested measure."
+    },
+    "compare.common.group_concept": {
+      "origin": "intention",
+      "axis": "sem",
+      "predicate": "concept_bound",
+      "params": {
+        "concept": "$group_dimension",
+        "slot": "group",
+        "kind": "dimension",
+        "values": "$groups"
+      },
+      "evidence_rule": "binding",
+      "rationale": "Groups are defined by the requested comparison dimension."
+    },
+    "compare.common.scope": {
+      "origin": "Filter",
+      "axis": "cov",
+      "predicate": "scope_satisfiable",
+      "params": {
+        "scope": "$scope"
+      },
+      "evidence_rule": "scoped_values",
+      "rationale": "Filter's selection contract: observations within the requested scope are identifiable."
+    },
+    "compare.common.comparable": {
+      "origin": "intention",
+      "axis": "sem",
+      "predicate": "single_definition",
+      "params": {
+        "slot": "measure"
+      },
+      "evidence_rule": "binding",
+      "rationale": "Group results use one measure definition and unit."
+    },
+    "compare.common.groups": {
+      "origin": "intention",
+      "axis": "cov",
+      "predicate": "groups_covered",
+      "params": {
+        "slot": "group",
+        "groups": "$groups",
+        "min_groups": 2,
+        "valid_slot": "measure"
+      },
+      "evidence_rule": "scoped_counts",
+      "rationale": "At least two groups have results, including every explicitly requested group."
+    },
+    "means.raw.observation": {
+      "origin": "Mean",
+      "axis": "str",
+      "predicate": "observation_level",
+      "params": {
+        "slot": "measure"
+      },
+      "evidence_rule": "measure_kind",
+      "rationale": "Mean input contract: each contributing value is an observation, not an existing summary (rate, mean or cumulative total)."
+    },
+    "means.raw.membership": {
+      "origin": "Group",
+      "axis": "str",
+      "predicate": "categorical_membership",
+      "params": {
+        "slot": "group"
+      },
+      "evidence_rule": "profile",
+      "rationale": "Selected observations carry a discrete group membership."
+    },
+    "means.raw.association": {
+      "origin": "composition",
+      "axis": "str",
+      "predicate": "co_located",
+      "params": {
+        "slots": [
+          "measure",
+          "group"
+        ]
+      },
+      "evidence_rule": "profile",
+      "rationale": "Measure and group refer to the same row (Filter-Group-Mean dependency)."
+    },
+    "means.raw.valid": {
+      "origin": "Mean",
+      "axis": "aff",
+      "predicate": "valid_per_group",
+      "params": {
+        "slot": "measure",
+        "group_slot": "group",
+        "groups": "$groups",
+        "min_valid": 1
+      },
+      "evidence_rule": "scoped_counts",
+      "rationale": "A defined arithmetic mean requires a nonempty set of valid numerical inputs for every included group."
+    },
+    "means.raw.completeness": {
+      "origin": "Mean",
+      "axis": "qual",
+      "kind": "soft",
+      "predicate": "completeness",
+      "params": {
+        "slot": "measure"
+      },
+      "evidence_rule": "profile",
+      "rationale": "Valid-value completeness of the measure."
+    },
+    "means.stored.summary": {
+      "origin": "Project",
+      "axis": "aff",
+      "predicate": "summary_kind",
+      "params": {
+        "slot": "measure",
+        "kinds": [
+          "mean"
+        ]
+      },
+      "evidence_rule": "measure_kind",
+      "rationale": "Selected values are documented arithmetic means of the measure."
+    },
+    "means.stored.association": {
+      "origin": "composition",
+      "axis": "str",
+      "predicate": "co_located",
+      "params": {
+        "slots": [
+          "measure",
+          "group"
+        ]
+      },
+      "evidence_rule": "profile",
+      "rationale": "Each documented mean is linked to its group."
+    },
+    "means.stored.valid": {
+      "origin": "Project",
+      "axis": "aff",
+      "predicate": "valid_per_group",
+      "params": {
+        "slot": "measure",
+        "group_slot": "group",
+        "groups": "$groups",
+        "min_valid": 1
+      },
+      "evidence_rule": "scoped_counts",
+      "rationale": "Each included group has a documented mean."
+    },
+    "means.stored.completeness": {
+      "origin": "Project",
+      "axis": "qual",
+      "kind": "soft",
+      "predicate": "completeness",
+      "params": {
+        "slot": "measure"
+      },
+      "evidence_rule": "profile",
+      "rationale": "Completeness of documented summaries."
+    },
+    "values.lookup.keys": {
+      "origin": "Lookup",
+      "axis": "str",
+      "predicate": "keys_bound",
+      "params": {
+        "groups": "$groups",
+        "dimension": "$group_dimension"
+      },
+      "evidence_rule": "scoped_values",
+      "rationale": "Requested entities or time points are identifiable through a key attribute."
+    },
+    "values.lookup.present": {
+      "origin": "intention",
+      "axis": "cov",
+      "predicate": "keys_present",
+      "params": {
+        "groups": "$groups"
+      },
+      "evidence_rule": "scoped_counts",
+      "rationale": "Every requested key occurs in scope."
+    },
+    "values.lookup.valid": {
+      "origin": "Lookup",
+      "axis": "aff",
+      "predicate": "valid_per_key",
+      "params": {
+        "slot": "measure",
+        "groups": "$groups"
+      },
+      "evidence_rule": "scoped_counts",
+      "rationale": "Every requested key has a valid value of the measure."
+    },
+    "values.lookup.unique": {
+      "origin": "Lookup",
+      "axis": "str",
+      "kind": "soft",
+      "predicate": "unique_per_key",
+      "params": {
+        "slot": "measure",
+        "groups": "$groups"
+      },
+      "evidence_rule": "scoped_counts",
+      "rationale": "One value per key; multiple rows require an explicit selection rule."
+    },
+    "aggregate.common.concept": {
+      "origin": "intention",
+      "axis": "sem",
+      "predicate": "concept_bound",
+      "params": {
+        "concept": "$measure",
+        "slot": "measure"
+      },
+      "evidence_rule": "binding",
+      "rationale": "The total is defined for the requested measure."
+    },
+    "aggregate.common.scope": {
+      "origin": "Filter",
+      "axis": "cov",
+      "predicate": "scope_satisfiable",
+      "params": {
+        "scope": "$scope"
+      },
+      "evidence_rule": "scoped_values",
+      "rationale": "Observations within the requested scope are identifiable."
+    },
+    "totals.raw.additive": {
+      "origin": "Sum",
+      "axis": "aff",
+      "predicate": "additive_measure",
+      "params": {
+        "slot": "measure"
+      },
+      "evidence_rule": "measure_kind",
+      "rationale": "Sum requires values that add over rows: counts or amounts, not rates, means or cumulative totals."
+    },
+    "totals.raw.grouping": {
+      "origin": "Group",
+      "axis": "str",
+      "predicate": "optional_grouping",
+      "params": {
+        "concept": "$group_dimension",
+        "groups": "$groups"
+      },
+      "evidence_rule": "binding",
+      "rationale": "When a grouping is requested, rows carry that membership."
+    },
+    "totals.raw.valid": {
+      "origin": "Sum",
+      "axis": "aff",
+      "predicate": "valid_per_group",
+      "params": {
+        "slot": "measure",
+        "group_slot": "group",
+        "groups": "$groups",
+        "min_valid": 1,
+        "group_optional": true
+      },
+      "evidence_rule": "scoped_counts",
+      "rationale": "Every included group has at least one valid value."
+    },
+    "totals.raw.completeness": {
+      "origin": "Sum",
+      "axis": "qual",
+      "kind": "soft",
+      "predicate": "completeness",
+      "params": {
+        "slot": "measure"
+      },
+      "evidence_rule": "profile",
+      "rationale": "Missing values bias totals downward."
+    },
+    "totals.stored.summary": {
+      "origin": "Project",
+      "axis": "aff",
+      "predicate": "summary_kind",
+      "params": {
+        "slot": "measure",
+        "kinds": [
+          "total",
+          "cumulative"
+        ]
+      },
+      "evidence_rule": "measure_kind",
+      "rationale": "Selected values are documented totals."
+    },
+    "totals.stored.grouping": {
+      "origin": "Project",
+      "axis": "str",
+      "predicate": "optional_grouping",
+      "params": {
+        "concept": "$group_dimension",
+        "groups": "$groups"
+      },
+      "evidence_rule": "binding",
+      "rationale": "Documented totals are linked to the requested grouping."
+    },
+    "totals.stored.valid": {
+      "origin": "Project",
+      "axis": "aff",
+      "predicate": "valid_per_group",
+      "params": {
+        "slot": "measure",
+        "group_slot": "group",
+        "groups": "$groups",
+        "min_valid": 1,
+        "group_optional": true
+      },
+      "evidence_rule": "scoped_counts",
+      "rationale": "Each included group has a documented total."
+    },
+    "predict.common.target": {
+      "origin": "intention",
+      "axis": "sem",
+      "predicate": "concept_bound",
+      "params": {
+        "concept": "$target",
+        "slot": "target"
+      },
+      "evidence_rule": "binding",
+      "rationale": "The outcome to be predicted is an attribute of the table."
+    },
+    "predict.common.scope": {
+      "origin": "Filter",
+      "axis": "cov",
+      "predicate": "scope_satisfiable",
+      "params": {
+        "scope": "$scope"
+      },
+      "evidence_rule": "scoped_values",
+      "rationale": "Training observations within the requested scope are identifiable."
+    },
+    "classifier.target_categorical": {
+      "origin": "Fit",
+      "axis": "aff",
+      "predicate": "target_type",
+      "params": {
+        "slot": "target",
+        "type": "categorical"
+      },
+      "evidence_rule": "profile",
+      "rationale": "Classification requires a discrete outcome with a small number of classes."
+    },
+    "regressor.target_numeric": {
+      "origin": "Fit",
+      "axis": "aff",
+      "predicate": "target_type",
+      "params": {
+        "slot": "target",
+        "type": "numeric"
+      },
+      "evidence_rule": "profile",
+      "rationale": "Regression requires a numerical outcome."
+    },
+    "predict.common.observation": {
+      "origin": "Fit",
+      "axis": "str",
+      "predicate": "row_level_target",
+      "params": {
+        "slot": "target"
+      },
+      "evidence_rule": "measure_kind",
+      "rationale": "Each row is one observation with its own outcome, not an aggregate or rate over many units."
+    },
+    "predict.common.features": {
+      "origin": "Fit",
+      "axis": "str",
+      "predicate": "features_available",
+      "params": {
+        "slot": "target",
+        "predictors": "$predictor",
+        "min_features": 2
+      },
+      "evidence_rule": "profile",
+      "rationale": "Attributes other than the outcome (and identifiers) are available as features."
+    },
+    "classifier.label_variation": {
+      "origin": "Fit",
+      "axis": "aff",
+      "predicate": "label_variation",
+      "params": {
+        "slot": "target",
+        "min_per_class": 5
+      },
+      "evidence_rule": "profile",
+      "rationale": "At least two classes are observed with enough examples each."
+    },
+    "regressor.target_variation": {
+      "origin": "Fit",
+      "axis": "aff",
+      "predicate": "numeric_variation",
+      "params": {
+        "slot": "target"
+      },
+      "evidence_rule": "profile",
+      "rationale": "The outcome takes more than one value."
+    },
+    "predict.common.labelled": {
+      "origin": "Fit",
+      "axis": "aff",
+      "predicate": "min_valid_rows",
+      "params": {
+        "slot": "target",
+        "min_rows": 30
+      },
+      "evidence_rule": "profile",
+      "rationale": "Fitting requires a nonempty training set; 30 labelled rows is the declared minimum of this release."
+    },
+    "predict.common.feature_completeness": {
+      "origin": "Fit",
+      "axis": "qual",
+      "kind": "soft",
+      "predicate": "feature_completeness",
+      "params": {
+        "slot": "target"
+      },
+      "evidence_rule": "profile",
+      "rationale": "Mean valid-value fraction over candidate features."
+    },
+    "classifier.balance": {
+      "origin": "Fit",
+      "axis": "qual",
+      "kind": "soft",
+      "predicate": "class_balance",
+      "params": {
+        "slot": "target"
+      },
+      "evidence_rule": "profile",
+      "rationale": "Normalised entropy of the class distribution."
+    },
+    "predict.common.size": {
+      "origin": "Fit",
+      "axis": "qual",
+      "kind": "soft",
+      "predicate": "size_indicator",
+      "params": {
+        "slot": "target",
+        "reference_rows": 1000
+      },
+      "evidence_rule": "profile",
+      "rationale": "More labelled rows support more reliable fitting (saturating at the reference size)."
+    },
+    "explain.common.concept": {
+      "origin": "intention",
+      "axis": "sem",
+      "predicate": "concept_bound",
+      "params": {
+        "concept": "$measure",
+        "slot": "measure"
+      },
+      "evidence_rule": "binding",
+      "rationale": "The explained quantity is an attribute of the table."
+    },
+    "explain.common.partner": {
+      "origin": "intention",
+      "axis": "sem",
+      "predicate": "concept_bound",
+      "params": {
+        "concept": "$predictor",
+        "slot": "partner",
+        "kind": "any"
+      },
+      "evidence_rule": "binding",
+      "rationale": "The explanatory attribute is an attribute of the same table."
+    },
+    "explain.common.scope": {
+      "origin": "Filter",
+      "axis": "cov",
+      "predicate": "scope_satisfiable",
+      "params": {
+        "scope": "$scope"
+      },
+      "evidence_rule": "scoped_values",
+      "rationale": "Observations within the requested scope are identifiable."
+    },
+    "assoc.numeric_outcome": {
+      "origin": "Associate",
+      "axis": "aff",
+      "predicate": "numeric_measure",
+      "params": {
+        "slot": "measure"
+      },
+      "evidence_rule": "profile",
+      "rationale": "The explained quantity is numerical or binary."
+    },
+    "assoc.co_observed": {
+      "origin": "Associate",
+      "axis": "str",
+      "predicate": "co_observed",
+      "params": {
+        "slots": [
+          "measure",
+          "partner"
+        ],
+        "min_rows": 10
+      },
+      "evidence_rule": "profile",
+      "rationale": "Both attributes are observed together on enough rows."
+    },
+    "assoc.variation": {
+      "origin": "Associate",
+      "axis": "aff",
+      "predicate": "both_vary",
+      "params": {
+        "slots": [
+          "measure",
+          "partner"
+        ]
+      },
+      "evidence_rule": "profile",
+      "rationale": "An association is undefined for a constant attribute."
+    },
+    "assoc.completeness": {
+      "origin": "Associate",
+      "axis": "qual",
+      "kind": "soft",
+      "predicate": "completeness",
+      "params": {
+        "slot": "measure"
+      },
+      "evidence_rule": "profile",
+      "rationale": "Pairwise completeness."
+    },
+    "monitor.common.concept": {
+      "origin": "intention",
+      "axis": "sem",
+      "predicate": "concept_bound",
+      "params": {
+        "concept": "$measure",
+        "slot": "measure"
+      },
+      "evidence_rule": "binding",
+      "rationale": "The monitored quantity is an attribute of the table."
+    },
+    "monitor.common.scope": {
+      "origin": "Filter",
+      "axis": "cov",
+      "predicate": "scope_satisfiable",
+      "params": {
+        "scope": "$scope"
+      },
+      "evidence_rule": "scoped_values",
+      "rationale": "Observations within the requested scope are identifiable."
+    },
+    "series.time": {
+      "origin": "Order",
+      "axis": "str",
+      "predicate": "time_bound",
+      "params": {
+        "slot": "time"
+      },
+      "evidence_rule": "profile",
+      "rationale": "A parseable time attribute orders the observations."
+    },
+    "series.numeric": {
+      "origin": "Order",
+      "axis": "aff",
+      "predicate": "numeric_measure",
+      "params": {
+        "slot": "measure"
+      },
+      "evidence_rule": "profile",
+      "rationale": "The monitored values are numerical."
+    },
+    "series.subjects": {
+      "origin": "intention",
+      "axis": "cov",
+      "predicate": "keys_present",
+      "params": {
+        "groups": "$groups",
+        "optional": true
+      },
+      "evidence_rule": "scoped_counts",
+      "rationale": "Every requested subject occurs in scope."
+    },
+    "series.length": {
+      "origin": "Order",
+      "axis": "aff",
+      "predicate": "distinct_times",
+      "params": {
+        "slot": "time",
+        "min_points": 3
+      },
+      "evidence_rule": "scoped_counts",
+      "rationale": "A trend requires at least three distinct time points in scope."
+    },
+    "series.grain": {
+      "origin": "intention",
+      "axis": "str",
+      "kind": "soft",
+      "predicate": "grain_compatible",
+      "params": {
+        "slot": "time",
+        "grain": "$time_grain"
+      },
+      "evidence_rule": "profile",
+      "rationale": "The observed grain is at least as fine as the requested grain."
+    },
+    "series.completeness": {
+      "origin": "Order",
+      "axis": "qual",
+      "kind": "soft",
+      "predicate": "completeness",
+      "params": {
+        "slot": "measure"
+      },
+      "evidence_rule": "profile",
+      "rationale": "Missing values interrupt the series."
+    },
+    "common.size": {
+      "origin": "intention",
+      "axis": "qual",
+      "kind": "soft",
+      "predicate": "size_indicator",
+      "params": {
+        "slot": "measure",
+        "reference_rows": 1000
+      },
+      "evidence_rule": "profile",
+      "rationale": "More valid observations give more stable summaries (saturating)."
+    }
+  },
+  "evidence_rules": {
+    "binding": "A slot is bound when the Aligner's binder links the requested concept to an attribute through documented descriptions, attribute names or attribute values, with a recorded match score at or above the release threshold. No binding yields unresolved; absence of a concept is never treated as violation.",
+    "scoped_values": "Scope restrictions are matched against full-scan attribute values, documented table scope (title/description), or a declared membership mapping (geography gazetteer). Supported when every restriction is satisfiable; violated when the restriction's attribute is bound and a full scan shows no member; unresolved otherwise.",
+    "scoped_counts": "Counts over a full scan of the scoped rows. Positive counts establish support; zero counts establish violation only after an exhaustive scan.",
+    "measure_kind": "The measure kind (count, amount, level, rate, mean, cumulative, proportion) is read from the documentation and name by declared keyword rules; undocumented kinds are unresolved.",
+    "profile": "Values computed by the Table Profiler on the full table (types, distinct counts, missingness, ranges)."
+  },
+  "thresholds": {
+    "binding_min_score": 0.5,
+    "categorical_max_distinct": 60,
+    "categorical_max_distinct_fraction": 0.5,
+    "classification_max_classes": 30
+  },
+  "expression_index": [
+    {
+      "phrase": "compare",
+      "family": "compare"
+    },
+    {
+      "phrase": "comparison",
+      "family": "compare"
+    },
+    {
+      "phrase": "contrast",
+      "family": "compare"
+    },
+    {
+      "phrase": "versus",
+      "family": "compare"
+    },
+    {
+      "phrase": "vs",
+      "family": "compare"
+    },
+    {
+      "phrase": "difference between",
+      "family": "compare"
+    },
+    {
+      "phrase": "differ",
+      "family": "compare"
+    },
+    {
+      "phrase": "higher",
+      "family": "compare"
+    },
+    {
+      "phrase": "lower",
+      "family": "compare"
+    },
+    {
+      "phrase": "total",
+      "family": "aggregate"
+    },
+    {
+      "phrase": "sum",
+      "family": "aggregate"
+    },
+    {
+      "phrase": "how many",
+      "family": "aggregate"
+    },
+    {
+      "phrase": "aggregate",
+      "family": "aggregate"
+    },
+    {
+      "phrase": "add up",
+      "family": "aggregate"
+    },
+    {
+      "phrase": "predict",
+      "family": "predict"
+    },
+    {
+      "phrase": "prediction",
+      "family": "predict"
+    },
+    {
+      "phrase": "forecast",
+      "family": "predict"
+    },
+    {
+      "phrase": "classify",
+      "family": "predict"
+    },
+    {
+      "phrase": "model",
+      "family": "predict"
+    },
+    {
+      "phrase": "estimate whether",
+      "family": "predict"
+    },
+    {
+      "phrase": "explain",
+      "family": "explain"
+    },
+    {
+      "phrase": "relationship",
+      "family": "explain"
+    },
+    {
+      "phrase": "relate",
+      "family": "explain"
+    },
+    {
+      "phrase": "association",
+      "family": "explain"
+    },
+    {
+      "phrase": "associated",
+      "family": "explain"
+    },
+    {
+      "phrase": "correlate",
+      "family": "explain"
+    },
+    {
+      "phrase": "correlation",
+      "family": "explain"
+    },
+    {
+      "phrase": "affect",
+      "family": "explain"
+    },
+    {
+      "phrase": "influence",
+      "family": "explain"
+    },
+    {
+      "phrase": "depend",
+      "family": "explain"
+    },
+    {
+      "phrase": "track",
+      "family": "monitor"
+    },
+    {
+      "phrase": "monitor",
+      "family": "monitor"
+    },
+    {
+      "phrase": "trend",
+      "family": "monitor"
+    },
+    {
+      "phrase": "over time",
+      "family": "monitor"
+    },
+    {
+      "phrase": "evolve",
+      "family": "monitor"
+    },
+    {
+      "phrase": "evolution",
+      "family": "monitor"
+    },
+    {
+      "phrase": "change over",
+      "family": "monitor"
+    },
+    {
+      "phrase": "follow",
+      "family": "monitor"
+    },
+    {
+      "phrase": "how has",
+      "family": "monitor"
+    },
+    {
+      "phrase": "how have",
+      "family": "monitor"
+    },
+    {
+      "phrase": "changed",
+      "family": "monitor"
+    },
+    {
+      "phrase": "what drives",
+      "family": "explain"
+    },
+    {
+      "phrase": "related",
+      "family": "explain"
+    }
+  ]
+}

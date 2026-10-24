@@ -1,160 +1,122 @@
-"""One-command interpreter -> grounder -> profiler -> conservative aligner pipeline."""
+"""Command line: run one request through the framework and explain every stage.
+
+  python -m intention_grounding.cli "Compare the average hourly wage across genders"
+  python -m intention_grounding.cli "..." --interpreter llm --resolver llm --allow-live --html out.html
+  python -m intention_grounding.cli --describe compare.group_means
+"""
 import argparse
+import html
 import json
-from datetime import datetime, timezone
-from importlib.resources import files
+import sys
 from pathlib import Path
-import uuid
 
-from .intention_library import (CANONICAL_IL_PATH, IntentionLibraryError, describe_intention,
-                          list_intentions, load_intention_library)
-from .aligner import compare_card
-from .grounder import GroqGrounderProvider, ReplayGrounderProvider, ground
-from .groq_config import groq_model_id
-from .interpreter.core import interpret
-from .interpreter.providers import GroqProvider, ReplayProvider, list_available_models
-from .provider_errors import provider_diagnostic
-from .profiler import profile_paths
+from . import corpus, il
+from .context import ContextMatcher
+from .grounder import IndexResolver, LLMResolver
+from .interpreter import LLMInterpreter, RuleInterpreter
+from .pipeline import Pipeline
 
 
-def _write(path, value):
-    path.write_text(json.dumps(value, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
+def build(args):
+    manifest, library = corpus.load_manifest(), il.load()
+    interp = LLMInterpreter(allow_live=args.allow_live) if args.interpreter == "llm" else RuleInterpreter()
+    resolver = LLMResolver(allow_live=args.allow_live) if args.resolver == "llm" else IndexResolver(library)
+    return Pipeline(manifest, library=library, interpreter=interp, resolver=resolver,
+                    matcher=ContextMatcher(manifest, args.context, sbert_model=args.sbert_model, vector_store=args.vector_store), k_candidates=args.k, k_out=args.top,
+                    combination=args.combination)
 
 
-def _offline_inputs(il_version=None):
-    replay = json.loads(files("intention_grounding.interpreter").joinpath("fixtures/replay.json").read_text())
-    case = replay[2]  # compare.time: complete canonical required roles and exact evidence.
-    doc = json.loads(case["raw_response"])
-    refs, evidence = {}, []
-    for index, argument in enumerate(doc["intentions"][0]["arguments"]):
-        refs.setdefault(argument["role"], []).append({"intention_instance_id": "a1", "argument_index": index})
-        evidence.extend(argument["value"]["evidence"])
-    proposal = {"il_version": il_version or load_intention_library()["il_version"], "input_id": doc["input_id"],
-                "intention_id": "compare.time", "bindings": refs, "evidence": list(dict.fromkeys(evidence))}
-    return case["input_id"], case["input"], ReplayProvider(case["raw_response"]), ReplayGrounderProvider(json.dumps(proposal))
+def explain_text(report, top):
+    lines = []
+    i, g = report["interpretation"], report["grounding"]
+    lines.append(f"Interpreter [{i['status']}]  q_u = {report['context_query']!r}")
+    if i.get("intention"):
+        lines.append(f"  expression: {i['intention']['expression']!r}")
+        for e in i["intention"]["arguments"] + i["intention"]["scope"]:
+            lines.append(f"  {e['id']:>3} {e['label']:<16} {e['value']}")
+    lines.append(f"Grounder [{g['status']}] " + (f"variant {g['g_u']['variant_id']} procedures {[p['procedure_id'] for p in g['psi_u']]}" if g["g_u"] else str(g["diagnostics"])))
+    lines.append(f"Ranking ({report['mode']}):")
+    for item in report["ranking"][:top]:
+        a = report["assessments"].get(item["table_id"])
+        extra = ""
+        if a:
+            best = next(p for p in a["procedures"] if p["procedure_id"] == a["best_procedure"])
+            extra = f"  {a['state']:<10} A={a['A']:.2f} via {a['best_procedure']} " + "".join(v["verdict"][0].upper() for v in best["requirements"])
+        lines.append(f"  {item['rank']:>2}. {item['table_id']:<48} U={item['U']:.3f} r={item['r']:.3f}{extra}")
+    t = report["timing"]
+    lines.append("Timing (ms): " + ", ".join(f"{k.replace('_ms', '')}={v}" for k, v in t.items()))
+    return "\n".join(lines)
+
+
+def explain_html(report, top, tables):
+    esc = html.escape
+    i, g = report["interpretation"], report["grounding"]
+    rows = []
+    for item in report["ranking"][:top]:
+        a = report["assessments"].get(item["table_id"])
+        detail = ""
+        if a:
+            for p in a["procedures"]:
+                reqs = "".join(f"<tr class='{v['verdict']}'><td>{esc(v['id'])}</td><td>{v['axis']}</td><td>{v['verdict']}</td>"
+                               f"<td><code>{esc(json.dumps(v['evidence'], ensure_ascii=False)[:400])}</code></td></tr>" for v in p["requirements"])
+                soft = ", ".join(f"{s['id'].split('/')[1]}={s['value']}" for s in p["soft"])
+                detail += f"<details><summary>{esc(p['procedure_id'])}: {p['state']} (score {p['score']:.2f})</summary><table>{reqs}</table><p>soft: {esc(soft)}</p></details>"
+        title = tables[item["table_id"]].get("title", "")
+        rows.append(f"<tr><td>{item['rank']}</td><td><b>{esc(item['table_id'])}</b><br><small>{esc(title)}</small>{detail}</td>"
+                    f"<td>{item['U']:.3f}</td><td>{item['r']:.3f}</td><td>{'' if item['A'] is None else f'{item['A']:.2f}'}</td>"
+                    f"<td class='{item['state'] or ''}'>{item['state'] or 'context only'}</td></tr>")
+    args_ = "".join(f"<li><code>{esc(e['label'])}</code>: {esc(e['value'])}</li>" for e in (i.get("intention") or {}).get("arguments", []) + (i.get("intention") or {}).get("scope", []))
+    psi = "".join(f"<li><b>{esc(p['procedure_id'])}</b> <code>{esc(p['expression'])}</code>: " + ", ".join(esc(r['requirement_id']) for r in p["hard"]) + "</li>" for p in g["psi_u"])
+    timing = "".join(f"<tr><td>{esc(k)}</td><td>{v}</td></tr>" for k, v in report["timing"].items())
+    return f"""<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Intention grounding run</title><style>
+:root{{--bg:#fff;--fg:#1d1d1f;--muted:#666;--line:#e3e3e3;--sup:#e7f6ec;--vio:#fbe9e9;--unr:#f6f3e6}}
+@media (prefers-color-scheme: dark){{:root{{--bg:#16171a;--fg:#ececec;--muted:#aaa;--line:#333;--sup:#1d3326;--vio:#3a1f1f;--unr:#35321f}}}}
+body{{font:14px/1.5 system-ui,sans-serif;background:var(--bg);color:var(--fg);max-width:1100px;margin:auto;padding:16px}}
+table{{border-collapse:collapse;width:100%}}td,th{{border-bottom:1px solid var(--line);padding:6px;vertical-align:top;text-align:left}}
+.supported{{background:var(--sup)}}.violated{{background:var(--vio)}}.unresolved{{background:var(--unr)}}code{{font-size:12px;word-break:break-word}}
+small{{color:var(--muted)}}</style></head><body>
+<h1>{esc(report['input'])}</h1>
+<h2>1. Interpreter: {esc(i['status'])}</h2><p>Context query q<sub>u</sub>: <b>{esc(report['context_query'])}</b>; expression: <b>{esc(str((i.get('intention') or {}).get('expression')))}</b></p><ul>{args_}</ul>
+<h2>2. Grounder: {esc(g['status'])}</h2><p>{esc(g['g_u']['variant_id'] if g['g_u'] else json.dumps(g['diagnostics']))}</p><ul>{psi}</ul>
+<h2>3–6. Context matching, profiling, alignment and ranking ({esc(report['mode'])})</h2>
+<table><tr><th>#</th><th>Table and requirement verdicts</th><th>U</th><th>r</th><th>A</th><th>State</th></tr>{''.join(rows)}</table>
+<h2>Timing (ms)</h2><table>{timing}</table></body></html>"""
 
 
 def main(argv=None):
-    parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--mode", choices=("offline", "groq", "discovery"), default="offline")
-    parser.add_argument("--input-id", default="live-input-1")
-    parser.add_argument("--input", help="Natural-language request; required in groq mode")
-    parser.add_argument("--model", help="Groq model ID; overrides GROQ_MODEL_ID")
-    parser.add_argument("--list-models", action="store_true",
-                        help="List model IDs visible to GROQ_API_KEY; makes one authenticated API call")
-    parser.add_argument("--dataset", action="append", type=Path, help="Local CSV/JSON table (repeatable)")
-    parser.add_argument("--dataset-metadata", type=Path, help="JSON provenance record for supplied tables")
-    parser.add_argument("--max-tables", type=int, default=None)
-    parser.add_argument("--output", type=Path, default=Path("outputs/pipeline"))
-    parser.add_argument("--il", "--il", dest="il", type=Path, default=CANONICAL_IL_PATH,
-                        help="Intention Library JSON path (--il is a compatibility alias)")
-    inspection = parser.add_mutually_exclusive_group()
-    inspection.add_argument("--list-intentions", action="store_true", help="List the IL offline as JSON")
-    inspection.add_argument("--intention", help="Inspect an intention and its separate procedure definitions offline")
-    parser.add_argument('--case', default='dc_daily', help='Authored real-data demonstration case ID')
-    parser.add_argument('--request', type=Path, help='Closed structured request JSON for discovery mode')
-    parser.add_argument('--withhold-semantics', action='store_true', help='Explicit missing-documentation diagnostic')
-    parser.add_argument('--no-execute', action='store_true', help='Assess and rank without SQL execution')
-    args = parser.parse_args(argv)
-    if args.mode == 'discovery':
-        from .discovery import run, save_report, ROOT
-        try:
-            options = {}
-            if args.request:
-                request = json.loads(args.request.read_text())
-            else:
-                cases = json.loads((ROOT/'data/requests/demo-v1.json').read_text())['cases']
-                case = next((c for c in cases if c['request']['request_id'] == args.case), None)
-                if case is None: parser.error('Unknown demonstration case')
-                request, options = case['request'], case['run_options']
-            report = run(request, execute=not args.no_execute,
-                         withhold_semantics=args.withhold_semantics or options.get('withhold_semantics', False))
-            path = save_report(report, args.output)
-        except (OSError, ValueError) as exc:
-            print('discovery_error=' + type(exc).__name__ + ': ' + str(exc))
-            return 2
-        print('input_mode=' + request['input_mode'] + ' grounding=' + report['grounded_intention']['status'])
-        for table in report['ranking']:
-            print(table['rank'], table['table_id'], table['overall_state'], round(table['retrieval_score'], 6))
-        print('abstained=' + str(report['abstained']) + ' effectiveness=pending_independent_judgments')
-        print('predictions=' + str(path))
+    p = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
+    p.add_argument("request", nargs="?")
+    p.add_argument("--interpreter", choices=["rule", "llm"], default="rule")
+    p.add_argument("--resolver", choices=["index", "llm"], default="index")
+    p.add_argument("--context", default="bm25", choices=["bm25", "tfidf", "lsa", "sbert", "hybrid"])
+    p.add_argument("--sbert-model", default=None)
+    p.add_argument("--vector-store", default="chroma", choices=["chroma", "faiss", "numpy"])
+    p.add_argument("--k", type=int, default=50, help="candidates retrieved by context matching")
+    p.add_argument("--top", type=int, default=10)
+    p.add_argument("--combination", default="product", choices=["product", "linear", "lexicographic"])
+    p.add_argument("--allow-live", action="store_true", help="permit new LLM calls")
+    p.add_argument("--json", type=Path)
+    p.add_argument("--html", type=Path)
+    p.add_argument("--describe", help="print one Intention Library variant with its procedures and requirements")
+    p.add_argument("--list", action="store_true", help="list Intention Library variants")
+    args = p.parse_args(argv)
+    if args.list or args.describe:
+        library = il.load()
+        out = il.describe(library, args.describe) if args.describe else {v: x["outcome"] for v, x in library["variants"].items()}
+        print(json.dumps(out, indent=1, ensure_ascii=False))
         return 0
-    if args.list_intentions or args.intention is not None:
-        try:
-            il = load_intention_library(args.il)
-            result = list_intentions(il) if args.list_intentions else describe_intention(args.intention, il)
-        except IntentionLibraryError as exc:
-            print(f"library_error={exc}")
-            return 2
-        print(json.dumps(result, indent=2, ensure_ascii=False))
-        return 0
-    if args.list_models:
-        try:
-            for model_id in list_available_models():
-                print(model_id)
-        except Exception as exc:
-            diagnostic = provider_diagnostic(exc)
-            label = diagnostic.get("error_code", diagnostic["exception_type"])
-            status = diagnostic.get("http_status")
-            print(f"model_list_error={label}" + (f" http_status={status}" if status else ""))
-            return 2
-        return 0
-    if args.mode == "groq" and not args.input:
-        parser.error("--input is required in groq mode")
-    if args.mode == "groq":
-        try:
-            model = groq_model_id(args.model)
-        except Exception as exc:
-            diagnostic = provider_diagnostic(exc)
-            print(f"configuration_error={diagnostic.get('error_code', diagnostic['exception_type'])}")
-            return 2
-    if args.max_tables is not None and args.max_tables < 1:
-        parser.error("--max-tables must be positive")
-    il = load_intention_library(args.il)
-    if args.mode == "offline":
-        input_id, user_input, interpreter_provider, grounder_provider = _offline_inputs(il["il_version"])
-    else:
-        input_id, user_input = args.input_id, args.input
-        interpreter_provider, grounder_provider = GroqProvider(model=model), GroqGrounderProvider(model=model)
-    run_id = "run-" + uuid.uuid4().hex[:12]
-    output = args.output / run_id
-    output.mkdir(parents=True, exist_ok=False)
-    interpreted = interpret(input_id, user_input, interpreter_provider)
-    grounded = ground(interpreted, il, grounder_provider, run_id=run_id)
-    paths = sorted(args.dataset or [Path(files("intention_grounding").joinpath("fixtures/offline_table.csv"))], key=str)
-    if args.max_tables is not None:
-        paths = paths[:args.max_tables]
-    if args.dataset_metadata:
-        source_metadata = json.loads(args.dataset_metadata.read_text(encoding="utf-8"))
-    else:
-        source_metadata = ({"dataset_id": "local", "source_url": None, "license": None, "benchmark_eligible": False}
-                           if args.dataset else json.loads(files("intention_grounding").joinpath("fixtures/offline-source-metadata.json").read_text()))
-    if not isinstance(source_metadata.get("dataset_id"), str) or not source_metadata["dataset_id"]:
-        parser.error("dataset metadata must contain a nonempty dataset_id")
-    profiles = profile_paths(paths, dataset_id=source_metadata["dataset_id"], source_metadata=source_metadata)
-    comparison = compare_card(grounded["grounded_intention"], profiles)
-    (output / "interpreter.raw.txt").write_text(interpreted["raw_response"] or "", encoding="utf-8")
-    _write(output / "interpretation.json", {k: v for k, v in interpreted.items() if k != "raw_response"})
-    (output / "grounder.raw.txt").write_text(grounded["raw_response"] or "", encoding="utf-8")
-    _write(output / "grounding.json", {k: v for k, v in grounded.items() if k != "raw_response"})
-    _write(output / "table-profiles.json", profiles)
-    _write(output / "comparison.json", comparison)
-    manifest = {"run_id": run_id, "created_at": datetime.now(timezone.utc).isoformat(), "mode": args.mode,
-                "il_path": str(args.il), "il_version": il["il_version"], "input_id": input_id,
-                "tables": [str(path) for path in paths], "artifact_directory": str(output)}
-    _write(output / "run.json", manifest)
-    states = {table["overall_state"] for table in comparison["tables"]}
-    print(f"run_id={run_id} interpretation={interpreted['failure'] or interpreted['interpretation']['status']} "
-          f"grounding={grounded['status']} tables={len(profiles)} alignment={','.join(sorted(states)) or 'not_run'}")
-    print(f"artifacts={output}")
-    for stage, result in (("interpreter", interpreted), ("grounder", grounded)):
-        diagnostic = result.get("provider_error")
-        if diagnostic:
-            label = diagnostic.get("error_code", diagnostic["exception_type"])
-            status = diagnostic.get("http_status")
-            print(f"{stage}_provider_error={label}" + (f" http_status={status}" if status else ""))
-    return 0 if grounded["status"] == "grounded" else 2
+    if not args.request:
+        p.error("a request is required")
+    pipe = build(args)
+    report = pipe.run(args.request)
+    print(explain_text(report, args.top))
+    if args.json:
+        args.json.write_text(json.dumps(report, indent=1, ensure_ascii=False, default=str))
+    if args.html:
+        args.html.write_text(explain_html(report, args.top, pipe.tables), encoding="utf-8")
+    return 0
 
 
 if __name__ == "__main__":
-    raise SystemExit(main())
+    sys.exit(main())

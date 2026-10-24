@@ -1,0 +1,5 @@
+region,vaccine_brand,mild_side_effect_rate,severe_side_effect_rate,observation_period
+Europe,Pfizer,16.8,0.18,2021 Q2
+Asia,Pfizer,18.3,0.22,2021 Q2
+Africa,Pfizer,21.1,0.34,2021 Q2
+North America,Pfizer,17.2,0.21,2021 Q2

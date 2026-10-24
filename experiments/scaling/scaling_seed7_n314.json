@@ -1,0 +1,58 @@
+{
+ "tables": 314,
+ "seed": 7,
+ "cells": {
+  "median": 1092.0,
+  "max": 4118040
+ },
+ "profile_ms": {
+  "median": 19.904,
+  "p95": 504.627,
+  "fit": {
+   "intercept_ms": 36.549,
+   "ms_per_million_cells": 1280.569
+  }
+ },
+ "align_ms": {
+  "compare": {
+   "median": 0.671,
+   "p95": 3.666,
+   "fit": {
+    "intercept_ms": 1.121,
+    "ms_per_million_cells": 0.811
+   }
+  },
+  "aggregate": {
+   "median": 0.583,
+   "p95": 2.815,
+   "fit": {
+    "intercept_ms": -0.195,
+    "ms_per_million_cells": 37.695
+   }
+  },
+  "predict": {
+   "median": 0.271,
+   "p95": 1.659,
+   "fit": {
+    "intercept_ms": 0.444,
+    "ms_per_million_cells": 0.329
+   }
+  },
+  "explain": {
+   "median": 0.309,
+   "p95": 0.909,
+   "fit": {
+    "intercept_ms": 0.394,
+    "ms_per_million_cells": 0.375
+   }
+  },
+  "monitor": {
+   "median": 0.256,
+   "p95": 1.874,
+   "fit": {
+    "intercept_ms": 0.137,
+    "ms_per_million_cells": 19.09
+   }
+  }
+ }
+}
