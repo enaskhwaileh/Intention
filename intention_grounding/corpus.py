@@ -331,7 +331,7 @@ def build(out=CORPUS, *, include_rdatasets=True):
 def load_manifest(path=CORPUS / "manifest.json"):
     manifest = json.loads(Path(path).read_text(encoding="utf-8"))
     for t in manifest["tables"]:
-        t["abs_path"] = str((ROOT / t["path"]).resolve())
+        t["abs_path"] = str((ROOT / t["path"]).resolve()) if not Path(t["path"]).is_absolute() else t["path"]
     return manifest
 
 

@@ -1,0 +1,290 @@
+
+=== [21:19:06] START Sat Oct 24 21:19:06 CEST 2026
+
+=== [21:19:06] installing dependencies into .venv-sbert (torch / numpy pinned to the versions that work on this Mac)
+using /Users/enaso/.local/bin/uv
+Using Python 3.12.3 environment at: .venv-sbert
+Resolved 33 packages in 227ms
+Downloading pyarrow (30.6MiB)
+ Downloaded pyarrow
+Prepared 5 packages in 3.88s
+Uninstalled 5 packages in 300ms
+Installed 5 packages in 61ms
+ - datasets==5.1.0
+ + datasets==3.6.0
+ - dill==0.4.1
+ + dill==0.3.8
+ - fsspec==2026.7.0
+ + fsspec==2025.3.0
+ - multiprocess==0.70.19
+ + multiprocess==0.70.16
+ - pyarrow==26.0.0
+ + pyarrow==19.0.1
+Using Python 3.12.3 environment at: .venv-sbert
+Resolved 1 package in 5ms
+   Building intention-grounding @ file:///Users/enaso/Desktop/play%20ground/Intention
+      Built intention-grounding @ file:///Users/enaso/Desktop/play%20ground/Intention
+Prepared 1 package in 1.47s
+Uninstalled 1 package in 2ms
+Installed 1 package in 5ms
+ ~ intention-grounding==1.0.0 (from file:///Users/enaso/Desktop/play%20ground/Intention)
+Using Python 3.12.3 environment at: .venv-sbert
+Audited 1 package in 62ms
+vector store: chroma
+sbert 3.0.1 torch 2.2.2 pandas 2.2.3
+
+=== [21:19:34] building the IGBench corpus (git downloads OWID + Rdatasets once)
+uci-275-day 731 537e98e2c8b8f53e3094d953f847788b1dc224764a4a1e538b3e1ec4e30dac8a
+uci-275-hour 17379 b03a2d02e8c10f435c43c7f0b358b7e34a003afea53dbc37f0183f2763295133
+uci-560-hour 8760 b17c3b771e991fad8c5b6d994bd0abec84cf624edb5739bbed5c8239893b5894
+corpus igbench-v1: 3301 tables
+
+=== [21:19:55] unit tests
+OK
+ctx:bm25                                      nDCG@10=1.0  P@5=0.2  MRR=1.0  U@1=1.0  swap=None  wall=0.0s
+ig:rule/index:bm25                            nDCG@10=1.0  P@5=0.2  MRR=1.0  U@1=1.0  swap=None  wall=0.001s
+results: /var/folders/96/ftrw9x3x6pb1vd2dfq__n0k80000gp/T/ig-test-tu5zsofv/results/20261024T191959Z
+
+=== [21:19:59] IGBench held-out test: BM25, TF-IDF, SBERT, hybrid (+ intention grounding on each)
+/Users/enaso/Desktop/play ground/Intention/.venv-sbert/lib/python3.12/site-packages/transformers/tokenization_utils_base.py:1601: FutureWarning: `clean_up_tokenization_spaces` was not set. It will be set to `True` by default. This behavior will be depracted in transformers v4.45, and will be then set to `False` by default. For more details check this issue: https://github.com/huggingface/transformers/issues/31884
+  warnings.warn(
+/Users/enaso/Desktop/play ground/Intention/.venv-sbert/lib/python3.12/site-packages/transformers/tokenization_utils_base.py:1601: FutureWarning: `clean_up_tokenization_spaces` was not set. It will be set to `True` by default. This behavior will be depracted in transformers v4.45, and will be then set to `False` by default. For more details check this issue: https://github.com/huggingface/transformers/issues/31884
+  warnings.warn(
+/Users/enaso/Desktop/play ground/Intention/.venv-sbert/lib/python3.12/site-packages/pandas/core/nanops.py:1016: RuntimeWarning: invalid value encountered in subtract
+  sqr = _ensure_numeric((avg - values) ** 2)
+/Users/enaso/Desktop/play ground/Intention/.venv-sbert/lib/python3.12/site-packages/pandas/core/nanops.py:1016: RuntimeWarning: invalid value encountered in subtract
+  sqr = _ensure_numeric((avg - values) ** 2)
+huggingface/tokenizers: The current process just got forked, after parallelism has already been used. Disabling parallelism to avoid deadlocks...
+To disable this warning, you can either:
+	- Avoid using `tokenizers` before the fork if possible
+	- Explicitly set the environment variable TOKENIZERS_PARALLELISM=(true | false)
+huggingface/tokenizers: The current process just got forked, after parallelism has already been used. Disabling parallelism to avoid deadlocks...
+To disable this warning, you can either:
+	- Avoid using `tokenizers` before the fork if possible
+	- Explicitly set the environment variable TOKENIZERS_PARALLELISM=(true | false)
+ctx:bm25                                      nDCG@10=0.8283  P@5=0.53  MRR=0.9167  U@1=0.85  swap=0.871  wall=0.201s
+ctx:tfidf                                     nDCG@10=0.7746  P@5=0.46  MRR=0.7646  U@1=0.6  swap=0.8615  wall=0.128s
+ctx:sbert                                     nDCG@10=0.6903  P@5=0.34  MRR=0.8142  U@1=0.7  swap=0.8244  wall=1.37s
+ctx:hybrid                                    nDCG@10=0.8446  P@5=0.56  MRR=0.95  U@1=0.9  swap=0.8598  wall=1.539s
+ig:gold/gold:bm25                             nDCG@10=0.8569  P@5=0.55  MRR=0.975  U@1=0.95  swap=0.8822  wall=67.561s
+ig:rule/index:bm25                            nDCG@10=0.8256  P@5=0.54  MRR=0.9  U@1=0.8  swap=0.8822  wall=27.719s
+ig:gold/gold:sbert                            nDCG@10=0.7859  P@5=0.54  MRR=0.9292  U@1=0.9  swap=0.9423  wall=35.389s
+ig:rule/index:sbert                           nDCG@10=0.7466  P@5=0.49  MRR=0.8792  U@1=0.8  swap=0.9398  wall=9.318s
+ig:gold/gold:hybrid                           nDCG@10=0.8416  P@5=0.57  MRR=0.95  U@1=0.9  swap=0.8822  wall=28.356s
+ig:rule/index:hybrid                          nDCG@10=0.8279  P@5=0.57  MRR=0.925  U@1=0.85  swap=0.8822  wall=26.78s
+results: /Users/enaso/Desktop/play ground/Intention/experiments/results/20261024T192320Z_mac_test
+
+=== [21:26:41] IGBench development set
+/Users/enaso/Desktop/play ground/Intention/.venv-sbert/lib/python3.12/site-packages/transformers/tokenization_utils_base.py:1601: FutureWarning: `clean_up_tokenization_spaces` was not set. It will be set to `True` by default. This behavior will be depracted in transformers v4.45, and will be then set to `False` by default. For more details check this issue: https://github.com/huggingface/transformers/issues/31884
+  warnings.warn(
+/Users/enaso/Desktop/play ground/Intention/.venv-sbert/lib/python3.12/site-packages/transformers/tokenization_utils_base.py:1601: FutureWarning: `clean_up_tokenization_spaces` was not set. It will be set to `True` by default. This behavior will be depracted in transformers v4.45, and will be then set to `False` by default. For more details check this issue: https://github.com/huggingface/transformers/issues/31884
+  warnings.warn(
+huggingface/tokenizers: The current process just got forked, after parallelism has already been used. Disabling parallelism to avoid deadlocks...
+To disable this warning, you can either:
+	- Avoid using `tokenizers` before the fork if possible
+	- Explicitly set the environment variable TOKENIZERS_PARALLELISM=(true | false)
+huggingface/tokenizers: The current process just got forked, after parallelism has already been used. Disabling parallelism to avoid deadlocks...
+To disable this warning, you can either:
+	- Avoid using `tokenizers` before the fork if possible
+	- Explicitly set the environment variable TOKENIZERS_PARALLELISM=(true | false)
+ctx:bm25                                      nDCG@10=0.7683  P@5=0.4857  MRR=0.8952  U@1=0.8  swap=0.8035  wall=0.283s
+ctx:tfidf                                     nDCG@10=0.73  P@5=0.4686  MRR=0.7952  U@1=0.6571  swap=0.7993  wall=0.213s
+ctx:sbert                                     nDCG@10=0.7688  P@5=0.4743  MRR=0.8384  U@1=0.7429  swap=0.7717  wall=3.405s
+ctx:hybrid                                    nDCG@10=0.8128  P@5=0.5429  MRR=0.8762  U@1=0.7714  swap=0.8084  wall=2.538s
+ig:gold/gold:bm25                             nDCG@10=0.7963  P@5=0.5371  MRR=0.8786  U@1=0.7714  swap=0.8602  wall=91.107s
+ig:rule/index:bm25                            nDCG@10=0.7883  P@5=0.5314  MRR=0.9095  U@1=0.8286  swap=0.843  wall=39.2s
+ig:gold/gold:sbert                            nDCG@10=0.815  P@5=0.5257  MRR=0.9274  U@1=0.8857  swap=0.823  wall=57.57s
+ig:rule/index:sbert                           nDCG@10=0.7836  P@5=0.5314  MRR=0.8684  U@1=0.8286  swap=0.7986  wall=36.065s
+ig:gold/gold:hybrid                           nDCG@10=0.8206  P@5=0.5314  MRR=0.9  U@1=0.8286  swap=0.8339  wall=45.632s
+ig:rule/index:hybrid                          nDCG@10=0.8112  P@5=0.5486  MRR=0.8857  U@1=0.7714  swap=0.8406  wall=38.7s
+results: /Users/enaso/Desktop/play ground/Intention/experiments/results/20261024T192653Z_mac_dev
+
+=== [21:32:11] IGBench ablations (held-out test)
+ig:gold/gold:bm25+comb=linear                 nDCG@10=0.8064  P@5=0.55  MRR=0.9229  U@1=0.9  swap=0.8822  wall=22.604s
+ig:gold/gold:bm25+comb=lexicographic          nDCG@10=0.7419  P@5=0.51  MRR=0.9117  U@1=0.9  swap=0.8491  wall=22.344s
+ig:gold/gold:bm25+soft=0                      nDCG@10=0.8542  P@5=0.55  MRR=0.975  U@1=0.95  swap=0.8822  wall=22.937s
+ig:gold/gold:bm25+alpha=0.25                  nDCG@10=0.8606  P@5=0.55  MRR=0.975  U@1=0.95  swap=0.8822  wall=22.998s
+ig:gold/gold:bm25+alpha=0.75                  nDCG@10=0.8082  P@5=0.55  MRR=0.9267  U@1=0.9  swap=0.8822  wall=23.598s
+ig:gold/gold:bm25+alpha=1.0                   nDCG@10=0.7639  P@5=0.53  MRR=0.9075  U@1=0.9  swap=0.8822  wall=23.633s
+ig:gold/gold:bm25+k=20                        nDCG@10=0.8616  P@5=0.55  MRR=0.975  U@1=0.95  swap=0.8822  wall=2.703s
+ig:gold/gold:bm25+k=100                       nDCG@10=0.8569  P@5=0.55  MRR=0.975  U@1=0.95  swap=0.8822  wall=38.912s
+ig:gold/gold:bm25+bind=0.7                    nDCG@10=0.8754  P@5=0.56  MRR=1.0  U@1=1.0  swap=0.9207  wall=22.378s
+ig:gold/index:bm25                            nDCG@10=0.8467  P@5=0.55  MRR=0.95  U@1=0.9  swap=0.8822  wall=23.351s
+ig:rule/gold:bm25                             nDCG@10=0.8285  P@5=0.54  MRR=0.8917  U@1=0.8  swap=0.8502  wall=2.467s
+results: /Users/enaso/Desktop/play ground/Intention/experiments/results/20261024T193220Z_mac_test_ablations
+
+=== [21:36:09] scalability
+{
+ "tables": 314,
+ "seed": 7,
+ "cells": {
+  "median": 1092.0,
+  "max": 4118040
+ },
+ "profile_ms": {
+  "median": 19.904,
+  "p95": 504.627,
+  "fit": {
+   "intercept_ms": 36.549,
+   "ms_per_million_cells": 1280.569
+  }
+ },
+ "align_ms": {
+  "compare": {
+   "median": 0.671,
+   "p95": 3.666,
+   "fit": {
+    "intercept_ms": 1.121,
+    "ms_per_million_cells": 0.811
+   }
+  },
+  "aggregate": {
+   "median": 0.583,
+   "p95": 2.815,
+   "fit": {
+    "intercept_ms": -0.195,
+    "ms_per_million_cells": 37.695
+   }
+  },
+  "predict": {
+   "median": 0.271,
+   "p95": 1.659,
+   "fit": {
+    "intercept_ms": 0.444,
+    "ms_per_million_cells": 0.329
+   }
+  },
+  "explain": {
+   "median": 0.309,
+   "p95": 0.909,
+   "fit": {
+    "intercept_ms": 0.394,
+    "ms_per_million_cells": 0.375
+   }
+  },
+  "monitor": {
+   "median": 0.256,
+   "p95": 1.874,
+   "fit": {
+    "intercept_ms": 0.137,
+    "ms_per_million_cells": 19.09
+   }
+  }
+ }
+}
+
+=== [21:36:52] TARGET bird-validation: import
+Downloading data:   0%|          | 0/75 [00:00<?, ?files/s]Downloading data:  21%|██▏       | 16/75 [00:02<00:08,  7.26files/s]Downloading data:  43%|████▎     | 32/75 [00:03<00:04, 10.45files/s]Downloading data:  64%|██████▍   | 48/75 [00:03<00:02, 13.19files/s]Downloading data:  85%|████████▌ | 64/75 [00:04<00:00, 15.13files/s]Downloading data: 100%|██████████| 75/75 [00:04<00:00, 15.87files/s]
+Generating validation split: 0 examples [00:00, ? examples/s]Generating validation split: 29 examples [00:00, 3456.03 examples/s]
+Traceback (most recent call last):
+  File "/Users/enaso/Desktop/play ground/Intention/.venv-sbert/lib/python3.12/site-packages/datasets/builder.py", line 1871, in _prepare_split_single
+    writer.write_table(table)
+  File "/Users/enaso/Desktop/play ground/Intention/.venv-sbert/lib/python3.12/site-packages/datasets/arrow_writer.py", line 643, in write_table
+    pa_table = table_cast(pa_table, self._schema)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/enaso/Desktop/play ground/Intention/.venv-sbert/lib/python3.12/site-packages/datasets/table.py", line 2293, in table_cast
+    return cast_table_to_schema(table, schema)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/enaso/Desktop/play ground/Intention/.venv-sbert/lib/python3.12/site-packages/datasets/table.py", line 2247, in cast_table_to_schema
+    cast_array_to_feature(
+  File "/Users/enaso/Desktop/play ground/Intention/.venv-sbert/lib/python3.12/site-packages/datasets/table.py", line 1796, in wrapper
+    return pa.chunked_array([func(chunk, *args, **kwargs) for chunk in array.chunks])
+                             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/enaso/Desktop/play ground/Intention/.venv-sbert/lib/python3.12/site-packages/datasets/table.py", line 2103, in cast_array_to_feature
+    return array_cast(
+           ^^^^^^^^^^^
+  File "/Users/enaso/Desktop/play ground/Intention/.venv-sbert/lib/python3.12/site-packages/datasets/table.py", line 1798, in wrapper
+    return func(array, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/enaso/Desktop/play ground/Intention/.venv-sbert/lib/python3.12/site-packages/datasets/table.py", line 1950, in array_cast
+    return array.cast(pa_type)
+           ^^^^^^^^^^^^^^^^^^^
+  File "pyarrow/array.pxi", line 1004, in pyarrow.lib.Array.cast
+  File "/Users/enaso/Desktop/play ground/Intention/.venv-sbert/lib/python3.12/site-packages/pyarrow/compute.py", line 405, in cast
+    return call_function("cast", [arr], options, memory_pool)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "pyarrow/_compute.pyx", line 598, in pyarrow._compute.call_function
+  File "pyarrow/_compute.pyx", line 393, in pyarrow._compute.Function.call
+  File "pyarrow/error.pxi", line 155, in pyarrow.lib.pyarrow_internal_check_status
+  File "pyarrow/error.pxi", line 92, in pyarrow.lib.check_status
+pyarrow.lib.ArrowInvalid: Failed to parse string: 'Number of Test Takers Whose Total SAT Scores Are Greater or Equal to 1500' as a scalar of type double
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "<frozen runpy>", line 198, in _run_module_as_main
+  File "<frozen runpy>", line 88, in _run_code
+  File "/Users/enaso/Desktop/play ground/Intention/intention_grounding/target_import.py", line 163, in <module>
+    main()
+  File "/Users/enaso/Desktop/play ground/Intention/intention_grounding/target_import.py", line 155, in main
+    m, b = import_dataset(args.dataset, corpus_path=args.corpus, queries_path=args.queries, max_rows=args.max_rows, max_queries=args.max_queries)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/enaso/Desktop/play ground/Intention/intention_grounding/target_import.py", line 91, in import_dataset
+    corpus_rows = _load(corpus_path or hf_corpus, split)
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/enaso/Desktop/play ground/Intention/intention_grounding/target_import.py", line 42, in _load
+    return list(load_dataset(path, split=split))
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/enaso/Desktop/play ground/Intention/.venv-sbert/lib/python3.12/site-packages/datasets/load.py", line 2084, in load_dataset
+    builder_instance.download_and_prepare(
+  File "/Users/enaso/Desktop/play ground/Intention/.venv-sbert/lib/python3.12/site-packages/datasets/builder.py", line 925, in download_and_prepare
+    self._download_and_prepare(
+  File "/Users/enaso/Desktop/play ground/Intention/.venv-sbert/lib/python3.12/site-packages/datasets/builder.py", line 1001, in _download_and_prepare
+    self._prepare_split(split_generator, **prepare_split_kwargs)
+  File "/Users/enaso/Desktop/play ground/Intention/.venv-sbert/lib/python3.12/site-packages/datasets/builder.py", line 1742, in _prepare_split
+    for job_id, done, content in self._prepare_split_single(
+  File "/Users/enaso/Desktop/play ground/Intention/.venv-sbert/lib/python3.12/site-packages/datasets/builder.py", line 1898, in _prepare_split_single
+    raise DatasetGenerationError("An error occurred while generating the dataset") from e
+datasets.exceptions.DatasetGenerationError: An error occurred while generating the dataset
+WARN: import of bird-validation failed
+
+=== [21:37:02] TARGET infiagentda: import
+Traceback (most recent call last):
+  File "<frozen runpy>", line 198, in _run_module_as_main
+  File "<frozen runpy>", line 88, in _run_code
+  File "/Users/enaso/Desktop/play ground/Intention/intention_grounding/target_import.py", line 163, in <module>
+    main()
+  File "/Users/enaso/Desktop/play ground/Intention/intention_grounding/target_import.py", line 155, in main
+    m, b = import_dataset(args.dataset, corpus_path=args.corpus, queries_path=args.queries, max_rows=args.max_rows, max_queries=args.max_queries)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/enaso/Desktop/play ground/Intention/intention_grounding/target_import.py", line 91, in import_dataset
+    corpus_rows = _load(corpus_path or hf_corpus, split)
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/enaso/Desktop/play ground/Intention/intention_grounding/target_import.py", line 42, in _load
+    return list(load_dataset(path, split=split))
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/enaso/Desktop/play ground/Intention/.venv-sbert/lib/python3.12/site-packages/datasets/load.py", line 2062, in load_dataset
+    builder_instance = load_dataset_builder(
+                       ^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/enaso/Desktop/play ground/Intention/.venv-sbert/lib/python3.12/site-packages/datasets/load.py", line 1782, in load_dataset_builder
+    dataset_module = dataset_module_factory(
+                     ^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/enaso/Desktop/play ground/Intention/.venv-sbert/lib/python3.12/site-packages/datasets/load.py", line 1652, in dataset_module_factory
+    raise e1 from None
+  File "/Users/enaso/Desktop/play ground/Intention/.venv-sbert/lib/python3.12/site-packages/datasets/load.py", line 1578, in dataset_module_factory
+    raise DatasetNotFoundError(f"Dataset '{path}' doesn't exist on the Hub or cannot be accessed.") from e
+datasets.exceptions.DatasetNotFoundError: Dataset 'target-benchmark/infiagentda-corpus' doesn't exist on the Hub or cannot be accessed.
+WARN: import of infiagentda failed
+
+=== [21:37:04] TARGET spider-test: import
+Downloading data:   0%|          | 0/20 [00:00<?, ?files/s]Downloading data:  80%|████████  | 16/20 [00:00<00:00, 25.69files/s]Downloading data: 100%|██████████| 20/20 [00:00<00:00, 21.80files/s]
+Generating test split:   0%|          | 0/755 [00:00<?, ? examples/s]Generating test split: 100%|██████████| 755/755 [00:00<00:00, 78474.95 examples/s]
+Generating train split:   0%|          | 0/6997 [00:00<?, ? examples/s]Generating train split: 100%|██████████| 6997/6997 [00:00<00:00, 455558.67 examples/s]
+Generating validation split:   0%|          | 0/1034 [00:00<?, ? examples/s]Generating validation split: 100%|██████████| 1034/1034 [00:00<00:00, 255683.90 examples/s]
+Generating test split:   0%|          | 0/2147 [00:00<?, ? examples/s]Generating test split: 100%|██████████| 2147/2147 [00:00<00:00, 400318.77 examples/s]
+Traceback (most recent call last):
+  File "<frozen runpy>", line 198, in _run_module_as_main
+  File "<frozen runpy>", line 88, in _run_code
+  File "/Users/enaso/Desktop/play ground/Intention/intention_grounding/target_import.py", line 163, in <module>
+    main()
+  File "/Users/enaso/Desktop/play ground/Intention/intention_grounding/target_import.py", line 155, in main
+    m, b = import_dataset(args.dataset, corpus_path=args.corpus, queries_path=args.queries, max_rows=args.max_rows, max_queries=args.max_queries)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/enaso/Desktop/play ground/Intention/intention_grounding/target_import.py", line 98, in import_dataset
+    db, tid = str(entry["database_id"]), str(entry["table_id"])
+                  ~~~~~^^^^^^^^^^^^^^^
+KeyError: 'database_id'
+WARN: import of spider-test failed
+
+=== [21:37:15] ALL DONE Sat Oct 24 21:37:15 CEST 2026
+You can close this window.

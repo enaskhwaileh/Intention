@@ -1,0 +1,30 @@
+{
+ "aggregate": {
+  "system": "ig:rule/index:bm25",
+  "queries": 0,
+  "ndcg@10": null,
+  "ndcg@10|intention": null,
+  "p@5": null,
+  "p@5|intention": null,
+  "p@10": null,
+  "p@10|intention": null,
+  "r@1": null,
+  "r@1|intention": null,
+  "r@5": null,
+  "r@5|intention": null,
+  "r@10": null,
+  "r@10|intention": null,
+  "mrr": null,
+  "mrr|intention": null,
+  "useful@1": null,
+  "useful@1|intention": null,
+  "topical_only@1": null,
+  "topical_only@1|intention": null,
+  "swap_accuracy": null,
+  "by_operation": {},
+  "timing": {},
+  "wall_seconds": 0.0
+ },
+ "per_query": {},
+ "swap": []
+}

@@ -23,6 +23,17 @@ def write_report(out):
               "| System | nDCG@10 | P@5 | MRR | Useful@1 |", "|---|---|---|---|---|"]
     for s in systems:
         lines.append(f"| {s['system']} | {_fmt(s['ndcg@10|intention'])} | {_fmt(s['p@5|intention'])} | {_fmt(s['mrr|intention'])} | {_fmt(s['useful@1|intention'])} |")
+    lines += ["", "Recall of gold/useful tables at k (TARGET's main retrieval metric):", "",
+              "| System | R@1 | R@5 | R@10 |", "|---|---|---|---|"]
+    for s in systems:
+        lines.append(f"| {s['system']} | {_fmt(s.get('r@1'))} | {_fmt(s.get('r@5'))} | {_fmt(s.get('r@10'))} |")
+    ops = sorted({op for s in systems for op in (s.get("by_operation") or {})})
+    if ops:
+        lines += ["", "nDCG@10 by analytical operation / intention family (n = queries):", "",
+                  "| System | " + " | ".join(f"{op} (n={systems[0]['by_operation'].get(op, {}).get('n', 0)})" for op in ops) + " |",
+                  "|---|" + "---|" * len(ops)]
+        for s in systems:
+            lines.append(f"| {s['system']} | " + " | ".join(_fmt((s.get('by_operation') or {}).get(op, {}).get('ndcg@10')) for op in ops) + " |")
     lines += ["", "## RQ2 – response to a change of intention with a fixed topic", "",
               "Pairwise intention-swap accuracy: a table useful only for intention *a* ranks above a table useful only for intention *b* in *a*'s ranking (0.5 = indifferent).", "",
               "| System | Swap accuracy |", "|---|---|"]

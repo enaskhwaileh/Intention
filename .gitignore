@@ -37,3 +37,6 @@ data/raw/rdatasets
 experiments/results/*/predictions_*.jsonl
 experiments/results/scratch*/
 intention_grounding/.env
+
+# failed launcher attempts
+experiments/run_*attempt*.txt

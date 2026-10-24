@@ -1,0 +1,4 @@
+{"query_id": 1, "query": "What is the average grade of students in each major?", "database_id": "school", "table_id": "students", "answer": "SELECT major, AVG(grade) FROM students GROUP BY major"}
+{"query_id": 2, "query": "How many courses have 4 credits?", "database_id": "school", "table_id": "courses", "answer": "SELECT COUNT(*) FROM courses WHERE credits = 4"}
+{"query_id": 3, "query": "Compare the total order amount across countries", "database_id": "shop", "table_id": ["orders"], "answer": "SELECT country, SUM(amount) FROM orders GROUP BY country"}
+{"query_id": 4, "query": "List the names of customers living in Paris", "database_id": "shop", "table_id": "customers", "answer": "SELECT customer_name FROM customers WHERE city='Paris'"}

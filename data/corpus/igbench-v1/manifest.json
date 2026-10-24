@@ -1,6 +1,6 @@
 {
  "corpus_id": "igbench-v1",
- "created": "2026-10-24T10:01:18.515091+00:00",
+ "created": "2026-10-24T19:19:55.418000+00:00",
  "pins": {
   "owid": {
    "url": "https://github.com/owid/covid-19-data",
@@ -29,7 +29,7 @@
   "max_bytes": 5000000,
   "min_cols": 2
  },
- "table_count": 3300,
+ "table_count": 3301,
  "source_families": [
   "owid-covid",
   "rdatasets",
@@ -58228,6 +58228,38 @@
     "commit": "1dcc2bf5f955cc1224a3e1307256e1fe86b68dae",
     "package": "datasets",
     "item": "CO2"
+   },
+   "license": "Per originating CRAN package (mostly GPL-2/GPL-3); collection code GPL-3",
+   "derivation": null,
+   "documentation_source": "source documentation",
+   "columns": [
+    {
+     "name": "rownames",
+     "description": "Row identifier added by Rdatasets"
+    },
+    {
+     "name": "time",
+     "description": ""
+    },
+    {
+     "name": "value",
+     "description": ""
+    }
+   ]
+  },
+  {
+   "table_id": "rdatasets.datasets.co2",
+   "title": "Mauna Loa Atmospheric CO2 Concentration",
+   "description": "Atmospheric concentrations of CO _2 are expressed in parts per million (ppm) and reported in the preliminary 1997 SIO manometric mole fraction scale.",
+   "path": "data/raw/rdatasets/csv/datasets/co2.csv",
+   "sha256": "16f9baa6f3986f31d5b4585d14f5479471a719906638626570ea96faab038807",
+   "bytes": 12431,
+   "source_family": "rdatasets:datasets",
+   "source": {
+    "repository": "https://github.com/vincentarelbundock/Rdatasets",
+    "commit": "1dcc2bf5f955cc1224a3e1307256e1fe86b68dae",
+    "package": "datasets",
+    "item": "co2"
    },
    "license": "Per originating CRAN package (mostly GPL-2/GPL-3); collection code GPL-3",
    "derivation": null,

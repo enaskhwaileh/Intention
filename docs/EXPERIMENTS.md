@@ -107,11 +107,30 @@ grounded intention against one table has a median below 1 ms and grows with the 
 2. **Run the LLM configuration** (paper's main system) with a key: `ig:llm/llm:{bm25,tfidf}`; responses are cached,
    so the run is paid once. Report LLM token use and latency from `llm-cache`.
 3. **Add dense, instruction-aware and structure-aware context matchers** on the Mac environment
-   (`--context sbert`; e5/instructor via `--context sbert` with another `sbert_model`; TABERTA and semantic matching
+   (`--context sbert` with tables and queries embedded by SBERT and stored in ChromaDB; e5/bge via `--sbert-model`; TABERTA and semantic matching
    from the authors' prior work as additional `ContextMatcher` methods). The framework is applied on top of each.
 4. **Review the labels** with two annotators and report agreement; re-run without code changes.
 5. **External generality:** FollowTable once released (map aggregation-level / column-semantics instructions to
    variants), reporting nDCG and its responsiveness score.
+
+## Established benchmark: TARGET (RQ1 generality)
+
+TARGET (Ji et al., 2025) standardises table retrieval over established datasets. `target_import.py` converts a
+TARGET dataset into a corpus and a benchmark with its gold tables (label 2, binary relevance) and, for BIRD and
+Spider, the analytical operation of each question from its gold SQL (mean, total/count, extreme, lookup; grouped).
+Recommended order: **BIRD validation** (real databases with documented columns, many aggregate questions),
+**InfiAgent-DABench** (data-analysis questions over CSV files), **Spider test** (1,000+ tables). Report R@1/R@5/R@10
+and nDCG@10 for context-only matchers (BM25, SBERT) and the framework on top of each (automatic and LLM
+configurations), overall and by operation. Because TARGET's relevance is "table needed to answer", not
+intention-conditional usefulness, this experiment shows that intention grounding generalises to an external
+benchmark without hurting retrieval; the intention-specific claims (RQ2) rest on IGBench.
+
+```sh
+pip install datasets
+python -m intention_grounding.target_import --dataset bird-validation
+python -m intention_grounding.experiments --corpus data/corpus/target-bird-validation/manifest.json \
+  --benchmark benchmarks/target/bird-validation.json --systems target --context bm25,sbert --tag bird
+```
 
 ## Reproduce
 

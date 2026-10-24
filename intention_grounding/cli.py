@@ -22,7 +22,7 @@ def build(args):
     interp = LLMInterpreter(allow_live=args.allow_live) if args.interpreter == "llm" else RuleInterpreter()
     resolver = LLMResolver(allow_live=args.allow_live) if args.resolver == "llm" else IndexResolver(library)
     return Pipeline(manifest, library=library, interpreter=interp, resolver=resolver,
-                    matcher=ContextMatcher(manifest, args.context), k_candidates=args.k, k_out=args.top,
+                    matcher=ContextMatcher(manifest, args.context, sbert_model=args.sbert_model, vector_store=args.vector_store), k_candidates=args.k, k_out=args.top,
                     combination=args.combination)
 
 
@@ -90,6 +90,8 @@ def main(argv=None):
     p.add_argument("--interpreter", choices=["rule", "llm"], default="rule")
     p.add_argument("--resolver", choices=["index", "llm"], default="index")
     p.add_argument("--context", default="bm25", choices=["bm25", "tfidf", "lsa", "sbert", "hybrid"])
+    p.add_argument("--sbert-model", default=None)
+    p.add_argument("--vector-store", default="chroma", choices=["chroma", "faiss", "numpy"])
     p.add_argument("--k", type=int, default=50, help="candidates retrieved by context matching")
     p.add_argument("--top", type=int, default=10)
     p.add_argument("--combination", default="product", choices=["product", "linear", "lexicographic"])

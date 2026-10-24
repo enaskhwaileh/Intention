@@ -46,7 +46,7 @@ class Pipeline:
 
     def config(self):
         return {"il_version": il.version(self.library), "il_sha256": self.library["_sha256"],
-                "context_method": self.matcher.method, "k_candidates": self.k_candidates, "k_out": self.k_out,
+                "context_method": self.matcher.method, "dense_index": getattr(self.matcher, "dense_stats", None), "k_candidates": self.k_candidates, "k_out": self.k_out,
                 "alpha": self.alpha, "combination": self.combination, "use_soft": self.use_soft,
                 "binding_threshold": self.binding_threshold, "profiler_version": profiler.PROFILER_VERSION,
                 "aligner_version": aligner.ALIGNER_VERSION,
@@ -62,6 +62,7 @@ class Pipeline:
         q = interpretation["context_query"]
         # 2. Context matching
         candidates, timing["context_matching_ms"] = self.matcher.retrieve(q, self.k_candidates)
+        timing.update(getattr(self.matcher, "last_timing", {}) or {})
         # 3. Grounder
         if grounding is None:
             grounding = ground(interpretation, self.library, self.resolver)

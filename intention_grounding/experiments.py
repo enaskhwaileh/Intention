@@ -47,6 +47,8 @@ def query_metrics(ranked, labels, k=K):
             "r@10": sum(1 for t in ranked[:10] if t in useful) / len(useful) if useful else None,
             "mrr": (1 / (first + 1) if first is not None else 0.0) if useful else None,
             "useful@1": (1.0 if ranked and ranked[0] in useful else 0.0) if useful else None,
+            "r@1": (1.0 * sum(1 for t in ranked[:1] if t in useful) / len(useful)) if useful else None,
+            "r@5": (sum(1 for t in ranked[:5] if t in useful) / len(useful)) if useful else None,
             "topical_only@1": (1.0 if ranked and labels.get(ranked[0], 0) == 1 else 0.0)}
 
 
@@ -151,7 +153,7 @@ def assessment_accuracy(report, labels):
 
 # ------------------------------------------------------------------ systems
 def gold_providers(queries):
-    interp = ReplayInterpreter({qd["text"]: qd["gold_interpretation"] for qd in queries}, origin="gold_annotation")
+    interp = ReplayInterpreter({qd["text"]: qd["gold_interpretation"] for qd in queries if qd.get("gold_interpretation")}, origin="gold_annotation")
     proposals = {qd["text"]: qd["gold_grounding"] for qd in queries if qd["gold_grounding"]}
     return interp, ReplayResolver(proposals, origin="gold_annotation")
 
@@ -185,7 +187,7 @@ def run_system(system, queries, k=50):
             start = time.perf_counter()
             ranked, ms = system["matcher"].retrieve(qd["text"], k)
             rankings[qd["query_id"]] = [t for t, _ in ranked]
-            reports[qd["query_id"]] = {"timing": {"context_matching_ms": ms, "total_ms": round((time.perf_counter() - start) * 1000, 3)},
+            reports[qd["query_id"]] = {"timing": {"context_matching_ms": ms, **system["matcher"].last_timing, "total_ms": round((time.perf_counter() - start) * 1000, 3)},
                                        "ranking": [{"table_id": t, "r": r, "U": r} for t, r in ranked]}
         else:
             rep = system["pipeline"].run(qd["text"], input_id=qd["query_id"])
@@ -199,17 +201,24 @@ def summarise(name, rankings, reports, queries):
     for qd in queries:
         m = query_metrics(rankings[qd["query_id"]], qd["labels"])
         rep = reports[qd["query_id"]]
-        if "interpretation" in rep:
+        if "interpretation" in rep and qd.get("gold_interpretation") is not None:
             m.update({f"rq3_{k}": v for k, v in interpretation_accuracy(rep, qd).items()})
             m["mode"] = rep["mode"]
         per_query[qd["query_id"]] = m
     with_useful = [qd["query_id"] for qd in queries if any(g == 2 for g in qd["labels"].values())]
     grounded_gold = [qd["query_id"] for qd in queries if qd["gold_grounding_status"] == "grounded"]
     agg = {"system": name, "queries": len(queries)}
-    for key in ("ndcg@10", "p@5", "p@10", "r@10", "mrr", "useful@1", "topical_only@1"):
+    for key in ("ndcg@10", "p@5", "p@10", "r@1", "r@5", "r@10", "mrr", "useful@1", "topical_only@1"):
         agg[key] = mean(per_query[q][key] for q in with_useful)
         agg[key + "|intention"] = mean(per_query[q][key] for q in grounded_gold if q in with_useful)
     agg["swap_accuracy"], swap_details = swap_accuracy(rankings, queries)
+    strata = {}
+    for qd in queries:
+        op = qd.get("sql_operation") or qd.get("gold_family")
+        if op and per_query[qd["query_id"]]["ndcg@10"] is not None:
+            strata.setdefault(op, []).append(qd["query_id"])
+    agg["by_operation"] = {op: {"n": len(q), "ndcg@10": mean(per_query[x]["ndcg@10"] for x in q),
+                                "r@5": mean(per_query[x]["r@5"] for x in q)} for op, q in sorted(strata.items())}
     rq3_keys = sorted({k for m in per_query.values() for k in m if k.startswith("rq3_")})
     for key in rq3_keys:
         agg[key] = mean(per_query[q].get(key) for q in per_query)
@@ -226,7 +235,7 @@ def summarise(name, rankings, reports, queries):
         agg["assessment_precision"] = round(tp / (tp + fp), 4) if tp + fp else None
         agg["assessment_recall"] = round(tp / (tp + fn), 4) if tp + fn else None
         agg["violated_but_useful"] = vu
-    stages = ["interpreter_ms", "context_matching_ms", "grounder_ms", "profiler_ms", "aligner_ms", "ranking_ms", "total_ms"]
+    stages = ["interpreter_ms", "context_matching_ms", "embed_query_ms", "vector_search_ms", "grounder_ms", "profiler_ms", "aligner_ms", "ranking_ms", "total_ms"]
     timing = {}
     for s in stages:
         vals = [reports[q]["timing"].get(s) for q in reports if reports[q]["timing"].get(s) is not None]
@@ -252,16 +261,22 @@ def main(argv=None):
     parser.add_argument("--out", type=Path, default=RESULTS)
     parser.add_argument("--warm", action="store_true", help="run every system twice; report the second (warm-cache) pass")
     parser.add_argument("--tag", default="", help="suffix for the results directory name")
+    parser.add_argument("--corpus", type=Path, default=None, help="corpus manifest (default: IGBench)")
+    parser.add_argument("--sbert-model", default=None, help="sentence-transformers model for sbert/hybrid (default all-MiniLM-L6-v2)")
+    parser.add_argument("--vector-store", default="chroma", choices=["chroma", "faiss", "numpy"], help="vector database for table embeddings")
     args = parser.parse_args(argv)
     bench = json.loads(args.benchmark.read_text())
     queries = bench["queries"]
-    manifest, library = corpus.load_manifest(), il.load()
-    names = {"main": MAIN, "ablations": ABLATIONS, "all": MAIN + ABLATIONS}.get(args.systems, args.systems.split(","))
+    manifest, library = corpus.load_manifest(args.corpus) if args.corpus else corpus.load_manifest(), il.load()
+    target = [f"{kind}:{m}" for m in args.context.split(",") for kind in ("ctx", "ig:rule/index")]
+    if args.allow_live:
+        target += [f"ig:llm/llm:{m}" for m in args.context.split(",")]
+    names = {"main": MAIN, "ablations": ABLATIONS, "all": MAIN + ABLATIONS, "target": target}.get(args.systems, args.systems.split(","))
     methods = sorted({n.split(":")[-1].split("+")[0] for n in names} | set(args.context.split(",")))
     matchers, index_times = {}, {}
     for m in methods:
-        matchers[m] = ContextMatcher(manifest, m)
-        index_times[m] = {"build_ms": matchers[m].build_ms, "cache_hit": matchers[m].cache_hit}
+        matchers[m] = ContextMatcher(manifest, m, sbert_model=args.sbert_model, vector_store=args.vector_store)
+        index_times[m] = {"build_ms": matchers[m].build_ms, "cache_hit": matchers[m].cache_hit, "dense": matchers[m].dense_stats}
     run_id = datetime.now(timezone.utc).strftime("%Y%m%dT%H%M%SZ") + (f"_{args.tag}" if args.tag else "")
     out = args.out / run_id
     out.mkdir(parents=True, exist_ok=True)

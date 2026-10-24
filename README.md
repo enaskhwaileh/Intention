@@ -18,17 +18,18 @@ u ──Interpreter──► (q_u, ι_u)
 | Interpreter (§3.1, Alg. 1) | `interpreter/` | One extraction call returning the context query `q_u` and the intention record `ι_u = (e_u, B_u, Ω_u)`; validates JSON, labels, ids and that every span occurs in `u`; status `extracted` / `no_intention` / `failure` (fallback `q_u = u`). Providers: LLM (any OpenAI-compatible endpoint), recorded replay, rule baseline. |
 | Intention Library (§3.2) | `library/intention-library-v1.0.json`, `il.py` | Release `L = (J, O, P, R, E, v)`: 5 families, 7 variants, 9 procedures, 9 operators, 55 requirement records over the axes sem/str/cov/qual/aff, evidence rules and an expression index. Registration checks on load. Spec: [docs/INTENTION_LIBRARY.md](docs/INTENTION_LIBRARY.md). |
 | Grounder (§3.3, Alg. 2) | `grounder.py` | A resolver (LLM, replay, or the expression-index baseline) proposes a variant and role→entry references; contract validation, value binding, procedure applicability and requirement instantiation `Ψ_u` (Eq. 21) are deterministic. Statuses: grounded, insufficient, ambiguous, unsupported, failure, not_attempted. |
-| Context matching (§3.4) | `context.py` | Serialises each table (title, description, attributes and their documentation) and scores `r(q_u, T) ∈ [0, 1]` with BM25, TF-IDF, LSA, Sentence-BERT or a hybrid; returns the top-k candidates. |
+| Context matching (§3.4) | `context.py`, `embedding.py`, `vectorstore.py` | Scores `r(q_u, T) ∈ [0, 1]` with BM25, TF-IDF, LSA, Sentence-BERT or a hybrid and returns the top-k candidates. SBERT embeds each table as chunks (title + description, then groups of documented attributes) and the query at search time; table vectors live in a persistent vector database (ChromaDB by default, FAISS or exact numpy), synchronised incrementally so only changed tables are re-embedded. Query-embedding and vector-search time are recorded. |
 | Table Profiler (§3.5) | `profiler.py` | Full-scan capability profile `Φ(T)` for any CSV: types, missingness, distinct values, numeric ranges, temporal extent and grain, geographic level (gazetteer), documented measure kind (count, amount, level, rate, mean, cumulative), keys, panel / wide / aggregated-cell structure. Content-addressed cache. |
 | Aligner (§3.6) | `aligner.py` | Binds the symbolic slots of `Ψ_u` to attributes using names, documentation and values; evaluates each requirement with a registered predicate under its evidence rule (supported / violated / unresolved + evidence); combines per procedure (all hard supported → supported, any violated → violated) and across alternative procedures; computes `A(T, ι_u)` with soft indicators. |
 | Ranking (§3.7) | `pipeline.py` | `U = F(r, A)`; default `F(r, A) = r (½ + ½ A)` (nondecreasing, `F ≤ r`); linear and lexicographic forms for ablation; context-only fallback when no intention is grounded. Records the running time of every stage. |
 | Experiments (§4) | `experiments.py`, `scaling.py`, `report.py` | RQ1–RQ4 on IGBench: baselines, ablations, intention-swap analysis, interpretation/grounding accuracy, per-stage timing and scalability. Design: [docs/EXPERIMENTS.md](docs/EXPERIMENTS.md). |
+| Established benchmarks | `target_import.py` | Imports TARGET datasets (BIRD, Spider, InfiAgent-DABench, FeTaQA, OTT-QA) from the Hugging Face hub into a corpus manifest + benchmark file with gold tables, and derives the analytical operation of each text-to-SQL question from its gold SQL for stratified results. |
 | Corpus and benchmark | `corpus.py`, `benchmarks/igbench_v1/` | IGBench-v1: 3,300 documented real tables (Our World in Data COVID-19, UCI bike sharing, Rdatasets) with intention-paired queries. Rationale: [docs/DATASET.md](docs/DATASET.md). |
 
 ## Setup
 
 ```sh
-python3 -m venv .venv && ./.venv/bin/pip install -e .           # pandas, numpy, scikit-learn
+python3 -m venv .venv && ./.venv/bin/pip install -e ".[sbert]"  # pandas, numpy, scikit-learn, sentence-transformers, chromadb
 ./.venv/bin/python -m intention_grounding.acquire                # UCI bike tables (once)
 ./.venv/bin/python -m intention_grounding.corpus fetch           # OWID + Rdatasets at pinned commits (git, ~1.5 GB)
 ./.venv/bin/python -m intention_grounding.corpus build           # data/corpus/igbench-v1/manifest.json
@@ -56,7 +57,13 @@ behind each verdict and the timing of each stage.
 ```sh
 python -m intention_grounding.experiments --systems main --benchmark benchmarks/igbench_v1/test_queries.json
 python -m intention_grounding.experiments --systems ablations
-python -m intention_grounding.experiments --systems ctx:sbert,ig:gold/gold:sbert --context sbert     # needs .[sbert]
+python -m intention_grounding.experiments --systems ctx:sbert,ig:gold/gold:sbert,ig:rule/index:sbert --context sbert   # needs .[sbert]
+#   --sbert-model intfloat/e5-base-v2   --vector-store chroma|faiss|numpy
+
+# Established benchmark (TARGET: BIRD, Spider, InfiAgent-DABench, ...); needs `pip install datasets` and internet
+python -m intention_grounding.target_import --dataset bird-validation
+python -m intention_grounding.experiments --corpus data/corpus/target-bird-validation/manifest.json \
+    --benchmark benchmarks/target/bird-validation.json --systems target --context bm25,sbert --tag bird
 python -m intention_grounding.experiments --systems ig:llm/llm:bm25 --allow-live                      # needs an LLM key
 python -m intention_grounding.scaling --sample 300
 ```

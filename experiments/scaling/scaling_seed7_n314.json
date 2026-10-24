@@ -2,56 +2,56 @@
  "tables": 314,
  "seed": 7,
  "cells": {
-  "median": 916.5,
+  "median": 1092.0,
   "max": 4118040
  },
  "profile_ms": {
-  "median": 17.653,
-  "p95": 556.533,
+  "median": 19.904,
+  "p95": 504.627,
   "fit": {
-   "intercept_ms": 45.791,
-   "ms_per_million_cells": 1321.57
+   "intercept_ms": 36.549,
+   "ms_per_million_cells": 1280.569
   }
  },
  "align_ms": {
   "compare": {
-   "median": 0.681,
-   "p95": 4.077,
+   "median": 0.671,
+   "p95": 3.666,
    "fit": {
-    "intercept_ms": 1.333,
-    "ms_per_million_cells": 1.093
+    "intercept_ms": 1.121,
+    "ms_per_million_cells": 0.811
    }
   },
   "aggregate": {
-   "median": 0.515,
-   "p95": 3.151,
+   "median": 0.583,
+   "p95": 2.815,
    "fit": {
-    "intercept_ms": -0.164,
-    "ms_per_million_cells": 42.716
+    "intercept_ms": -0.195,
+    "ms_per_million_cells": 37.695
    }
   },
   "predict": {
-   "median": 0.228,
-   "p95": 1.999,
+   "median": 0.271,
+   "p95": 1.659,
    "fit": {
-    "intercept_ms": 0.575,
-    "ms_per_million_cells": 0.847
+    "intercept_ms": 0.444,
+    "ms_per_million_cells": 0.329
    }
   },
   "explain": {
-   "median": 0.262,
-   "p95": 1.277,
+   "median": 0.309,
+   "p95": 0.909,
    "fit": {
-    "intercept_ms": 0.433,
-    "ms_per_million_cells": 0.379
+    "intercept_ms": 0.394,
+    "ms_per_million_cells": 0.375
    }
   },
   "monitor": {
-   "median": 0.214,
-   "p95": 1.947,
+   "median": 0.256,
+   "p95": 1.874,
    "fit": {
-    "intercept_ms": 0.002,
-    "ms_per_million_cells": 26.996
+    "intercept_ms": 0.137,
+    "ms_per_million_cells": 19.09
    }
   }
  }
