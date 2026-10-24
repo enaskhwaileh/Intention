@@ -1,0 +1,2654 @@
+{
+ "benchmark": "igbench-v1",
+ "corpus_id": "igbench-v1",
+ "label_scale": {
+  "2": "useful",
+  "1": "topical only",
+  "0": "not relevant"
+ },
+ "label_status": "draft_author_labels_unreviewed",
+ "default_label": 0,
+ "queries": [
+  {
+   "query_id": "C1",
+   "topic": "covid-vaccination",
+   "pair_group": "covid-vaccination",
+   "text": "Compare the share of people fully vaccinated against COVID-19 across countries in Europe",
+   "gold_family": "compare",
+   "gold_variant": "compare.observed_values",
+   "gold_grounding_status": "grounded",
+   "gold_interpretation": {
+    "context_query": "share of people fully vaccinated against COVID-19 across countries in Europe",
+    "intention_expression": "Compare",
+    "arguments": [
+     {
+      "id": "a1",
+      "label": "measure",
+      "value": "share of people fully vaccinated against COVID-19",
+      "spans": [
+       "share of people fully vaccinated against COVID-19"
+      ]
+     },
+     {
+      "id": "a2",
+      "label": "group_dimension",
+      "value": "countries",
+      "spans": [
+       "countries"
+      ]
+     }
+    ],
+    "scope": [
+     {
+      "id": "s1",
+      "label": "geography",
+      "value": "Europe",
+      "spans": [
+       "in Europe"
+      ]
+     }
+    ]
+   },
+   "gold_grounding": {
+    "status": "proposed",
+    "variant_id": "compare.observed_values",
+    "bindings": {
+     "measure": [
+      "a1"
+     ],
+     "group_dimension": [
+      "a2"
+     ]
+    },
+    "scope": [
+     "s1"
+    ],
+    "justification": "gold",
+    "diagnostics": []
+   },
+   "labels": {
+    "owid.vaccinations": 2,
+    "owid.vaccinations_by_age_group": 1,
+    "owid.vaccinations_by_manufacturer": 1,
+    "owid.us_state_vaccinations": 1,
+    "owid.country_profile_latest": 2,
+    "owid.regional_summary_latest": 1,
+    "owid.country_weekly_panel": 2,
+    "rdatasets.openintro.biontech_adolescents": 1,
+    "rdatasets.MedDataSets.biontech_teens_tbl_df": 1
+   },
+   "label_notes": {
+    "owid.regional_summary_latest": "continent level only; country distinctions lost",
+    "owid.vaccinations_by_age_group": "rates only within age groups",
+    "owid.us_state_vaccinations": "United States states, not Europe"
+   }
+  },
+  {
+   "query_id": "C2",
+   "topic": "covid-cases",
+   "pair_group": "covid-cases",
+   "text": "Compare the average daily number of new COVID-19 cases across continents in 2021",
+   "gold_family": "compare",
+   "gold_variant": "compare.group_means",
+   "gold_grounding_status": "grounded",
+   "gold_interpretation": {
+    "context_query": "daily number of new COVID-19 cases across continents in 2021",
+    "intention_expression": "Compare",
+    "arguments": [
+     {
+      "id": "a1",
+      "label": "statistic",
+      "value": "average",
+      "spans": [
+       "average"
+      ]
+     },
+     {
+      "id": "a2",
+      "label": "measure",
+      "value": "daily number of new COVID-19 cases",
+      "spans": [
+       "daily number of new COVID-19 cases"
+      ]
+     },
+     {
+      "id": "a3",
+      "label": "group_dimension",
+      "value": "continents",
+      "spans": [
+       "continents"
+      ]
+     }
+    ],
+    "scope": [
+     {
+      "id": "s1",
+      "label": "period",
+      "value": "2021",
+      "spans": [
+       "in 2021"
+      ]
+     }
+    ]
+   },
+   "gold_grounding": {
+    "status": "proposed",
+    "variant_id": "compare.group_means",
+    "bindings": {
+     "statistic": [
+      "a1"
+     ],
+     "measure": [
+      "a2"
+     ],
+     "group_dimension": [
+      "a3"
+     ]
+    },
+    "scope": [
+     "s1"
+    ],
+    "justification": "gold",
+    "diagnostics": []
+   },
+   "labels": {
+    "owid.cases_deaths": 2,
+    "owid.new_cases_wide": 2,
+    "owid.country_weekly_panel": 1,
+    "owid.testing": 1,
+    "owid.hospitalizations": 1,
+    "owid.country_profile_latest": 1,
+    "owid.regional_summary_latest": 1,
+    "rdatasets.MedDataSets.covid19sf_tests_df": 1
+   },
+   "label_notes": {
+    "owid.cases_deaths": "continent aggregate rows with daily new cases",
+    "owid.new_cases_wide": "one daily column per continent",
+    "owid.country_weekly_panel": "country rows only; a mean over countries is not the continent mean"
+   }
+  },
+  {
+   "query_id": "C3",
+   "topic": "covid-hospital",
+   "pair_group": "covid-hospital",
+   "text": "How has COVID-19 hospital occupancy in France changed over time?",
+   "gold_family": "monitor",
+   "gold_variant": "monitor.trend",
+   "gold_grounding_status": "grounded",
+   "gold_interpretation": {
+    "context_query": "COVID-19 hospital occupancy in France",
+    "intention_expression": "changed over time",
+    "arguments": [
+     {
+      "id": "a1",
+      "label": "measure",
+      "value": "COVID-19 hospital occupancy",
+      "spans": [
+       "COVID-19 hospital occupancy"
+      ]
+     },
+     {
+      "id": "a2",
+      "label": "time_dimension",
+      "value": "over time",
+      "spans": [
+       "over time"
+      ]
+     }
+    ],
+    "scope": [
+     {
+      "id": "s1",
+      "label": "geography",
+      "value": "France",
+      "spans": [
+       "in France"
+      ]
+     }
+    ]
+   },
+   "gold_grounding": {
+    "status": "proposed",
+    "variant_id": "monitor.trend",
+    "bindings": {
+     "measure": [
+      "a1"
+     ],
+     "time_dimension": [
+      "a2"
+     ]
+    },
+    "scope": [
+     "s1"
+    ],
+    "justification": "gold",
+    "diagnostics": []
+   },
+   "labels": {
+    "owid.cases_deaths": 1,
+    "rdatasets.MedDataSets.covid19sf_hospital_df": 1,
+    "owid.country_profile_latest": 1,
+    "owid.hospitalizations": 2,
+    "owid.country_weekly_panel": 2
+   },
+   "label_notes": {}
+  },
+  {
+   "query_id": "C4",
+   "topic": "covid-vaccination",
+   "pair_group": "covid-vaccination",
+   "text": "What is the total number of COVID-19 vaccine doses administered by each manufacturer in Germany?",
+   "gold_family": "aggregate",
+   "gold_variant": "aggregate.group_totals",
+   "gold_grounding_status": "grounded",
+   "gold_interpretation": {
+    "context_query": "COVID-19 vaccine doses administered by each manufacturer in Germany",
+    "intention_expression": "total number",
+    "arguments": [
+     {
+      "id": "a1",
+      "label": "statistic",
+      "value": "total number",
+      "spans": [
+       "total number"
+      ]
+     },
+     {
+      "id": "a2",
+      "label": "measure",
+      "value": "COVID-19 vaccine doses administered",
+      "spans": [
+       "COVID-19 vaccine doses administered"
+      ]
+     },
+     {
+      "id": "a3",
+      "label": "group_dimension",
+      "value": "manufacturer",
+      "spans": [
+       "manufacturer"
+      ]
+     }
+    ],
+    "scope": [
+     {
+      "id": "s1",
+      "label": "geography",
+      "value": "Germany",
+      "spans": [
+       "in Germany"
+      ]
+     }
+    ]
+   },
+   "gold_grounding": {
+    "status": "proposed",
+    "variant_id": "aggregate.group_totals",
+    "bindings": {
+     "statistic": [
+      "a1"
+     ],
+     "measure": [
+      "a2"
+     ],
+     "group_dimension": [
+      "a3"
+     ]
+    },
+    "scope": [
+     "s1"
+    ],
+    "justification": "gold",
+    "diagnostics": []
+   },
+   "labels": {
+    "owid.vaccinations": 1,
+    "owid.vaccinations_by_age_group": 1,
+    "owid.vaccinations_by_manufacturer": 2,
+    "owid.us_state_vaccinations": 1,
+    "owid.country_profile_latest": 1,
+    "owid.regional_summary_latest": 1,
+    "owid.country_weekly_panel": 1,
+    "rdatasets.openintro.biontech_adolescents": 1,
+    "rdatasets.MedDataSets.biontech_teens_tbl_df": 1
+   },
+   "label_notes": {}
+  },
+  {
+   "query_id": "C5",
+   "topic": "covid-vaccination",
+   "pair_group": "covid-vaccination",
+   "text": "Is the COVID-19 death rate per million associated with the share of people fully vaccinated?",
+   "gold_family": "explain",
+   "gold_variant": "explain.association",
+   "gold_grounding_status": "grounded",
+   "gold_interpretation": {
+    "context_query": "COVID-19 death rate per million and share of people fully vaccinated",
+    "intention_expression": "associated with",
+    "arguments": [
+     {
+      "id": "a1",
+      "label": "measure",
+      "value": "COVID-19 death rate per million",
+      "spans": [
+       "COVID-19 death rate per million"
+      ]
+     },
+     {
+      "id": "a2",
+      "label": "predictor",
+      "value": "share of people fully vaccinated",
+      "spans": [
+       "share of people fully vaccinated"
+      ]
+     }
+    ],
+    "scope": []
+   },
+   "gold_grounding": {
+    "status": "proposed",
+    "variant_id": "explain.association",
+    "bindings": {
+     "measure": [
+      "a1"
+     ],
+     "predictor": [
+      "a2"
+     ]
+    },
+    "scope": [],
+    "justification": "gold",
+    "diagnostics": []
+   },
+   "labels": {
+    "owid.vaccinations": 1,
+    "owid.vaccinations_by_age_group": 1,
+    "owid.vaccinations_by_manufacturer": 1,
+    "owid.us_state_vaccinations": 1,
+    "owid.country_profile_latest": 2,
+    "owid.regional_summary_latest": 1,
+    "owid.country_weekly_panel": 2,
+    "rdatasets.openintro.biontech_adolescents": 1,
+    "rdatasets.MedDataSets.biontech_teens_tbl_df": 1,
+    "owid.cases_deaths": 1,
+    "owid.excess_mortality": 1
+   },
+   "label_notes": {
+    "owid.regional_summary_latest": "eight aggregate rows: too few co-observations"
+   }
+  },
+  {
+   "query_id": "C6",
+   "topic": "covid-deaths",
+   "pair_group": "covid-deaths",
+   "text": "Predict a country's COVID-19 deaths per million from its median age, GDP per capita and vaccination rate",
+   "gold_family": "predict",
+   "gold_variant": "predict.regression",
+   "gold_grounding_status": "grounded",
+   "gold_interpretation": {
+    "context_query": "country COVID-19 deaths per million, median age, GDP per capita and vaccination rate",
+    "intention_expression": "Predict",
+    "arguments": [
+     {
+      "id": "a1",
+      "label": "target",
+      "value": "COVID-19 deaths per million",
+      "spans": [
+       "COVID-19 deaths per million"
+      ]
+     },
+     {
+      "id": "a2",
+      "label": "predictor",
+      "value": "median age",
+      "spans": [
+       "median age"
+      ]
+     },
+     {
+      "id": "a3",
+      "label": "predictor",
+      "value": "GDP per capita",
+      "spans": [
+       "GDP per capita"
+      ]
+     },
+     {
+      "id": "a4",
+      "label": "predictor",
+      "value": "vaccination rate",
+      "spans": [
+       "vaccination rate"
+      ]
+     }
+    ],
+    "scope": []
+   },
+   "gold_grounding": {
+    "status": "proposed",
+    "variant_id": "predict.regression",
+    "bindings": {
+     "target": [
+      "a1"
+     ],
+     "predictor": [
+      "a2",
+      "a3",
+      "a4"
+     ]
+    },
+    "scope": [],
+    "justification": "gold",
+    "diagnostics": []
+   },
+   "labels": {
+    "owid.regional_summary_latest": 1,
+    "owid.cases_deaths": 1,
+    "owid.excess_mortality": 1,
+    "owid.vaccinations": 1,
+    "owid.country_profile_latest": 2,
+    "owid.country_weekly_panel": 2
+   },
+   "label_notes": {}
+  },
+  {
+   "query_id": "C7",
+   "topic": "covid-vaccination",
+   "pair_group": "covid-vaccination",
+   "text": "Compare the number of people vaccinated in the United States on 2021-06-01 and 2022-06-01",
+   "gold_family": "compare",
+   "gold_variant": "compare.observed_values",
+   "gold_grounding_status": "grounded",
+   "gold_interpretation": {
+    "context_query": "number of people vaccinated in the United States",
+    "intention_expression": "Compare",
+    "arguments": [
+     {
+      "id": "a1",
+      "label": "measure",
+      "value": "number of people vaccinated",
+      "spans": [
+       "number of people vaccinated"
+      ]
+     },
+     {
+      "id": "a2",
+      "label": "time_points",
+      "value": "2021-06-01",
+      "spans": [
+       "2021-06-01"
+      ]
+     },
+     {
+      "id": "a3",
+      "label": "time_points",
+      "value": "2022-06-01",
+      "spans": [
+       "2022-06-01"
+      ]
+     }
+    ],
+    "scope": [
+     {
+      "id": "s1",
+      "label": "geography",
+      "value": "United States",
+      "spans": [
+       "in the United States"
+      ]
+     }
+    ]
+   },
+   "gold_grounding": {
+    "status": "proposed",
+    "variant_id": "compare.observed_values",
+    "bindings": {
+     "measure": [
+      "a1"
+     ],
+     "groups": [
+      "a2",
+      "a3"
+     ]
+    },
+    "scope": [
+     "s1"
+    ],
+    "justification": "gold",
+    "diagnostics": []
+   },
+   "labels": {
+    "owid.vaccinations": 2,
+    "owid.vaccinations_by_age_group": 1,
+    "owid.vaccinations_by_manufacturer": 1,
+    "owid.us_state_vaccinations": 2,
+    "owid.country_profile_latest": 1,
+    "owid.regional_summary_latest": 1,
+    "owid.country_weekly_panel": 1,
+    "rdatasets.openintro.biontech_adolescents": 1,
+    "rdatasets.MedDataSets.biontech_teens_tbl_df": 1
+   },
+   "label_notes": {
+    "owid.country_weekly_panel": "weekly Sunday snapshots: the requested dates are absent"
+   }
+  },
+  {
+   "query_id": "C8",
+   "topic": "covid-vaccination",
+   "pair_group": "covid-vaccination",
+   "text": "COVID-19 vaccination data for European countries",
+   "gold_family": null,
+   "gold_variant": null,
+   "gold_grounding_status": "not_attempted",
+   "gold_interpretation": {
+    "context_query": "COVID-19 vaccination data for European countries",
+    "intention_expression": null,
+    "arguments": [],
+    "scope": []
+   },
+   "gold_grounding": null,
+   "labels": {
+    "owid.vaccinations": 2,
+    "owid.vaccinations_by_age_group": 2,
+    "owid.vaccinations_by_manufacturer": 2,
+    "owid.us_state_vaccinations": 1,
+    "owid.country_profile_latest": 2,
+    "owid.regional_summary_latest": 1,
+    "owid.country_weekly_panel": 2,
+    "rdatasets.openintro.biontech_adolescents": 1,
+    "rdatasets.MedDataSets.biontech_teens_tbl_df": 1
+   },
+   "label_notes": {}
+  },
+  {
+   "query_id": "C9",
+   "topic": "covid-vaccination",
+   "pair_group": "covid-vaccination",
+   "text": "Compare COVID-19 vaccine side effects in Europe",
+   "gold_family": "compare",
+   "gold_variant": null,
+   "gold_grounding_status": "insufficient",
+   "gold_interpretation": {
+    "context_query": "COVID-19 vaccine side effects in Europe",
+    "intention_expression": "Compare",
+    "arguments": [
+     {
+      "id": "a1",
+      "label": "measure",
+      "value": "COVID-19 vaccine side effects",
+      "spans": [
+       "COVID-19 vaccine side effects"
+      ]
+     }
+    ],
+    "scope": [
+     {
+      "id": "s1",
+      "label": "geography",
+      "value": "Europe",
+      "spans": [
+       "in Europe"
+      ]
+     }
+    ]
+   },
+   "gold_grounding": {
+    "status": "insufficient",
+    "variant_id": null,
+    "bindings": {},
+    "scope": [
+     "s1"
+    ],
+    "justification": "gold",
+    "diagnostics": [
+     {
+      "code": "MISSING_ROLE",
+      "role": "group_dimension",
+      "entry_refs": []
+     }
+    ]
+   },
+   "labels": {
+    "owid.vaccinations": 1,
+    "owid.vaccinations_by_age_group": 1,
+    "owid.vaccinations_by_manufacturer": 1,
+    "owid.us_state_vaccinations": 1,
+    "owid.country_profile_latest": 1,
+    "owid.regional_summary_latest": 1,
+    "owid.country_weekly_panel": 1,
+    "rdatasets.openintro.biontech_adolescents": 1,
+    "rdatasets.MedDataSets.biontech_teens_tbl_df": 1
+   },
+   "label_notes": {
+    "*": "no table reports side effects: no useful table exists"
+   }
+  },
+  {
+   "query_id": "C10",
+   "topic": "covid-testing",
+   "pair_group": "covid-testing",
+   "text": "Predict whether a patient tests positive for COVID-19 from their age, gender and clinic",
+   "gold_family": "predict",
+   "gold_variant": "predict.classification",
+   "gold_grounding_status": "grounded",
+   "gold_interpretation": {
+    "context_query": "patient COVID-19 test result, age, gender and clinic",
+    "intention_expression": "Predict",
+    "arguments": [
+     {
+      "id": "a1",
+      "label": "target",
+      "value": "tests positive for COVID-19",
+      "spans": [
+       "tests positive for COVID-19"
+      ]
+     },
+     {
+      "id": "a2",
+      "label": "predictor",
+      "value": "age",
+      "spans": [
+       "age"
+      ]
+     },
+     {
+      "id": "a3",
+      "label": "predictor",
+      "value": "gender",
+      "spans": [
+       "gender"
+      ]
+     },
+     {
+      "id": "a4",
+      "label": "predictor",
+      "value": "clinic",
+      "spans": [
+       "clinic"
+      ]
+     }
+    ],
+    "scope": []
+   },
+   "gold_grounding": {
+    "status": "proposed",
+    "variant_id": "predict.classification",
+    "bindings": {
+     "target": [
+      "a1"
+     ],
+     "predictor": [
+      "a2",
+      "a3",
+      "a4"
+     ]
+    },
+    "scope": [],
+    "justification": "gold",
+    "diagnostics": []
+   },
+   "labels": {
+    "rdatasets.MedDataSets.covid19sf_tests_df": 1,
+    "owid.testing": 1,
+    "rdatasets.medicaldata.covid_testing": 2
+   },
+   "label_notes": {}
+  },
+  {
+   "query_id": "TI1",
+   "topic": "titanic",
+   "pair_group": "titanic",
+   "text": "Predict whether a Titanic passenger survived from their class, sex and age",
+   "gold_family": "predict",
+   "gold_variant": "predict.classification",
+   "gold_grounding_status": "grounded",
+   "gold_interpretation": {
+    "context_query": "Titanic passenger survival, class, sex and age",
+    "intention_expression": "Predict",
+    "arguments": [
+     {
+      "id": "a1",
+      "label": "target",
+      "value": "survived",
+      "spans": [
+       "survived"
+      ]
+     },
+     {
+      "id": "a2",
+      "label": "predictor",
+      "value": "class",
+      "spans": [
+       "class"
+      ]
+     },
+     {
+      "id": "a3",
+      "label": "predictor",
+      "value": "sex",
+      "spans": [
+       "sex"
+      ]
+     },
+     {
+      "id": "a4",
+      "label": "predictor",
+      "value": "age",
+      "spans": [
+       "age"
+      ]
+     }
+    ],
+    "scope": []
+   },
+   "gold_grounding": {
+    "status": "proposed",
+    "variant_id": "predict.classification",
+    "bindings": {
+     "target": [
+      "a1"
+     ],
+     "predictor": [
+      "a2",
+      "a3",
+      "a4"
+     ]
+    },
+    "scope": [],
+    "justification": "gold",
+    "diagnostics": []
+   },
+   "labels": {
+    "rdatasets.carData.TitanicSurvival": 2,
+    "rdatasets.causaldata.titanic": 2,
+    "rdatasets.COUNT.titanic": 2,
+    "rdatasets.Stat2Data.Titanic": 2,
+    "rdatasets.vcdExtra.Titanicp": 2,
+    "rdatasets.datasets.Titanic": 1,
+    "rdatasets.COUNT.titanicgrp": 1,
+    "rdatasets.vcd.Lifeboats": 1
+   },
+   "label_notes": {
+    "rdatasets.datasets.Titanic": "aggregated cells, not passenger rows",
+    "rdatasets.COUNT.titanicgrp": "aggregated cells, not passenger rows"
+   }
+  },
+  {
+   "query_id": "TI2",
+   "topic": "titanic",
+   "pair_group": "titanic",
+   "text": "Compare the average survival rate of Titanic passengers across passenger classes",
+   "gold_family": "compare",
+   "gold_variant": "compare.group_means",
+   "gold_grounding_status": "grounded",
+   "gold_interpretation": {
+    "context_query": "survival rate of Titanic passengers across passenger classes",
+    "intention_expression": "Compare",
+    "arguments": [
+     {
+      "id": "a1",
+      "label": "statistic",
+      "value": "average",
+      "spans": [
+       "average"
+      ]
+     },
+     {
+      "id": "a2",
+      "label": "measure",
+      "value": "survival rate",
+      "spans": [
+       "survival rate"
+      ]
+     },
+     {
+      "id": "a3",
+      "label": "group_dimension",
+      "value": "passenger classes",
+      "spans": [
+       "passenger classes"
+      ]
+     }
+    ],
+    "scope": []
+   },
+   "gold_grounding": {
+    "status": "proposed",
+    "variant_id": "compare.group_means",
+    "bindings": {
+     "statistic": [
+      "a1"
+     ],
+     "measure": [
+      "a2"
+     ],
+     "group_dimension": [
+      "a3"
+     ]
+    },
+    "scope": [],
+    "justification": "gold",
+    "diagnostics": []
+   },
+   "labels": {
+    "rdatasets.carData.TitanicSurvival": 2,
+    "rdatasets.causaldata.titanic": 2,
+    "rdatasets.COUNT.titanic": 2,
+    "rdatasets.Stat2Data.Titanic": 2,
+    "rdatasets.vcdExtra.Titanicp": 2,
+    "rdatasets.datasets.Titanic": 1,
+    "rdatasets.COUNT.titanicgrp": 1,
+    "rdatasets.vcd.Lifeboats": 1
+   },
+   "label_notes": {
+    "rdatasets.datasets.Titanic": "rate derivable only with weighted counts",
+    "rdatasets.COUNT.titanicgrp": "rate derivable only with weighted counts"
+   }
+  },
+  {
+   "query_id": "TI3",
+   "topic": "titanic",
+   "pair_group": "titanic",
+   "text": "How is passenger age associated with survival on the Titanic?",
+   "gold_family": "explain",
+   "gold_variant": "explain.association",
+   "gold_grounding_status": "grounded",
+   "gold_interpretation": {
+    "context_query": "Titanic passenger age and survival",
+    "intention_expression": "associated with",
+    "arguments": [
+     {
+      "id": "a1",
+      "label": "predictor",
+      "value": "passenger age",
+      "spans": [
+       "passenger age"
+      ]
+     },
+     {
+      "id": "a2",
+      "label": "measure",
+      "value": "survival",
+      "spans": [
+       "survival"
+      ]
+     }
+    ],
+    "scope": []
+   },
+   "gold_grounding": {
+    "status": "proposed",
+    "variant_id": "explain.association",
+    "bindings": {
+     "measure": [
+      "a2"
+     ],
+     "predictor": [
+      "a1"
+     ]
+    },
+    "scope": [],
+    "justification": "gold",
+    "diagnostics": []
+   },
+   "labels": {
+    "rdatasets.carData.TitanicSurvival": 2,
+    "rdatasets.causaldata.titanic": 1,
+    "rdatasets.COUNT.titanic": 1,
+    "rdatasets.Stat2Data.Titanic": 2,
+    "rdatasets.vcdExtra.Titanicp": 2,
+    "rdatasets.datasets.Titanic": 1,
+    "rdatasets.COUNT.titanicgrp": 1,
+    "rdatasets.vcd.Lifeboats": 1
+   },
+   "label_notes": {
+    "rdatasets.causaldata.titanic": "age only as child/adult",
+    "rdatasets.COUNT.titanic": "age only as child/adult"
+   }
+  },
+  {
+   "query_id": "TI4",
+   "topic": "titanic",
+   "pair_group": "titanic",
+   "text": "How many Titanic passengers survived in each passenger class?",
+   "gold_family": "aggregate",
+   "gold_variant": "aggregate.group_totals",
+   "gold_grounding_status": "grounded",
+   "gold_interpretation": {
+    "context_query": "Titanic passengers survived in each passenger class",
+    "intention_expression": "How many",
+    "arguments": [
+     {
+      "id": "a1",
+      "label": "statistic",
+      "value": "How many",
+      "spans": [
+       "How many"
+      ]
+     },
+     {
+      "id": "a2",
+      "label": "measure",
+      "value": "passengers survived",
+      "spans": [
+       "passengers survived"
+      ]
+     },
+     {
+      "id": "a3",
+      "label": "group_dimension",
+      "value": "passenger class",
+      "spans": [
+       "passenger class"
+      ]
+     }
+    ],
+    "scope": []
+   },
+   "gold_grounding": {
+    "status": "proposed",
+    "variant_id": "aggregate.group_totals",
+    "bindings": {
+     "statistic": [
+      "a1"
+     ],
+     "measure": [
+      "a2"
+     ],
+     "group_dimension": [
+      "a3"
+     ]
+    },
+    "scope": [],
+    "justification": "gold",
+    "diagnostics": []
+   },
+   "labels": {
+    "rdatasets.carData.TitanicSurvival": 2,
+    "rdatasets.causaldata.titanic": 2,
+    "rdatasets.COUNT.titanic": 2,
+    "rdatasets.Stat2Data.Titanic": 2,
+    "rdatasets.vcdExtra.Titanicp": 2,
+    "rdatasets.datasets.Titanic": 2,
+    "rdatasets.COUNT.titanicgrp": 2,
+    "rdatasets.vcd.Lifeboats": 1
+   },
+   "label_notes": {}
+  },
+  {
+   "query_id": "W1",
+   "topic": "wages",
+   "pair_group": "wages",
+   "text": "Compare the average hourly wage across genders",
+   "gold_family": "compare",
+   "gold_variant": "compare.group_means",
+   "gold_grounding_status": "grounded",
+   "gold_interpretation": {
+    "context_query": "hourly wage across genders",
+    "intention_expression": "Compare",
+    "arguments": [
+     {
+      "id": "a1",
+      "label": "statistic",
+      "value": "average",
+      "spans": [
+       "average"
+      ]
+     },
+     {
+      "id": "a2",
+      "label": "measure",
+      "value": "hourly wage",
+      "spans": [
+       "hourly wage"
+      ]
+     },
+     {
+      "id": "a3",
+      "label": "group_dimension",
+      "value": "genders",
+      "spans": [
+       "genders"
+      ]
+     }
+    ],
+    "scope": []
+   },
+   "gold_grounding": {
+    "status": "proposed",
+    "variant_id": "compare.group_means",
+    "bindings": {
+     "statistic": [
+      "a1"
+     ],
+     "measure": [
+      "a2"
+     ],
+     "group_dimension": [
+      "a3"
+     ]
+    },
+    "scope": [],
+    "justification": "gold",
+    "diagnostics": []
+   },
+   "labels": {
+    "rdatasets.AER.CPS1985": 2,
+    "rdatasets.mosaicData.CPS85": 2,
+    "rdatasets.Ecdat.Bwages": 2,
+    "rdatasets.carData.SLID": 2,
+    "rdatasets.np.wage1": 2,
+    "rdatasets.AER.CPSSW04": 2,
+    "rdatasets.AER.CPSSW3": 2,
+    "rdatasets.AER.CPSSW8": 2,
+    "rdatasets.AER.CPSSW9204": 2,
+    "rdatasets.AER.CPSSW9298": 2,
+    "rdatasets.AER.CPSSWEducation": 2,
+    "rdatasets.Ecdat.CPSch3": 2,
+    "rdatasets.Ecdat.Wages1": 2,
+    "rdatasets.carData.Salaries": 1,
+    "rdatasets.AER.PSID1982": 1,
+    "rdatasets.AER.PSID7682": 1,
+    "rdatasets.plm.Wages": 1,
+    "rdatasets.Ecdat.Wages": 1,
+    "rdatasets.AER.BankWages": 1,
+    "rdatasets.ISLR.Wage": 1,
+    "rdatasets.AER.CPS1988": 1,
+    "rdatasets.Ecdat.Males": 1,
+    "rdatasets.plm.Males": 1,
+    "rdatasets.wooldridge.wage2": 1,
+    "rdatasets.wooldridge.wagepan": 1,
+    "rdatasets.camerondata.incpanel": 1,
+    "rdatasets.DAAG.wages1833": 1,
+    "rdatasets.HistData.Wheat": 1,
+    "rdatasets.Ecdat.Earnings": 1,
+    "rdatasets.AER.Parade2005": 1,
+    "rdatasets.wooldridge.prminwge": 1,
+    "rdatasets.stevedata.min_wage": 1,
+    "rdatasets.np.cps71": 1,
+    "rdatasets.Ecdat.LaborSupply": 1,
+    "rdatasets.plm.LaborSupply": 1,
+    "rdatasets.HLMdiag.wages": 1,
+    "rdatasets.causaldata.close_college": 1
+   },
+   "label_notes": {}
+  },
+  {
+   "query_id": "W2",
+   "topic": "wages",
+   "pair_group": "wages",
+   "text": "Predict a worker's hourly wage from education, experience and gender",
+   "gold_family": "predict",
+   "gold_variant": "predict.regression",
+   "gold_grounding_status": "grounded",
+   "gold_interpretation": {
+    "context_query": "worker hourly wage, education, experience and gender",
+    "intention_expression": "Predict",
+    "arguments": [
+     {
+      "id": "a1",
+      "label": "target",
+      "value": "hourly wage",
+      "spans": [
+       "hourly wage"
+      ]
+     },
+     {
+      "id": "a2",
+      "label": "predictor",
+      "value": "education",
+      "spans": [
+       "education"
+      ]
+     },
+     {
+      "id": "a3",
+      "label": "predictor",
+      "value": "experience",
+      "spans": [
+       "experience"
+      ]
+     },
+     {
+      "id": "a4",
+      "label": "predictor",
+      "value": "gender",
+      "spans": [
+       "gender"
+      ]
+     }
+    ],
+    "scope": []
+   },
+   "gold_grounding": {
+    "status": "proposed",
+    "variant_id": "predict.regression",
+    "bindings": {
+     "target": [
+      "a1"
+     ],
+     "predictor": [
+      "a2",
+      "a3",
+      "a4"
+     ]
+    },
+    "scope": [],
+    "justification": "gold",
+    "diagnostics": []
+   },
+   "labels": {
+    "rdatasets.AER.CPS1985": 2,
+    "rdatasets.mosaicData.CPS85": 2,
+    "rdatasets.Ecdat.Bwages": 2,
+    "rdatasets.carData.SLID": 2,
+    "rdatasets.np.wage1": 2,
+    "rdatasets.AER.CPSSW04": 2,
+    "rdatasets.AER.CPSSW3": 1,
+    "rdatasets.AER.CPSSW8": 2,
+    "rdatasets.AER.CPSSW9204": 2,
+    "rdatasets.AER.CPSSW9298": 2,
+    "rdatasets.AER.CPSSWEducation": 2,
+    "rdatasets.Ecdat.CPSch3": 1,
+    "rdatasets.Ecdat.Wages1": 2,
+    "rdatasets.carData.Salaries": 1,
+    "rdatasets.AER.PSID1982": 1,
+    "rdatasets.AER.PSID7682": 1,
+    "rdatasets.plm.Wages": 1,
+    "rdatasets.Ecdat.Wages": 1,
+    "rdatasets.AER.BankWages": 1,
+    "rdatasets.ISLR.Wage": 1,
+    "rdatasets.AER.CPS1988": 1,
+    "rdatasets.Ecdat.Males": 1,
+    "rdatasets.plm.Males": 1,
+    "rdatasets.wooldridge.wage2": 1,
+    "rdatasets.wooldridge.wagepan": 1,
+    "rdatasets.camerondata.incpanel": 1,
+    "rdatasets.DAAG.wages1833": 1,
+    "rdatasets.HistData.Wheat": 1,
+    "rdatasets.Ecdat.Earnings": 1,
+    "rdatasets.AER.Parade2005": 1,
+    "rdatasets.wooldridge.prminwge": 1,
+    "rdatasets.stevedata.min_wage": 1,
+    "rdatasets.np.cps71": 1,
+    "rdatasets.Ecdat.LaborSupply": 1,
+    "rdatasets.plm.LaborSupply": 1,
+    "rdatasets.HLMdiag.wages": 1,
+    "rdatasets.causaldata.close_college": 1
+   },
+   "label_notes": {}
+  },
+  {
+   "query_id": "W3",
+   "topic": "wages",
+   "pair_group": "wages",
+   "text": "Is a worker's hourly wage associated with years of education?",
+   "gold_family": "explain",
+   "gold_variant": "explain.association",
+   "gold_grounding_status": "grounded",
+   "gold_interpretation": {
+    "context_query": "worker hourly wage and years of education",
+    "intention_expression": "associated with",
+    "arguments": [
+     {
+      "id": "a1",
+      "label": "measure",
+      "value": "hourly wage",
+      "spans": [
+       "hourly wage"
+      ]
+     },
+     {
+      "id": "a2",
+      "label": "predictor",
+      "value": "years of education",
+      "spans": [
+       "years of education"
+      ]
+     }
+    ],
+    "scope": []
+   },
+   "gold_grounding": {
+    "status": "proposed",
+    "variant_id": "explain.association",
+    "bindings": {
+     "measure": [
+      "a1"
+     ],
+     "predictor": [
+      "a2"
+     ]
+    },
+    "scope": [],
+    "justification": "gold",
+    "diagnostics": []
+   },
+   "labels": {
+    "rdatasets.AER.CPS1985": 2,
+    "rdatasets.mosaicData.CPS85": 2,
+    "rdatasets.Ecdat.Bwages": 2,
+    "rdatasets.carData.SLID": 2,
+    "rdatasets.np.wage1": 2,
+    "rdatasets.AER.CPSSW04": 1,
+    "rdatasets.AER.CPSSW3": 1,
+    "rdatasets.AER.CPSSW8": 2,
+    "rdatasets.AER.CPSSW9204": 1,
+    "rdatasets.AER.CPSSW9298": 1,
+    "rdatasets.AER.CPSSWEducation": 2,
+    "rdatasets.Ecdat.CPSch3": 1,
+    "rdatasets.Ecdat.Wages1": 2,
+    "rdatasets.carData.Salaries": 1,
+    "rdatasets.AER.PSID1982": 1,
+    "rdatasets.AER.PSID7682": 1,
+    "rdatasets.plm.Wages": 1,
+    "rdatasets.Ecdat.Wages": 1,
+    "rdatasets.AER.BankWages": 1,
+    "rdatasets.ISLR.Wage": 1,
+    "rdatasets.AER.CPS1988": 1,
+    "rdatasets.Ecdat.Males": 2,
+    "rdatasets.plm.Males": 2,
+    "rdatasets.wooldridge.wage2": 1,
+    "rdatasets.wooldridge.wagepan": 1,
+    "rdatasets.camerondata.incpanel": 1,
+    "rdatasets.DAAG.wages1833": 1,
+    "rdatasets.HistData.Wheat": 1,
+    "rdatasets.Ecdat.Earnings": 1,
+    "rdatasets.AER.Parade2005": 1,
+    "rdatasets.wooldridge.prminwge": 1,
+    "rdatasets.stevedata.min_wage": 1,
+    "rdatasets.np.cps71": 1,
+    "rdatasets.Ecdat.LaborSupply": 1,
+    "rdatasets.plm.LaborSupply": 1,
+    "rdatasets.HLMdiag.wages": 1,
+    "rdatasets.causaldata.close_college": 1
+   },
+   "label_notes": {}
+  },
+  {
+   "query_id": "W4",
+   "topic": "wages",
+   "pair_group": "wages",
+   "text": "How have average hourly earnings changed over time?",
+   "gold_family": "monitor",
+   "gold_variant": "monitor.trend",
+   "gold_grounding_status": "grounded",
+   "gold_interpretation": {
+    "context_query": "average hourly earnings",
+    "intention_expression": "changed over time",
+    "arguments": [
+     {
+      "id": "a1",
+      "label": "measure",
+      "value": "average hourly earnings",
+      "spans": [
+       "average hourly earnings"
+      ]
+     },
+     {
+      "id": "a2",
+      "label": "time_dimension",
+      "value": "over time",
+      "spans": [
+       "over time"
+      ]
+     }
+    ],
+    "scope": []
+   },
+   "gold_grounding": {
+    "status": "proposed",
+    "variant_id": "monitor.trend",
+    "bindings": {
+     "measure": [
+      "a1"
+     ],
+     "time_dimension": [
+      "a2"
+     ]
+    },
+    "scope": [],
+    "justification": "gold",
+    "diagnostics": []
+   },
+   "labels": {
+    "rdatasets.AER.CPS1985": 1,
+    "rdatasets.mosaicData.CPS85": 1,
+    "rdatasets.Ecdat.Bwages": 1,
+    "rdatasets.carData.SLID": 1,
+    "rdatasets.np.wage1": 1,
+    "rdatasets.AER.CPSSW04": 1,
+    "rdatasets.AER.CPSSW3": 2,
+    "rdatasets.AER.CPSSW8": 1,
+    "rdatasets.AER.CPSSW9204": 1,
+    "rdatasets.AER.CPSSW9298": 1,
+    "rdatasets.AER.CPSSWEducation": 1,
+    "rdatasets.Ecdat.CPSch3": 2,
+    "rdatasets.Ecdat.Wages1": 1,
+    "rdatasets.carData.Salaries": 1,
+    "rdatasets.AER.PSID1982": 1,
+    "rdatasets.AER.PSID7682": 2,
+    "rdatasets.plm.Wages": 1,
+    "rdatasets.Ecdat.Wages": 1,
+    "rdatasets.AER.BankWages": 1,
+    "rdatasets.ISLR.Wage": 2,
+    "rdatasets.AER.CPS1988": 1,
+    "rdatasets.Ecdat.Males": 2,
+    "rdatasets.plm.Males": 2,
+    "rdatasets.wooldridge.wage2": 1,
+    "rdatasets.wooldridge.wagepan": 2,
+    "rdatasets.camerondata.incpanel": 1,
+    "rdatasets.DAAG.wages1833": 1,
+    "rdatasets.HistData.Wheat": 1,
+    "rdatasets.Ecdat.Earnings": 1,
+    "rdatasets.AER.Parade2005": 1,
+    "rdatasets.wooldridge.prminwge": 2,
+    "rdatasets.stevedata.min_wage": 1,
+    "rdatasets.np.cps71": 1,
+    "rdatasets.Ecdat.LaborSupply": 1,
+    "rdatasets.plm.LaborSupply": 1,
+    "rdatasets.HLMdiag.wages": 1,
+    "rdatasets.causaldata.close_college": 1
+   },
+   "label_notes": {
+    "rdatasets.AER.CPSSW9204": "two years only",
+    "rdatasets.AER.CPSSW9298": "two years only"
+   }
+  },
+  {
+   "query_id": "W5",
+   "topic": "wages",
+   "pair_group": "wages",
+   "text": "Compare the weekly wages of a good mechanic in 1700 and 1800",
+   "gold_family": "compare",
+   "gold_variant": "compare.observed_values",
+   "gold_grounding_status": "grounded",
+   "gold_interpretation": {
+    "context_query": "weekly wages of a good mechanic",
+    "intention_expression": "Compare",
+    "arguments": [
+     {
+      "id": "a1",
+      "label": "measure",
+      "value": "weekly wages",
+      "spans": [
+       "weekly wages"
+      ]
+     },
+     {
+      "id": "a2",
+      "label": "time_points",
+      "value": "1700",
+      "spans": [
+       "1700"
+      ]
+     },
+     {
+      "id": "a3",
+      "label": "time_points",
+      "value": "1800",
+      "spans": [
+       "1800"
+      ]
+     },
+     {
+      "id": "a4",
+      "label": "subject",
+      "value": "good mechanic",
+      "spans": [
+       "good mechanic"
+      ]
+     }
+    ],
+    "scope": []
+   },
+   "gold_grounding": {
+    "status": "proposed",
+    "variant_id": "compare.observed_values",
+    "bindings": {
+     "measure": [
+      "a1"
+     ],
+     "groups": [
+      "a2",
+      "a3"
+     ]
+    },
+    "scope": [],
+    "justification": "gold",
+    "diagnostics": []
+   },
+   "labels": {
+    "rdatasets.AER.CPS1985": 1,
+    "rdatasets.mosaicData.CPS85": 1,
+    "rdatasets.Ecdat.Bwages": 1,
+    "rdatasets.carData.SLID": 1,
+    "rdatasets.np.wage1": 1,
+    "rdatasets.AER.CPSSW04": 1,
+    "rdatasets.AER.CPSSW3": 1,
+    "rdatasets.AER.CPSSW8": 1,
+    "rdatasets.AER.CPSSW9204": 1,
+    "rdatasets.AER.CPSSW9298": 1,
+    "rdatasets.AER.CPSSWEducation": 1,
+    "rdatasets.Ecdat.CPSch3": 1,
+    "rdatasets.Ecdat.Wages1": 1,
+    "rdatasets.carData.Salaries": 1,
+    "rdatasets.AER.PSID1982": 1,
+    "rdatasets.AER.PSID7682": 1,
+    "rdatasets.plm.Wages": 1,
+    "rdatasets.Ecdat.Wages": 1,
+    "rdatasets.AER.BankWages": 1,
+    "rdatasets.ISLR.Wage": 1,
+    "rdatasets.AER.CPS1988": 1,
+    "rdatasets.Ecdat.Males": 1,
+    "rdatasets.plm.Males": 1,
+    "rdatasets.wooldridge.wage2": 1,
+    "rdatasets.wooldridge.wagepan": 1,
+    "rdatasets.camerondata.incpanel": 1,
+    "rdatasets.DAAG.wages1833": 1,
+    "rdatasets.HistData.Wheat": 2,
+    "rdatasets.Ecdat.Earnings": 1,
+    "rdatasets.AER.Parade2005": 1,
+    "rdatasets.wooldridge.prminwge": 1,
+    "rdatasets.stevedata.min_wage": 1,
+    "rdatasets.np.cps71": 1,
+    "rdatasets.Ecdat.LaborSupply": 1,
+    "rdatasets.plm.LaborSupply": 1,
+    "rdatasets.HLMdiag.wages": 1,
+    "rdatasets.causaldata.close_college": 1
+   },
+   "label_notes": {}
+  },
+  {
+   "query_id": "B1",
+   "topic": "bikes",
+   "pair_group": "bikes",
+   "text": "Track daily bike rental counts in Washington DC over time",
+   "gold_family": "monitor",
+   "gold_variant": "monitor.trend",
+   "gold_grounding_status": "grounded",
+   "gold_interpretation": {
+    "context_query": "daily bike rental counts in Washington DC",
+    "intention_expression": "Track",
+    "arguments": [
+     {
+      "id": "a1",
+      "label": "measure",
+      "value": "bike rental counts",
+      "spans": [
+       "bike rental counts"
+      ]
+     },
+     {
+      "id": "a2",
+      "label": "time_grain",
+      "value": "daily",
+      "spans": [
+       "daily"
+      ]
+     },
+     {
+      "id": "a3",
+      "label": "time_dimension",
+      "value": "over time",
+      "spans": [
+       "over time"
+      ]
+     }
+    ],
+    "scope": [
+     {
+      "id": "s1",
+      "label": "geography",
+      "value": "Washington DC",
+      "spans": [
+       "in Washington DC"
+      ]
+     }
+    ]
+   },
+   "gold_grounding": {
+    "status": "proposed",
+    "variant_id": "monitor.trend",
+    "bindings": {
+     "measure": [
+      "a1"
+     ],
+     "time_grain": [
+      "a2"
+     ],
+     "time_dimension": [
+      "a3"
+     ]
+    },
+    "scope": [
+     "s1"
+    ],
+    "justification": "gold",
+    "diagnostics": []
+   },
+   "labels": {
+    "uci.275-day": 2,
+    "uci.275-hour": 1,
+    "uci.560-hour": 1,
+    "rdatasets.bayesrules.bikes": 2,
+    "rdatasets.bayesrules.bike_users": 1,
+    "rdatasets.tsibbledata.nyc_bikes": 1
+   },
+   "label_notes": {
+    "uci.275-hour": "hourly rows need summing per day",
+    "rdatasets.bayesrules.bike_users": "rides split by rider type"
+   }
+  },
+  {
+   "query_id": "B2",
+   "topic": "bikes",
+   "pair_group": "bikes",
+   "text": "Compare the average hourly bike rental count across seasons in Washington DC",
+   "gold_family": "compare",
+   "gold_variant": "compare.group_means",
+   "gold_grounding_status": "grounded",
+   "gold_interpretation": {
+    "context_query": "hourly bike rental count across seasons in Washington DC",
+    "intention_expression": "Compare",
+    "arguments": [
+     {
+      "id": "a1",
+      "label": "statistic",
+      "value": "average",
+      "spans": [
+       "average"
+      ]
+     },
+     {
+      "id": "a2",
+      "label": "measure",
+      "value": "hourly bike rental count",
+      "spans": [
+       "hourly bike rental count"
+      ]
+     },
+     {
+      "id": "a3",
+      "label": "group_dimension",
+      "value": "seasons",
+      "spans": [
+       "seasons"
+      ]
+     }
+    ],
+    "scope": [
+     {
+      "id": "s1",
+      "label": "geography",
+      "value": "Washington DC",
+      "spans": [
+       "in Washington DC"
+      ]
+     }
+    ]
+   },
+   "gold_grounding": {
+    "status": "proposed",
+    "variant_id": "compare.group_means",
+    "bindings": {
+     "statistic": [
+      "a1"
+     ],
+     "measure": [
+      "a2"
+     ],
+     "group_dimension": [
+      "a3"
+     ]
+    },
+    "scope": [
+     "s1"
+    ],
+    "justification": "gold",
+    "diagnostics": []
+   },
+   "labels": {
+    "uci.275-day": 1,
+    "uci.275-hour": 2,
+    "uci.560-hour": 1,
+    "rdatasets.bayesrules.bikes": 1,
+    "rdatasets.bayesrules.bike_users": 1,
+    "rdatasets.tsibbledata.nyc_bikes": 1
+   },
+   "label_notes": {
+    "uci.560-hour": "Seoul, not Washington DC"
+   }
+  },
+  {
+   "query_id": "B3",
+   "topic": "bikes",
+   "pair_group": "bikes",
+   "text": "Predict the number of bike rentals per day from temperature, humidity and wind speed",
+   "gold_family": "predict",
+   "gold_variant": "predict.regression",
+   "gold_grounding_status": "grounded",
+   "gold_interpretation": {
+    "context_query": "number of bike rentals per day, temperature, humidity and wind speed",
+    "intention_expression": "Predict",
+    "arguments": [
+     {
+      "id": "a1",
+      "label": "target",
+      "value": "number of bike rentals per day",
+      "spans": [
+       "number of bike rentals per day"
+      ]
+     },
+     {
+      "id": "a2",
+      "label": "predictor",
+      "value": "temperature",
+      "spans": [
+       "temperature"
+      ]
+     },
+     {
+      "id": "a3",
+      "label": "predictor",
+      "value": "humidity",
+      "spans": [
+       "humidity"
+      ]
+     },
+     {
+      "id": "a4",
+      "label": "predictor",
+      "value": "wind speed",
+      "spans": [
+       "wind speed"
+      ]
+     }
+    ],
+    "scope": []
+   },
+   "gold_grounding": {
+    "status": "proposed",
+    "variant_id": "predict.regression",
+    "bindings": {
+     "target": [
+      "a1"
+     ],
+     "predictor": [
+      "a2",
+      "a3",
+      "a4"
+     ]
+    },
+    "scope": [],
+    "justification": "gold",
+    "diagnostics": []
+   },
+   "labels": {
+    "uci.275-day": 2,
+    "uci.275-hour": 1,
+    "uci.560-hour": 1,
+    "rdatasets.bayesrules.bikes": 2,
+    "rdatasets.bayesrules.bike_users": 1,
+    "rdatasets.tsibbledata.nyc_bikes": 1
+   },
+   "label_notes": {}
+  },
+  {
+   "query_id": "B4",
+   "topic": "bikes",
+   "pair_group": "bikes",
+   "text": "How does temperature affect the number of bike rentals?",
+   "gold_family": "explain",
+   "gold_variant": "explain.association",
+   "gold_grounding_status": "grounded",
+   "gold_interpretation": {
+    "context_query": "temperature and number of bike rentals",
+    "intention_expression": "affect",
+    "arguments": [
+     {
+      "id": "a1",
+      "label": "predictor",
+      "value": "temperature",
+      "spans": [
+       "temperature"
+      ]
+     },
+     {
+      "id": "a2",
+      "label": "measure",
+      "value": "number of bike rentals",
+      "spans": [
+       "number of bike rentals"
+      ]
+     }
+    ],
+    "scope": []
+   },
+   "gold_grounding": {
+    "status": "proposed",
+    "variant_id": "explain.association",
+    "bindings": {
+     "measure": [
+      "a2"
+     ],
+     "predictor": [
+      "a1"
+     ]
+    },
+    "scope": [],
+    "justification": "gold",
+    "diagnostics": []
+   },
+   "labels": {
+    "uci.275-day": 2,
+    "uci.275-hour": 2,
+    "uci.560-hour": 2,
+    "rdatasets.bayesrules.bikes": 2,
+    "rdatasets.bayesrules.bike_users": 2,
+    "rdatasets.tsibbledata.nyc_bikes": 1
+   },
+   "label_notes": {}
+  },
+  {
+   "query_id": "B5",
+   "topic": "bikes",
+   "pair_group": "bikes",
+   "text": "What was the total number of bike rentals per season in 2011 in Washington DC?",
+   "gold_family": "aggregate",
+   "gold_variant": "aggregate.group_totals",
+   "gold_grounding_status": "grounded",
+   "gold_interpretation": {
+    "context_query": "bike rentals per season in 2011 in Washington DC",
+    "intention_expression": "total number",
+    "arguments": [
+     {
+      "id": "a1",
+      "label": "statistic",
+      "value": "total number",
+      "spans": [
+       "total number"
+      ]
+     },
+     {
+      "id": "a2",
+      "label": "measure",
+      "value": "bike rentals",
+      "spans": [
+       "bike rentals"
+      ]
+     },
+     {
+      "id": "a3",
+      "label": "group_dimension",
+      "value": "season",
+      "spans": [
+       "season"
+      ]
+     }
+    ],
+    "scope": [
+     {
+      "id": "s1",
+      "label": "period",
+      "value": "2011",
+      "spans": [
+       "in 2011"
+      ]
+     },
+     {
+      "id": "s2",
+      "label": "geography",
+      "value": "Washington DC",
+      "spans": [
+       "in Washington DC"
+      ]
+     }
+    ]
+   },
+   "gold_grounding": {
+    "status": "proposed",
+    "variant_id": "aggregate.group_totals",
+    "bindings": {
+     "statistic": [
+      "a1"
+     ],
+     "measure": [
+      "a2"
+     ],
+     "group_dimension": [
+      "a3"
+     ]
+    },
+    "scope": [
+     "s1",
+     "s2"
+    ],
+    "justification": "gold",
+    "diagnostics": []
+   },
+   "labels": {
+    "uci.275-day": 2,
+    "uci.275-hour": 2,
+    "uci.560-hour": 1,
+    "rdatasets.bayesrules.bikes": 1,
+    "rdatasets.bayesrules.bike_users": 1,
+    "rdatasets.tsibbledata.nyc_bikes": 1
+   },
+   "label_notes": {
+    "rdatasets.bayesrules.bikes": "500 sampled days: totals incomplete"
+   }
+  },
+  {
+   "query_id": "H1",
+   "topic": "housing",
+   "pair_group": "housing",
+   "text": "Predict the sale price of a house from its lot size, number of bedrooms and bathrooms",
+   "gold_family": "predict",
+   "gold_variant": "predict.regression",
+   "gold_grounding_status": "grounded",
+   "gold_interpretation": {
+    "context_query": "house sale price, lot size, number of bedrooms and bathrooms",
+    "intention_expression": "Predict",
+    "arguments": [
+     {
+      "id": "a1",
+      "label": "target",
+      "value": "sale price of a house",
+      "spans": [
+       "sale price of a house"
+      ]
+     },
+     {
+      "id": "a2",
+      "label": "predictor",
+      "value": "lot size",
+      "spans": [
+       "lot size"
+      ]
+     },
+     {
+      "id": "a3",
+      "label": "predictor",
+      "value": "number of bedrooms",
+      "spans": [
+       "number of bedrooms"
+      ]
+     },
+     {
+      "id": "a4",
+      "label": "predictor",
+      "value": "bathrooms",
+      "spans": [
+       "bathrooms"
+      ]
+     }
+    ],
+    "scope": []
+   },
+   "gold_grounding": {
+    "status": "proposed",
+    "variant_id": "predict.regression",
+    "bindings": {
+     "target": [
+      "a1"
+     ],
+     "predictor": [
+      "a2",
+      "a3",
+      "a4"
+     ]
+    },
+    "scope": [],
+    "justification": "gold",
+    "diagnostics": []
+   },
+   "labels": {
+    "rdatasets.AER.HousePrices": 2,
+    "rdatasets.Ecdat.Housing": 2,
+    "rdatasets.wooldridge.hprice1": 2,
+    "rdatasets.modeldata.ames": 2,
+    "rdatasets.wooldridge.kielmc": 2,
+    "rdatasets.Stat2Data.RailsTrails": 2,
+    "rdatasets.MASS.Boston": 1,
+    "rdatasets.crimedatasets.Boston_df": 1,
+    "rdatasets.usdatasets.Boston_df": 1,
+    "rdatasets.wooldridge.hprice2": 1,
+    "rdatasets.DAAG.houseprices": 1,
+    "rdatasets.ggplot2.txhousing": 1,
+    "rdatasets.MASS.housing": 1,
+    "rdatasets.Ecdat.Hstarts": 1
+   },
+   "label_notes": {
+    "rdatasets.DAAG.houseprices": "15 houses only"
+   }
+  },
+  {
+   "query_id": "H2",
+   "topic": "housing",
+   "pair_group": "housing",
+   "text": "Compare the average sale price of houses by air conditioning",
+   "gold_family": "compare",
+   "gold_variant": "compare.group_means",
+   "gold_grounding_status": "grounded",
+   "gold_interpretation": {
+    "context_query": "sale price of houses by air conditioning",
+    "intention_expression": "Compare",
+    "arguments": [
+     {
+      "id": "a1",
+      "label": "statistic",
+      "value": "average",
+      "spans": [
+       "average"
+      ]
+     },
+     {
+      "id": "a2",
+      "label": "measure",
+      "value": "sale price of houses",
+      "spans": [
+       "sale price of houses"
+      ]
+     },
+     {
+      "id": "a3",
+      "label": "group_dimension",
+      "value": "air conditioning",
+      "spans": [
+       "air conditioning"
+      ]
+     }
+    ],
+    "scope": []
+   },
+   "gold_grounding": {
+    "status": "proposed",
+    "variant_id": "compare.group_means",
+    "bindings": {
+     "statistic": [
+      "a1"
+     ],
+     "measure": [
+      "a2"
+     ],
+     "group_dimension": [
+      "a3"
+     ]
+    },
+    "scope": [],
+    "justification": "gold",
+    "diagnostics": []
+   },
+   "labels": {
+    "rdatasets.AER.HousePrices": 2,
+    "rdatasets.Ecdat.Housing": 2,
+    "rdatasets.wooldridge.hprice1": 1,
+    "rdatasets.modeldata.ames": 2,
+    "rdatasets.wooldridge.kielmc": 1,
+    "rdatasets.Stat2Data.RailsTrails": 1,
+    "rdatasets.MASS.Boston": 1,
+    "rdatasets.crimedatasets.Boston_df": 1,
+    "rdatasets.usdatasets.Boston_df": 1,
+    "rdatasets.wooldridge.hprice2": 1,
+    "rdatasets.DAAG.houseprices": 1,
+    "rdatasets.ggplot2.txhousing": 1,
+    "rdatasets.MASS.housing": 1,
+    "rdatasets.Ecdat.Hstarts": 1
+   },
+   "label_notes": {}
+  },
+  {
+   "query_id": "H3",
+   "topic": "housing",
+   "pair_group": "housing",
+   "text": "Track the median house sale price in Austin over time",
+   "gold_family": "monitor",
+   "gold_variant": "monitor.trend",
+   "gold_grounding_status": "grounded",
+   "gold_interpretation": {
+    "context_query": "median house sale price in Austin",
+    "intention_expression": "Track",
+    "arguments": [
+     {
+      "id": "a1",
+      "label": "measure",
+      "value": "median house sale price",
+      "spans": [
+       "median house sale price"
+      ]
+     },
+     {
+      "id": "a2",
+      "label": "time_dimension",
+      "value": "over time",
+      "spans": [
+       "over time"
+      ]
+     }
+    ],
+    "scope": [
+     {
+      "id": "s1",
+      "label": "geography",
+      "value": "Austin",
+      "spans": [
+       "in Austin"
+      ]
+     }
+    ]
+   },
+   "gold_grounding": {
+    "status": "proposed",
+    "variant_id": "monitor.trend",
+    "bindings": {
+     "measure": [
+      "a1"
+     ],
+     "time_dimension": [
+      "a2"
+     ]
+    },
+    "scope": [
+     "s1"
+    ],
+    "justification": "gold",
+    "diagnostics": []
+   },
+   "labels": {
+    "rdatasets.AER.HousePrices": 1,
+    "rdatasets.Ecdat.Housing": 1,
+    "rdatasets.wooldridge.hprice1": 1,
+    "rdatasets.modeldata.ames": 1,
+    "rdatasets.wooldridge.kielmc": 1,
+    "rdatasets.Stat2Data.RailsTrails": 1,
+    "rdatasets.MASS.Boston": 1,
+    "rdatasets.crimedatasets.Boston_df": 1,
+    "rdatasets.usdatasets.Boston_df": 1,
+    "rdatasets.wooldridge.hprice2": 1,
+    "rdatasets.DAAG.houseprices": 1,
+    "rdatasets.ggplot2.txhousing": 2,
+    "rdatasets.MASS.housing": 1,
+    "rdatasets.Ecdat.Hstarts": 1
+   },
+   "label_notes": {}
+  },
+  {
+   "query_id": "H4",
+   "topic": "housing",
+   "pair_group": "housing",
+   "text": "How is the median home value of a town associated with its crime rate?",
+   "gold_family": "explain",
+   "gold_variant": "explain.association",
+   "gold_grounding_status": "grounded",
+   "gold_interpretation": {
+    "context_query": "town median home value and crime rate",
+    "intention_expression": "associated with",
+    "arguments": [
+     {
+      "id": "a1",
+      "label": "measure",
+      "value": "median home value",
+      "spans": [
+       "median home value"
+      ]
+     },
+     {
+      "id": "a2",
+      "label": "predictor",
+      "value": "crime rate",
+      "spans": [
+       "crime rate"
+      ]
+     }
+    ],
+    "scope": []
+   },
+   "gold_grounding": {
+    "status": "proposed",
+    "variant_id": "explain.association",
+    "bindings": {
+     "measure": [
+      "a1"
+     ],
+     "predictor": [
+      "a2"
+     ]
+    },
+    "scope": [],
+    "justification": "gold",
+    "diagnostics": []
+   },
+   "labels": {
+    "rdatasets.AER.HousePrices": 1,
+    "rdatasets.Ecdat.Housing": 1,
+    "rdatasets.wooldridge.hprice1": 1,
+    "rdatasets.modeldata.ames": 1,
+    "rdatasets.wooldridge.kielmc": 1,
+    "rdatasets.Stat2Data.RailsTrails": 1,
+    "rdatasets.MASS.Boston": 2,
+    "rdatasets.crimedatasets.Boston_df": 2,
+    "rdatasets.usdatasets.Boston_df": 2,
+    "rdatasets.wooldridge.hprice2": 2,
+    "rdatasets.DAAG.houseprices": 1,
+    "rdatasets.ggplot2.txhousing": 1,
+    "rdatasets.MASS.housing": 1,
+    "rdatasets.Ecdat.Hstarts": 1
+   },
+   "label_notes": {}
+  },
+  {
+   "query_id": "D1",
+   "topic": "diabetes",
+   "pair_group": "diabetes",
+   "text": "Predict whether a woman has diabetes from her glucose level, BMI and age",
+   "gold_family": "predict",
+   "gold_variant": "predict.classification",
+   "gold_grounding_status": "grounded",
+   "gold_interpretation": {
+    "context_query": "woman diabetes, glucose level, BMI and age",
+    "intention_expression": "Predict",
+    "arguments": [
+     {
+      "id": "a1",
+      "label": "target",
+      "value": "has diabetes",
+      "spans": [
+       "has diabetes"
+      ]
+     },
+     {
+      "id": "a2",
+      "label": "predictor",
+      "value": "glucose level",
+      "spans": [
+       "glucose level"
+      ]
+     },
+     {
+      "id": "a3",
+      "label": "predictor",
+      "value": "BMI",
+      "spans": [
+       "BMI"
+      ]
+     },
+     {
+      "id": "a4",
+      "label": "predictor",
+      "value": "age",
+      "spans": [
+       "age"
+      ]
+     }
+    ],
+    "scope": []
+   },
+   "gold_grounding": {
+    "status": "proposed",
+    "variant_id": "predict.classification",
+    "bindings": {
+     "target": [
+      "a1"
+     ],
+     "predictor": [
+      "a2",
+      "a3",
+      "a4"
+     ]
+    },
+    "scope": [],
+    "justification": "gold",
+    "diagnostics": []
+   },
+   "labels": {
+    "rdatasets.MASS.Pima.te": 2,
+    "rdatasets.MASS.Pima.tr": 2,
+    "rdatasets.MASS.Pima.tr2": 2,
+    "rdatasets.MedDataSets.Pima_te_df": 2,
+    "rdatasets.MedDataSets.Pima_tr_df": 2,
+    "rdatasets.MedDataSets.Pima_tr2_df": 2,
+    "rdatasets.heplots.Diabetes": 1,
+    "rdatasets.MLDataR.diabetes_data": 1,
+    "rdatasets.MLDataR.PreDiabetes": 1,
+    "rdatasets.openintro.diabetes2": 1,
+    "rdatasets.MedDataSets.diabetes2_tbl_df": 1,
+    "rdatasets.survival.diabetic": 1,
+    "rdatasets.survival.retinopathy": 1,
+    "rdatasets.fpp2.a10": 1,
+    "rdatasets.timeSeriesDataSets.a10_ts": 1
+   },
+   "label_notes": {}
+  },
+  {
+   "query_id": "D2",
+   "topic": "diabetes",
+   "pair_group": "diabetes",
+   "text": "Compare the average plasma glucose concentration by diabetes status",
+   "gold_family": "compare",
+   "gold_variant": "compare.group_means",
+   "gold_grounding_status": "grounded",
+   "gold_interpretation": {
+    "context_query": "plasma glucose concentration by diabetes status",
+    "intention_expression": "Compare",
+    "arguments": [
+     {
+      "id": "a1",
+      "label": "statistic",
+      "value": "average",
+      "spans": [
+       "average"
+      ]
+     },
+     {
+      "id": "a2",
+      "label": "measure",
+      "value": "plasma glucose concentration",
+      "spans": [
+       "plasma glucose concentration"
+      ]
+     },
+     {
+      "id": "a3",
+      "label": "group_dimension",
+      "value": "diabetes status",
+      "spans": [
+       "diabetes status"
+      ]
+     }
+    ],
+    "scope": []
+   },
+   "gold_grounding": {
+    "status": "proposed",
+    "variant_id": "compare.group_means",
+    "bindings": {
+     "statistic": [
+      "a1"
+     ],
+     "measure": [
+      "a2"
+     ],
+     "group_dimension": [
+      "a3"
+     ]
+    },
+    "scope": [],
+    "justification": "gold",
+    "diagnostics": []
+   },
+   "labels": {
+    "rdatasets.MASS.Pima.te": 2,
+    "rdatasets.MASS.Pima.tr": 2,
+    "rdatasets.MASS.Pima.tr2": 2,
+    "rdatasets.MedDataSets.Pima_te_df": 2,
+    "rdatasets.MedDataSets.Pima_tr_df": 2,
+    "rdatasets.MedDataSets.Pima_tr2_df": 2,
+    "rdatasets.heplots.Diabetes": 2,
+    "rdatasets.MLDataR.diabetes_data": 1,
+    "rdatasets.MLDataR.PreDiabetes": 1,
+    "rdatasets.openintro.diabetes2": 1,
+    "rdatasets.MedDataSets.diabetes2_tbl_df": 1,
+    "rdatasets.survival.diabetic": 1,
+    "rdatasets.survival.retinopathy": 1,
+    "rdatasets.fpp2.a10": 1,
+    "rdatasets.timeSeriesDataSets.a10_ts": 1
+   },
+   "label_notes": {}
+  },
+  {
+   "query_id": "D3",
+   "topic": "diabetes",
+   "pair_group": "diabetes",
+   "text": "Is body mass index associated with diabetes?",
+   "gold_family": "explain",
+   "gold_variant": "explain.association",
+   "gold_grounding_status": "grounded",
+   "gold_interpretation": {
+    "context_query": "body mass index and diabetes",
+    "intention_expression": "associated with",
+    "arguments": [
+     {
+      "id": "a1",
+      "label": "predictor",
+      "value": "body mass index",
+      "spans": [
+       "body mass index"
+      ]
+     },
+     {
+      "id": "a2",
+      "label": "measure",
+      "value": "diabetes",
+      "spans": [
+       "diabetes"
+      ]
+     }
+    ],
+    "scope": []
+   },
+   "gold_grounding": {
+    "status": "proposed",
+    "variant_id": "explain.association",
+    "bindings": {
+     "measure": [
+      "a2"
+     ],
+     "predictor": [
+      "a1"
+     ]
+    },
+    "scope": [],
+    "justification": "gold",
+    "diagnostics": []
+   },
+   "labels": {
+    "rdatasets.MASS.Pima.te": 2,
+    "rdatasets.MASS.Pima.tr": 2,
+    "rdatasets.MASS.Pima.tr2": 2,
+    "rdatasets.MedDataSets.Pima_te_df": 2,
+    "rdatasets.MedDataSets.Pima_tr_df": 2,
+    "rdatasets.MedDataSets.Pima_tr2_df": 2,
+    "rdatasets.heplots.Diabetes": 1,
+    "rdatasets.MLDataR.diabetes_data": 1,
+    "rdatasets.MLDataR.PreDiabetes": 1,
+    "rdatasets.openintro.diabetes2": 1,
+    "rdatasets.MedDataSets.diabetes2_tbl_df": 1,
+    "rdatasets.survival.diabetic": 1,
+    "rdatasets.survival.retinopathy": 1,
+    "rdatasets.fpp2.a10": 1,
+    "rdatasets.timeSeriesDataSets.a10_ts": 1
+   },
+   "label_notes": {}
+  },
+  {
+   "query_id": "A1",
+   "topic": "air-quality",
+   "pair_group": "air-quality",
+   "text": "How does temperature affect ozone concentration in New York?",
+   "gold_family": "explain",
+   "gold_variant": "explain.association",
+   "gold_grounding_status": "grounded",
+   "gold_interpretation": {
+    "context_query": "temperature and ozone concentration in New York",
+    "intention_expression": "affect",
+    "arguments": [
+     {
+      "id": "a1",
+      "label": "predictor",
+      "value": "temperature",
+      "spans": [
+       "temperature"
+      ]
+     },
+     {
+      "id": "a2",
+      "label": "measure",
+      "value": "ozone concentration",
+      "spans": [
+       "ozone concentration"
+      ]
+     }
+    ],
+    "scope": [
+     {
+      "id": "s1",
+      "label": "geography",
+      "value": "New York",
+      "spans": [
+       "in New York"
+      ]
+     }
+    ]
+   },
+   "gold_grounding": {
+    "status": "proposed",
+    "variant_id": "explain.association",
+    "bindings": {
+     "measure": [
+      "a2"
+     ],
+     "predictor": [
+      "a1"
+     ]
+    },
+    "scope": [
+     "s1"
+    ],
+    "justification": "gold",
+    "diagnostics": []
+   },
+   "labels": {
+    "rdatasets.datasets.airquality": 2,
+    "rdatasets.usdatasets.airquality_df": 2,
+    "rdatasets.lattice.environmental": 2,
+    "rdatasets.robustbase.airmay": 2,
+    "rdatasets.Ecdat.Airq": 1,
+    "rdatasets.openintro.pm25_2011_durham": 1,
+    "rdatasets.openintro.pm25_2022_durham": 1,
+    "rdatasets.DAAG.ozone": 1,
+    "rdatasets.texmex.summer": 1,
+    "rdatasets.texmex.winter": 1
+   },
+   "label_notes": {}
+  },
+  {
+   "query_id": "A2",
+   "topic": "air-quality",
+   "pair_group": "air-quality",
+   "text": "Track daily PM2.5 concentration in Durham over time",
+   "gold_family": "monitor",
+   "gold_variant": "monitor.trend",
+   "gold_grounding_status": "grounded",
+   "gold_interpretation": {
+    "context_query": "daily PM2.5 concentration in Durham",
+    "intention_expression": "Track",
+    "arguments": [
+     {
+      "id": "a1",
+      "label": "measure",
+      "value": "PM2.5 concentration",
+      "spans": [
+       "PM2.5 concentration"
+      ]
+     },
+     {
+      "id": "a2",
+      "label": "time_grain",
+      "value": "daily",
+      "spans": [
+       "daily"
+      ]
+     },
+     {
+      "id": "a3",
+      "label": "time_dimension",
+      "value": "over time",
+      "spans": [
+       "over time"
+      ]
+     }
+    ],
+    "scope": [
+     {
+      "id": "s1",
+      "label": "geography",
+      "value": "Durham",
+      "spans": [
+       "in Durham"
+      ]
+     }
+    ]
+   },
+   "gold_grounding": {
+    "status": "proposed",
+    "variant_id": "monitor.trend",
+    "bindings": {
+     "measure": [
+      "a1"
+     ],
+     "time_grain": [
+      "a2"
+     ],
+     "time_dimension": [
+      "a3"
+     ]
+    },
+    "scope": [
+     "s1"
+    ],
+    "justification": "gold",
+    "diagnostics": []
+   },
+   "labels": {
+    "rdatasets.datasets.airquality": 1,
+    "rdatasets.usdatasets.airquality_df": 1,
+    "rdatasets.lattice.environmental": 1,
+    "rdatasets.robustbase.airmay": 1,
+    "rdatasets.Ecdat.Airq": 1,
+    "rdatasets.openintro.pm25_2011_durham": 2,
+    "rdatasets.openintro.pm25_2022_durham": 2,
+    "rdatasets.DAAG.ozone": 1,
+    "rdatasets.texmex.summer": 1,
+    "rdatasets.texmex.winter": 1
+   },
+   "label_notes": {}
+  },
+  {
+   "query_id": "A3",
+   "topic": "air-quality",
+   "pair_group": "air-quality",
+   "text": "Predict ozone levels from solar radiation, wind speed and temperature",
+   "gold_family": "predict",
+   "gold_variant": "predict.regression",
+   "gold_grounding_status": "grounded",
+   "gold_interpretation": {
+    "context_query": "ozone levels, solar radiation, wind speed and temperature",
+    "intention_expression": "Predict",
+    "arguments": [
+     {
+      "id": "a1",
+      "label": "target",
+      "value": "ozone levels",
+      "spans": [
+       "ozone levels"
+      ]
+     },
+     {
+      "id": "a2",
+      "label": "predictor",
+      "value": "solar radiation",
+      "spans": [
+       "solar radiation"
+      ]
+     },
+     {
+      "id": "a3",
+      "label": "predictor",
+      "value": "wind speed",
+      "spans": [
+       "wind speed"
+      ]
+     },
+     {
+      "id": "a4",
+      "label": "predictor",
+      "value": "temperature",
+      "spans": [
+       "temperature"
+      ]
+     }
+    ],
+    "scope": []
+   },
+   "gold_grounding": {
+    "status": "proposed",
+    "variant_id": "predict.regression",
+    "bindings": {
+     "target": [
+      "a1"
+     ],
+     "predictor": [
+      "a2",
+      "a3",
+      "a4"
+     ]
+    },
+    "scope": [],
+    "justification": "gold",
+    "diagnostics": []
+   },
+   "labels": {
+    "rdatasets.datasets.airquality": 2,
+    "rdatasets.usdatasets.airquality_df": 2,
+    "rdatasets.lattice.environmental": 2,
+    "rdatasets.robustbase.airmay": 2,
+    "rdatasets.Ecdat.Airq": 1,
+    "rdatasets.openintro.pm25_2011_durham": 1,
+    "rdatasets.openintro.pm25_2022_durham": 1,
+    "rdatasets.DAAG.ozone": 1,
+    "rdatasets.texmex.summer": 1,
+    "rdatasets.texmex.winter": 1
+   },
+   "label_notes": {}
+  },
+  {
+   "query_id": "N1",
+   "topic": "bikes",
+   "pair_group": "bikes",
+   "text": "Bike sharing rental data",
+   "gold_family": null,
+   "gold_variant": null,
+   "gold_grounding_status": "not_attempted",
+   "gold_interpretation": {
+    "context_query": "Bike sharing rental data",
+    "intention_expression": null,
+    "arguments": [],
+    "scope": []
+   },
+   "gold_grounding": null,
+   "labels": {
+    "uci.275-day": 2,
+    "uci.275-hour": 2,
+    "uci.560-hour": 2,
+    "rdatasets.bayesrules.bikes": 2,
+    "rdatasets.bayesrules.bike_users": 2,
+    "rdatasets.tsibbledata.nyc_bikes": 1
+   },
+   "label_notes": {}
+  },
+  {
+   "query_id": "N2",
+   "topic": "housing",
+   "pair_group": "housing",
+   "text": "House sale prices",
+   "gold_family": null,
+   "gold_variant": null,
+   "gold_grounding_status": "not_attempted",
+   "gold_interpretation": {
+    "context_query": "House sale prices",
+    "intention_expression": null,
+    "arguments": [],
+    "scope": []
+   },
+   "gold_grounding": null,
+   "labels": {
+    "rdatasets.AER.HousePrices": 2,
+    "rdatasets.Ecdat.Housing": 2,
+    "rdatasets.wooldridge.hprice1": 2,
+    "rdatasets.modeldata.ames": 2,
+    "rdatasets.wooldridge.kielmc": 2,
+    "rdatasets.Stat2Data.RailsTrails": 2,
+    "rdatasets.MASS.Boston": 1,
+    "rdatasets.crimedatasets.Boston_df": 1,
+    "rdatasets.usdatasets.Boston_df": 1,
+    "rdatasets.wooldridge.hprice2": 1,
+    "rdatasets.DAAG.houseprices": 2,
+    "rdatasets.ggplot2.txhousing": 1,
+    "rdatasets.MASS.housing": 1,
+    "rdatasets.Ecdat.Hstarts": 1
+   },
+   "label_notes": {}
+  }
+ ]
+}

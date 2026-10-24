@@ -1,150 +1,111 @@
-"""Parsing, closed schema validation, and deterministic provenance checks."""
-import json
-from importlib.resources import files
+"""Interpreter: interpret(u) = (q_u, iota_u) with diagnostic status s_I (Algorithm 1).
 
-from jsonschema import Draft202012Validator
+The extracted intention is iota_u = (e_u, B_u, Omega_u): an intention expression
+copied from the input, argument candidates and scope restrictions. Each argument
+or scope entry is a record (id, label, value, spans) whose spans are exact
+substrings of the input. Candidate-table information is never supplied.
+"""
+from dataclasses import dataclass, field
+import time
 
-from ..provider_errors import provider_diagnostic
+from ..llm import parse_json_object
 
-SCHEMA_VERSION = '2.0'
-NORMALIZATION_VERSION = '1.0'
-SCHEMA = json.loads(files(__package__).joinpath('schema.json').read_text())
-VALIDATOR = Draft202012Validator(SCHEMA)
-
-
-class ContractError(ValueError):
-    """Deliberately contains only a safe diagnostic code."""
-
-
-def require(condition, code):
-    if not condition:
-        raise ContractError(code)
+STATUS_EXTRACTED, STATUS_NO_INTENTION, STATUS_FAILURE = "extracted", "no_intention", "failure"
+CONTRACT_KEYS = {"context_query", "intention_expression", "arguments", "scope"}
+ENTRY_KEYS = {"id", "label", "value", "spans"}
 
 
-def parse_response(raw):
-    def pairs(items):
-        result = {}
-        for key, value in items:
-            if key in result:
-                raise ValueError('duplicate key')
-            result[key] = value
-        return result
+@dataclass
+class Interpretation:
+    input_id: str
+    input: str
+    status: str
+    context_query: str
+    intention: dict = None          # {"expression", "arguments", "scope"} or None (= bottom)
+    failure: str = None
+    provider: dict = field(default_factory=dict)
+    raw_response: str = None
+    elapsed_ms: float = 0.0
 
-    def constant(_):
-        raise ValueError('non-JSON constant')
+    def to_dict(self):
+        return {"input_id": self.input_id, "input": self.input, "status": self.status,
+                "context_query": self.context_query, "intention": self.intention,
+                "failure": self.failure, "provider": self.provider,
+                "raw_response": self.raw_response, "elapsed_ms": self.elapsed_ms}
 
+
+class ExtractionError(ValueError):
+    """Carries only a fixed diagnostic code."""
+
+
+def _contains(text, span):
+    return isinstance(span, str) and span.strip() != "" and span.casefold() in text.casefold()
+
+
+def validate_extraction(z, u, vocabulary):
+    """ValidExtraction(z, u): structure, permitted labels, unique ids, nonempty context
+    query and textual occurrence of every cited span and of the intention expression."""
+    if not isinstance(z, dict) or set(z) != CONTRACT_KEYS:
+        raise ExtractionError("CONTRACT_KEYS")
+    q = z["context_query"]
+    if not isinstance(q, str) or not q.strip():
+        raise ExtractionError("EMPTY_CONTEXT_QUERY")
+    expression = z["intention_expression"]
+    if expression is not None and not _contains(u, expression):
+        raise ExtractionError("EXPRESSION_NOT_IN_INPUT")
+    ids = set()
+    for field_name, labels in (("arguments", vocabulary["argument_labels"]), ("scope", vocabulary["scope_labels"])):
+        entries = z[field_name]
+        if not isinstance(entries, list):
+            raise ExtractionError("ENTRIES_NOT_LIST")
+        for entry in entries:
+            if not isinstance(entry, dict) or set(entry) != ENTRY_KEYS:
+                raise ExtractionError("ENTRY_KEYS")
+            if not isinstance(entry["id"], str) or not entry["id"] or entry["id"] in ids:
+                raise ExtractionError("DUPLICATE_OR_INVALID_ID")
+            ids.add(entry["id"])
+            if entry["label"] not in labels:
+                raise ExtractionError("UNKNOWN_LABEL")
+            if not isinstance(entry["value"], str) or not entry["value"].strip():
+                raise ExtractionError("EMPTY_VALUE")
+            spans = entry["spans"]
+            if not isinstance(spans, list) or not spans or not all(_contains(u, s) for s in spans):
+                raise ExtractionError("SPAN_NOT_IN_INPUT")
+    if expression is None and z["arguments"]:
+        # Arguments without an intention expression are kept only as context.
+        pass
+    return z
+
+
+def parse_record(z):
+    return {"expression": z["intention_expression"], "arguments": z["arguments"], "scope": z["scope"]}
+
+
+def interpret(u, provider, vocabulary, *, input_id="input"):
+    """Algorithm 1. One extraction attempt; failure falls back to q_u = u."""
+    start = time.perf_counter()
+    result = Interpretation(input_id=input_id, input=u, status=STATUS_FAILURE, context_query=u)
     try:
-        return json.loads(raw, object_pairs_hook=pairs, parse_constant=constant)
-    except (ValueError, TypeError, RecursionError):
-        raise ContractError('MALFORMED_JSON') from None
-
-
-def validate(document, input_id, original_input):
-    require(not list(VALIDATOR.iter_errors(document)), 'SCHEMA_VALIDATION')
-    require(document['input_id'] == input_id and document['original_input'] == original_input,
-            'INPUT_MISMATCH')
-    evidence = {}
-    for item in document['evidence']:
-        start, end = item['start'], item['end']
-        require(type(start) is int and type(end) is int and
-                0 <= start < end <= len(original_input), 'INVALID_SPAN')
-        require(original_input[start:end] == item['text'], 'SPAN_TEXT_MISMATCH')
-        require(item['id'] not in evidence, 'DUPLICATE_ID')
-        evidence[item['id']] = item['text']
-
-    def check_refs(refs):
-        require(all(r in evidence for r in refs), 'UNRESOLVED_EVIDENCE')
-
-    def walk(node):
-        if isinstance(node, list):
-            for child in node:
-                walk(child)
-        elif isinstance(node, dict):
-            if isinstance(node.get('evidence'), list) and all(isinstance(r, str) for r in node['evidence']):
-                check_refs(node['evidence'])
-            if 'literal' in node:
-                require(all(evidence[r] == node['literal'] for r in node['evidence']), 'LITERAL_MISMATCH')
-                normalized = node['normalized']
-                if normalized:
-                    check_refs(normalized['evidence'])
-                    require(normalized['evidence'] == node['evidence'], 'NORMALIZATION_SOURCE')
-                    literal = node['literal']
-                    if normalized['rule_id'] == 'casefold-v1':
-                        expected = literal.casefold()
-                    else:
-                        expected = {'annual':'year', 'annually':'year', 'yearly':'year'}.get(literal.casefold())
-                    require(expected is not None and normalized['value'] == expected, 'INVALID_NORMALIZATION')
-            for child in node.values():
-                walk(child)
-    walk(document)
-    intentions = {a['id']: a for a in document['intentions']}
-    require(len(intentions) == len(document['intentions']), 'DUPLICATE_ID')
-    candidates = {}
-    for intention in intentions.values():
-        for candidate in intention['candidates']:
-            require(candidate['id'] not in candidates and candidate['id'] not in intentions, 'DUPLICATE_ID')
-            candidates[candidate['id']] = intention['id']
-    covered_intentions, covered_candidates = set(), set()
-    competing = False
-    for rel in document['relationships']:
-        members = rel['members']
-        require(len(set(members)) == len(members), 'RELATIONSHIP_MEMBERS')
-        if rel['kind'] == 'competing_interpretations':
-            require(len(members) >= 2 and all(m in candidates for m in members), 'RELATIONSHIP_MEMBERS')
-            require(len({candidates[m] for m in members}) == 1, 'RELATIONSHIP_MEMBERS')
-            covered_candidates.update(members)
-            competing = True
-        else:
-            require(all(m in intentions for m in members), 'RELATIONSHIP_MEMBERS')
-            require(len(members) == 1 if rel['kind'] == 'single' else len(members) >= 2,
-                    'RELATIONSHIP_MEMBERS')
-            require(not covered_intentions.intersection(members), 'RELATIONSHIP_CONFLICT')
-            covered_intentions.update(members)
-    require(covered_intentions == set(intentions), 'RELATIONSHIP_COVERAGE')
-    for intention in intentions.values():
-        if len(intention['candidates']) > 1:
-            require(all(c['id'] in covered_candidates for c in intention['candidates']), 'AMBIGUITY_REQUIRED')
-    status, codes = document['status'], set(document['diagnostics'])
-    missing = [m for a in intentions.values() for m in a['missing']]
-    require(status != 'unambiguous' or (bool(intentions) and not missing and not codes and not competing), 'STATUS_CONFLICT')
-    require(status != 'ambiguous' or (competing and 'COMPETING_INTERPRETATIONS' in codes), 'STATUS_CONFLICT')
-    require(not competing or status == 'ambiguous', 'STATUS_CONFLICT')
-    require(status != 'insufficient' or (bool(missing) and bool(codes & {'MISSING_ARGUMENT','UNRESOLVED_REFERENCE'})), 'STATUS_CONFLICT')
-    require(status != 'unsupported' or (not intentions and codes == {'OUT_OF_SCOPE'}), 'STATUS_CONFLICT')
-    return document
-
-
-def interpret(input_id, original_input, provider):
-    """Return an execution envelope; interpretation status exists only on success."""
-    result = {'metadata': {'schema_version': SCHEMA_VERSION,
-                           'normalization_version': NORMALIZATION_VERSION},
-              'raw_response': None, 'interpretation': None, 'failure': None,
-              'provider_error': None}
-    if not isinstance(input_id, str) or not input_id.strip() or not isinstance(original_input, str) or not original_input.strip():
-        result['failure'] = 'INVALID_INPUT'
+        raw, meta = provider.extract(u, vocabulary)
+        result.provider = meta
+        result.raw_response = raw
+    except Exception as exc:  # provider failure
+        code = exc.args[0] if exc.args and isinstance(exc.args[0], str) else type(exc).__name__
+        result.failure = "PROVIDER_FAILURE:" + code
+        result.provider = getattr(provider, "metadata", {})
+        result.elapsed_ms = round((time.perf_counter() - start) * 1000, 3)
         return result
     try:
-        result['metadata'].update(provider.metadata)
-        raw = provider.invoke(input_id, original_input)
-        result["metadata"].update(provider.metadata)
-        if hasattr(provider,"actual_model"): result["metadata"]["actual_model"] = provider.actual_model
-    except Exception as exc:
-        result['failure'] = 'PROVIDER_FAILURE'
-        result['provider_error'] = provider_diagnostic(exc)
+        z = validate_extraction(parse_json_object(raw), u, vocabulary)
+    except (ValueError, ExtractionError) as exc:
+        result.failure = "INVALID_EXTRACTION:" + str(exc)
+        result.elapsed_ms = round((time.perf_counter() - start) * 1000, 3)
         return result
-    result['raw_response'] = raw if isinstance(raw, str) else None
-    try:
-        result['interpretation'] = validate(parse_response(raw), input_id, original_input)
-    except ContractError as exc:
-        result['failure'] = str(exc)
+    result.context_query = z["context_query"]
+    if z["intention_expression"] is None:
+        result.status = STATUS_NO_INTENTION
+    else:
+        result.status = STATUS_EXTRACTED
+        result.intention = parse_record(z)
+    result.elapsed_ms = round((time.perf_counter() - start) * 1000, 3)
     return result
-
-
-def interpret_structured(record):
-    """Explicit author-supplied semantic representation; no natural-language inference."""
-    from ..contracts import validate_request
-    import copy
-    validated = validate_request(copy.deepcopy(record))
-    return {'schema_version':'1.0','input_mode':'authored_structured_request',
-            'status':'validated','structured_intention_record':validated,
-            'notice':'Semantic roles supplied by the author, not extracted by a live LLM; wording-to-role correctness requires review.'}

@@ -1,0 +1,7 @@
+country,vaccine_brand,mild_side_effect_rate,severe_side_effect_rate,vaccinated_population
+Germany,Pfizer,17.1,0.19,5200000
+France,Pfizer,18.7,0.23,3800000
+Italy,Pfizer,20.9,0.31,2900000
+Spain,Pfizer,19.4,0.27,3100000
+Netherlands,Pfizer,16.2,0.17,1400000
+Japan,Pfizer,15.1,0.12,4100000

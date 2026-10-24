@@ -1,0 +1,664 @@
+{
+ "aggregate": {
+  "system": "ctx:lsa",
+  "queries": 36,
+  "ndcg@10": 0.7434,
+  "ndcg@10|intention": 0.7435,
+  "p@5": 0.4857,
+  "p@5|intention": 0.4625,
+  "p@10": 0.32,
+  "p@10|intention": 0.3094,
+  "r@10": 0.8506,
+  "r@10|intention": 0.8545,
+  "mrr": 0.8486,
+  "mrr|intention": 0.85,
+  "useful@1": 0.7429,
+  "useful@1|intention": 0.75,
+  "topical_only@1": 0.1429,
+  "topical_only@1|intention": 0.1562,
+  "swap_accuracy": 0.8223,
+  "timing": {
+   "context_matching_ms": {
+    "mean": 31.236,
+    "median": 27.254,
+    "p95": 40.677,
+    "max": 41.393
+   },
+   "total_ms": {
+    "mean": 31.503,
+    "median": 27.474,
+    "p95": 40.98,
+    "max": 41.697
+   }
+  },
+  "wall_seconds": 1.135
+ },
+ "per_query": {
+  "C1": {
+   "ndcg@10": 0.7580424869541296,
+   "p@5": 0.4,
+   "p@10": 0.3,
+   "r@10": 1.0,
+   "mrr": 0.5,
+   "useful@1": 0.0,
+   "topical_only@1": 1.0
+  },
+  "C2": {
+   "ndcg@10": 0.9518014418570123,
+   "p@5": 0.4,
+   "p@10": 0.2,
+   "r@10": 1.0,
+   "mrr": 1.0,
+   "useful@1": 1.0,
+   "topical_only@1": 0.0
+  },
+  "C3": {
+   "ndcg@10": 0.8756173980593145,
+   "p@5": 0.4,
+   "p@10": 0.2,
+   "r@10": 1.0,
+   "mrr": 1.0,
+   "useful@1": 1.0,
+   "topical_only@1": 0.0
+  },
+  "C4": {
+   "ndcg@10": 0.8962668831353077,
+   "p@5": 0.2,
+   "p@10": 0.1,
+   "r@10": 1.0,
+   "mrr": 1.0,
+   "useful@1": 1.0,
+   "topical_only@1": 0.0
+  },
+  "C5": {
+   "ndcg@10": 0.7381041782441021,
+   "p@5": 0.4,
+   "p@10": 0.2,
+   "r@10": 1.0,
+   "mrr": 0.5,
+   "useful@1": 0.0,
+   "topical_only@1": 1.0
+  },
+  "C6": {
+   "ndcg@10": 0.8402894799823556,
+   "p@5": 0.4,
+   "p@10": 0.2,
+   "r@10": 1.0,
+   "mrr": 1.0,
+   "useful@1": 1.0,
+   "topical_only@1": 0.0
+  },
+  "C7": {
+   "ndcg@10": 0.7542823266831278,
+   "p@5": 0.4,
+   "p@10": 0.2,
+   "r@10": 1.0,
+   "mrr": 1.0,
+   "useful@1": 1.0,
+   "topical_only@1": 0.0
+  },
+  "C8": {
+   "ndcg@10": 0.8693202261051467,
+   "p@5": 0.6,
+   "p@10": 0.5,
+   "r@10": 1.0,
+   "mrr": 1.0,
+   "useful@1": 1.0,
+   "topical_only@1": 0.0
+  },
+  "C9": {
+   "ndcg@10": 0.89595903198491,
+   "p@5": null,
+   "p@10": null,
+   "r@10": null,
+   "mrr": null,
+   "useful@1": null,
+   "topical_only@1": 1.0
+  },
+  "C10": {
+   "ndcg@10": 0.5444286351947745,
+   "p@5": 0.2,
+   "p@10": 0.1,
+   "r@10": 1.0,
+   "mrr": 0.5,
+   "useful@1": 0.0,
+   "topical_only@1": 0.0
+  },
+  "TI1": {
+   "ndcg@10": 0.9368965748361221,
+   "p@5": 0.8,
+   "p@10": 0.5,
+   "r@10": 1.0,
+   "mrr": 1.0,
+   "useful@1": 1.0,
+   "topical_only@1": 0.0
+  },
+  "TI2": {
+   "ndcg@10": 0.8869889773167732,
+   "p@5": 0.6,
+   "p@10": 0.5,
+   "r@10": 1.0,
+   "mrr": 1.0,
+   "useful@1": 1.0,
+   "topical_only@1": 0.0
+  },
+  "TI3": {
+   "ndcg@10": 0.9512488625083206,
+   "p@5": 0.6,
+   "p@10": 0.3,
+   "r@10": 1.0,
+   "mrr": 1.0,
+   "useful@1": 1.0,
+   "topical_only@1": 0.0
+  },
+  "TI4": {
+   "ndcg@10": 0.9671337605094593,
+   "p@5": 1.0,
+   "p@10": 0.7,
+   "r@10": 1.0,
+   "mrr": 1.0,
+   "useful@1": 1.0,
+   "topical_only@1": 0.0
+  },
+  "W1": {
+   "ndcg@10": 0.6741138521166831,
+   "p@5": 0.6,
+   "p@10": 0.6,
+   "r@10": 0.46153846153846156,
+   "mrr": 0.3333333333333333,
+   "useful@1": 0.0,
+   "topical_only@1": 1.0
+  },
+  "W2": {
+   "ndcg@10": 0.5242306598349795,
+   "p@5": 0.2,
+   "p@10": 0.2,
+   "r@10": 0.18181818181818182,
+   "mrr": 1.0,
+   "useful@1": 1.0,
+   "topical_only@1": 0.0
+  },
+  "W3": {
+   "ndcg@10": 0.8564113471486753,
+   "p@5": 1.0,
+   "p@10": 0.7,
+   "r@10": 0.7,
+   "mrr": 1.0,
+   "useful@1": 1.0,
+   "topical_only@1": 0.0
+  },
+  "W4": {
+   "ndcg@10": 0.5317165870026781,
+   "p@5": 0.2,
+   "p@10": 0.2,
+   "r@10": 0.25,
+   "mrr": 1.0,
+   "useful@1": 1.0,
+   "topical_only@1": 0.0
+  },
+  "W5": {
+   "ndcg@10": 0.7762283474099947,
+   "p@5": 0.2,
+   "p@10": 0.1,
+   "r@10": 1.0,
+   "mrr": 1.0,
+   "useful@1": 1.0,
+   "topical_only@1": 0.0
+  },
+  "B1": {
+   "ndcg@10": 0.6118581842428914,
+   "p@5": 0.2,
+   "p@10": 0.1,
+   "r@10": 0.5,
+   "mrr": 1.0,
+   "useful@1": 1.0,
+   "topical_only@1": 0.0
+  },
+  "B2": {
+   "ndcg@10": 0.9010421557140375,
+   "p@5": 0.2,
+   "p@10": 0.1,
+   "r@10": 1.0,
+   "mrr": 1.0,
+   "useful@1": 1.0,
+   "topical_only@1": 0.0
+  },
+  "B3": {
+   "ndcg@10": 0.6547075806193552,
+   "p@5": 0.2,
+   "p@10": 0.2,
+   "r@10": 1.0,
+   "mrr": 0.3333333333333333,
+   "useful@1": 0.0,
+   "topical_only@1": 1.0
+  },
+  "B4": {
+   "ndcg@10": 0.6168040500418212,
+   "p@5": 0.4,
+   "p@10": 0.5,
+   "r@10": 1.0,
+   "mrr": 0.3333333333333333,
+   "useful@1": 0.0,
+   "topical_only@1": 0.0
+  },
+  "B5": {
+   "ndcg@10": 0.9457540871314697,
+   "p@5": 0.4,
+   "p@10": 0.2,
+   "r@10": 1.0,
+   "mrr": 1.0,
+   "useful@1": 1.0,
+   "topical_only@1": 0.0
+  },
+  "H1": {
+   "ndcg@10": 0.4685890096889267,
+   "p@5": 0.4,
+   "p@10": 0.2,
+   "r@10": 0.3333333333333333,
+   "mrr": 1.0,
+   "useful@1": 1.0,
+   "topical_only@1": 0.0
+  },
+  "H2": {
+   "ndcg@10": 0.5995901115831875,
+   "p@5": 0.4,
+   "p@10": 0.2,
+   "r@10": 0.6666666666666666,
+   "mrr": 1.0,
+   "useful@1": 1.0,
+   "topical_only@1": 0.0
+  },
+  "H3": {
+   "ndcg@10": 0.4160067316121774,
+   "p@5": 0.2,
+   "p@10": 0.1,
+   "r@10": 1.0,
+   "mrr": 0.2,
+   "useful@1": 0.0,
+   "topical_only@1": 0.0
+  },
+  "H4": {
+   "ndcg@10": 0.5855686308024467,
+   "p@5": 0.6,
+   "p@10": 0.3,
+   "r@10": 0.75,
+   "mrr": 1.0,
+   "useful@1": 1.0,
+   "topical_only@1": 0.0
+  },
+  "D1": {
+   "ndcg@10": 0.9740816258588203,
+   "p@5": 1.0,
+   "p@10": 0.6,
+   "r@10": 1.0,
+   "mrr": 1.0,
+   "useful@1": 1.0,
+   "topical_only@1": 0.0
+  },
+  "D2": {
+   "ndcg@10": 0.9470511754820309,
+   "p@5": 1.0,
+   "p@10": 0.7,
+   "r@10": 1.0,
+   "mrr": 1.0,
+   "useful@1": 1.0,
+   "topical_only@1": 0.0
+  },
+  "D3": {
+   "ndcg@10": 0.7652099195881961,
+   "p@5": 0.6,
+   "p@10": 0.6,
+   "r@10": 1.0,
+   "mrr": 0.5,
+   "useful@1": 0.0,
+   "topical_only@1": 1.0
+  },
+  "A1": {
+   "ndcg@10": 0.6095922490214951,
+   "p@5": 0.4,
+   "p@10": 0.3,
+   "r@10": 0.75,
+   "mrr": 1.0,
+   "useful@1": 1.0,
+   "topical_only@1": 0.0
+  },
+  "A2": {
+   "ndcg@10": 0.6268451902108538,
+   "p@5": 0.4,
+   "p@10": 0.2,
+   "r@10": 1.0,
+   "mrr": 1.0,
+   "useful@1": 1.0,
+   "topical_only@1": 0.0
+  },
+  "A3": {
+   "ndcg@10": 0.6040469263577366,
+   "p@5": 0.4,
+   "p@10": 0.3,
+   "r@10": 0.75,
+   "mrr": 1.0,
+   "useful@1": 1.0,
+   "topical_only@1": 0.0
+  },
+  "N1": {
+   "ndcg@10": 0.9612884948875337,
+   "p@5": 1.0,
+   "p@10": 0.5,
+   "r@10": 1.0,
+   "mrr": 1.0,
+   "useful@1": 1.0,
+   "topical_only@1": 0.0
+  },
+  "N2": {
+   "ndcg@10": 0.3963615805672714,
+   "p@5": 0.6,
+   "p@10": 0.3,
+   "r@10": 0.42857142857142855,
+   "mrr": 0.5,
+   "useful@1": 0.0,
+   "topical_only@1": 0.0
+  }
+ },
+ "swap": [
+  {
+   "group": "covid-vaccination",
+   "a": "C1",
+   "b": "C4",
+   "accuracy": 1.0
+  },
+  {
+   "group": "covid-vaccination",
+   "a": "C1",
+   "b": "C7",
+   "accuracy": 0.5
+  },
+  {
+   "group": "covid-vaccination",
+   "a": "C4",
+   "b": "C1",
+   "accuracy": 1.0
+  },
+  {
+   "group": "covid-vaccination",
+   "a": "C4",
+   "b": "C5",
+   "accuracy": 1.0
+  },
+  {
+   "group": "covid-vaccination",
+   "a": "C4",
+   "b": "C7",
+   "accuracy": 1.0
+  },
+  {
+   "group": "covid-vaccination",
+   "a": "C5",
+   "b": "C4",
+   "accuracy": 1.0
+  },
+  {
+   "group": "covid-vaccination",
+   "a": "C5",
+   "b": "C7",
+   "accuracy": 0.75
+  },
+  {
+   "group": "covid-vaccination",
+   "a": "C7",
+   "b": "C1",
+   "accuracy": 1.0
+  },
+  {
+   "group": "covid-vaccination",
+   "a": "C7",
+   "b": "C4",
+   "accuracy": 1.0
+  },
+  {
+   "group": "covid-vaccination",
+   "a": "C7",
+   "b": "C5",
+   "accuracy": 1.0
+  },
+  {
+   "group": "wages",
+   "a": "W1",
+   "b": "W3",
+   "accuracy": 0.8
+  },
+  {
+   "group": "wages",
+   "a": "W1",
+   "b": "W4",
+   "accuracy": 0.8636
+  },
+  {
+   "group": "wages",
+   "a": "W1",
+   "b": "W5",
+   "accuracy": 0.9615
+  },
+  {
+   "group": "wages",
+   "a": "W2",
+   "b": "W3",
+   "accuracy": 0.0
+  },
+  {
+   "group": "wages",
+   "a": "W2",
+   "b": "W4",
+   "accuracy": 0.5682
+  },
+  {
+   "group": "wages",
+   "a": "W2",
+   "b": "W5",
+   "accuracy": 1.0
+  },
+  {
+   "group": "wages",
+   "a": "W3",
+   "b": "W1",
+   "accuracy": 1.0
+  },
+  {
+   "group": "wages",
+   "a": "W3",
+   "b": "W2",
+   "accuracy": 1.0
+  },
+  {
+   "group": "wages",
+   "a": "W3",
+   "b": "W4",
+   "accuracy": 0.875
+  },
+  {
+   "group": "wages",
+   "a": "W3",
+   "b": "W5",
+   "accuracy": 1.0
+  },
+  {
+   "group": "wages",
+   "a": "W4",
+   "b": "W1",
+   "accuracy": 0.2727
+  },
+  {
+   "group": "wages",
+   "a": "W4",
+   "b": "W2",
+   "accuracy": 0.3977
+  },
+  {
+   "group": "wages",
+   "a": "W4",
+   "b": "W3",
+   "accuracy": 0.5417
+  },
+  {
+   "group": "wages",
+   "a": "W4",
+   "b": "W5",
+   "accuracy": 0.625
+  },
+  {
+   "group": "wages",
+   "a": "W5",
+   "b": "W1",
+   "accuracy": 1.0
+  },
+  {
+   "group": "wages",
+   "a": "W5",
+   "b": "W2",
+   "accuracy": 1.0
+  },
+  {
+   "group": "wages",
+   "a": "W5",
+   "b": "W3",
+   "accuracy": 1.0
+  },
+  {
+   "group": "wages",
+   "a": "W5",
+   "b": "W4",
+   "accuracy": 1.0
+  },
+  {
+   "group": "bikes",
+   "a": "B1",
+   "b": "B2",
+   "accuracy": 0.5
+  },
+  {
+   "group": "bikes",
+   "a": "B1",
+   "b": "B5",
+   "accuracy": 0.0
+  },
+  {
+   "group": "bikes",
+   "a": "B2",
+   "b": "B1",
+   "accuracy": 1.0
+  },
+  {
+   "group": "bikes",
+   "a": "B2",
+   "b": "B3",
+   "accuracy": 1.0
+  },
+  {
+   "group": "bikes",
+   "a": "B3",
+   "b": "B2",
+   "accuracy": 0.5
+  },
+  {
+   "group": "bikes",
+   "a": "B3",
+   "b": "B5",
+   "accuracy": 1.0
+  },
+  {
+   "group": "bikes",
+   "a": "B5",
+   "b": "B1",
+   "accuracy": 1.0
+  },
+  {
+   "group": "bikes",
+   "a": "B5",
+   "b": "B3",
+   "accuracy": 1.0
+  },
+  {
+   "group": "housing",
+   "a": "H1",
+   "b": "H3",
+   "accuracy": 0.6667
+  },
+  {
+   "group": "housing",
+   "a": "H1",
+   "b": "H4",
+   "accuracy": 1.0
+  },
+  {
+   "group": "housing",
+   "a": "H2",
+   "b": "H3",
+   "accuracy": 0.6667
+  },
+  {
+   "group": "housing",
+   "a": "H2",
+   "b": "H4",
+   "accuracy": 1.0
+  },
+  {
+   "group": "housing",
+   "a": "H3",
+   "b": "H1",
+   "accuracy": 0.6667
+  },
+  {
+   "group": "housing",
+   "a": "H3",
+   "b": "H2",
+   "accuracy": 0.3333
+  },
+  {
+   "group": "housing",
+   "a": "H3",
+   "b": "H4",
+   "accuracy": 1.0
+  },
+  {
+   "group": "housing",
+   "a": "H4",
+   "b": "H1",
+   "accuracy": 0.875
+  },
+  {
+   "group": "housing",
+   "a": "H4",
+   "b": "H2",
+   "accuracy": 0.875
+  },
+  {
+   "group": "housing",
+   "a": "H4",
+   "b": "H3",
+   "accuracy": 0.875
+  },
+  {
+   "group": "air-quality",
+   "a": "A1",
+   "b": "A2",
+   "accuracy": 1.0
+  },
+  {
+   "group": "air-quality",
+   "a": "A2",
+   "b": "A1",
+   "accuracy": 1.0
+  },
+  {
+   "group": "air-quality",
+   "a": "A2",
+   "b": "A3",
+   "accuracy": 1.0
+  },
+  {
+   "group": "air-quality",
+   "a": "A3",
+   "b": "A2",
+   "accuracy": 1.0
+  }
+ ]
+}

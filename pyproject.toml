@@ -4,26 +4,21 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "intention-grounding"
-version = "0.2.0"
-description = "Intention-grounded table discovery with validated intention grounding"
+version = "1.0.0"
+description = "Intention grounding for dataset discovery: Interpreter, Intention Library, Grounder, Context matching, Table Profiler, Aligner"
 requires-python = ">=3.10"
-dependencies = ["jsonschema==4.23.0", "python-dotenv>=1.0,<2"]
+dependencies = ["pandas>=2.0", "numpy>=1.24", "scikit-learn>=1.3", "python-dotenv>=1.0,<2"]
 
 [project.optional-dependencies]
-sbert = ["sentence-transformers==3.0.1", "transformers==4.44.2", "torch==2.2.2", "numpy==1.26.4"]
-groq = ["groq>=0.11,<1"]
+sbert = ["sentence-transformers>=3.0", "torch>=2.2"]
 notebook = ["notebook>=7,<8", "ipykernel>=6.29,<8"]
-dev = [] # Tests use the Python standard library.
 
 [project.scripts]
 intention-grounding = "intention_grounding.cli:main"
-intention-demo = "intention_grounding.dashboard:main"
+ig-experiments = "intention_grounding.experiments:main"
 
 [tool.setuptools.packages.find]
 include = ["intention_grounding*"]
 
 [tool.setuptools.package-data]
-"intention_grounding.interpreter" = ["schema.json", "fixtures/*.json"]
-"intention_grounding" = ["fixtures/*.csv", "fixtures/*.json", "docs/ab_proposal/*.json", "library/*.json", "schemas/*.json", "ui/*.html", "ui/*.css", "ui/*.js"]
-
-"intention_grounding.legacy" = ["*.json"]
+"intention_grounding" = ["library/*.json", "resources/*.json"]

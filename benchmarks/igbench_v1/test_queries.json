@@ -1,0 +1,1449 @@
+{
+ "benchmark": "igbench-v1-test",
+ "corpus_id": "igbench-v1",
+ "label_scale": {
+  "2": "useful",
+  "1": "topical only",
+  "0": "not relevant"
+ },
+ "label_status": "draft_author_labels_unreviewed",
+ "default_label": 0,
+ "protocol": "held-out: authored and labelled after design freeze (IL 1.0.0, Profiler 3.0.0, Aligner 1.0)",
+ "queries": [
+  {
+   "query_id": "T-CAR1",
+   "topic": "cars",
+   "pair_group": "cars",
+   "text": "Compare the average miles per gallon of cars by number of cylinders",
+   "gold_family": "compare",
+   "gold_variant": "compare.group_means",
+   "gold_grounding_status": "grounded",
+   "gold_interpretation": {
+    "context_query": "miles per gallon of cars by number of cylinders",
+    "intention_expression": "Compare",
+    "arguments": [
+     {
+      "id": "a1",
+      "label": "statistic",
+      "value": "average",
+      "spans": [
+       "average"
+      ]
+     },
+     {
+      "id": "a2",
+      "label": "measure",
+      "value": "miles per gallon of cars",
+      "spans": [
+       "miles per gallon of cars"
+      ]
+     },
+     {
+      "id": "a3",
+      "label": "group_dimension",
+      "value": "number of cylinders",
+      "spans": [
+       "number of cylinders"
+      ]
+     }
+    ],
+    "scope": []
+   },
+   "gold_grounding": {
+    "status": "proposed",
+    "variant_id": "compare.group_means",
+    "bindings": {
+     "statistic": [
+      "a1"
+     ],
+     "measure": [
+      "a2"
+     ],
+     "group_dimension": [
+      "a3"
+     ]
+    },
+    "scope": [],
+    "justification": "gold",
+    "diagnostics": []
+   },
+   "labels": {
+    "rdatasets.causaldata.auto": 1,
+    "rdatasets.usdatasets.Cars93_df": 1,
+    "rdatasets.DAAG.carprice": 1,
+    "rdatasets.gt.gtcars": 1,
+    "rdatasets.openintro.prius_mpg": 1,
+    "rdatasets.rpart.car90": 1,
+    "rdatasets.rpart.car.test.frame": 1,
+    "rdatasets.rpart.cu.summary": 1,
+    "rdatasets.ipsRdbs.gasmileage": 1,
+    "rdatasets.Stat2Data.PorschePrice": 1,
+    "rdatasets.Stat2Data.PorscheJaguar": 1,
+    "rdatasets.Stat2Data.ThreeCars": 1,
+    "rdatasets.Stat2Data.ThreeCars2017": 1,
+    "rdatasets.modeldata.car_prices": 1,
+    "rdatasets.datasets.cars": 1,
+    "rdatasets.datasets.mtcars": 2,
+    "rdatasets.ISLR.Auto": 2,
+    "rdatasets.ggplot2.mpg": 2,
+    "rdatasets.MASS.Cars93": 2,
+    "rdatasets.openintro.cars04": 2
+   },
+   "label_notes": {}
+  },
+  {
+   "query_id": "T-CAR2",
+   "topic": "cars",
+   "pair_group": "cars",
+   "text": "Predict a car's fuel efficiency in miles per gallon from its weight and horsepower",
+   "gold_family": "predict",
+   "gold_variant": "predict.regression",
+   "gold_grounding_status": "grounded",
+   "gold_interpretation": {
+    "context_query": "car fuel efficiency in miles per gallon, weight and horsepower",
+    "intention_expression": "Predict",
+    "arguments": [
+     {
+      "id": "a1",
+      "label": "target",
+      "value": "fuel efficiency in miles per gallon",
+      "spans": [
+       "fuel efficiency in miles per gallon"
+      ]
+     },
+     {
+      "id": "a2",
+      "label": "predictor",
+      "value": "weight",
+      "spans": [
+       "weight"
+      ]
+     },
+     {
+      "id": "a3",
+      "label": "predictor",
+      "value": "horsepower",
+      "spans": [
+       "horsepower"
+      ]
+     }
+    ],
+    "scope": []
+   },
+   "gold_grounding": {
+    "status": "proposed",
+    "variant_id": "predict.regression",
+    "bindings": {
+     "target": [
+      "a1"
+     ],
+     "predictor": [
+      "a2",
+      "a3"
+     ]
+    },
+    "scope": [],
+    "justification": "gold",
+    "diagnostics": []
+   },
+   "labels": {
+    "rdatasets.datasets.mtcars": 2,
+    "rdatasets.ISLR.Auto": 2,
+    "rdatasets.ggplot2.mpg": 1,
+    "rdatasets.MASS.Cars93": 2,
+    "rdatasets.openintro.cars04": 2,
+    "rdatasets.causaldata.auto": 1,
+    "rdatasets.usdatasets.Cars93_df": 1,
+    "rdatasets.DAAG.carprice": 1,
+    "rdatasets.gt.gtcars": 1,
+    "rdatasets.openintro.prius_mpg": 1,
+    "rdatasets.rpart.car90": 1,
+    "rdatasets.rpart.car.test.frame": 1,
+    "rdatasets.rpart.cu.summary": 1,
+    "rdatasets.ipsRdbs.gasmileage": 1,
+    "rdatasets.Stat2Data.PorschePrice": 1,
+    "rdatasets.Stat2Data.PorscheJaguar": 1,
+    "rdatasets.Stat2Data.ThreeCars": 1,
+    "rdatasets.Stat2Data.ThreeCars2017": 1,
+    "rdatasets.modeldata.car_prices": 1,
+    "rdatasets.datasets.cars": 1
+   },
+   "label_notes": {}
+  },
+  {
+   "query_id": "T-CAR3",
+   "topic": "cars",
+   "pair_group": "cars",
+   "text": "Is a used car's price associated with its mileage?",
+   "gold_family": "explain",
+   "gold_variant": "explain.association",
+   "gold_grounding_status": "grounded",
+   "gold_interpretation": {
+    "context_query": "used car price and mileage",
+    "intention_expression": "associated with",
+    "arguments": [
+     {
+      "id": "a1",
+      "label": "measure",
+      "value": "used car's price",
+      "spans": [
+       "used car's price"
+      ]
+     },
+     {
+      "id": "a2",
+      "label": "predictor",
+      "value": "mileage",
+      "spans": [
+       "mileage"
+      ]
+     }
+    ],
+    "scope": []
+   },
+   "gold_grounding": {
+    "status": "proposed",
+    "variant_id": "explain.association",
+    "bindings": {
+     "measure": [
+      "a1"
+     ],
+     "predictor": [
+      "a2"
+     ]
+    },
+    "scope": [],
+    "justification": "gold",
+    "diagnostics": []
+   },
+   "labels": {
+    "rdatasets.datasets.mtcars": 1,
+    "rdatasets.ISLR.Auto": 1,
+    "rdatasets.ggplot2.mpg": 1,
+    "rdatasets.MASS.Cars93": 1,
+    "rdatasets.openintro.cars04": 1,
+    "rdatasets.causaldata.auto": 1,
+    "rdatasets.usdatasets.Cars93_df": 1,
+    "rdatasets.DAAG.carprice": 1,
+    "rdatasets.gt.gtcars": 1,
+    "rdatasets.openintro.prius_mpg": 1,
+    "rdatasets.rpart.car90": 1,
+    "rdatasets.rpart.car.test.frame": 1,
+    "rdatasets.rpart.cu.summary": 1,
+    "rdatasets.ipsRdbs.gasmileage": 1,
+    "rdatasets.Stat2Data.PorschePrice": 2,
+    "rdatasets.Stat2Data.PorscheJaguar": 2,
+    "rdatasets.Stat2Data.ThreeCars": 2,
+    "rdatasets.Stat2Data.ThreeCars2017": 2,
+    "rdatasets.modeldata.car_prices": 2,
+    "rdatasets.datasets.cars": 1
+   },
+   "label_notes": {
+    "rdatasets.rpart.car.test.frame": "Mileage is fuel economy, not odometer reading"
+   }
+  },
+  {
+   "query_id": "T-CAR4",
+   "topic": "cars",
+   "pair_group": "cars",
+   "text": "Compare car prices",
+   "gold_family": "compare",
+   "gold_variant": null,
+   "gold_grounding_status": "insufficient",
+   "gold_interpretation": {
+    "context_query": "car prices",
+    "intention_expression": "Compare",
+    "arguments": [
+     {
+      "id": "a1",
+      "label": "measure",
+      "value": "car prices",
+      "spans": [
+       "car prices"
+      ]
+     }
+    ],
+    "scope": []
+   },
+   "gold_grounding": {
+    "status": "insufficient",
+    "variant_id": null,
+    "bindings": {},
+    "scope": [],
+    "justification": "gold",
+    "diagnostics": [
+     {
+      "code": "MISSING_ROLE",
+      "role": "group_dimension",
+      "entry_refs": []
+     }
+    ]
+   },
+   "labels": {
+    "rdatasets.causaldata.auto": 1,
+    "rdatasets.usdatasets.Cars93_df": 1,
+    "rdatasets.DAAG.carprice": 1,
+    "rdatasets.gt.gtcars": 1,
+    "rdatasets.openintro.prius_mpg": 1,
+    "rdatasets.rpart.car90": 1,
+    "rdatasets.rpart.car.test.frame": 1,
+    "rdatasets.rpart.cu.summary": 1,
+    "rdatasets.ipsRdbs.gasmileage": 1,
+    "rdatasets.Stat2Data.PorschePrice": 1,
+    "rdatasets.Stat2Data.PorscheJaguar": 1,
+    "rdatasets.Stat2Data.ThreeCars": 1,
+    "rdatasets.Stat2Data.ThreeCars2017": 1,
+    "rdatasets.modeldata.car_prices": 1,
+    "rdatasets.datasets.cars": 1,
+    "rdatasets.datasets.mtcars": 1,
+    "rdatasets.ISLR.Auto": 1,
+    "rdatasets.ggplot2.mpg": 1,
+    "rdatasets.MASS.Cars93": 1,
+    "rdatasets.openintro.cars04": 1
+   },
+   "label_notes": {}
+  },
+  {
+   "query_id": "T-BW1",
+   "topic": "births",
+   "pair_group": "births",
+   "text": "Predict whether a baby has low birth weight from the mother's age, smoking status and weight",
+   "gold_family": "predict",
+   "gold_variant": "predict.classification",
+   "gold_grounding_status": "grounded",
+   "gold_interpretation": {
+    "context_query": "baby low birth weight, mother age, smoking status and weight",
+    "intention_expression": "Predict",
+    "arguments": [
+     {
+      "id": "a1",
+      "label": "target",
+      "value": "has low birth weight",
+      "spans": [
+       "has low birth weight"
+      ]
+     },
+     {
+      "id": "a2",
+      "label": "predictor",
+      "value": "mother's age",
+      "spans": [
+       "mother's age"
+      ]
+     },
+     {
+      "id": "a3",
+      "label": "predictor",
+      "value": "smoking status",
+      "spans": [
+       "smoking status"
+      ]
+     },
+     {
+      "id": "a4",
+      "label": "predictor",
+      "value": "weight",
+      "spans": [
+       "weight"
+      ]
+     }
+    ],
+    "scope": []
+   },
+   "gold_grounding": {
+    "status": "proposed",
+    "variant_id": "predict.classification",
+    "bindings": {
+     "target": [
+      "a1"
+     ],
+     "predictor": [
+      "a2",
+      "a3",
+      "a4"
+     ]
+    },
+    "scope": [],
+    "justification": "gold",
+    "diagnostics": []
+   },
+   "labels": {
+    "rdatasets.openintro.births": 1,
+    "rdatasets.usdatasets.births_tbl_df": 1,
+    "rdatasets.Stat2Data.NCbirths": 1,
+    "rdatasets.wooldridge.bwght2": 2,
+    "rdatasets.COUNT.lbwgrp": 1,
+    "rdatasets.mosaicData.Gestation": 1,
+    "rdatasets.mosaicData.Births": 1,
+    "rdatasets.mosaicData.Births2015": 1,
+    "rdatasets.mosaicData.Births78": 1,
+    "rdatasets.mosaicData.BirthsCDC": 1,
+    "rdatasets.mosaicData.BirthsSSA": 1,
+    "rdatasets.openintro.present": 1,
+    "rdatasets.MASS.birthwt": 2,
+    "rdatasets.MedDataSets.birthwt_df": 2,
+    "rdatasets.COUNT.lbw": 2,
+    "rdatasets.openintro.births14": 2,
+    "rdatasets.usdatasets.births14_tbl_df": 2,
+    "rdatasets.openintro.ncbirths": 2,
+    "rdatasets.usdatasets.ncbirths_tbl_df": 2
+   },
+   "label_notes": {}
+  },
+  {
+   "query_id": "T-BW2",
+   "topic": "births",
+   "pair_group": "births",
+   "text": "Compare the average birth weight of babies by mother's smoking status",
+   "gold_family": "compare",
+   "gold_variant": "compare.group_means",
+   "gold_grounding_status": "grounded",
+   "gold_interpretation": {
+    "context_query": "birth weight of babies by mother's smoking status",
+    "intention_expression": "Compare",
+    "arguments": [
+     {
+      "id": "a1",
+      "label": "statistic",
+      "value": "average",
+      "spans": [
+       "average"
+      ]
+     },
+     {
+      "id": "a2",
+      "label": "measure",
+      "value": "birth weight of babies",
+      "spans": [
+       "birth weight of babies"
+      ]
+     },
+     {
+      "id": "a3",
+      "label": "group_dimension",
+      "value": "mother's smoking status",
+      "spans": [
+       "mother's smoking status"
+      ]
+     }
+    ],
+    "scope": []
+   },
+   "gold_grounding": {
+    "status": "proposed",
+    "variant_id": "compare.group_means",
+    "bindings": {
+     "statistic": [
+      "a1"
+     ],
+     "measure": [
+      "a2"
+     ],
+     "group_dimension": [
+      "a3"
+     ]
+    },
+    "scope": [],
+    "justification": "gold",
+    "diagnostics": []
+   },
+   "labels": {
+    "rdatasets.openintro.births": 2,
+    "rdatasets.usdatasets.births_tbl_df": 2,
+    "rdatasets.Stat2Data.NCbirths": 2,
+    "rdatasets.wooldridge.bwght2": 1,
+    "rdatasets.COUNT.lbwgrp": 1,
+    "rdatasets.mosaicData.Gestation": 2,
+    "rdatasets.MASS.birthwt": 2,
+    "rdatasets.MedDataSets.birthwt_df": 2,
+    "rdatasets.COUNT.lbw": 2,
+    "rdatasets.openintro.births14": 2,
+    "rdatasets.usdatasets.births14_tbl_df": 2,
+    "rdatasets.openintro.ncbirths": 2,
+    "rdatasets.usdatasets.ncbirths_tbl_df": 2
+   },
+   "label_notes": {
+    "rdatasets.wooldridge.bwght2": "cigarettes per day, not a status",
+    "rdatasets.COUNT.lbwgrp": "grouped counts"
+   }
+  },
+  {
+   "query_id": "T-BW3",
+   "topic": "births",
+   "pair_group": "births",
+   "text": "How has the number of births in the United States changed over time?",
+   "gold_family": "monitor",
+   "gold_variant": "monitor.trend",
+   "gold_grounding_status": "grounded",
+   "gold_interpretation": {
+    "context_query": "number of births in the United States",
+    "intention_expression": "changed over time",
+    "arguments": [
+     {
+      "id": "a1",
+      "label": "measure",
+      "value": "number of births",
+      "spans": [
+       "number of births"
+      ]
+     },
+     {
+      "id": "a2",
+      "label": "time_dimension",
+      "value": "over time",
+      "spans": [
+       "over time"
+      ]
+     }
+    ],
+    "scope": [
+     {
+      "id": "s1",
+      "label": "geography",
+      "value": "United States",
+      "spans": [
+       "in the United States"
+      ]
+     }
+    ]
+   },
+   "gold_grounding": {
+    "status": "proposed",
+    "variant_id": "monitor.trend",
+    "bindings": {
+     "measure": [
+      "a1"
+     ],
+     "time_dimension": [
+      "a2"
+     ]
+    },
+    "scope": [
+     "s1"
+    ],
+    "justification": "gold",
+    "diagnostics": []
+   },
+   "labels": {
+    "rdatasets.openintro.arbuthnot": 1,
+    "rdatasets.HistData.Arbuthnot": 1,
+    "rdatasets.fpp3.aus_births": 1,
+    "rdatasets.openintro.births14": 1,
+    "rdatasets.usdatasets.births14_tbl_df": 1,
+    "rdatasets.openintro.ncbirths": 1,
+    "rdatasets.usdatasets.ncbirths_tbl_df": 1,
+    "rdatasets.mosaicData.Births": 2,
+    "rdatasets.mosaicData.Births2015": 2,
+    "rdatasets.mosaicData.Births78": 2,
+    "rdatasets.mosaicData.BirthsCDC": 2,
+    "rdatasets.mosaicData.BirthsSSA": 2,
+    "rdatasets.openintro.present": 2
+   },
+   "label_notes": {}
+  },
+  {
+   "query_id": "T-LE1",
+   "topic": "life-expectancy",
+   "pair_group": "life-expectancy",
+   "text": "Compare the average life expectancy across continents in 2007",
+   "gold_family": "compare",
+   "gold_variant": "compare.group_means",
+   "gold_grounding_status": "grounded",
+   "gold_interpretation": {
+    "context_query": "life expectancy across continents in 2007",
+    "intention_expression": "Compare",
+    "arguments": [
+     {
+      "id": "a1",
+      "label": "statistic",
+      "value": "average",
+      "spans": [
+       "average"
+      ]
+     },
+     {
+      "id": "a2",
+      "label": "measure",
+      "value": "life expectancy",
+      "spans": [
+       "life expectancy"
+      ]
+     },
+     {
+      "id": "a3",
+      "label": "group_dimension",
+      "value": "continents",
+      "spans": [
+       "continents"
+      ]
+     }
+    ],
+    "scope": [
+     {
+      "id": "s1",
+      "label": "period",
+      "value": "2007",
+      "spans": [
+       "in 2007"
+      ]
+     }
+    ]
+   },
+   "gold_grounding": {
+    "status": "proposed",
+    "variant_id": "compare.group_means",
+    "bindings": {
+     "statistic": [
+      "a1"
+     ],
+     "measure": [
+      "a2"
+     ],
+     "group_dimension": [
+      "a3"
+     ]
+    },
+    "scope": [
+     "s1"
+    ],
+    "justification": "gold",
+    "diagnostics": []
+   },
+   "labels": {
+    "rdatasets.dslabs.gapminder": 2,
+    "rdatasets.openintro.life_exp": 1,
+    "rdatasets.openintro.sowc_maternal_newborn": 1,
+    "owid.country_profile_latest": 1,
+    "owid.country_weekly_panel": 1,
+    "rdatasets.gapminder.gapminder": 2,
+    "rdatasets.causaldata.gapminder": 2,
+    "rdatasets.gapminder.gapminder_unfiltered": 2
+   },
+   "label_notes": {}
+  },
+  {
+   "query_id": "T-LE2",
+   "topic": "life-expectancy",
+   "pair_group": "life-expectancy",
+   "text": "Track life expectancy in Japan over time",
+   "gold_family": "monitor",
+   "gold_variant": "monitor.trend",
+   "gold_grounding_status": "grounded",
+   "gold_interpretation": {
+    "context_query": "life expectancy in Japan",
+    "intention_expression": "Track",
+    "arguments": [
+     {
+      "id": "a1",
+      "label": "measure",
+      "value": "life expectancy",
+      "spans": [
+       "life expectancy"
+      ]
+     },
+     {
+      "id": "a2",
+      "label": "time_dimension",
+      "value": "over time",
+      "spans": [
+       "over time"
+      ]
+     }
+    ],
+    "scope": [
+     {
+      "id": "s1",
+      "label": "geography",
+      "value": "Japan",
+      "spans": [
+       "in Japan"
+      ]
+     }
+    ]
+   },
+   "gold_grounding": {
+    "status": "proposed",
+    "variant_id": "monitor.trend",
+    "bindings": {
+     "measure": [
+      "a1"
+     ],
+     "time_dimension": [
+      "a2"
+     ]
+    },
+    "scope": [
+     "s1"
+    ],
+    "justification": "gold",
+    "diagnostics": []
+   },
+   "labels": {
+    "rdatasets.dslabs.gapminder": 2,
+    "rdatasets.openintro.life_exp": 1,
+    "rdatasets.openintro.sowc_maternal_newborn": 1,
+    "owid.country_profile_latest": 1,
+    "owid.country_weekly_panel": 1,
+    "rdatasets.gapminder.gapminder": 2,
+    "rdatasets.causaldata.gapminder": 2,
+    "rdatasets.gapminder.gapminder_unfiltered": 2
+   },
+   "label_notes": {}
+  },
+  {
+   "query_id": "T-LE3",
+   "topic": "life-expectancy",
+   "pair_group": "life-expectancy",
+   "text": "How is GDP per capita associated with life expectancy across countries?",
+   "gold_family": "explain",
+   "gold_variant": "explain.association",
+   "gold_grounding_status": "grounded",
+   "gold_interpretation": {
+    "context_query": "GDP per capita and life expectancy across countries",
+    "intention_expression": "associated with",
+    "arguments": [
+     {
+      "id": "a1",
+      "label": "predictor",
+      "value": "GDP per capita",
+      "spans": [
+       "GDP per capita"
+      ]
+     },
+     {
+      "id": "a2",
+      "label": "measure",
+      "value": "life expectancy",
+      "spans": [
+       "life expectancy"
+      ]
+     }
+    ],
+    "scope": []
+   },
+   "gold_grounding": {
+    "status": "proposed",
+    "variant_id": "explain.association",
+    "bindings": {
+     "measure": [
+      "a2"
+     ],
+     "predictor": [
+      "a1"
+     ]
+    },
+    "scope": [],
+    "justification": "gold",
+    "diagnostics": []
+   },
+   "labels": {
+    "rdatasets.dslabs.gapminder": 1,
+    "rdatasets.openintro.life_exp": 1,
+    "rdatasets.openintro.sowc_maternal_newborn": 1,
+    "owid.country_profile_latest": 2,
+    "owid.country_weekly_panel": 2,
+    "rdatasets.gapminder.gapminder": 2,
+    "rdatasets.causaldata.gapminder": 2,
+    "rdatasets.gapminder.gapminder_unfiltered": 2
+   },
+   "label_notes": {
+    "rdatasets.dslabs.gapminder": "total GDP and population only"
+   }
+  },
+  {
+   "query_id": "T-LE4",
+   "topic": "life-expectancy",
+   "pair_group": "life-expectancy",
+   "text": "Gapminder life expectancy data",
+   "gold_family": null,
+   "gold_variant": null,
+   "gold_grounding_status": "not_attempted",
+   "gold_interpretation": {
+    "context_query": "Gapminder life expectancy data",
+    "intention_expression": null,
+    "arguments": [],
+    "scope": []
+   },
+   "gold_grounding": null,
+   "labels": {
+    "rdatasets.dslabs.gapminder": 2,
+    "rdatasets.openintro.life_exp": 1,
+    "rdatasets.openintro.sowc_maternal_newborn": 1,
+    "owid.country_profile_latest": 1,
+    "owid.country_weekly_panel": 1,
+    "rdatasets.gapminder.gapminder": 2,
+    "rdatasets.causaldata.gapminder": 2,
+    "rdatasets.gapminder.gapminder_unfiltered": 2
+   },
+   "label_notes": {}
+  },
+  {
+   "query_id": "T-CR1",
+   "topic": "crime",
+   "pair_group": "crime",
+   "text": "Track the number of violent crimes in the United States over time",
+   "gold_family": "monitor",
+   "gold_variant": "monitor.trend",
+   "gold_grounding_status": "grounded",
+   "gold_interpretation": {
+    "context_query": "number of violent crimes in the United States",
+    "intention_expression": "Track",
+    "arguments": [
+     {
+      "id": "a1",
+      "label": "measure",
+      "value": "number of violent crimes",
+      "spans": [
+       "number of violent crimes"
+      ]
+     },
+     {
+      "id": "a2",
+      "label": "time_dimension",
+      "value": "over time",
+      "spans": [
+       "over time"
+      ]
+     }
+    ],
+    "scope": [
+     {
+      "id": "s1",
+      "label": "geography",
+      "value": "United States",
+      "spans": [
+       "in the United States"
+      ]
+     }
+    ]
+   },
+   "gold_grounding": {
+    "status": "proposed",
+    "variant_id": "monitor.trend",
+    "bindings": {
+     "measure": [
+      "a1"
+     ],
+     "time_dimension": [
+      "a2"
+     ]
+    },
+    "scope": [
+     "s1"
+    ],
+    "justification": "gold",
+    "diagnostics": []
+   },
+   "labels": {
+    "rdatasets.AER.Guns": 1,
+    "rdatasets.carData.Hartnagel": 1,
+    "rdatasets.crimedatasets.Hartnagel_df": 1,
+    "rdatasets.crimedatasets.Abilene_tbl_df": 1,
+    "rdatasets.causaldata.castle": 1,
+    "rdatasets.wooldridge.countymurders": 1,
+    "rdatasets.crimedatasets.crimestatewide_tbl_df": 1,
+    "rdatasets.stevedata.af_crime93": 1,
+    "rdatasets.datasets.USArrests": 1,
+    "rdatasets.crimedatasets.USArrests_df": 1,
+    "rdatasets.usdatasets.USArrests_df": 1,
+    "rdatasets.crimedatasets.crimeHSdegree_tbl_df": 1,
+    "rdatasets.educationR.crime_degree_tbl_df": 1,
+    "rdatasets.crimedatasets.hate_crimes_tbl_df": 1,
+    "rdatasets.MASS.UScrime": 1,
+    "rdatasets.Ecdat.Crime": 1,
+    "rdatasets.crimedatasets.UScrimerates_tbl_df": 2,
+    "rdatasets.usdatasets.us_crime_rates_spec_tbl_df": 2
+   },
+   "label_notes": {}
+  },
+  {
+   "query_id": "T-CR2",
+   "topic": "crime",
+   "pair_group": "crime",
+   "text": "Compare the murder rates of California and Texas",
+   "gold_family": "compare",
+   "gold_variant": "compare.observed_values",
+   "gold_grounding_status": "grounded",
+   "gold_interpretation": {
+    "context_query": "murder rates of California and Texas",
+    "intention_expression": "Compare",
+    "arguments": [
+     {
+      "id": "a1",
+      "label": "measure",
+      "value": "murder rates",
+      "spans": [
+       "murder rates"
+      ]
+     },
+     {
+      "id": "a2",
+      "label": "groups",
+      "value": "California",
+      "spans": [
+       "California"
+      ]
+     },
+     {
+      "id": "a3",
+      "label": "groups",
+      "value": "Texas",
+      "spans": [
+       "Texas"
+      ]
+     }
+    ],
+    "scope": []
+   },
+   "gold_grounding": {
+    "status": "proposed",
+    "variant_id": "compare.observed_values",
+    "bindings": {
+     "measure": [
+      "a1"
+     ],
+     "groups": [
+      "a2",
+      "a3"
+     ]
+    },
+    "scope": [],
+    "justification": "gold",
+    "diagnostics": []
+   },
+   "labels": {
+    "rdatasets.AER.Guns": 2,
+    "rdatasets.carData.Hartnagel": 1,
+    "rdatasets.crimedatasets.Hartnagel_df": 1,
+    "rdatasets.crimedatasets.Abilene_tbl_df": 1,
+    "rdatasets.causaldata.castle": 1,
+    "rdatasets.wooldridge.countymurders": 1,
+    "rdatasets.crimedatasets.crimestatewide_tbl_df": 2,
+    "rdatasets.stevedata.af_crime93": 2,
+    "rdatasets.datasets.USArrests": 2,
+    "rdatasets.crimedatasets.USArrests_df": 2,
+    "rdatasets.usdatasets.USArrests_df": 2,
+    "rdatasets.crimedatasets.crimeHSdegree_tbl_df": 1,
+    "rdatasets.educationR.crime_degree_tbl_df": 1,
+    "rdatasets.crimedatasets.hate_crimes_tbl_df": 1,
+    "rdatasets.MASS.UScrime": 1,
+    "rdatasets.Ecdat.Crime": 1,
+    "rdatasets.crimedatasets.UScrimerates_tbl_df": 1,
+    "rdatasets.usdatasets.us_crime_rates_spec_tbl_df": 1
+   },
+   "label_notes": {}
+  },
+  {
+   "query_id": "T-CR3",
+   "topic": "crime",
+   "pair_group": "crime",
+   "text": "How is the share of people without a high school degree associated with violent crime across US states?",
+   "gold_family": "explain",
+   "gold_variant": "explain.association",
+   "gold_grounding_status": "grounded",
+   "gold_interpretation": {
+    "context_query": "share of people without a high school degree and violent crime across US states",
+    "intention_expression": "associated with",
+    "arguments": [
+     {
+      "id": "a1",
+      "label": "predictor",
+      "value": "share of people without a high school degree",
+      "spans": [
+       "share of people without a high school degree"
+      ]
+     },
+     {
+      "id": "a2",
+      "label": "measure",
+      "value": "violent crime",
+      "spans": [
+       "violent crime"
+      ]
+     }
+    ],
+    "scope": []
+   },
+   "gold_grounding": {
+    "status": "proposed",
+    "variant_id": "explain.association",
+    "bindings": {
+     "measure": [
+      "a2"
+     ],
+     "predictor": [
+      "a1"
+     ]
+    },
+    "scope": [],
+    "justification": "gold",
+    "diagnostics": []
+   },
+   "labels": {
+    "rdatasets.AER.Guns": 1,
+    "rdatasets.carData.Hartnagel": 1,
+    "rdatasets.crimedatasets.Hartnagel_df": 1,
+    "rdatasets.crimedatasets.Abilene_tbl_df": 1,
+    "rdatasets.causaldata.castle": 1,
+    "rdatasets.wooldridge.countymurders": 1,
+    "rdatasets.crimedatasets.crimestatewide_tbl_df": 2,
+    "rdatasets.stevedata.af_crime93": 2,
+    "rdatasets.datasets.USArrests": 1,
+    "rdatasets.crimedatasets.USArrests_df": 1,
+    "rdatasets.usdatasets.USArrests_df": 1,
+    "rdatasets.crimedatasets.crimeHSdegree_tbl_df": 2,
+    "rdatasets.educationR.crime_degree_tbl_df": 2,
+    "rdatasets.crimedatasets.hate_crimes_tbl_df": 1,
+    "rdatasets.MASS.UScrime": 1,
+    "rdatasets.Ecdat.Crime": 1,
+    "rdatasets.crimedatasets.UScrimerates_tbl_df": 1,
+    "rdatasets.usdatasets.us_crime_rates_spec_tbl_df": 1
+   },
+   "label_notes": {}
+  },
+  {
+   "query_id": "T-UN1",
+   "topic": "unemployment",
+   "pair_group": "unemployment",
+   "text": "Track the annual US unemployment rate since 1890",
+   "gold_family": "monitor",
+   "gold_variant": "monitor.trend",
+   "gold_grounding_status": "grounded",
+   "gold_interpretation": {
+    "context_query": "annual US unemployment rate since 1890",
+    "intention_expression": "Track",
+    "arguments": [
+     {
+      "id": "a1",
+      "label": "measure",
+      "value": "unemployment rate",
+      "spans": [
+       "unemployment rate"
+      ]
+     },
+     {
+      "id": "a2",
+      "label": "time_grain",
+      "value": "annual",
+      "spans": [
+       "annual"
+      ]
+     }
+    ],
+    "scope": [
+     {
+      "id": "s1",
+      "label": "period",
+      "value": "since 1890",
+      "spans": [
+       "since 1890"
+      ]
+     }
+    ]
+   },
+   "gold_grounding": {
+    "status": "proposed",
+    "variant_id": "monitor.trend",
+    "bindings": {
+     "measure": [
+      "a1"
+     ],
+     "time_grain": [
+      "a2"
+     ]
+    },
+    "scope": [
+     "s1"
+    ],
+    "justification": "gold",
+    "diagnostics": []
+   },
+   "labels": {
+    "rdatasets.openintro.unempl": 2,
+    "rdatasets.openintro.unemploy_pres": 1,
+    "rdatasets.openintro.midterms_house": 1,
+    "rdatasets.fpp3.us_change": 1,
+    "rdatasets.fpp2.uschange": 1,
+    "rdatasets.AER.GermanUnemployment": 1
+   },
+   "label_notes": {}
+  },
+  {
+   "query_id": "T-EX1",
+   "topic": "experiments",
+   "pair_group": "experiments",
+   "text": "Compare the average tooth length of guinea pigs across vitamin C doses",
+   "gold_family": "compare",
+   "gold_variant": "compare.group_means",
+   "gold_grounding_status": "grounded",
+   "gold_interpretation": {
+    "context_query": "tooth length of guinea pigs across vitamin C doses",
+    "intention_expression": "Compare",
+    "arguments": [
+     {
+      "id": "a1",
+      "label": "statistic",
+      "value": "average",
+      "spans": [
+       "average"
+      ]
+     },
+     {
+      "id": "a2",
+      "label": "measure",
+      "value": "tooth length of guinea pigs",
+      "spans": [
+       "tooth length of guinea pigs"
+      ]
+     },
+     {
+      "id": "a3",
+      "label": "group_dimension",
+      "value": "vitamin C doses",
+      "spans": [
+       "vitamin C doses"
+      ]
+     }
+    ],
+    "scope": []
+   },
+   "gold_grounding": {
+    "status": "proposed",
+    "variant_id": "compare.group_means",
+    "bindings": {
+     "statistic": [
+      "a1"
+     ],
+     "measure": [
+      "a2"
+     ],
+     "group_dimension": [
+      "a3"
+     ]
+    },
+    "scope": [],
+    "justification": "gold",
+    "diagnostics": []
+   },
+   "labels": {
+    "rdatasets.datasets.ToothGrowth": 2
+   },
+   "label_notes": {}
+  },
+  {
+   "query_id": "T-EX2",
+   "topic": "experiments",
+   "pair_group": "experiments",
+   "text": "Compare the average plant weight across treatment groups",
+   "gold_family": "compare",
+   "gold_variant": "compare.group_means",
+   "gold_grounding_status": "grounded",
+   "gold_interpretation": {
+    "context_query": "plant weight across treatment groups",
+    "intention_expression": "Compare",
+    "arguments": [
+     {
+      "id": "a1",
+      "label": "statistic",
+      "value": "average",
+      "spans": [
+       "average"
+      ]
+     },
+     {
+      "id": "a2",
+      "label": "measure",
+      "value": "plant weight",
+      "spans": [
+       "plant weight"
+      ]
+     },
+     {
+      "id": "a3",
+      "label": "group_dimension",
+      "value": "treatment groups",
+      "spans": [
+       "treatment groups"
+      ]
+     }
+    ],
+    "scope": []
+   },
+   "gold_grounding": {
+    "status": "proposed",
+    "variant_id": "compare.group_means",
+    "bindings": {
+     "statistic": [
+      "a1"
+     ],
+     "measure": [
+      "a2"
+     ],
+     "group_dimension": [
+      "a3"
+     ]
+    },
+    "scope": [],
+    "justification": "gold",
+    "diagnostics": []
+   },
+   "labels": {
+    "rdatasets.datasets.ChickWeight": 1,
+    "rdatasets.datasets.PlantGrowth": 2
+   },
+   "label_notes": {}
+  },
+  {
+   "query_id": "T-EX3",
+   "topic": "experiments",
+   "pair_group": "experiments",
+   "text": "Track the body weight of chicks over time",
+   "gold_family": "monitor",
+   "gold_variant": "monitor.trend",
+   "gold_grounding_status": "grounded",
+   "gold_interpretation": {
+    "context_query": "body weight of chicks",
+    "intention_expression": "Track",
+    "arguments": [
+     {
+      "id": "a1",
+      "label": "measure",
+      "value": "body weight of chicks",
+      "spans": [
+       "body weight of chicks"
+      ]
+     },
+     {
+      "id": "a2",
+      "label": "time_dimension",
+      "value": "over time",
+      "spans": [
+       "over time"
+      ]
+     }
+    ],
+    "scope": []
+   },
+   "gold_grounding": {
+    "status": "proposed",
+    "variant_id": "monitor.trend",
+    "bindings": {
+     "measure": [
+      "a1"
+     ],
+     "time_dimension": [
+      "a2"
+     ]
+    },
+    "scope": [],
+    "justification": "gold",
+    "diagnostics": []
+   },
+   "labels": {
+    "rdatasets.datasets.PlantGrowth": 1,
+    "rdatasets.datasets.ChickWeight": 2
+   },
+   "label_notes": {}
+  },
+  {
+   "query_id": "T-IR1",
+   "topic": "iris",
+   "pair_group": "iris",
+   "text": "Predict the species of an iris flower from its petal and sepal measurements",
+   "gold_family": "predict",
+   "gold_variant": "predict.classification",
+   "gold_grounding_status": "grounded",
+   "gold_interpretation": {
+    "context_query": "iris flower species, petal and sepal measurements",
+    "intention_expression": "Predict",
+    "arguments": [
+     {
+      "id": "a1",
+      "label": "target",
+      "value": "species of an iris flower",
+      "spans": [
+       "species of an iris flower"
+      ]
+     },
+     {
+      "id": "a2",
+      "label": "predictor",
+      "value": "petal and sepal measurements",
+      "spans": [
+       "petal and sepal measurements"
+      ]
+     }
+    ],
+    "scope": []
+   },
+   "gold_grounding": {
+    "status": "proposed",
+    "variant_id": "predict.classification",
+    "bindings": {
+     "target": [
+      "a1"
+     ],
+     "predictor": [
+      "a2"
+     ]
+    },
+    "scope": [],
+    "justification": "gold",
+    "diagnostics": []
+   },
+   "labels": {
+    "rdatasets.datasets.iris3": 1,
+    "rdatasets.datasets.iris": 2
+   },
+   "label_notes": {
+    "rdatasets.datasets.iris3": "species spread over columns"
+   }
+  },
+  {
+   "query_id": "T-HE1",
+   "topic": "heart",
+   "pair_group": "heart",
+   "text": "Predict whether a patient has heart disease from age, cholesterol and blood pressure",
+   "gold_family": "predict",
+   "gold_variant": "predict.classification",
+   "gold_grounding_status": "grounded",
+   "gold_interpretation": {
+    "context_query": "patient heart disease, age, cholesterol and blood pressure",
+    "intention_expression": "Predict",
+    "arguments": [
+     {
+      "id": "a1",
+      "label": "target",
+      "value": "has heart disease",
+      "spans": [
+       "has heart disease"
+      ]
+     },
+     {
+      "id": "a2",
+      "label": "predictor",
+      "value": "age",
+      "spans": [
+       "age"
+      ]
+     },
+     {
+      "id": "a3",
+      "label": "predictor",
+      "value": "cholesterol",
+      "spans": [
+       "cholesterol"
+      ]
+     },
+     {
+      "id": "a4",
+      "label": "predictor",
+      "value": "blood pressure",
+      "spans": [
+       "blood pressure"
+      ]
+     }
+    ],
+    "scope": []
+   },
+   "gold_grounding": {
+    "status": "proposed",
+    "variant_id": "predict.classification",
+    "bindings": {
+     "target": [
+      "a1"
+     ],
+     "predictor": [
+      "a2",
+      "a3",
+      "a4"
+     ]
+    },
+    "scope": [],
+    "justification": "gold",
+    "diagnostics": []
+   },
+   "labels": {
+    "rdatasets.CardioDataSets.cardiac_failure_df": 1,
+    "rdatasets.CardioDataSets.heartdiseaserisk_tbl_df": 1,
+    "rdatasets.CardioDataSets.heartfailure_df": 1,
+    "rdatasets.vcdExtra.Heart": 1,
+    "rdatasets.vcdExtra.Reinis": 1,
+    "rdatasets.CardioDataSets.heartdisease_tbl_df": 2,
+    "rdatasets.MLDataR.heartdisease": 2
+   },
+   "label_notes": {
+    "rdatasets.vcdExtra.Heart": "aggregated frequency table",
+    "rdatasets.vcdExtra.Reinis": "aggregated frequency table"
+   }
+  },
+  {
+   "query_id": "T-HE2",
+   "topic": "heart",
+   "pair_group": "heart",
+   "text": "Compare the average maximum heart rate by presence of heart disease",
+   "gold_family": "compare",
+   "gold_variant": "compare.group_means",
+   "gold_grounding_status": "grounded",
+   "gold_interpretation": {
+    "context_query": "maximum heart rate by presence of heart disease",
+    "intention_expression": "Compare",
+    "arguments": [
+     {
+      "id": "a1",
+      "label": "statistic",
+      "value": "average",
+      "spans": [
+       "average"
+      ]
+     },
+     {
+      "id": "a2",
+      "label": "measure",
+      "value": "maximum heart rate",
+      "spans": [
+       "maximum heart rate"
+      ]
+     },
+     {
+      "id": "a3",
+      "label": "group_dimension",
+      "value": "presence of heart disease",
+      "spans": [
+       "presence of heart disease"
+      ]
+     }
+    ],
+    "scope": []
+   },
+   "gold_grounding": {
+    "status": "proposed",
+    "variant_id": "compare.group_means",
+    "bindings": {
+     "statistic": [
+      "a1"
+     ],
+     "measure": [
+      "a2"
+     ],
+     "group_dimension": [
+      "a3"
+     ]
+    },
+    "scope": [],
+    "justification": "gold",
+    "diagnostics": []
+   },
+   "labels": {
+    "rdatasets.CardioDataSets.cardiac_failure_df": 1,
+    "rdatasets.CardioDataSets.heartdiseaserisk_tbl_df": 1,
+    "rdatasets.CardioDataSets.heartfailure_df": 1,
+    "rdatasets.vcdExtra.Heart": 1,
+    "rdatasets.vcdExtra.Reinis": 1,
+    "rdatasets.CardioDataSets.heartdisease_tbl_df": 2,
+    "rdatasets.MLDataR.heartdisease": 2
+   },
+   "label_notes": {}
+  }
+ ]
+}
