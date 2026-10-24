@@ -6,6 +6,7 @@ hash and profiler version. Profiles describe evidence only; they do not decide
 whether a table is useful for an intention (that is the Aligner's job).
 """
 import hashlib
+import os
 import json
 import math
 import re
@@ -275,7 +276,9 @@ def profile(record, *, cache_dir=None, frames=FRAMES):
     result["compute_ms"] = round((time.perf_counter() - start) * 1000, 3)
     if cache:
         cache.parent.mkdir(parents=True, exist_ok=True)
-        cache.write_text(json.dumps(result, ensure_ascii=False), encoding="utf-8")
+        tmp = cache.with_name(f"{cache.name}.{os.getpid()}.tmp")  # atomic: parallel workers may profile the same table
+        tmp.write_text(json.dumps(result, ensure_ascii=False), encoding="utf-8")
+        os.replace(tmp, cache)
     result["elapsed_ms"] = round((time.perf_counter() - start) * 1000, 3)
     return result
 

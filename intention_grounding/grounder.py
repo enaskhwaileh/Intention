@@ -14,7 +14,7 @@ from .llm import ChatClient, parse_json_object
 
 GROUNDED, INSUFFICIENT, AMBIGUOUS, UNSUPPORTED, FAILURE, NOT_ATTEMPTED = (
     "grounded", "insufficient", "ambiguous", "unsupported", "failure", "not_attempted")
-PROMPT_VERSION = "grounder-v3.0"
+PROMPT_VERSION = "grounder-v3.1"
 PROPOSAL_KEYS = {"status", "variant_id", "bindings", "scope", "justification", "diagnostics"}
 
 
@@ -30,9 +30,11 @@ Return ONLY one JSON object:
 Rules:
 - Choose a variant whose outcome is what the input asks for. Use only variant ids and role
   names from the library definitions below.
-- Every binding must reference ids of the extracted arguments; never write new values,
-  SQL, predicates or thresholds. The entry label must be admitted by the role contract.
-- Reference every extracted scope entry in "scope".
+- Every binding must reference ids of the extracted arguments (e.g. "a1"), never their values
+  (write ["a1"], not ["mean"]); never write new values, SQL, predicates or thresholds. The
+  entry label must be one of the labels the role admits ("labels" in the role contract), and
+  an entry that no role admits is left unbound.
+- Reference every extracted scope entry id in "scope" (e.g. ["s1"]); never omit one.
 - If a required role has no extracted entry, return "insufficient" and name the role in a
   diagnostic (code MISSING_ROLE). Never select a statistic or prediction target merely
   because it is plausible.
@@ -43,16 +45,21 @@ Library definitions:
 
 
 class LLMResolver:
-    def __init__(self, client=None, **kwargs):
+    def __init__(self, client=None, max_repairs=0, **kwargs):
         self.client = client or ChatClient(**kwargs)
+        self.max_repairs = max_repairs  # 0 = Algorithm 2 exactly (one proposal)
 
     @property
     def metadata(self):
-        return {"resolver": "llm", "model": self.client.model, "prompt_version": PROMPT_VERSION}
+        return {"resolver": "llm", "model": self.client.model, "prompt_version": PROMPT_VERSION, "max_repairs": self.max_repairs}
 
-    def propose(self, u, intention, definitions):
+    def propose(self, u, intention, definitions, feedback=None):
         messages = [{"role": "system", "content": RESOLVER_PROMPT + json.dumps(definitions, ensure_ascii=False)},
                     {"role": "user", "content": json.dumps({"input": u, "intention": intention}, ensure_ascii=False)}]
+        if feedback:
+            messages += [{"role": "assistant", "content": feedback["raw"]},
+                         {"role": "user", "content": f"Your previous proposal was rejected by the contract check with error {feedback['error']}. "
+                                                     "Return a corrected JSON object for the same input, following every rule above."}]
         raw, record = self.client.complete_json(messages, prompt_version=PROMPT_VERSION)
         return raw, {**self.metadata, **record}
 
@@ -271,10 +278,22 @@ def ground(interpretation, library, resolver):
         code = exc.args[0] if exc.args and isinstance(exc.args[0], str) else type(exc).__name__
         return done(FAILURE, diagnostics=[{"code": "RESOLVER_FAILURE:" + code}],
                     resolver=getattr(resolver, "metadata", {}))
-    try:
-        status, diagnostics = _contract_valid(z, intention, library)
-    except GroundingError as exc:
-        return done(FAILURE, diagnostics=[{"code": "CONTRACT_INVALID:" + str(exc)}], proposal=z)
+    repairs = 0
+    while True:
+        try:
+            status, diagnostics = _contract_valid(z, intention, library)
+            break
+        except GroundingError as exc:
+            if repairs >= getattr(resolver, "max_repairs", 0):
+                return done(FAILURE, diagnostics=[{"code": "CONTRACT_INVALID:" + str(exc)}], proposal=z)
+            repairs += 1
+            try:
+                raw, meta = resolver.propose(interpretation["input"], intention, definitions, feedback={"raw": raw, "error": str(exc)})
+                result["resolver"], result["raw_proposal"] = {**meta, "repairs": repairs}, raw
+                z = parse_json_object(raw)
+            except Exception as exc2:
+                code = exc2.args[0] if exc2.args and isinstance(exc2.args[0], str) else type(exc2).__name__
+                return done(FAILURE, diagnostics=[{"code": "RESOLVER_FAILURE:" + code}], resolver=getattr(resolver, "metadata", {}))
     result["proposal"] = z
     if status != "proposed":
         return done(status, diagnostics=diagnostics)

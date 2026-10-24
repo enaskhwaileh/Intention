@@ -104,6 +104,8 @@ def _load(path, split):
              and not f.name.lower().startswith(("dataset_info", "dataset_infos", "state", "readme"))]
     from collections import Counter
     print(f"{repo}: files by type {dict(Counter(f.suffix.lower() for f in files))}; e.g. {[str(f.relative_to(root)) for f in files[:6]]}")
+    top = [f for f in files if len(f.relative_to(root).parts) == 1 or f.relative_to(root).parts[0] == "data"]
+    files = top or files  # the dataset's own data files, not the raw databases shipped beside them
     with_split = [f for f in files if split and split.lower() in str(f.relative_to(root)).lower()]
     files = with_split or files
     for ext in (".parquet", ".jsonl", ".ndjson", ".json", ".csv"):  # one format only: the dataset's data files
@@ -230,7 +232,10 @@ def import_dataset(name, *, corpus_path=None, queries_path=None, out_corpus=None
     for entry in corpus_rows:
         db = str(_get(entry, "database_id", "database_name", "db_id", "dataset_name", default="db"))
         tid = str(_get(entry, "table_id", "table_name", "table_title", "id"))
-        header, body = _as_table(_get(entry, "table", "data", "table_content"))
+        raw_table = _get(entry, "table", "data", "table_content")
+        if not raw_table or tid == "None":
+            continue
+        header, body = _as_table(raw_table)
         if max_rows:
             body = body[:max_rows]
         path = out_corpus / "tables" / _slug(db) / f"{_slug(tid)}.csv"

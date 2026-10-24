@@ -1,0 +1,126 @@
+{
+ "environment": {
+  "python": "3.11.17",
+  "platform": "Linux-5.15.0-151-generic-x86_64-with-glibc2.35",
+  "processor": "x86_64",
+  "il_version": "1.0.0",
+  "il_sha256": "e357f3fba0c4440127d177177e4af8dcc967c1c17253a602fa8e7c9ba310dd68",
+  "corpus_id": "igbench-v1",
+  "tables": 3300,
+  "benchmark_sha256": "49c74c038397f1d3564be19518161f0981e366fb1c516a42e5fb31dafed03157",
+  "label_status": "draft_author_labels_unreviewed",
+  "benchmark": "igbench-v1-test",
+  "index": {
+   "bm25": {
+    "build_ms": 57.0,
+    "cache_hit": true,
+    "dense": null
+   }
+  },
+  "warm": false
+ },
+ "systems": [
+  {
+   "system": "ig:gold/gold:bm25",
+   "queries": 21,
+   "ndcg@10": 0.8569,
+   "ndcg@10|intention": 0.8535,
+   "p@5": 0.55,
+   "p@5|intention": 0.5368,
+   "p@10": 0.355,
+   "p@10|intention": 0.3526,
+   "r@1": 0.395,
+   "r@1|intention": 0.4026,
+   "r@5": 0.8286,
+   "r@5|intention": 0.8195,
+   "r@10": 0.9484,
+   "r@10|intention": 0.9457,
+   "mrr": 0.975,
+   "mrr|intention": 0.9737,
+   "useful@1": 0.95,
+   "useful@1|intention": 0.9474,
+   "topical_only@1": 0.0,
+   "topical_only@1|intention": 0.0,
+   "swap_accuracy": 0.8822,
+   "by_operation": {
+    "compare": {
+     "n": 8,
+     "ndcg@10": 0.8048,
+     "r@5": 0.8268
+    },
+    "explain": {
+     "n": 3,
+     "ndcg@10": 0.8328,
+     "r@5": 0.65
+    },
+    "monitor": {
+     "n": 5,
+     "ndcg@10": 0.8487,
+     "r@5": 0.9167
+    },
+    "predict": {
+     "n": 4,
+     "ndcg@10": 0.9184,
+     "r@5": 0.8125
+    }
+   },
+   "rq3_argument_f1": 1.0,
+   "rq3_binding_accuracy": 1.0,
+   "rq3_extraction_valid": 1.0,
+   "rq3_family": 1.0,
+   "rq3_grounding_status": 1.0,
+   "rq3_intention_presence": 1.0,
+   "rq3_scope_f1": 1.0,
+   "rq3_variant": 1.0,
+   "fallback_rate": 0.0,
+   "assessment_precision": 0.5761,
+   "assessment_recall": 0.7465,
+   "violated_but_useful": 3,
+   "timing": {
+    "interpreter_ms": {
+     "mean": 0.05,
+     "median": 0.049,
+     "p95": 0.058,
+     "max": 0.075
+    },
+    "context_matching_ms": {
+     "mean": 4.279,
+     "median": 3.195,
+     "p95": 6.226,
+     "max": 18.089
+    },
+    "grounder_ms": {
+     "mean": 0.754,
+     "median": 0.153,
+     "p95": 2.95,
+     "max": 3.028
+    },
+    "profiler_ms": {
+     "mean": 22.938,
+     "median": 21.974,
+     "p95": 35.115,
+     "max": 36.068
+    },
+    "aligner_ms": {
+     "mean": 431.592,
+     "median": 250.163,
+     "p95": 947.734,
+     "max": 1681.66
+    },
+    "ranking_ms": {
+     "mean": 0.087,
+     "median": 0.09,
+     "p95": 0.094,
+     "max": 0.095
+    },
+    "total_ms": {
+     "mean": 456.389,
+     "median": 273.891,
+     "p95": 987.088,
+     "max": 1705.92
+    }
+   },
+   "wall_seconds": 3.948
+  }
+ ]
+}

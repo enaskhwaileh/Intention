@@ -1,0 +1,170 @@
+[
+ {
+  "system": "ig:llm/llm:sbert+repair=1+rnorm=minmax",
+  "baseline": "ctx:sbert",
+  "metric": "ndcg@10",
+  "n": 36,
+  "mean_diff": 0.0037,
+  "p_value": 0.5853,
+  "ci95": [
+   -0.0081,
+   0.016
+  ],
+  "wins": 11,
+  "losses": 12
+ },
+ {
+  "system": "ig:llm/llm:sbert+repair=1+rnorm=minmax",
+  "baseline": "ctx:sbert",
+  "metric": "mrr",
+  "n": 35,
+  "mean_diff": 0.0,
+  "p_value": 1.0,
+  "ci95": [
+   0.0,
+   0.0
+  ],
+  "wins": 0,
+  "losses": 0
+ },
+ {
+  "system": "ig:llm/llm:sbert+repair=1+rnorm=minmax",
+  "baseline": "ctx:sbert",
+  "metric": "useful@1",
+  "n": 35,
+  "mean_diff": 0.0,
+  "p_value": 1.0,
+  "ci95": [
+   0.0,
+   0.0
+  ],
+  "wins": 0,
+  "losses": 0
+ },
+ {
+  "system": "ig:llm/llm:sbert+rnorm=minmax",
+  "baseline": "ctx:sbert",
+  "metric": "ndcg@10",
+  "n": 36,
+  "mean_diff": 0.0055,
+  "p_value": 0.3807,
+  "ci95": [
+   -0.0057,
+   0.0176
+  ],
+  "wins": 10,
+  "losses": 11
+ },
+ {
+  "system": "ig:llm/llm:sbert+rnorm=minmax",
+  "baseline": "ctx:sbert",
+  "metric": "mrr",
+  "n": 35,
+  "mean_diff": 0.0,
+  "p_value": 1.0,
+  "ci95": [
+   0.0,
+   0.0
+  ],
+  "wins": 0,
+  "losses": 0
+ },
+ {
+  "system": "ig:llm/llm:sbert+rnorm=minmax",
+  "baseline": "ctx:sbert",
+  "metric": "useful@1",
+  "n": 35,
+  "mean_diff": 0.0,
+  "p_value": 1.0,
+  "ci95": [
+   0.0,
+   0.0
+  ],
+  "wins": 0,
+  "losses": 0
+ },
+ {
+  "system": "ig:llm/llm:sbert",
+  "baseline": "ctx:sbert",
+  "metric": "ndcg@10",
+  "n": 36,
+  "mean_diff": -0.0558,
+  "p_value": 0.0193,
+  "ci95": [
+   -0.1133,
+   -0.0092
+  ],
+  "wins": 5,
+  "losses": 18
+ },
+ {
+  "system": "ig:llm/llm:sbert",
+  "baseline": "ctx:sbert",
+  "metric": "mrr",
+  "n": 35,
+  "mean_diff": -0.026,
+  "p_value": 1.0,
+  "ci95": [
+   -0.0779,
+   0.0
+  ],
+  "wins": 0,
+  "losses": 1
+ },
+ {
+  "system": "ig:llm/llm:sbert",
+  "baseline": "ctx:sbert",
+  "metric": "useful@1",
+  "n": 35,
+  "mean_diff": -0.0286,
+  "p_value": 1.0,
+  "ci95": [
+   -0.0857,
+   0.0
+  ],
+  "wins": 0,
+  "losses": 1
+ },
+ {
+  "system": "ig:llm/llm:sbert+repair=1",
+  "baseline": "ctx:sbert",
+  "metric": "ndcg@10",
+  "n": 36,
+  "mean_diff": -0.0576,
+  "p_value": 0.0149,
+  "ci95": [
+   -0.1152,
+   -0.0116
+  ],
+  "wins": 6,
+  "losses": 19
+ },
+ {
+  "system": "ig:llm/llm:sbert+repair=1",
+  "baseline": "ctx:sbert",
+  "metric": "mrr",
+  "n": 35,
+  "mean_diff": -0.026,
+  "p_value": 1.0,
+  "ci95": [
+   -0.0779,
+   0.0
+  ],
+  "wins": 0,
+  "losses": 1
+ },
+ {
+  "system": "ig:llm/llm:sbert+repair=1",
+  "baseline": "ctx:sbert",
+  "metric": "useful@1",
+  "n": 35,
+  "mean_diff": -0.0286,
+  "p_value": 1.0,
+  "ci95": [
+   -0.0857,
+   0.0
+  ],
+  "wins": 0,
+  "losses": 1
+ }
+]

@@ -33,7 +33,7 @@ def combine_product(r, a, lam=0.5):
 
 class Pipeline:
     def __init__(self, manifest, *, library=None, interpreter, resolver, matcher=None, context_method="bm25",
-                 k_candidates=50, k_out=10, alpha=0.5, combination="product", use_soft=True,
+                 k_candidates=50, k_out=10, alpha=0.5, combination="product", use_soft=True, r_norm="none",
                  binding_threshold=0.5, profile_cache=PROFILE_CACHE):
         self.manifest = manifest
         self.tables = {t["table_id"]: t for t in manifest["tables"]}
@@ -42,12 +42,13 @@ class Pipeline:
         self.matcher = matcher or ContextMatcher(manifest, context_method)
         self.k_candidates, self.k_out, self.alpha = k_candidates, k_out, alpha
         self.combination, self.use_soft, self.binding_threshold = combination, use_soft, binding_threshold
+        self.r_norm = r_norm  # "none": matcher score as is; "minmax": rescaled over the candidate list before F
         self.profile_cache = profile_cache
 
     def config(self):
         return {"il_version": il.version(self.library), "il_sha256": self.library["_sha256"],
                 "context_method": self.matcher.method, "dense_index": getattr(self.matcher, "dense_stats", None), "k_candidates": self.k_candidates, "k_out": self.k_out,
-                "alpha": self.alpha, "combination": self.combination, "use_soft": self.use_soft,
+                "alpha": self.alpha, "combination": self.combination, "use_soft": self.use_soft, "r_norm": self.r_norm,
                 "binding_threshold": self.binding_threshold, "profiler_version": profiler.PROFILER_VERSION,
                 "aligner_version": aligner.ALIGNER_VERSION,
                 "interpreter": getattr(self.interpreter, "metadata", {}), "resolver": getattr(self.resolver, "metadata", {})}
@@ -91,15 +92,19 @@ class Pipeline:
         # 6. Ranking
         t_rank = time.perf_counter()
         ranking = []
-        for tid, r in candidates:
+        lo, hi = (min(r for _, r in candidates), max(r for _, r in candidates)) if candidates else (0.0, 1.0)
+        for tid, r_raw in candidates:
+            r = r_raw
+            if self.r_norm == "minmax" and grounded:
+                r = (r_raw - lo) / (hi - lo) if hi > lo else 1.0
             a = assessments.get(tid)
             if a is None:
-                U, state, A = r, None, None
+                U, state, A = r_raw, None, None
             else:
                 A, state = a["A"], a["state"]
                 U = (combine_linear(r, A, self.alpha) if self.combination == "linear" else
                      combine_product(r, A, 1 - self.alpha) if self.combination == "product" else r)
-            ranking.append({"table_id": tid, "r": r, "A": A, "state": state, "U": round(U, 6)})
+            ranking.append({"table_id": tid, "r": r_raw, "A": A, "state": state, "U": round(U, 6)})
         if grounded and self.combination == "lexicographic":
             ranking.sort(key=lambda x: (STATE_ORDER[x["state"]], -x["A"], -x["r"], x["table_id"]))
         else:

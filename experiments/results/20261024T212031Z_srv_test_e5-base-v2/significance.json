@@ -1,0 +1,86 @@
+[
+ {
+  "system": "ig:rule/index:sbert",
+  "baseline": "ctx:sbert",
+  "metric": "ndcg@10",
+  "n": 21,
+  "mean_diff": -0.0595,
+  "p_value": 0.2394,
+  "ci95": [
+   -0.1485,
+   0.0174
+  ],
+  "wins": 11,
+  "losses": 8
+ },
+ {
+  "system": "ig:rule/index:sbert",
+  "baseline": "ctx:sbert",
+  "metric": "mrr",
+  "n": 20,
+  "mean_diff": -0.1026,
+  "p_value": 0.2509,
+  "ci95": [
+   -0.2359,
+   0.0
+  ],
+  "wins": 0,
+  "losses": 3
+ },
+ {
+  "system": "ig:rule/index:sbert",
+  "baseline": "ctx:sbert",
+  "metric": "useful@1",
+  "n": 20,
+  "mean_diff": -0.1,
+  "p_value": 0.4956,
+  "ci95": [
+   -0.25,
+   0.0
+  ],
+  "wins": 0,
+  "losses": 2
+ },
+ {
+  "system": "ig:gold/gold:sbert",
+  "baseline": "ctx:sbert",
+  "metric": "ndcg@10",
+  "n": 21,
+  "mean_diff": -0.0078,
+  "p_value": 0.7786,
+  "ci95": [
+   -0.0612,
+   0.0418
+  ],
+  "wins": 11,
+  "losses": 8
+ },
+ {
+  "system": "ig:gold/gold:sbert",
+  "baseline": "ctx:sbert",
+  "metric": "mrr",
+  "n": 20,
+  "mean_diff": -0.0417,
+  "p_value": 0.4992,
+  "ci95": [
+   -0.1083,
+   0.0
+  ],
+  "wins": 0,
+  "losses": 2
+ },
+ {
+  "system": "ig:gold/gold:sbert",
+  "baseline": "ctx:sbert",
+  "metric": "useful@1",
+  "n": 20,
+  "mean_diff": -0.05,
+  "p_value": 1.0,
+  "ci95": [
+   -0.15,
+   0.0
+  ],
+  "wins": 0,
+  "losses": 1
+ }
+]

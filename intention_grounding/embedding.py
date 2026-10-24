@@ -30,8 +30,18 @@ def prefixes_for(model):
 
 
 class SBERTEncoder:
-    def __init__(self, model=DEFAULT_MODEL, *, device="cpu", batch_size=64, query_prefix=None, passage_prefix=None):
+    def __init__(self, model=DEFAULT_MODEL, *, device=None, batch_size=64, query_prefix=None, passage_prefix=None):
+        import os
         from sentence_transformers import SentenceTransformer
+        if device is None:  # IG_DEVICE overrides; otherwise CUDA when available
+            device = os.environ.get("IG_DEVICE")
+        if device is None:
+            try:
+                import torch
+                device = "cuda" if torch.cuda.is_available() else "cpu"
+            except ImportError:
+                device = "cpu"
+        self.device = device
         self.model_name = model
         self.model = SentenceTransformer(model, device=device)
         qp, pp = prefixes_for(model)
@@ -43,7 +53,7 @@ class SBERTEncoder:
 
     @property
     def identity(self):
-        return {"encoder": "sbert", "model": self.model_name, "dim": self.dim, "max_tokens": self.max_tokens,
+        return {"encoder": "sbert", "model": self.model_name, "device": self.device, "dim": self.dim, "max_tokens": self.max_tokens,
                 "query_prefix": self.query_prefix, "passage_prefix": self.passage_prefix}
 
     def encode(self, texts, kind="passage"):

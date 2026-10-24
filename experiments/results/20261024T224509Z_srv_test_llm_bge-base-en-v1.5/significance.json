@@ -1,0 +1,86 @@
+[
+ {
+  "system": "ig:llm/llm:sbert+rnorm=minmax",
+  "baseline": "ctx:sbert",
+  "metric": "ndcg@10",
+  "n": 21,
+  "mean_diff": 0.0002,
+  "p_value": 0.9942,
+  "ci95": [
+   -0.028,
+   0.0302
+  ],
+  "wins": 5,
+  "losses": 7
+ },
+ {
+  "system": "ig:llm/llm:sbert+rnorm=minmax",
+  "baseline": "ctx:sbert",
+  "metric": "mrr",
+  "n": 20,
+  "mean_diff": -0.0083,
+  "p_value": 1.0,
+  "ci95": [
+   -0.025,
+   0.0
+  ],
+  "wins": 0,
+  "losses": 1
+ },
+ {
+  "system": "ig:llm/llm:sbert+rnorm=minmax",
+  "baseline": "ctx:sbert",
+  "metric": "useful@1",
+  "n": 20,
+  "mean_diff": 0.0,
+  "p_value": 1.0,
+  "ci95": [
+   0.0,
+   0.0
+  ],
+  "wins": 0,
+  "losses": 0
+ },
+ {
+  "system": "ig:llm/llm:sbert",
+  "baseline": "ctx:sbert",
+  "metric": "ndcg@10",
+  "n": 21,
+  "mean_diff": -0.0457,
+  "p_value": 0.3656,
+  "ci95": [
+   -0.1384,
+   0.0197
+  ],
+  "wins": 6,
+  "losses": 8
+ },
+ {
+  "system": "ig:llm/llm:sbert",
+  "baseline": "ctx:sbert",
+  "metric": "mrr",
+  "n": 20,
+  "mean_diff": -0.0538,
+  "p_value": 0.4926,
+  "ci95": [
+   -0.153,
+   0.0
+  ],
+  "wins": 0,
+  "losses": 2
+ },
+ {
+  "system": "ig:llm/llm:sbert",
+  "baseline": "ctx:sbert",
+  "metric": "useful@1",
+  "n": 20,
+  "mean_diff": -0.05,
+  "p_value": 1.0,
+  "ci95": [
+   -0.15,
+   0.0
+  ],
+  "wins": 0,
+  "losses": 1
+ }
+]
