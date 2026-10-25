@@ -7,6 +7,10 @@ Configuration (environment or intention_grounding/.env):
   IG_LLM_BASE_URL  default https://api.groq.com/openai/v1
   IG_LLM_API_KEY   falls back to GROQ_API_KEY
   IG_LLM_MODEL     falls back to GROQ_MODEL_ID
+  IG_LLM_TIMEOUT   seconds per call (default 120)
+
+A local server works the same way, e.g. vLLM on a GPU:
+  IG_LLM_BASE_URL=http://localhost:8765/v1 IG_LLM_API_KEY=EMPTY IG_LLM_MODEL=Qwen/Qwen2.5-14B-Instruct-AWQ
 
 Every call is cached under data/runtime/llm-cache/<sha256>.json, keyed by the
 model, prompt version and messages. Re-running an experiment therefore replays
@@ -51,13 +55,14 @@ def config():
 
 
 class ChatClient:
-    def __init__(self, *, model=None, temperature=0.0, max_tokens=2048, timeout=60.0,
+    def __init__(self, *, model=None, temperature=0.0, max_tokens=2048, timeout=None,
                  cache_dir=DEFAULT_CACHE, allow_live=True, base_url=None, api_key=None):
         cfg = config()
         self.model = model or cfg["model"]
         self.base_url = (base_url or cfg["base_url"]).rstrip("/")
         self._api_key = api_key if api_key is not None else cfg["api_key"]
-        self.temperature, self.max_tokens, self.timeout = temperature, max_tokens, timeout
+        self.temperature, self.max_tokens = temperature, max_tokens
+        self.timeout = float(timeout if timeout is not None else os.environ.get("IG_LLM_TIMEOUT", 120))
         self.cache_dir = Path(cache_dir) if cache_dir else None
         self.allow_live = allow_live
         self.calls = []  # per-call records: cache hit, latency, usage

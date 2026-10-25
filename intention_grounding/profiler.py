@@ -6,6 +6,7 @@ hash and profiler version. Profiles describe evidence only; they do not decide
 whether a table is useful for an intention (that is the Aligner's job).
 """
 import hashlib
+import os
 import json
 import math
 import re
@@ -68,7 +69,6 @@ class FrameCache:
         except UnicodeDecodeError:
             df = pd.read_csv(path, dtype=str, keep_default_na=False, encoding="latin-1")
         df.columns = [str(c) for c in df.columns]
-        df.attrs["_derived"] = {}
         self.items[path] = df
         if len(self.items) > self.capacity:
             self.items.popitem(last=False)
@@ -78,9 +78,19 @@ class FrameCache:
 FRAMES = FrameCache()
 
 
+_DERIVED = {}
+
+
 def derived(df, key, fn):
-    """Memoise per-table derived series (numeric parses, missing masks, dates)."""
-    store = df.attrs.setdefault("_derived", {})
+    """Memoise per-table derived series (numeric parses, missing masks, dates).
+
+    Kept outside df.attrs: pandas deep-copies attrs on every operation, so series cached there
+    are copied recursively and the cost explodes on wide tables."""
+    import weakref
+    store = _DERIVED.get(id(df))
+    if store is None:
+        store = _DERIVED[id(df)] = {}
+        weakref.finalize(df, _DERIVED.pop, id(df), None)
     if key not in store:
         store[key] = fn()
     return store[key]
@@ -275,7 +285,9 @@ def profile(record, *, cache_dir=None, frames=FRAMES):
     result["compute_ms"] = round((time.perf_counter() - start) * 1000, 3)
     if cache:
         cache.parent.mkdir(parents=True, exist_ok=True)
-        cache.write_text(json.dumps(result, ensure_ascii=False), encoding="utf-8")
+        tmp = cache.with_name(f"{cache.name}.{os.getpid()}.tmp")  # atomic: parallel workers may profile the same table
+        tmp.write_text(json.dumps(result, ensure_ascii=False), encoding="utf-8")
+        os.replace(tmp, cache)
     result["elapsed_ms"] = round((time.perf_counter() - start) * 1000, 3)
     return result
 

@@ -33,12 +33,29 @@ class LLMPathTests(unittest.TestCase):
                            {"id": "a3", "label": "predictor", "value": "age", "spans": ["age"]}], "scope": []}
         p = {"status": "proposed", "variant_id": "predict.classification", "bindings": {"target": ["a1"], "predictor": ["a2", "a3"]},
              "scope": [], "justification": "whether -> classification", "diagnostics": []}
-        client = FakeClient({"interpreter-v3.0": z, "grounder-v3.0": p})
+        from intention_grounding.grounder import PROMPT_VERSION as GV
+        from intention_grounding.interpreter.providers import PROMPT_VERSION as IV
+        client = FakeClient({IV: z, GV: p})
         r = interpret(u, LLMInterpreter(client=client), L["vocabulary"]).to_dict()
         self.assertEqual(r["status"], "extracted")
         self.assertEqual(r["provider"]["model"], "fake-model")
         g = ground(r, L, LLMResolver(client=client))
         self.assertEqual((g["status"], g["g_u"]["variant_id"]), ("grounded", "predict.classification"))
+
+    def test_validator_guided_repair(self):
+        from intention_grounding.interpreter.providers import PROMPT_VERSION as IV
+        u = "Predict whether a passenger survived"
+        bad = {"context_query": "passenger survival", "intention_expression": "Predict ... survived",
+               "arguments": [{"id": "a1", "label": "target", "value": "survived", "spans": ["survived"]}], "scope": []}
+        good = dict(bad, intention_expression="Predict")
+
+        class Seq(FakeClient):
+            def complete_json(self, messages, *, prompt_version):
+                rec = {"cache_hit": False, "model": "fake", "usage": None, "latency_ms": 1.0}
+                return json.dumps(good if len(messages) > 2 else bad), rec
+        self.assertEqual(interpret(u, LLMInterpreter(client=Seq({})), L["vocabulary"]).to_dict()["status"], "failure")
+        r = interpret(u, LLMInterpreter(client=Seq({}), max_repairs=1), L["vocabulary"]).to_dict()
+        self.assertEqual((r["status"], r["provider"]["repairs"]), ("extracted", 1))
 
     def test_messages_never_contain_tables(self):
         msgs = LLMInterpreter(client=FakeClient({})).messages("Compare wages", L["vocabulary"])

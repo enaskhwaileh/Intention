@@ -82,7 +82,10 @@ def parse_record(z):
 
 
 def interpret(u, provider, vocabulary, *, input_id="input"):
-    """Algorithm 1. One extraction attempt; failure falls back to q_u = u."""
+    """Algorithm 1. One extraction attempt; failure falls back to q_u = u.
+
+    A provider with max_repairs > 0 gets that many extra attempts, each told the validator's error
+    (an optional extension; max_repairs = 0 reproduces Algorithm 1)."""
     start = time.perf_counter()
     result = Interpretation(input_id=input_id, input=u, status=STATUS_FAILURE, context_query=u)
     try:
@@ -95,12 +98,25 @@ def interpret(u, provider, vocabulary, *, input_id="input"):
         result.provider = getattr(provider, "metadata", {})
         result.elapsed_ms = round((time.perf_counter() - start) * 1000, 3)
         return result
-    try:
-        z = validate_extraction(parse_json_object(raw), u, vocabulary)
-    except (ValueError, ExtractionError) as exc:
-        result.failure = "INVALID_EXTRACTION:" + str(exc)
-        result.elapsed_ms = round((time.perf_counter() - start) * 1000, 3)
-        return result
+    repairs = 0
+    while True:
+        try:
+            z = validate_extraction(parse_json_object(raw), u, vocabulary)
+            break
+        except (ValueError, ExtractionError) as exc:
+            if repairs >= getattr(provider, "max_repairs", 0):
+                result.failure = "INVALID_EXTRACTION:" + str(exc)
+                result.elapsed_ms = round((time.perf_counter() - start) * 1000, 3)
+                return result
+            repairs += 1
+            try:
+                raw, meta = provider.extract(u, vocabulary, feedback={"raw": raw, "error": str(exc)})
+            except Exception as exc2:
+                code = exc2.args[0] if exc2.args and isinstance(exc2.args[0], str) else type(exc2).__name__
+                result.failure = "PROVIDER_FAILURE:" + code
+                result.elapsed_ms = round((time.perf_counter() - start) * 1000, 3)
+                return result
+            result.provider, result.raw_response = {**meta, "repairs": repairs}, raw
     result.context_query = z["context_query"]
     if z["intention_expression"] is None:
         result.status = STATUS_NO_INTENTION

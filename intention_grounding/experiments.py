@@ -171,17 +171,71 @@ def make_system(name, manifest, library, queries, matchers, *, allow_live=False)
             opts[k] = v
     interp_name, res_name = spec.split("/")
     gi, gr = gold_providers(queries)
-    interp = {"gold": gi, "rule": RuleInterpreter(), "llm": LLMInterpreter(allow_live=allow_live)}[interp_name]
-    resolver = {"gold": gr, "index": IndexResolver(library), "llm": LLMResolver(allow_live=allow_live)}[res_name]
+    rep = int(opts.get("repair", 0))  # +repair=1: one validator-guided retry for LLM components
+    interp = {"gold": gi, "rule": RuleInterpreter(), "llm": LLMInterpreter(allow_live=allow_live, max_repairs=rep)}[interp_name]
+    resolver = {"gold": gr, "index": IndexResolver(library), "llm": LLMResolver(allow_live=allow_live, max_repairs=rep)}[res_name]
     pipe = Pipeline(manifest, library=library, interpreter=interp, resolver=resolver, matcher=matchers[method],
                     k_candidates=int(opts.get("k", 50)), alpha=float(opts.get("alpha", 0.5)),
                     combination=opts.get("comb", "product"), use_soft=opts.get("soft", "1") == "1",
-                    binding_threshold=float(opts.get("bind", 0.5)))
+                    binding_threshold=float(opts.get("bind", 0.5)), r_norm=opts.get("rnorm", "none"))
     return {"name": name, "kind": "ig", "pipeline": pipe}
 
 
-def run_system(system, queries, k=50):
+class _Precomputed:
+    """Context matcher replaying retrievals computed in the parent process (used by worker processes,
+    so GPU encoders and vector stores are only touched by the parent)."""
+    def __init__(self, matcher, table):
+        self.matcher, self.table, self.last_timing = matcher, table, {}
+
+    def retrieve(self, q, k):
+        hit = self.table.get((q, k))
+        if hit is None:
+            return self.matcher.retrieve(q, k)
+        ranked, ms, timing = hit
+        self.last_timing = timing
+        return ranked, ms
+
+    def __getattr__(self, name):  # method, dense_stats, ... of the real matcher
+        return getattr(self.matcher, name)
+
+
+_WORKER = {}
+
+
+def _work(item):
+    qid, text, interp = item
+    return qid, _WORKER["pipe"].run(text, input_id=qid, interpretation=interp)
+
+
+def run_system(system, queries, k=50, workers=1):
     rankings, reports = {}, {}
+    if system["kind"] == "ig" and workers > 1:
+        import multiprocessing as mp
+        from .interpreter import interpret
+        pipe = system["pipeline"]
+        interps, table = {}, {}
+        from concurrent.futures import ThreadPoolExecutor  # LLM interpreters are I/O bound: interpret in threads
+        with ThreadPoolExecutor(max_workers=min(workers, 16)) as ex:
+            done = ex.map(lambda qd: (qd["query_id"], interpret(qd["text"], pipe.interpreter, pipe.library["vocabulary"],
+                                                                 input_id=qd["query_id"]).to_dict()), queries)
+            interps = dict(done)
+        for qd in queries:  # context matching in the parent (may use the GPU)
+            it = interps[qd["query_id"]]
+            key = (it["context_query"], pipe.k_candidates)
+            if key not in table:
+                ranked, ms = pipe.matcher.retrieve(*key)
+                table[key] = (ranked, ms, dict(getattr(pipe.matcher, "last_timing", {}) or {}))
+        real = pipe.matcher
+        pipe.matcher = _Precomputed(real, table)
+        _WORKER["pipe"] = pipe
+        try:
+            with mp.get_context("fork").Pool(workers) as pool:
+                for qid, rep in pool.imap_unordered(_work, [(qd["query_id"], qd["text"], interps[qd["query_id"]]) for qd in queries], chunksize=4):
+                    rankings[qid] = [x["table_id"] for x in rep["ranking"]]
+                    reports[qid] = rep
+        finally:
+            pipe.matcher = real
+        return rankings, reports
     for qd in queries:
         if system["kind"] == "ctx":
             start = time.perf_counter()
@@ -263,6 +317,7 @@ def main(argv=None):
     parser.add_argument("--tag", default="", help="suffix for the results directory name")
     parser.add_argument("--corpus", type=Path, default=None, help="corpus manifest (default: IGBench)")
     parser.add_argument("--sbert-model", default=None, help="sentence-transformers model for sbert/hybrid (default all-MiniLM-L6-v2)")
+    parser.add_argument("--workers", type=int, default=1, help="worker processes for intention-grounding systems (queries in parallel)")
     parser.add_argument("--vector-store", default="chroma", choices=["chroma", "faiss", "numpy"], help="vector database for table embeddings")
     args = parser.parse_args(argv)
     bench = json.loads(args.benchmark.read_text())
@@ -284,9 +339,9 @@ def main(argv=None):
     for name in names:
         system = make_system(name, manifest, library, queries, matchers, allow_live=args.allow_live)
         if args.warm:
-            run_system(system, queries)
+            run_system(system, queries, workers=args.workers)
         start = time.perf_counter()
-        rankings, reports = run_system(system, queries)
+        rankings, reports = run_system(system, queries, workers=args.workers)
         wall = round(time.perf_counter() - start, 3)
         agg, per_query, swap = summarise(name, rankings, reports, queries)
         agg["wall_seconds"] = wall
