@@ -69,7 +69,6 @@ class FrameCache:
         except UnicodeDecodeError:
             df = pd.read_csv(path, dtype=str, keep_default_na=False, encoding="latin-1")
         df.columns = [str(c) for c in df.columns]
-        df.attrs["_derived"] = {}
         self.items[path] = df
         if len(self.items) > self.capacity:
             self.items.popitem(last=False)
@@ -79,9 +78,19 @@ class FrameCache:
 FRAMES = FrameCache()
 
 
+_DERIVED = {}
+
+
 def derived(df, key, fn):
-    """Memoise per-table derived series (numeric parses, missing masks, dates)."""
-    store = df.attrs.setdefault("_derived", {})
+    """Memoise per-table derived series (numeric parses, missing masks, dates).
+
+    Kept outside df.attrs: pandas deep-copies attrs on every operation, so series cached there
+    are copied recursively and the cost explodes on wide tables."""
+    import weakref
+    store = _DERIVED.get(id(df))
+    if store is None:
+        store = _DERIVED[id(df)] = {}
+        weakref.finalize(df, _DERIVED.pop, id(df), None)
     if key not in store:
         store[key] = fn()
     return store[key]

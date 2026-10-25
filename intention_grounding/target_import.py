@@ -249,6 +249,7 @@ def import_dataset(name, *, corpus_path=None, queries_path=None, out_corpus=None
             col_docs.setdefault(col, doc)
         table_id = f"{db}/{tid}"
         ids[(db, tid)] = table_id
+        ids.setdefault((db.lower(), tid.lower()), table_id)  # gold names in queries may differ in case (Spider)
         tables.append({"table_id": table_id, "title": f"{Path(tid).stem.replace('_', ' ')}" + (f" ({title_ctx})" if title_ctx else "") + f" [{db}]",
                        "description": description, "path": str(path.relative_to(ROOT)) if path.is_relative_to(ROOT) else str(path),
                        "sha256": hashlib.sha256(path.read_bytes()).hexdigest(), "bytes": path.stat().st_size,
@@ -269,7 +270,11 @@ def import_dataset(name, *, corpus_path=None, queries_path=None, out_corpus=None
             except ValueError:
                 pass
         gold = gold if isinstance(gold, list) else [gold]
-        labels = {ids[(db, str(t))]: 2 for t in gold if (db, str(t)) in ids}
+        labels = {}
+        for t in gold:
+            hit = ids.get((db, str(t))) or ids.get((db.lower(), str(t).lower()))
+            if hit:
+                labels[hit] = 2
         if not labels:
             continue
         answer = _get(row, "answer", "sql", "query_sql")

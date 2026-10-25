@@ -224,6 +224,55 @@ python -m intention_grounding.experiments --corpus data/corpus/target-bird-valid
   --benchmark benchmarks/target/bird-validation.json --systems target --context bm25,sbert --tag bird
 ```
 
+
+### Results on the server (rule Interpreter + index Grounder; binary gold-table relevance)
+
+Spider is imported with case-insensitive gold-table matching (TARGET's gold names differ in case from the corpus;
+without it only 775 of 2,147 questions kept a gold table). Tables are capped at 2,000 rows.
+
+| Dataset | System | R@1 | R@5 | R@10 | nDCG@10 | MRR | Δ nDCG@10 vs matcher (p) |
+|---|---|---|---|---|---|---|---|
+| BIRD dev (75 tables, 1,533 q.) | BM25 | 0.426 | 0.773 | 0.875 | 0.762 | 0.810 | |
+| | IG automatic · BM25 | 0.443 | 0.814 | 0.893 | 0.791 | 0.836 | +0.029 (p < 0.001; 437 wins / 95 losses) |
+| | SBERT MiniLM | 0.486 | 0.877 | 0.963 | 0.863 | 0.893 | |
+| | IG automatic · SBERT | 0.487 | 0.878 | 0.960 | 0.862 | 0.894 | −0.001 (p = 0.84) |
+| Spider test (180 tables, 2,147 q.) | BM25 | 0.564 | 0.902 | 0.952 | 0.840 | 0.841 | |
+| | IG automatic · BM25 | 0.635 | 0.919 | 0.955 | 0.882 | 0.895 | +0.042 (p < 0.001) |
+| | SBERT MiniLM | 0.603 | 0.923 | 0.963 | 0.870 | 0.871 | |
+| | IG automatic · SBERT | 0.607 | 0.925 | 0.968 | 0.875 | 0.874 | +0.005 (p = 0.016) |
+
+LLM configuration (Qwen2.5-14B, prompts v3.1, one repair):
+
+| Dataset | System | R@1 | R@5 | R@10 | nDCG@10 | MRR | Δ nDCG@10 vs matcher (p) |
+|---|---|---|---|---|---|---|---|
+| BIRD | IG LLM · BM25 | 0.451 | 0.800 | 0.880 | 0.787 | 0.841 | +0.025 (p < 0.001; 400 / 123) |
+| BIRD | IG LLM · SBERT | 0.483 | 0.875 | 0.960 | 0.857 | 0.888 | −0.006 (p = 0.008) |
+| Spider | IG LLM · BM25 | 0.593 | 0.910 | 0.953 | 0.858 | 0.864 | +0.018 (p < 0.001; 343 / 75) |
+| Spider | IG LLM · SBERT | 0.600 | 0.922 | 0.963 | 0.869 | 0.868 | −0.001 (p = 0.57) |
+
+With the LLM, BIRD questions end as: Interpreter failure 32%, extracted but outside the Library (unsupported) 30%,
+grounding contract failure 23%, grounded 8%, insufficient 4%, no intention 3% (`breakdown.json` in each run). Most
+TARGET questions are look-ups and counts that the Intention Library does not cover, so TARGET mainly tests that
+intention grounding does not hurt topical retrieval: it helps BM25 on both datasets (rule and LLM), is neutral for
+SBERT with the rule pipeline, and costs SBERT 0.006 on BIRD with the LLM pipeline.
+
+**Where the gain comes from.** The rule Interpreter recognises an intention in few TARGET questions (text-to-SQL
+questions such as "How many …", "What is the highest …"): only 75 of 1,533 BIRD and 85 of 2,147 Spider questions are
+grounded. Most of the BM25 gain comes from the context query q_u (operation words removed), which also helps
+questions without an intention (BIRD +0.018, Spider +0.048 nDCG@10 on no-intention questions). On grounded questions
+alignment adds +0.02 to +0.04 for both BM25 and SBERT. The LLM configuration (running) grounds many more questions;
+report the same decomposition for it.
+
+**Running-time bug found and fixed.** One BIRD question took 23 minutes in the Aligner: the Profiler memoised derived
+series inside `DataFrame.attrs`, which pandas deep-copies on every operation, recursively through the cached series, so
+the cost exploded on wide tables (74-column `cards`). The cache now lives outside `attrs`; rankings are identical
+(IGBench test re-run: 0.8569 / 0.8256). After the fix, the rule pipeline on BIRD takes 21 s for all 1,533 questions in one process (before: 23 min with 32
+workers); slowest question 1.0 s. IGBench test, one process, cold profile cache (per request, median / p95): context
+matching BM25 8 / 11 ms, SBERT 122 / 152 ms (query embedding 11 ms + vector search 104 ms in ChromaDB); Interpreter
+(rule) 0.4 ms; Grounder (index) 0.5 ms; Profiler 31–37 / 44–68 ms for 50 candidates; Aligner 210–330 / 1,000–1,150 ms;
+ranking 0.15 ms. LLM components (14B on one A100, 16 requests in flight): Interpreter ≈ 4 s, Grounder ≈ 2–3 s per
+request. Scaling (314 tables): profiling 1.33 s per million cells + 63 ms; alignment median below 1 ms per table.
+
 ## Reproduce
 
 ```sh
