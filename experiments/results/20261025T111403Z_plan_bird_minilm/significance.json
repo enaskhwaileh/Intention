@@ -1,0 +1,128 @@
+[
+ {
+  "system": "ig:rule/index:sbert+rnorm=minmax",
+  "baseline": "ctx:sbert",
+  "metric": "ndcg@10",
+  "n": 1533,
+  "mean_diff": -0.0003,
+  "p_value": 0.9029,
+  "ci95": [
+   -0.0045,
+   0.004
+  ],
+  "wins": 261,
+  "losses": 247
+ },
+ {
+  "system": "ig:rule/index:sbert+rnorm=minmax",
+  "baseline": "ctx:sbert",
+  "metric": "mrr",
+  "n": 1533,
+  "mean_diff": 0.0008,
+  "p_value": 0.8115,
+  "ci95": [
+   -0.0063,
+   0.0075
+  ],
+  "wins": 78,
+  "losses": 84
+ },
+ {
+  "system": "ig:rule/index:sbert+rnorm=minmax",
+  "baseline": "ctx:sbert",
+  "metric": "useful@1",
+  "n": 1533,
+  "mean_diff": 0.0039,
+  "p_value": 0.6151,
+  "ci95": [
+   -0.0091,
+   0.0157
+  ],
+  "wins": 52,
+  "losses": 46
+ },
+ {
+  "system": "ig:rule/index:sbert",
+  "baseline": "ctx:sbert",
+  "metric": "ndcg@10",
+  "n": 1533,
+  "mean_diff": -0.0005,
+  "p_value": 0.838,
+  "ci95": [
+   -0.0047,
+   0.0038
+  ],
+  "wins": 260,
+  "losses": 248
+ },
+ {
+  "system": "ig:rule/index:sbert",
+  "baseline": "ctx:sbert",
+  "metric": "mrr",
+  "n": 1533,
+  "mean_diff": 0.0007,
+  "p_value": 0.8355,
+  "ci95": [
+   -0.0064,
+   0.0074
+  ],
+  "wins": 77,
+  "losses": 84
+ },
+ {
+  "system": "ig:rule/index:sbert",
+  "baseline": "ctx:sbert",
+  "metric": "useful@1",
+  "n": 1533,
+  "mean_diff": 0.0039,
+  "p_value": 0.6151,
+  "ci95": [
+   -0.0091,
+   0.0157
+  ],
+  "wins": 52,
+  "losses": 46
+ },
+ {
+  "system": "ig:rule/index:sbert+align=0",
+  "baseline": "ctx:sbert",
+  "metric": "ndcg@10",
+  "n": 1533,
+  "mean_diff": -0.0007,
+  "p_value": 0.743,
+  "ci95": [
+   -0.0049,
+   0.0036
+  ],
+  "wins": 260,
+  "losses": 249
+ },
+ {
+  "system": "ig:rule/index:sbert+align=0",
+  "baseline": "ctx:sbert",
+  "metric": "mrr",
+  "n": 1533,
+  "mean_diff": 0.0,
+  "p_value": 0.9969,
+  "ci95": [
+   -0.007,
+   0.0066
+  ],
+  "wins": 75,
+  "losses": 86
+ },
+ {
+  "system": "ig:rule/index:sbert+align=0",
+  "baseline": "ctx:sbert",
+  "metric": "useful@1",
+  "n": 1533,
+  "mean_diff": 0.0033,
+  "p_value": 0.6861,
+  "ci95": [
+   -0.0091,
+   0.0157
+  ],
+  "wins": 51,
+  "losses": 46
+ }
+]

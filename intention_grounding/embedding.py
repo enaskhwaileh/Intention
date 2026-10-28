@@ -14,7 +14,11 @@ import hashlib
 import re
 import time
 
-PREFIXES = {
+TASK = "Given a data analysis request, retrieve tables that contain the data needed to carry it out"
+PREFIXES = {  # most specific first
+    "e5-large-instruct": (f"Instruct: {TASK}\nQuery: ", ""),
+    "e5-mistral": (f"Instruct: {TASK}\nQuery: ", ""),
+    "stella": ("Instruct: Given a web search query, retrieve relevant passages that answer the query.\nQuery: ", ""),
     "e5": ("query: ", "passage: "),
     "bge": ("Represent this sentence for searching relevant passages: ", ""),
 }
@@ -43,7 +47,16 @@ class SBERTEncoder:
                 device = "cpu"
         self.device = device
         self.model_name = model
-        self.model = SentenceTransformer(model, device=device)
+        extra = {}
+        if "stella" in model.lower():  # stella's custom code needs xformers unless memory-efficient attention is off (model card)
+            extra = {"trust_remote_code": True, "config_kwargs": {"use_memory_efficient_attention": False, "unpad_inputs": False}}
+        self.model = SentenceTransformer(model, device=device, **extra)
+        if extra:  # non-persistent position_ids buffers are left uninitialised by newer transformers: rebuild them
+            import torch
+            for mod in self.model.modules():
+                buf = getattr(mod, "position_ids", None)
+                if isinstance(buf, torch.Tensor) and buf.dtype in (torch.int64, torch.int32):
+                    mod.position_ids = torch.arange(buf.shape[-1], device=buf.device, dtype=buf.dtype).expand_as(buf).clone()
         qp, pp = prefixes_for(model)
         self.query_prefix = qp if query_prefix is None else query_prefix
         self.passage_prefix = pp if passage_prefix is None else passage_prefix

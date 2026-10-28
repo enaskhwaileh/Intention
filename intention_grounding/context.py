@@ -129,6 +129,44 @@ def table_chunks(table, columns_per_chunk=12, max_chunks=25, desc_chars=600, col
     return chunks
 
 
+TABERTA_ROWS = 10
+TABERTA_DEFAULT_MODEL = "/datastore-beast/servers/Enas/enas/tabert/TABERTA_OWL/models/PC_pairwise_contrastive"
+
+
+def taberta_chunks(table, rows=TABERTA_ROWS, view=None):
+    """TABERTA's table serializations (paper Section 3.1), one passage per table, first 10 rows:
+      full   [DB]<db> [TABLE]<t> [SCHEMA]<c1>,<c2>,... [ROWS]<r1 values>|<r2 values>|...
+      row    [TABLE]<t> [ROWS][ROW] c1:v11 | c2:v12 [ROW] c1:v21 | ...      (PC model)
+      schema [TABLE]<t> [SCHEMA]<c1>,<c2>,...
+    The encoder truncates at its token limit (256). IG_TABERTA_VIEW selects the view (default full)."""
+    import csv as _csv
+    import os
+    view = view or os.environ.get("IG_TABERTA_VIEW", "full")
+    src = table.get("source") or {}
+    db = src.get("database_id") or table.get("source_family") or ""
+    name = src.get("table_id") or table.get("title") or table["table_id"]
+    cols = [c["name"] for c in table.get("columns", [])]
+    body = []
+    path = table.get("abs_path") or table.get("path")
+    if path and view != "schema":
+        try:
+            with open(path, newline="", encoding="utf-8", errors="replace") as f:
+                reader = _csv.reader(f)
+                header = next(reader, [])
+                cols = cols or header
+                for n, row in enumerate(reader):
+                    if n >= rows:
+                        break
+                    body.append(row)
+        except OSError:
+            pass
+    if view == "schema":
+        return [f"[TABLE]{name} [SCHEMA]{','.join(cols)}"]
+    if view == "row":
+        return [f"[TABLE]{name} [ROWS]" + " ".join("[ROW] " + " | ".join(f"{c}:{v}" for c, v in zip(cols, r)) for r in body)]
+    return [f"[DB]{db} [TABLE]{name} [SCHEMA]{','.join(cols)} [ROWS]{'|'.join(','.join(r) for r in body) or 'N/A'}"]
+
+
 class DenseIndex:
     """Dense context matching: tables embedded with an encoder and stored in a vector database.
 
@@ -138,9 +176,11 @@ class DenseIndex:
     name = "sbert"
     CHUNKING = "title-description+column-groups-12-v1"
 
-    def __init__(self, manifest, ids, encoder, backend="chroma", root=None, batch=256):
+    def __init__(self, manifest, ids, encoder, backend="chroma", root=None, batch=256, chunker=None, chunking=None):
         from . import vectorstore
         self.ids, self.encoder = ids, encoder
+        self.chunker = chunker or table_chunks
+        self.CHUNKING = chunking or self.CHUNKING
         self.pos = {t: i for i, t in enumerate(ids)}
         ident = encoder.identity
         slug = re.sub(r"[^A-Za-z0-9]+", "-", ident["model"]).strip("-")[-30:]
@@ -154,7 +194,7 @@ class DenseIndex:
         start = time.perf_counter()
         wanted = {}
         for t in manifest["tables"]:
-            for n, text in enumerate(table_chunks(t)):
+            for n, text in enumerate(self.chunker(t)):
                 h = hashlib.sha256(text.encode()).hexdigest()[:16]
                 wanted[f"{t['table_id']}::{n}"] = (t["table_id"], text, h)
         existing = self.store.metadata()
@@ -214,7 +254,17 @@ class ContextMatcher:
         self.dense_stats = None
         start = time.perf_counter()
         self.cache_hit = False
-        if method in ("sbert", "hybrid"):
+        if method == "taberta":  # TABERTA (structure-aware table embeddings; default: PC model, IG_TABERTA_MODEL overrides)
+            import os
+            if encoder is None:
+                from .embedding import SBERTEncoder
+                encoder = SBERTEncoder(os.environ.get("IG_TABERTA_MODEL", TABERTA_DEFAULT_MODEL))
+            dense = DenseIndex(manifest, self.ids, encoder, backend=vector_store, root=vector_root,
+                               chunker=taberta_chunks, chunking=f"taberta-{os.environ.get('IG_TABERTA_VIEW', 'full')}-rows{TABERTA_ROWS}-v2")
+            self.dense_stats = dense.stats
+            self.cache_hit = dense.stats["embedded"] == 0
+            self.index = dense
+        elif method in ("sbert", "hybrid"):
             if encoder is None:
                 from .embedding import DEFAULT_MODEL, SBERTEncoder
                 encoder = SBERTEncoder(sbert_model or DEFAULT_MODEL)

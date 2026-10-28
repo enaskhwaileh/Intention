@@ -1,0 +1,118 @@
+{
+ "ig:llm/llm:sbert": {
+  "extracted/grounded": {
+   "n": 13,
+   "share": 0.619,
+   "mean_delta_ndcg@10": -0.1103,
+   "contribution": -0.0683
+  },
+  "failure/not_attempted": {
+   "n": 5,
+   "share": 0.2381,
+   "mean_delta_ndcg@10": 0.0,
+   "contribution": 0.0
+  },
+  "extracted/insufficient": {
+   "n": 1,
+   "share": 0.0476,
+   "mean_delta_ndcg@10": -0.0475,
+   "contribution": -0.0023
+  },
+  "no_intention/not_attempted": {
+   "n": 1,
+   "share": 0.0476,
+   "mean_delta_ndcg@10": -0.1816,
+   "contribution": -0.0086
+  },
+  "extracted/failure": {
+   "n": 1,
+   "share": 0.0476,
+   "mean_delta_ndcg@10": -0.1697,
+   "contribution": -0.0081
+  }
+ },
+ "ig:llm/llm:sbert+repair=1": {
+  "extracted/grounded": {
+   "n": 17,
+   "share": 0.8095,
+   "mean_delta_ndcg@10": -0.0828,
+   "contribution": -0.067
+  },
+  "failure/not_attempted": {
+   "n": 1,
+   "share": 0.0476,
+   "mean_delta_ndcg@10": 0.0,
+   "contribution": 0.0
+  },
+  "extracted/insufficient": {
+   "n": 1,
+   "share": 0.0476,
+   "mean_delta_ndcg@10": -0.0475,
+   "contribution": -0.0023
+  },
+  "no_intention/not_attempted": {
+   "n": 1,
+   "share": 0.0476,
+   "mean_delta_ndcg@10": -0.1816,
+   "contribution": -0.0086
+  },
+  "extracted/failure": {
+   "n": 1,
+   "share": 0.0476,
+   "mean_delta_ndcg@10": -0.1697,
+   "contribution": -0.0081
+  }
+ },
+ "ig:llm/llm:sbert+repair=1+align=0": {
+  "extracted/disabled": {
+   "n": 19,
+   "share": 0.9048,
+   "mean_delta_ndcg@10": -0.0037,
+   "contribution": -0.0034
+  },
+  "failure/disabled": {
+   "n": 1,
+   "share": 0.0476,
+   "mean_delta_ndcg@10": 0.0,
+   "contribution": 0.0
+  },
+  "no_intention/disabled": {
+   "n": 1,
+   "share": 0.0476,
+   "mean_delta_ndcg@10": -0.1816,
+   "contribution": -0.0086
+  }
+ },
+ "ig:llm/llm:sbert+repair=1+rnorm=minmax": {
+  "extracted/grounded": {
+   "n": 17,
+   "share": 0.8095,
+   "mean_delta_ndcg@10": 0.0309,
+   "contribution": 0.025
+  },
+  "failure/not_attempted": {
+   "n": 1,
+   "share": 0.0476,
+   "mean_delta_ndcg@10": 0.0,
+   "contribution": 0.0
+  },
+  "extracted/insufficient": {
+   "n": 1,
+   "share": 0.0476,
+   "mean_delta_ndcg@10": -0.0475,
+   "contribution": -0.0023
+  },
+  "no_intention/not_attempted": {
+   "n": 1,
+   "share": 0.0476,
+   "mean_delta_ndcg@10": -0.1816,
+   "contribution": -0.0086
+  },
+  "extracted/failure": {
+   "n": 1,
+   "share": 0.0476,
+   "mean_delta_ndcg@10": -0.1697,
+   "contribution": -0.0081
+  }
+ }
+}

@@ -1,0 +1,506 @@
+[
+ {
+  "system": "ig:gold/gold:bm25+alpha=1.0",
+  "baseline": "ctx:bm25",
+  "metric": "ndcg@10",
+  "n": 21,
+  "mean_diff": -0.0613,
+  "p_value": 0.2984,
+  "ci95": [
+   -0.1669,
+   0.029
+  ],
+  "wins": 8,
+  "losses": 10
+ },
+ {
+  "system": "ig:gold/gold:bm25+alpha=1.0",
+  "baseline": "ctx:bm25",
+  "metric": "mrr",
+  "n": 20,
+  "mean_diff": -0.0091,
+  "p_value": 1.0,
+  "ci95": [
+   -0.18,
+   0.15
+  ],
+  "wins": 3,
+  "losses": 2
+ },
+ {
+  "system": "ig:gold/gold:bm25+alpha=1.0",
+  "baseline": "ctx:bm25",
+  "metric": "useful@1",
+  "n": 20,
+  "mean_diff": 0.05,
+  "p_value": 1.0,
+  "ci95": [
+   -0.15,
+   0.3
+  ],
+  "wins": 3,
+  "losses": 2
+ },
+ {
+  "system": "ig:gold/gold:bm25+comb=linear",
+  "baseline": "ctx:bm25",
+  "metric": "ndcg@10",
+  "n": 21,
+  "mean_diff": -0.0209,
+  "p_value": 0.6292,
+  "ci95": [
+   -0.099,
+   0.0495
+  ],
+  "wins": 9,
+  "losses": 8
+ },
+ {
+  "system": "ig:gold/gold:bm25+comb=linear",
+  "baseline": "ctx:bm25",
+  "metric": "mrr",
+  "n": 20,
+  "mean_diff": 0.0063,
+  "p_value": 1.0,
+  "ci95": [
+   -0.1437,
+   0.15
+  ],
+  "wins": 3,
+  "losses": 2
+ },
+ {
+  "system": "ig:gold/gold:bm25+comb=linear",
+  "baseline": "ctx:bm25",
+  "metric": "useful@1",
+  "n": 20,
+  "mean_diff": 0.05,
+  "p_value": 1.0,
+  "ci95": [
+   -0.15,
+   0.3
+  ],
+  "wins": 3,
+  "losses": 2
+ },
+ {
+  "system": "ig:gold/gold:bm25+k=100",
+  "baseline": "ctx:bm25",
+  "metric": "ndcg@10",
+  "n": 21,
+  "mean_diff": 0.0272,
+  "p_value": 0.2467,
+  "ci95": [
+   -0.0177,
+   0.0672
+  ],
+  "wins": 11,
+  "losses": 5
+ },
+ {
+  "system": "ig:gold/gold:bm25+k=100",
+  "baseline": "ctx:bm25",
+  "metric": "mrr",
+  "n": 20,
+  "mean_diff": 0.0583,
+  "p_value": 0.498,
+  "ci95": [
+   -0.0417,
+   0.175
+  ],
+  "wins": 3,
+  "losses": 1
+ },
+ {
+  "system": "ig:gold/gold:bm25+k=100",
+  "baseline": "ctx:bm25",
+  "metric": "useful@1",
+  "n": 20,
+  "mean_diff": 0.1,
+  "p_value": 0.6247,
+  "ci95": [
+   -0.1,
+   0.3
+  ],
+  "wins": 3,
+  "losses": 1
+ },
+ {
+  "system": "ig:gold/index:bm25",
+  "baseline": "ctx:bm25",
+  "metric": "ndcg@10",
+  "n": 21,
+  "mean_diff": 0.0175,
+  "p_value": 0.4921,
+  "ci95": [
+   -0.0315,
+   0.0637
+  ],
+  "wins": 11,
+  "losses": 6
+ },
+ {
+  "system": "ig:gold/index:bm25",
+  "baseline": "ctx:bm25",
+  "metric": "mrr",
+  "n": 20,
+  "mean_diff": 0.0333,
+  "p_value": 0.7482,
+  "ci95": [
+   -0.075,
+   0.1583
+  ],
+  "wins": 3,
+  "losses": 2
+ },
+ {
+  "system": "ig:gold/index:bm25",
+  "baseline": "ctx:bm25",
+  "metric": "useful@1",
+  "n": 20,
+  "mean_diff": 0.05,
+  "p_value": 1.0,
+  "ci95": [
+   -0.15,
+   0.3
+  ],
+  "wins": 3,
+  "losses": 2
+ },
+ {
+  "system": "ig:gold/gold:bm25+k=20",
+  "baseline": "ctx:bm25",
+  "metric": "ndcg@10",
+  "n": 21,
+  "mean_diff": 0.0317,
+  "p_value": 0.1859,
+  "ci95": [
+   -0.013,
+   0.0722
+  ],
+  "wins": 12,
+  "losses": 4
+ },
+ {
+  "system": "ig:gold/gold:bm25+k=20",
+  "baseline": "ctx:bm25",
+  "metric": "mrr",
+  "n": 20,
+  "mean_diff": 0.0583,
+  "p_value": 0.498,
+  "ci95": [
+   -0.0417,
+   0.175
+  ],
+  "wins": 3,
+  "losses": 1
+ },
+ {
+  "system": "ig:gold/gold:bm25+k=20",
+  "baseline": "ctx:bm25",
+  "metric": "useful@1",
+  "n": 20,
+  "mean_diff": 0.1,
+  "p_value": 0.6247,
+  "ci95": [
+   -0.1,
+   0.3
+  ],
+  "wins": 3,
+  "losses": 1
+ },
+ {
+  "system": "ig:gold/gold:bm25+comb=lexicographic",
+  "baseline": "ctx:bm25",
+  "metric": "ndcg@10",
+  "n": 21,
+  "mean_diff": -0.0823,
+  "p_value": 0.1331,
+  "ci95": [
+   -0.1826,
+   0.0075
+  ],
+  "wins": 7,
+  "losses": 11
+ },
+ {
+  "system": "ig:gold/gold:bm25+comb=lexicographic",
+  "baseline": "ctx:bm25",
+  "metric": "mrr",
+  "n": 20,
+  "mean_diff": -0.005,
+  "p_value": 1.0,
+  "ci95": [
+   -0.1717,
+   0.15
+  ],
+  "wins": 3,
+  "losses": 2
+ },
+ {
+  "system": "ig:gold/gold:bm25+comb=lexicographic",
+  "baseline": "ctx:bm25",
+  "metric": "useful@1",
+  "n": 20,
+  "mean_diff": 0.05,
+  "p_value": 1.0,
+  "ci95": [
+   -0.15,
+   0.3
+  ],
+  "wins": 3,
+  "losses": 2
+ },
+ {
+  "system": "ig:gold/gold:bm25+alpha=0.75",
+  "baseline": "ctx:bm25",
+  "metric": "ndcg@10",
+  "n": 21,
+  "mean_diff": -0.0191,
+  "p_value": 0.6396,
+  "ci95": [
+   -0.0928,
+   0.0508
+  ],
+  "wins": 9,
+  "losses": 8
+ },
+ {
+  "system": "ig:gold/gold:bm25+alpha=0.75",
+  "baseline": "ctx:bm25",
+  "metric": "mrr",
+  "n": 20,
+  "mean_diff": 0.01,
+  "p_value": 1.0,
+  "ci95": [
+   -0.1367,
+   0.15
+  ],
+  "wins": 3,
+  "losses": 2
+ },
+ {
+  "system": "ig:gold/gold:bm25+alpha=0.75",
+  "baseline": "ctx:bm25",
+  "metric": "useful@1",
+  "n": 20,
+  "mean_diff": 0.05,
+  "p_value": 1.0,
+  "ci95": [
+   -0.15,
+   0.3
+  ],
+  "wins": 3,
+  "losses": 2
+ },
+ {
+  "system": "ig:gold/gold:bm25+soft=0",
+  "baseline": "ctx:bm25",
+  "metric": "ndcg@10",
+  "n": 21,
+  "mean_diff": 0.0247,
+  "p_value": 0.2938,
+  "ci95": [
+   -0.0193,
+   0.0657
+  ],
+  "wins": 11,
+  "losses": 5
+ },
+ {
+  "system": "ig:gold/gold:bm25+soft=0",
+  "baseline": "ctx:bm25",
+  "metric": "mrr",
+  "n": 20,
+  "mean_diff": 0.0583,
+  "p_value": 0.498,
+  "ci95": [
+   -0.0417,
+   0.175
+  ],
+  "wins": 3,
+  "losses": 1
+ },
+ {
+  "system": "ig:gold/gold:bm25+soft=0",
+  "baseline": "ctx:bm25",
+  "metric": "useful@1",
+  "n": 20,
+  "mean_diff": 0.1,
+  "p_value": 0.6247,
+  "ci95": [
+   -0.1,
+   0.3
+  ],
+  "wins": 3,
+  "losses": 1
+ },
+ {
+  "system": "ig:gold/gold:bm25+alpha=0.25",
+  "baseline": "ctx:bm25",
+  "metric": "ndcg@10",
+  "n": 21,
+  "mean_diff": 0.0308,
+  "p_value": 0.1974,
+  "ci95": [
+   -0.0134,
+   0.072
+  ],
+  "wins": 11,
+  "losses": 4
+ },
+ {
+  "system": "ig:gold/gold:bm25+alpha=0.25",
+  "baseline": "ctx:bm25",
+  "metric": "mrr",
+  "n": 20,
+  "mean_diff": 0.0583,
+  "p_value": 0.498,
+  "ci95": [
+   -0.0417,
+   0.175
+  ],
+  "wins": 3,
+  "losses": 1
+ },
+ {
+  "system": "ig:gold/gold:bm25+alpha=0.25",
+  "baseline": "ctx:bm25",
+  "metric": "useful@1",
+  "n": 20,
+  "mean_diff": 0.1,
+  "p_value": 0.6247,
+  "ci95": [
+   -0.1,
+   0.3
+  ],
+  "wins": 3,
+  "losses": 1
+ },
+ {
+  "system": "ig:gold/gold:bm25",
+  "baseline": "ctx:bm25",
+  "metric": "ndcg@10",
+  "n": 21,
+  "mean_diff": 0.0272,
+  "p_value": 0.2467,
+  "ci95": [
+   -0.0177,
+   0.0672
+  ],
+  "wins": 11,
+  "losses": 5
+ },
+ {
+  "system": "ig:gold/gold:bm25",
+  "baseline": "ctx:bm25",
+  "metric": "mrr",
+  "n": 20,
+  "mean_diff": 0.0583,
+  "p_value": 0.498,
+  "ci95": [
+   -0.0417,
+   0.175
+  ],
+  "wins": 3,
+  "losses": 1
+ },
+ {
+  "system": "ig:gold/gold:bm25",
+  "baseline": "ctx:bm25",
+  "metric": "useful@1",
+  "n": 20,
+  "mean_diff": 0.1,
+  "p_value": 0.6247,
+  "ci95": [
+   -0.1,
+   0.3
+  ],
+  "wins": 3,
+  "losses": 1
+ },
+ {
+  "system": "ig:gold/gold:bm25+bind=0.7",
+  "baseline": "ctx:bm25",
+  "metric": "ndcg@10",
+  "n": 21,
+  "mean_diff": 0.0448,
+  "p_value": 0.0043,
+  "ci95": [
+   0.0166,
+   0.0762
+  ],
+  "wins": 12,
+  "losses": 2
+ },
+ {
+  "system": "ig:gold/gold:bm25+bind=0.7",
+  "baseline": "ctx:bm25",
+  "metric": "mrr",
+  "n": 20,
+  "mean_diff": 0.0833,
+  "p_value": 0.2477,
+  "ci95": [
+   0.0,
+   0.1833
+  ],
+  "wins": 3,
+  "losses": 0
+ },
+ {
+  "system": "ig:gold/gold:bm25+bind=0.7",
+  "baseline": "ctx:bm25",
+  "metric": "useful@1",
+  "n": 20,
+  "mean_diff": 0.15,
+  "p_value": 0.2477,
+  "ci95": [
+   0.0,
+   0.35
+  ],
+  "wins": 3,
+  "losses": 0
+ },
+ {
+  "system": "ig:rule/gold:bm25",
+  "baseline": "ctx:bm25",
+  "metric": "ndcg@10",
+  "n": 21,
+  "mean_diff": 0.0002,
+  "p_value": 0.9786,
+  "ci95": [
+   -0.0207,
+   0.0174
+  ],
+  "wins": 6,
+  "losses": 4
+ },
+ {
+  "system": "ig:rule/gold:bm25",
+  "baseline": "ctx:bm25",
+  "metric": "mrr",
+  "n": 20,
+  "mean_diff": -0.025,
+  "p_value": 1.0,
+  "ci95": [
+   -0.125,
+   0.05
+  ],
+  "wins": 1,
+  "losses": 2
+ },
+ {
+  "system": "ig:rule/gold:bm25",
+  "baseline": "ctx:bm25",
+  "metric": "useful@1",
+  "n": 20,
+  "mean_diff": -0.05,
+  "p_value": 1.0,
+  "ci95": [
+   -0.25,
+   0.1
+  ],
+  "wins": 1,
+  "losses": 2
+ }
+]

@@ -179,15 +179,18 @@ def _contract_valid(z, intention, library):
     for role, refs in z["bindings"].items():
         contract = variant["roles"].get(role)
         if contract is None:
-            raise GroundingError("UNKNOWN_ROLE:" + str(role))
+            raise GroundingError(f"UNKNOWN_ROLE:{role}: roles of {z['variant_id']} are {sorted(variant['roles'])}")
         if not isinstance(refs, list) or not refs:
-            raise GroundingError("EMPTY_BINDING:" + role)
+            raise GroundingError(f"EMPTY_BINDING:{role}: leave out roles without an extracted entry (or return \"insufficient\" if the role is required)")
         for ref in refs:
+            if not isinstance(ref, str):
+                raise GroundingError(f"REFERENCE_FORMAT:{role}: each binding is a list of entry id strings such as [\"a1\"]")
             entry = entries.get(ref)
             if entry is None:
-                raise GroundingError("UNKNOWN_REFERENCE:" + str(ref))
+                raise GroundingError(f"UNKNOWN_REFERENCE:{ref}: bindings must list ids of extracted arguments {sorted(entries)}, never values; "
+                                     "if no extracted argument fits a required role, return \"insufficient\"")
             if entry["label"] not in contract["labels"]:
-                raise GroundingError(f"LABEL_NOT_ADMITTED:{role}:{entry['label']}")
+                raise GroundingError(f"LABEL_NOT_ADMITTED:{role}:{entry['label']}: role {role} admits entries labelled {contract['labels']}")
         if len(refs) < contract["min"] or (contract["max"] is not None and len(refs) > contract["max"]):
             raise GroundingError("CARDINALITY:" + role)
         admissible = contract.get("admissible")
@@ -197,7 +200,7 @@ def _contract_valid(z, intention, library):
                 if not any(term in value for term in admissible):
                     return UNSUPPORTED, [{"code": "INADMISSIBLE_VALUE", "role": role, "entry_refs": [ref]}]
     if set(z["scope"]) != set(scope_entries):
-        raise GroundingError("SCOPE_NOT_PRESERVED")
+        raise GroundingError(f"SCOPE_NOT_PRESERVED: \"scope\" must list exactly the extracted scope ids {sorted(scope_entries)}")
     missing = [r for r, c in variant["roles"].items() if c["required"] and r not in z["bindings"]]
     for group in variant.get("requires_one_of", []):
         if not any(r in z["bindings"] for r in group):
@@ -283,7 +286,9 @@ def ground(interpretation, library, resolver):
         try:
             status, diagnostics = _contract_valid(z, intention, library)
             break
-        except GroundingError as exc:
+        except (GroundingError, TypeError, KeyError, AttributeError, ValueError) as exc:
+            if not isinstance(exc, GroundingError):  # malformed proposal of an unexpected shape
+                exc = GroundingError(f"MALFORMED_PROPOSAL:{type(exc).__name__}: follow the JSON schema exactly")
             if repairs >= getattr(resolver, "max_repairs", 0):
                 return done(FAILURE, diagnostics=[{"code": "CONTRACT_INVALID:" + str(exc)}], proposal=z)
             repairs += 1

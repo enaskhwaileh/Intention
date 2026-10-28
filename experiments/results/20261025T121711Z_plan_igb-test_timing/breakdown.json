@@ -1,0 +1,42 @@
+{
+ "ig:gold/gold:bm25": {
+  "extracted/grounded": {
+   "n": 19,
+   "share": 0.9048,
+   "mean_delta_ndcg@10": 0.0301,
+   "contribution": 0.0272
+  },
+  "extracted/insufficient": {
+   "n": 1,
+   "share": 0.0476,
+   "mean_delta_ndcg@10": 0.0,
+   "contribution": 0.0
+  },
+  "no_intention/not_attempted": {
+   "n": 1,
+   "share": 0.0476,
+   "mean_delta_ndcg@10": 0.0,
+   "contribution": 0.0
+  }
+ },
+ "ig:rule/index:bm25": {
+  "extracted/grounded": {
+   "n": 19,
+   "share": 0.9048,
+   "mean_delta_ndcg@10": -0.0028,
+   "contribution": -0.0025
+  },
+  "extracted/insufficient": {
+   "n": 1,
+   "share": 0.0476,
+   "mean_delta_ndcg@10": 0.0,
+   "contribution": 0.0
+  },
+  "no_intention/not_attempted": {
+   "n": 1,
+   "share": 0.0476,
+   "mean_delta_ndcg@10": 0.0,
+   "contribution": 0.0
+  }
+ }
+}

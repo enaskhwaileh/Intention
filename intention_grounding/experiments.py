@@ -162,6 +162,21 @@ def make_system(name, manifest, library, queries, matchers, *, allow_live=False)
     kind, _, rest = name.partition(":")
     if kind == "ctx":
         return {"name": name, "kind": "ctx", "matcher": matchers[rest]}
+    if kind == "rerank":  # rerank:<llm|ce>:<method>[+k=20] -- reranking baselines over the matcher's candidates
+        from .rerank import CrossEncoderReranker, LLMReranker
+        how, _, method = rest.partition(":")
+        method, *flags = method.split("+")
+        opts = dict(f.partition("=")[::2] for f in flags)
+        if how in ("llmig", "llmgold"):  # combination: LLM reranker + intention grounding's verdicts as evidence
+            from .rerank import IGLLMReranker
+            gi, gr = gold_providers(queries)
+            interp = gi if how == "llmgold" else LLMInterpreter(allow_live=allow_live, max_repairs=1)
+            res = gr if how == "llmgold" else LLMResolver(allow_live=allow_live, max_repairs=1)
+            pipe = Pipeline(manifest, library=library, interpreter=interp, resolver=res, matcher=matchers[method], r_norm="minmax")
+            return {"name": name, "kind": "rerank", "reranker": IGLLMReranker(manifest, pipe, k=int(opts.get("k", 20)), allow_live=allow_live)}
+        cls = LLMReranker if how == "llm" else CrossEncoderReranker
+        kw = {"allow_live": allow_live} if how == "llm" else {}
+        return {"name": name, "kind": "rerank", "reranker": cls(manifest, matchers[method], k=int(opts.get("k", 20)), **kw)}
     spec, _, method = rest.rpartition(":")
     opts = {}
     if "+" in method:
@@ -177,7 +192,8 @@ def make_system(name, manifest, library, queries, matchers, *, allow_live=False)
     pipe = Pipeline(manifest, library=library, interpreter=interp, resolver=resolver, matcher=matchers[method],
                     k_candidates=int(opts.get("k", 50)), alpha=float(opts.get("alpha", 0.5)),
                     combination=opts.get("comb", "product"), use_soft=opts.get("soft", "1") == "1",
-                    binding_threshold=float(opts.get("bind", 0.5)), r_norm=opts.get("rnorm", "none"))
+                    binding_threshold=float(opts.get("bind", 0.5)), r_norm=opts.get("rnorm", "none"),
+                    align=opts.get("align", "1") == "1")
     return {"name": name, "kind": "ig", "pipeline": pipe}
 
 
@@ -202,9 +218,23 @@ class _Precomputed:
 _WORKER = {}
 
 
+def _safe_run(pipe, text, qid, interp=None):
+    """One request; an unexpected error is recorded and the request ranked by context alone (never aborts a run)."""
+    try:
+        return pipe.run(text, input_id=qid, interpretation=interp)
+    except Exception as exc:  # noqa: BLE001
+        import traceback
+        q = (interp or {}).get("context_query", text)
+        ranked, ms = pipe.matcher.retrieve(q, pipe.k_candidates)
+        return {"input": text, "context_query": q, "interpretation": interp or {}, "grounding": {"status": "error"},
+                "mode": "error:" + type(exc).__name__, "error": traceback.format_exc()[-1500:], "assessments": {},
+                "ranking": [{"table_id": t, "r": r, "A": None, "state": None, "U": r, "rank": i + 1} for i, (t, r) in enumerate(ranked)],
+                "timing": {"context_matching_ms": ms, "total_ms": ms}}
+
+
 def _work(item):
     qid, text, interp = item
-    return qid, _WORKER["pipe"].run(text, input_id=qid, interpretation=interp)
+    return qid, _safe_run(_WORKER["pipe"], text, qid, interp)
 
 
 def run_system(system, queries, k=50, workers=1):
@@ -236,6 +266,14 @@ def run_system(system, queries, k=50, workers=1):
         finally:
             pipe.matcher = real
         return rankings, reports
+    if system["kind"] == "rerank":
+        from concurrent.futures import ThreadPoolExecutor
+        rr = system["reranker"]
+        with ThreadPoolExecutor(max_workers=max(1, min(workers, 16))) as ex:
+            for qid, rep in ex.map(lambda qd: (qd["query_id"], rr.rank(qd["text"])), queries):
+                rankings[qid] = [x["table_id"] for x in rep["ranking"]]
+                reports[qid] = rep
+        return rankings, reports
     for qd in queries:
         if system["kind"] == "ctx":
             start = time.perf_counter()
@@ -244,7 +282,7 @@ def run_system(system, queries, k=50, workers=1):
             reports[qd["query_id"]] = {"timing": {"context_matching_ms": ms, **system["matcher"].last_timing, "total_ms": round((time.perf_counter() - start) * 1000, 3)},
                                        "ranking": [{"table_id": t, "r": r, "U": r} for t, r in ranked]}
         else:
-            rep = system["pipeline"].run(qd["text"], input_id=qd["query_id"])
+            rep = _safe_run(system["pipeline"], qd["text"], qd["query_id"])
             rankings[qd["query_id"]] = [x["table_id"] for x in rep["ranking"]]
             reports[qd["query_id"]] = rep
     return rankings, reports
@@ -317,11 +355,19 @@ def main(argv=None):
     parser.add_argument("--tag", default="", help="suffix for the results directory name")
     parser.add_argument("--corpus", type=Path, default=None, help="corpus manifest (default: IGBench)")
     parser.add_argument("--sbert-model", default=None, help="sentence-transformers model for sbert/hybrid (default all-MiniLM-L6-v2)")
+    parser.add_argument("--limit", type=int, default=None, help="first N queries only (smoke tests)")
+    parser.add_argument("--sample", type=int, default=None, help="random sample of N queries (fixed seed 13), e.g. for rate-limited APIs")
     parser.add_argument("--workers", type=int, default=1, help="worker processes for intention-grounding systems (queries in parallel)")
     parser.add_argument("--vector-store", default="chroma", choices=["chroma", "faiss", "numpy"], help="vector database for table embeddings")
     args = parser.parse_args(argv)
     bench = json.loads(args.benchmark.read_text())
     queries = bench["queries"]
+    if args.sample and args.sample < len(queries):
+        import random
+        keep = set(random.Random(13).sample([q["query_id"] for q in queries], args.sample))
+        queries = [q for q in queries if q["query_id"] in keep]
+    if args.limit:
+        queries = queries[:args.limit]
     manifest, library = corpus.load_manifest(args.corpus) if args.corpus else corpus.load_manifest(), il.load()
     target = [f"{kind}:{m}" for m in args.context.split(",") for kind in ("ctx", "ig:rule/index")]
     if args.allow_live:
@@ -351,7 +397,7 @@ def main(argv=None):
             for qd in queries:
                 rep = reports[qd["query_id"]]
                 f.write(json.dumps({"query_id": qd["query_id"], "ranking": rep["ranking"][:50],
-                                    "timing": rep["timing"], "mode": rep.get("mode"),
+                                    "timing": rep["timing"], "mode": rep.get("mode"), "status": rep.get("status"),
                                     "interpretation": rep.get("interpretation"), "grounding": {k: v for k, v in rep.get("grounding", {}).items() if k != "psi_u"},
                                     "assessments": {t: {"state": a["state"], "A": a["A"], "best_procedure": a["best_procedure"],
                                                         "procedures": [{"procedure_id": p["procedure_id"], "state": p["state"], "score": p["score"],

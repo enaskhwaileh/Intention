@@ -29,6 +29,22 @@ ENV_PATH = Path(__file__).resolve().parent / ".env"
 DEFAULT_CACHE = ROOT / "data" / "runtime" / "llm-cache"
 
 
+MAX_RETRIES = int(os.environ.get("IG_LLM_MAX_RETRIES", 12))
+
+
+def _retry_after(headers, attempt):
+    """Seconds to wait: the provider's retry-after (or Groq's reset headers) when given, else exponential backoff."""
+    import re as _re
+    for key in ("retry-after", "x-ratelimit-reset-requests", "x-ratelimit-reset-tokens"):
+        value = headers.get(key) if headers else None
+        if value:
+            m = _re.fullmatch(r"(?:(\d+)m)?([\d.]+)(ms|s)?", str(value).strip())
+            if m:
+                secs = float(m.group(2)) / (1000 if m.group(3) == "ms" else 1) + 60 * float(m.group(1) or 0)
+                return min(max(secs, 1.0), 600.0)
+    return min(2 ** attempt, 300)
+
+
 class LLMUnavailable(RuntimeError):
     """No credentials/model, live calls disabled and no cached response."""
 
@@ -66,10 +82,16 @@ class ChatClient:
         self.cache_dir = Path(cache_dir) if cache_dir else None
         self.allow_live = allow_live
         self.calls = []  # per-call records: cache hit, latency, usage
+        # reasoning models (gpt-oss, qwen3 on Groq): hidden reasoning counts toward max_tokens, so give room and keep
+        # the effort low; both settings are part of the cache key
+        self.extra = {}
+        if any(m in (self.model or "") for m in ("gpt-oss", "qwen3")):
+            self.extra = {"reasoning_effort": os.environ.get("IG_LLM_REASONING_EFFORT", "low")}
+            self.max_tokens = max(self.max_tokens, int(os.environ.get("IG_LLM_REASONING_MAX_TOKENS", 2048)))
 
     def key(self, messages, prompt_version):
         payload = {"model": self.model, "temperature": self.temperature, "max_tokens": self.max_tokens,
-                   "prompt_version": prompt_version, "messages": messages}
+                   "prompt_version": prompt_version, "messages": messages, **({"extra": self.extra} if self.extra else {})}
         return hashlib.sha256(json.dumps(payload, sort_keys=True, ensure_ascii=False).encode()).hexdigest()
 
     def complete_json(self, messages, *, prompt_version):
@@ -89,19 +111,40 @@ class ChatClient:
         if not self._api_key or not self.model:
             raise LLMUnavailable("MISSING_LLM_CREDENTIALS_OR_MODEL")
         body = json.dumps({"model": self.model, "temperature": self.temperature, "max_tokens": self.max_tokens,
-                           "response_format": {"type": "json_object"}, "messages": messages}).encode()
+                           "response_format": {"type": "json_object"}, "messages": messages, **self.extra}).encode()
         request = urllib.request.Request(self.base_url + "/chat/completions", data=body, method="POST",
                                          headers={"Content-Type": "application/json",
+                                                  # Groq's Cloudflare front rejects urllib's default agent (error 1010)
+                                                  "User-Agent": "intention-grounding/1.0 (+python)",
                                                   "Authorization": "Bearer " + self._api_key})
-        try:
-            with urllib.request.urlopen(request, timeout=self.timeout) as response:
-                data = json.loads(response.read().decode())
-        except urllib.error.HTTPError as exc:
-            raise LLMUnavailable(f"HTTP_{exc.code}") from None
-        except (urllib.error.URLError, TimeoutError, OSError) as exc:
-            raise LLMUnavailable("CONNECTION_FAILED:" + type(exc).__name__) from None
+        data, attempt = None, 0
+        while data is None:
+            try:
+                with urllib.request.urlopen(request, timeout=self.timeout) as response:
+                    data = json.loads(response.read().decode())
+            except urllib.error.HTTPError as exc:
+                # rate limits and transient server errors: wait and retry (API providers such as Groq)
+                if exc.code in (429, 500, 502, 503, 504) and attempt < MAX_RETRIES:
+                    attempt += 1
+                    wait = _retry_after(exc.headers, attempt)
+                    self.retries = getattr(self, "retries", 0) + 1
+                    time.sleep(wait)
+                    continue
+                try:
+                    detail = exc.read()[:200].decode("utf-8", "replace")
+                except Exception:
+                    detail = ""
+                raise LLMUnavailable(f"HTTP_{exc.code}:{detail}") from None
+            except (urllib.error.URLError, TimeoutError, OSError) as exc:
+                if attempt < 3:
+                    attempt += 1
+                    time.sleep(5 * attempt)
+                    continue
+                raise LLMUnavailable("CONNECTION_FAILED:" + type(exc).__name__) from None
         latency = round((time.perf_counter() - start) * 1000, 3)
-        content = data["choices"][0]["message"]["content"]
+        content = data["choices"][0]["message"].get("content")
+        if not content:
+            raise LLMUnavailable("EMPTY_CONTENT:" + str(data["choices"][0].get("finish_reason")))
         usage = data.get("usage")
         if path:
             path.parent.mkdir(parents=True, exist_ok=True)

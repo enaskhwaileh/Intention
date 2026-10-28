@@ -89,7 +89,7 @@ def main(argv=None):
     p.add_argument("request", nargs="?")
     p.add_argument("--interpreter", choices=["rule", "llm"], default="rule")
     p.add_argument("--resolver", choices=["index", "llm"], default="index")
-    p.add_argument("--context", default="bm25", choices=["bm25", "tfidf", "lsa", "sbert", "hybrid"])
+    p.add_argument("--context", default="bm25", choices=["bm25", "tfidf", "lsa", "sbert", "hybrid", "taberta"])
     p.add_argument("--sbert-model", default=None)
     p.add_argument("--vector-store", default="chroma", choices=["chroma", "faiss", "numpy"])
     p.add_argument("--k", type=int, default=50, help="candidates retrieved by context matching")

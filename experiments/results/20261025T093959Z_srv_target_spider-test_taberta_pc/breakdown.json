@@ -1,0 +1,54 @@
+{
+ "ig:rule/index:taberta": {
+  "no_intention/not_attempted": {
+   "n": 1812,
+   "share": 0.844,
+   "mean_delta_ndcg@10": -0.0015,
+   "contribution": -0.0013
+  },
+  "extracted/insufficient": {
+   "n": 241,
+   "share": 0.1122,
+   "mean_delta_ndcg@10": 0.0106,
+   "contribution": 0.0012
+  },
+  "extracted/grounded": {
+   "n": 85,
+   "share": 0.0396,
+   "mean_delta_ndcg@10": 0.0197,
+   "contribution": 0.0008
+  },
+  "extracted/unsupported": {
+   "n": 9,
+   "share": 0.0042,
+   "mean_delta_ndcg@10": -0.027,
+   "contribution": -0.0001
+  }
+ },
+ "ig:rule/index:taberta+rnorm=minmax": {
+  "no_intention/not_attempted": {
+   "n": 1812,
+   "share": 0.844,
+   "mean_delta_ndcg@10": -0.0015,
+   "contribution": -0.0013
+  },
+  "extracted/insufficient": {
+   "n": 241,
+   "share": 0.1122,
+   "mean_delta_ndcg@10": 0.0106,
+   "contribution": 0.0012
+  },
+  "extracted/grounded": {
+   "n": 85,
+   "share": 0.0396,
+   "mean_delta_ndcg@10": 0.0198,
+   "contribution": 0.0008
+  },
+  "extracted/unsupported": {
+   "n": 9,
+   "share": 0.0042,
+   "mean_delta_ndcg@10": -0.027,
+   "contribution": -0.0001
+  }
+ }
+}

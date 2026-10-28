@@ -1,0 +1,212 @@
+[
+ {
+  "system": "ig:rule/index:sbert+rnorm=minmax",
+  "baseline": "ctx:sbert",
+  "metric": "ndcg@10",
+  "n": 21,
+  "mean_diff": 0.0154,
+  "p_value": 0.531,
+  "ci95": [
+   -0.0323,
+   0.0593
+  ],
+  "wins": 9,
+  "losses": 9
+ },
+ {
+  "system": "ig:rule/index:sbert+rnorm=minmax",
+  "baseline": "ctx:sbert",
+  "metric": "mrr",
+  "n": 20,
+  "mean_diff": -0.0333,
+  "p_value": 0.507,
+  "ci95": [
+   -0.0917,
+   0.0
+  ],
+  "wins": 0,
+  "losses": 2
+ },
+ {
+  "system": "ig:rule/index:sbert+rnorm=minmax",
+  "baseline": "ctx:sbert",
+  "metric": "useful@1",
+  "n": 20,
+  "mean_diff": -0.05,
+  "p_value": 1.0,
+  "ci95": [
+   -0.15,
+   0.0
+  ],
+  "wins": 0,
+  "losses": 1
+ },
+ {
+  "system": "ig:rule/index:sbert",
+  "baseline": "ctx:sbert",
+  "metric": "ndcg@10",
+  "n": 21,
+  "mean_diff": -0.0595,
+  "p_value": 0.2394,
+  "ci95": [
+   -0.1485,
+   0.0174
+  ],
+  "wins": 11,
+  "losses": 8
+ },
+ {
+  "system": "ig:rule/index:sbert",
+  "baseline": "ctx:sbert",
+  "metric": "mrr",
+  "n": 20,
+  "mean_diff": -0.1026,
+  "p_value": 0.2509,
+  "ci95": [
+   -0.2359,
+   0.0
+  ],
+  "wins": 0,
+  "losses": 3
+ },
+ {
+  "system": "ig:rule/index:sbert",
+  "baseline": "ctx:sbert",
+  "metric": "useful@1",
+  "n": 20,
+  "mean_diff": -0.1,
+  "p_value": 0.4956,
+  "ci95": [
+   -0.25,
+   0.0
+  ],
+  "wins": 0,
+  "losses": 2
+ },
+ {
+  "system": "ig:rule/index:sbert+align=0",
+  "baseline": "ctx:sbert",
+  "metric": "ndcg@10",
+  "n": 21,
+  "mean_diff": -0.0003,
+  "p_value": 0.9831,
+  "ci95": [
+   -0.0332,
+   0.0277
+  ],
+  "wins": 8,
+  "losses": 8
+ },
+ {
+  "system": "ig:rule/index:sbert+align=0",
+  "baseline": "ctx:sbert",
+  "metric": "mrr",
+  "n": 20,
+  "mean_diff": 0.0,
+  "p_value": 1.0,
+  "ci95": [
+   0.0,
+   0.0
+  ],
+  "wins": 0,
+  "losses": 0
+ },
+ {
+  "system": "ig:rule/index:sbert+align=0",
+  "baseline": "ctx:sbert",
+  "metric": "useful@1",
+  "n": 20,
+  "mean_diff": 0.0,
+  "p_value": 1.0,
+  "ci95": [
+   0.0,
+   0.0
+  ],
+  "wins": 0,
+  "losses": 0
+ },
+ {
+  "system": "ig:gold/gold:sbert+rnorm=minmax",
+  "baseline": "ctx:sbert",
+  "metric": "ndcg@10",
+  "n": 21,
+  "mean_diff": 0.0284,
+  "p_value": 0.1892,
+  "ci95": [
+   -0.0153,
+   0.0656
+  ],
+  "wins": 12,
+  "losses": 5
+ },
+ {
+  "system": "ig:gold/gold:sbert+rnorm=minmax",
+  "baseline": "ctx:sbert",
+  "metric": "mrr",
+  "n": 20,
+  "mean_diff": -0.0083,
+  "p_value": 1.0,
+  "ci95": [
+   -0.025,
+   0.0
+  ],
+  "wins": 0,
+  "losses": 1
+ },
+ {
+  "system": "ig:gold/gold:sbert+rnorm=minmax",
+  "baseline": "ctx:sbert",
+  "metric": "useful@1",
+  "n": 20,
+  "mean_diff": 0.0,
+  "p_value": 1.0,
+  "ci95": [
+   0.0,
+   0.0
+  ],
+  "wins": 0,
+  "losses": 0
+ },
+ {
+  "system": "ig:gold/gold:sbert",
+  "baseline": "ctx:sbert",
+  "metric": "ndcg@10",
+  "n": 21,
+  "mean_diff": -0.0078,
+  "p_value": 0.7786,
+  "ci95": [
+   -0.0612,
+   0.0418
+  ],
+  "wins": 11,
+  "losses": 8
+ },
+ {
+  "system": "ig:gold/gold:sbert",
+  "baseline": "ctx:sbert",
+  "metric": "mrr",
+  "n": 20,
+  "mean_diff": -0.0417,
+  "p_value": 0.4992,
+  "ci95": [
+   -0.1083,
+   0.0
+  ],
+  "wins": 0,
+  "losses": 2
+ },
+ {
+  "system": "ig:gold/gold:sbert",
+  "baseline": "ctx:sbert",
+  "metric": "useful@1",
+  "n": 20,
+  "mean_diff": -0.05,
+  "p_value": 1.0,
+  "ci95": [
+   -0.15,
+   0.0
+  ],
+  "wins": 0,
+  "losses": 1
+ }
+]

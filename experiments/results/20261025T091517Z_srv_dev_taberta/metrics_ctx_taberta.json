@@ -1,0 +1,779 @@
+{
+ "aggregate": {
+  "system": "ctx:taberta",
+  "queries": 36,
+  "ndcg@10": 0.0028,
+  "ndcg@10|intention": 0.003,
+  "p@5": 0.0,
+  "p@5|intention": 0.0,
+  "p@10": 0.0,
+  "p@10|intention": 0.0,
+  "r@1": 0.0,
+  "r@1|intention": 0.0,
+  "r@5": 0.0,
+  "r@5|intention": 0.0,
+  "r@10": 0.0,
+  "r@10|intention": 0.0,
+  "mrr": 0.0009,
+  "mrr|intention": 0.001,
+  "useful@1": 0.0,
+  "useful@1|intention": 0.0,
+  "topical_only@1": 0.0,
+  "topical_only@1|intention": 0.0,
+  "swap_accuracy": 0.54,
+  "by_operation": {
+   "aggregate": {
+    "n": 3,
+    "ndcg@10": 0.0,
+    "r@5": 0.0
+   },
+   "compare": {
+    "n": 10,
+    "ndcg@10": 0.0044,
+    "r@5": 0.0
+   },
+   "explain": {
+    "n": 7,
+    "ndcg@10": 0.0032,
+    "r@5": 0.0
+   },
+   "monitor": {
+    "n": 5,
+    "ndcg@10": 0.0062,
+    "r@5": 0.0
+   },
+   "predict": {
+    "n": 8,
+    "ndcg@10": 0.0,
+    "r@5": 0.0
+   }
+  },
+  "timing": {
+   "context_matching_ms": {
+    "mean": 11.345,
+    "median": 10.709,
+    "p95": 13.098,
+    "max": 20.163
+   },
+   "embed_query_ms": {
+    "mean": 7.844,
+    "median": 7.318,
+    "p95": 9.714,
+    "max": 15.241
+   },
+   "vector_search_ms": {
+    "mean": 1.381,
+    "median": 1.293,
+    "p95": 2.166,
+    "max": 2.552
+   },
+   "total_ms": {
+    "mean": 11.411,
+    "median": 10.781,
+    "p95": 13.16,
+    "max": 20.29
+   }
+  },
+  "wall_seconds": 0.411
+ },
+ "per_query": {
+  "C1": {
+   "ndcg@10": 0.0,
+   "p@5": 0.0,
+   "p@10": 0.0,
+   "r@10": 0.0,
+   "mrr": 0.0,
+   "useful@1": 0.0,
+   "r@1": 0.0,
+   "r@5": 0.0,
+   "topical_only@1": 0.0
+  },
+  "C2": {
+   "ndcg@10": 0.0,
+   "p@5": 0.0,
+   "p@10": 0.0,
+   "r@10": 0.0,
+   "mrr": 0.0,
+   "useful@1": 0.0,
+   "r@1": 0.0,
+   "r@5": 0.0,
+   "topical_only@1": 0.0
+  },
+  "C3": {
+   "ndcg@10": 0.0,
+   "p@5": 0.0,
+   "p@10": 0.0,
+   "r@10": 0.0,
+   "mrr": 0.0,
+   "useful@1": 0.0,
+   "r@1": 0.0,
+   "r@5": 0.0,
+   "topical_only@1": 0.0
+  },
+  "C4": {
+   "ndcg@10": 0.0,
+   "p@5": 0.0,
+   "p@10": 0.0,
+   "r@10": 0.0,
+   "mrr": 0.0,
+   "useful@1": 0.0,
+   "r@1": 0.0,
+   "r@5": 0.0,
+   "topical_only@1": 0.0
+  },
+  "C5": {
+   "ndcg@10": 0.0,
+   "p@5": 0.0,
+   "p@10": 0.0,
+   "r@10": 0.0,
+   "mrr": 0.0,
+   "useful@1": 0.0,
+   "r@1": 0.0,
+   "r@5": 0.0,
+   "topical_only@1": 0.0
+  },
+  "C6": {
+   "ndcg@10": 0.0,
+   "p@5": 0.0,
+   "p@10": 0.0,
+   "r@10": 0.0,
+   "mrr": 0.0,
+   "useful@1": 0.0,
+   "r@1": 0.0,
+   "r@5": 0.0,
+   "topical_only@1": 0.0
+  },
+  "C7": {
+   "ndcg@10": 0.0,
+   "p@5": 0.0,
+   "p@10": 0.0,
+   "r@10": 0.0,
+   "mrr": 0.0,
+   "useful@1": 0.0,
+   "r@1": 0.0,
+   "r@5": 0.0,
+   "topical_only@1": 0.0
+  },
+  "C8": {
+   "ndcg@10": 0.0,
+   "p@5": 0.0,
+   "p@10": 0.0,
+   "r@10": 0.0,
+   "mrr": 0.0,
+   "useful@1": 0.0,
+   "r@1": 0.0,
+   "r@5": 0.0,
+   "topical_only@1": 0.0
+  },
+  "C9": {
+   "ndcg@10": 0.0,
+   "p@5": null,
+   "p@10": null,
+   "r@10": null,
+   "mrr": null,
+   "useful@1": null,
+   "r@1": null,
+   "r@5": null,
+   "topical_only@1": 0.0
+  },
+  "C10": {
+   "ndcg@10": 0.0,
+   "p@5": 0.0,
+   "p@10": 0.0,
+   "r@10": 0.0,
+   "mrr": 0.0,
+   "useful@1": 0.0,
+   "r@1": 0.0,
+   "r@5": 0.0,
+   "topical_only@1": 0.0
+  },
+  "TI1": {
+   "ndcg@10": 0.0,
+   "p@5": 0.0,
+   "p@10": 0.0,
+   "r@10": 0.0,
+   "mrr": 0.0,
+   "useful@1": 0.0,
+   "r@1": 0.0,
+   "r@5": 0.0,
+   "topical_only@1": 0.0
+  },
+  "TI2": {
+   "ndcg@10": 0.0,
+   "p@5": 0.0,
+   "p@10": 0.0,
+   "r@10": 0.0,
+   "mrr": 0.0,
+   "useful@1": 0.0,
+   "r@1": 0.0,
+   "r@5": 0.0,
+   "topical_only@1": 0.0
+  },
+  "TI3": {
+   "ndcg@10": 0.0,
+   "p@5": 0.0,
+   "p@10": 0.0,
+   "r@10": 0.0,
+   "mrr": 0.0,
+   "useful@1": 0.0,
+   "r@1": 0.0,
+   "r@5": 0.0,
+   "topical_only@1": 0.0
+  },
+  "TI4": {
+   "ndcg@10": 0.0,
+   "p@5": 0.0,
+   "p@10": 0.0,
+   "r@10": 0.0,
+   "mrr": 0.0,
+   "useful@1": 0.0,
+   "r@1": 0.0,
+   "r@5": 0.0,
+   "topical_only@1": 0.0
+  },
+  "W1": {
+   "ndcg@10": 0.0,
+   "p@5": 0.0,
+   "p@10": 0.0,
+   "r@10": 0.0,
+   "mrr": 0.0,
+   "useful@1": 0.0,
+   "r@1": 0.0,
+   "r@5": 0.0,
+   "topical_only@1": 0.0
+  },
+  "W2": {
+   "ndcg@10": 0.0,
+   "p@5": 0.0,
+   "p@10": 0.0,
+   "r@10": 0.0,
+   "mrr": 0.0,
+   "useful@1": 0.0,
+   "r@1": 0.0,
+   "r@5": 0.0,
+   "topical_only@1": 0.0
+  },
+  "W3": {
+   "ndcg@10": 0.02208474115146301,
+   "p@5": 0.0,
+   "p@10": 0.0,
+   "r@10": 0.0,
+   "mrr": 0.0,
+   "useful@1": 0.0,
+   "r@1": 0.0,
+   "r@5": 0.0,
+   "topical_only@1": 0.0
+  },
+  "W4": {
+   "ndcg@10": 0.03107129581818804,
+   "p@5": 0.0,
+   "p@10": 0.0,
+   "r@10": 0.0,
+   "mrr": 0.0,
+   "useful@1": 0.0,
+   "r@1": 0.0,
+   "r@5": 0.0,
+   "topical_only@1": 0.0
+  },
+  "W5": {
+   "ndcg@10": 0.044175472610956126,
+   "p@5": 0.0,
+   "p@10": 0.0,
+   "r@10": 0.0,
+   "mrr": 0.03225806451612903,
+   "useful@1": 0.0,
+   "r@1": 0.0,
+   "r@5": 0.0,
+   "topical_only@1": 0.0
+  },
+  "B1": {
+   "ndcg@10": 0.0,
+   "p@5": 0.0,
+   "p@10": 0.0,
+   "r@10": 0.0,
+   "mrr": 0.0,
+   "useful@1": 0.0,
+   "r@1": 0.0,
+   "r@5": 0.0,
+   "topical_only@1": 0.0
+  },
+  "B2": {
+   "ndcg@10": 0.0,
+   "p@5": 0.0,
+   "p@10": 0.0,
+   "r@10": 0.0,
+   "mrr": 0.0,
+   "useful@1": 0.0,
+   "r@1": 0.0,
+   "r@5": 0.0,
+   "topical_only@1": 0.0
+  },
+  "B3": {
+   "ndcg@10": 0.0,
+   "p@5": 0.0,
+   "p@10": 0.0,
+   "r@10": 0.0,
+   "mrr": 0.0,
+   "useful@1": 0.0,
+   "r@1": 0.0,
+   "r@5": 0.0,
+   "topical_only@1": 0.0
+  },
+  "B4": {
+   "ndcg@10": 0.0,
+   "p@5": 0.0,
+   "p@10": 0.0,
+   "r@10": 0.0,
+   "mrr": 0.0,
+   "useful@1": 0.0,
+   "r@1": 0.0,
+   "r@5": 0.0,
+   "topical_only@1": 0.0
+  },
+  "B5": {
+   "ndcg@10": 0.0,
+   "p@5": 0.0,
+   "p@10": 0.0,
+   "r@10": 0.0,
+   "mrr": 0.0,
+   "useful@1": 0.0,
+   "r@1": 0.0,
+   "r@5": 0.0,
+   "topical_only@1": 0.0
+  },
+  "H1": {
+   "ndcg@10": 0.0,
+   "p@5": 0.0,
+   "p@10": 0.0,
+   "r@10": 0.0,
+   "mrr": 0.0,
+   "useful@1": 0.0,
+   "r@1": 0.0,
+   "r@5": 0.0,
+   "topical_only@1": 0.0
+  },
+  "H2": {
+   "ndcg@10": 0.0,
+   "p@5": 0.0,
+   "p@10": 0.0,
+   "r@10": 0.0,
+   "mrr": 0.0,
+   "useful@1": 0.0,
+   "r@1": 0.0,
+   "r@5": 0.0,
+   "topical_only@1": 0.0
+  },
+  "H3": {
+   "ndcg@10": 0.0,
+   "p@5": 0.0,
+   "p@10": 0.0,
+   "r@10": 0.0,
+   "mrr": 0.0,
+   "useful@1": 0.0,
+   "r@1": 0.0,
+   "r@5": 0.0,
+   "topical_only@1": 0.0
+  },
+  "H4": {
+   "ndcg@10": 0.0,
+   "p@5": 0.0,
+   "p@10": 0.0,
+   "r@10": 0.0,
+   "mrr": 0.0,
+   "useful@1": 0.0,
+   "r@1": 0.0,
+   "r@5": 0.0,
+   "topical_only@1": 0.0
+  },
+  "D1": {
+   "ndcg@10": 0.0,
+   "p@5": 0.0,
+   "p@10": 0.0,
+   "r@10": 0.0,
+   "mrr": 0.0,
+   "useful@1": 0.0,
+   "r@1": 0.0,
+   "r@5": 0.0,
+   "topical_only@1": 0.0
+  },
+  "D2": {
+   "ndcg@10": 0.0,
+   "p@5": 0.0,
+   "p@10": 0.0,
+   "r@10": 0.0,
+   "mrr": 0.0,
+   "useful@1": 0.0,
+   "r@1": 0.0,
+   "r@5": 0.0,
+   "topical_only@1": 0.0
+  },
+  "D3": {
+   "ndcg@10": 0.0,
+   "p@5": 0.0,
+   "p@10": 0.0,
+   "r@10": 0.0,
+   "mrr": 0.0,
+   "useful@1": 0.0,
+   "r@1": 0.0,
+   "r@5": 0.0,
+   "topical_only@1": 0.0
+  },
+  "A1": {
+   "ndcg@10": 0.0,
+   "p@5": 0.0,
+   "p@10": 0.0,
+   "r@10": 0.0,
+   "mrr": 0.0,
+   "useful@1": 0.0,
+   "r@1": 0.0,
+   "r@5": 0.0,
+   "topical_only@1": 0.0
+  },
+  "A2": {
+   "ndcg@10": 0.0,
+   "p@5": 0.0,
+   "p@10": 0.0,
+   "r@10": 0.0,
+   "mrr": 0.0,
+   "useful@1": 0.0,
+   "r@1": 0.0,
+   "r@5": 0.0,
+   "topical_only@1": 0.0
+  },
+  "A3": {
+   "ndcg@10": 0.0,
+   "p@5": 0.0,
+   "p@10": 0.0,
+   "r@10": 0.0,
+   "mrr": 0.0,
+   "useful@1": 0.0,
+   "r@1": 0.0,
+   "r@5": 0.0,
+   "topical_only@1": 0.0
+  },
+  "N1": {
+   "ndcg@10": 0.0,
+   "p@5": 0.0,
+   "p@10": 0.0,
+   "r@10": 0.0,
+   "mrr": 0.0,
+   "useful@1": 0.0,
+   "r@1": 0.0,
+   "r@5": 0.0,
+   "topical_only@1": 0.0
+  },
+  "N2": {
+   "ndcg@10": 0.0,
+   "p@5": 0.0,
+   "p@10": 0.0,
+   "r@10": 0.0,
+   "mrr": 0.0,
+   "useful@1": 0.0,
+   "r@1": 0.0,
+   "r@5": 0.0,
+   "topical_only@1": 0.0
+  }
+ },
+ "swap": [
+  {
+   "group": "covid-vaccination",
+   "a": "C1",
+   "b": "C4",
+   "accuracy": 0.5
+  },
+  {
+   "group": "covid-vaccination",
+   "a": "C1",
+   "b": "C7",
+   "accuracy": 0.5
+  },
+  {
+   "group": "covid-vaccination",
+   "a": "C4",
+   "b": "C1",
+   "accuracy": 0.5
+  },
+  {
+   "group": "covid-vaccination",
+   "a": "C4",
+   "b": "C5",
+   "accuracy": 0.5
+  },
+  {
+   "group": "covid-vaccination",
+   "a": "C4",
+   "b": "C7",
+   "accuracy": 0.5
+  },
+  {
+   "group": "covid-vaccination",
+   "a": "C5",
+   "b": "C4",
+   "accuracy": 0.5
+  },
+  {
+   "group": "covid-vaccination",
+   "a": "C5",
+   "b": "C7",
+   "accuracy": 0.5
+  },
+  {
+   "group": "covid-vaccination",
+   "a": "C7",
+   "b": "C1",
+   "accuracy": 0.5
+  },
+  {
+   "group": "covid-vaccination",
+   "a": "C7",
+   "b": "C4",
+   "accuracy": 0.5
+  },
+  {
+   "group": "covid-vaccination",
+   "a": "C7",
+   "b": "C5",
+   "accuracy": 0.5
+  },
+  {
+   "group": "wages",
+   "a": "W1",
+   "b": "W3",
+   "accuracy": 0.5
+  },
+  {
+   "group": "wages",
+   "a": "W1",
+   "b": "W4",
+   "accuracy": 0.5
+  },
+  {
+   "group": "wages",
+   "a": "W1",
+   "b": "W5",
+   "accuracy": 0.5
+  },
+  {
+   "group": "wages",
+   "a": "W2",
+   "b": "W3",
+   "accuracy": 0.5
+  },
+  {
+   "group": "wages",
+   "a": "W2",
+   "b": "W4",
+   "accuracy": 0.5
+  },
+  {
+   "group": "wages",
+   "a": "W2",
+   "b": "W5",
+   "accuracy": 0.5
+  },
+  {
+   "group": "wages",
+   "a": "W3",
+   "b": "W1",
+   "accuracy": 0.5
+  },
+  {
+   "group": "wages",
+   "a": "W3",
+   "b": "W2",
+   "accuracy": 0.5
+  },
+  {
+   "group": "wages",
+   "a": "W3",
+   "b": "W4",
+   "accuracy": 0.5
+  },
+  {
+   "group": "wages",
+   "a": "W3",
+   "b": "W5",
+   "accuracy": 0.5
+  },
+  {
+   "group": "wages",
+   "a": "W4",
+   "b": "W1",
+   "accuracy": 0.5
+  },
+  {
+   "group": "wages",
+   "a": "W4",
+   "b": "W2",
+   "accuracy": 0.5
+  },
+  {
+   "group": "wages",
+   "a": "W4",
+   "b": "W3",
+   "accuracy": 0.5
+  },
+  {
+   "group": "wages",
+   "a": "W4",
+   "b": "W5",
+   "accuracy": 0.5
+  },
+  {
+   "group": "wages",
+   "a": "W5",
+   "b": "W1",
+   "accuracy": 1.0
+  },
+  {
+   "group": "wages",
+   "a": "W5",
+   "b": "W2",
+   "accuracy": 1.0
+  },
+  {
+   "group": "wages",
+   "a": "W5",
+   "b": "W3",
+   "accuracy": 1.0
+  },
+  {
+   "group": "wages",
+   "a": "W5",
+   "b": "W4",
+   "accuracy": 1.0
+  },
+  {
+   "group": "bikes",
+   "a": "B1",
+   "b": "B2",
+   "accuracy": 0.5
+  },
+  {
+   "group": "bikes",
+   "a": "B1",
+   "b": "B5",
+   "accuracy": 0.5
+  },
+  {
+   "group": "bikes",
+   "a": "B2",
+   "b": "B1",
+   "accuracy": 0.5
+  },
+  {
+   "group": "bikes",
+   "a": "B2",
+   "b": "B3",
+   "accuracy": 0.5
+  },
+  {
+   "group": "bikes",
+   "a": "B3",
+   "b": "B2",
+   "accuracy": 0.5
+  },
+  {
+   "group": "bikes",
+   "a": "B3",
+   "b": "B5",
+   "accuracy": 0.5
+  },
+  {
+   "group": "bikes",
+   "a": "B5",
+   "b": "B1",
+   "accuracy": 0.5
+  },
+  {
+   "group": "bikes",
+   "a": "B5",
+   "b": "B3",
+   "accuracy": 0.5
+  },
+  {
+   "group": "housing",
+   "a": "H1",
+   "b": "H3",
+   "accuracy": 0.5
+  },
+  {
+   "group": "housing",
+   "a": "H1",
+   "b": "H4",
+   "accuracy": 0.5
+  },
+  {
+   "group": "housing",
+   "a": "H2",
+   "b": "H3",
+   "accuracy": 0.5
+  },
+  {
+   "group": "housing",
+   "a": "H2",
+   "b": "H4",
+   "accuracy": 0.5
+  },
+  {
+   "group": "housing",
+   "a": "H3",
+   "b": "H1",
+   "accuracy": 0.5
+  },
+  {
+   "group": "housing",
+   "a": "H3",
+   "b": "H2",
+   "accuracy": 0.5
+  },
+  {
+   "group": "housing",
+   "a": "H3",
+   "b": "H4",
+   "accuracy": 0.5
+  },
+  {
+   "group": "housing",
+   "a": "H4",
+   "b": "H1",
+   "accuracy": 0.5
+  },
+  {
+   "group": "housing",
+   "a": "H4",
+   "b": "H2",
+   "accuracy": 0.5
+  },
+  {
+   "group": "housing",
+   "a": "H4",
+   "b": "H3",
+   "accuracy": 0.5
+  },
+  {
+   "group": "air-quality",
+   "a": "A1",
+   "b": "A2",
+   "accuracy": 0.5
+  },
+  {
+   "group": "air-quality",
+   "a": "A2",
+   "b": "A1",
+   "accuracy": 0.5
+  },
+  {
+   "group": "air-quality",
+   "a": "A2",
+   "b": "A3",
+   "accuracy": 0.5
+  },
+  {
+   "group": "air-quality",
+   "a": "A3",
+   "b": "A2",
+   "accuracy": 0.5
+  }
+ ]
+}

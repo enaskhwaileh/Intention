@@ -1,0 +1,100 @@
+{
+ "ig:llm/llm:sbert": {
+  "extracted/grounded": {
+   "n": 13,
+   "share": 0.619,
+   "mean_delta_ndcg@10": -0.0305,
+   "contribution": -0.0189
+  },
+  "failure/not_attempted": {
+   "n": 3,
+   "share": 0.1429,
+   "mean_delta_ndcg@10": 0.0,
+   "contribution": 0.0
+  },
+  "extracted/failure": {
+   "n": 3,
+   "share": 0.1429,
+   "mean_delta_ndcg@10": -0.0707,
+   "contribution": -0.0101
+  },
+  "extracted/insufficient": {
+   "n": 1,
+   "share": 0.0476,
+   "mean_delta_ndcg@10": -0.0663,
+   "contribution": -0.0032
+  },
+  "no_intention/not_attempted": {
+   "n": 1,
+   "share": 0.0476,
+   "mean_delta_ndcg@10": -0.1528,
+   "contribution": -0.0073
+  }
+ },
+ "ig:llm/llm:sbert+repair=1": {
+  "extracted/grounded": {
+   "n": 17,
+   "share": 0.8095,
+   "mean_delta_ndcg@10": -0.0368,
+   "contribution": -0.0298
+  },
+  "extracted/failure": {
+   "n": 2,
+   "share": 0.0952,
+   "mean_delta_ndcg@10": 0.023,
+   "contribution": 0.0022
+  },
+  "extracted/insufficient": {
+   "n": 1,
+   "share": 0.0476,
+   "mean_delta_ndcg@10": -0.0663,
+   "contribution": -0.0032
+  },
+  "no_intention/not_attempted": {
+   "n": 1,
+   "share": 0.0476,
+   "mean_delta_ndcg@10": -0.1528,
+   "contribution": -0.0073
+  }
+ },
+ "ig:llm/llm:sbert+repair=1+align=0": {
+  "extracted/disabled": {
+   "n": 20,
+   "share": 0.9524,
+   "mean_delta_ndcg@10": -0.0332,
+   "contribution": -0.0317
+  },
+  "no_intention/disabled": {
+   "n": 1,
+   "share": 0.0476,
+   "mean_delta_ndcg@10": -0.1528,
+   "contribution": -0.0073
+  }
+ },
+ "ig:llm/llm:sbert+repair=1+rnorm=minmax": {
+  "extracted/grounded": {
+   "n": 17,
+   "share": 0.8095,
+   "mean_delta_ndcg@10": 0.008,
+   "contribution": 0.0065
+  },
+  "extracted/failure": {
+   "n": 2,
+   "share": 0.0952,
+   "mean_delta_ndcg@10": 0.023,
+   "contribution": 0.0022
+  },
+  "extracted/insufficient": {
+   "n": 1,
+   "share": 0.0476,
+   "mean_delta_ndcg@10": -0.0663,
+   "contribution": -0.0032
+  },
+  "no_intention/not_attempted": {
+   "n": 1,
+   "share": 0.0476,
+   "mean_delta_ndcg@10": -0.1528,
+   "contribution": -0.0073
+  }
+ }
+}

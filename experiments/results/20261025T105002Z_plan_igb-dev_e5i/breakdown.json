@@ -1,0 +1,108 @@
+{
+ "ig:gold/gold:sbert": {
+  "extracted/grounded": {
+   "n": 32,
+   "share": 0.8889,
+   "mean_delta_ndcg@10": -0.0243,
+   "contribution": -0.0216
+  },
+  "no_intention/not_attempted": {
+   "n": 3,
+   "share": 0.0833,
+   "mean_delta_ndcg@10": 0.0,
+   "contribution": 0.0
+  },
+  "extracted/insufficient": {
+   "n": 1,
+   "share": 0.0278,
+   "mean_delta_ndcg@10": 0.0072,
+   "contribution": 0.0002
+  }
+ },
+ "ig:gold/gold:sbert+rnorm=minmax": {
+  "extracted/grounded": {
+   "n": 32,
+   "share": 0.8889,
+   "mean_delta_ndcg@10": 0.0503,
+   "contribution": 0.0448
+  },
+  "no_intention/not_attempted": {
+   "n": 3,
+   "share": 0.0833,
+   "mean_delta_ndcg@10": 0.0,
+   "contribution": 0.0
+  },
+  "extracted/insufficient": {
+   "n": 1,
+   "share": 0.0278,
+   "mean_delta_ndcg@10": 0.0072,
+   "contribution": 0.0002
+  }
+ },
+ "ig:rule/index:sbert": {
+  "extracted/grounded": {
+   "n": 26,
+   "share": 0.7222,
+   "mean_delta_ndcg@10": -0.0097,
+   "contribution": -0.007
+  },
+  "extracted/insufficient": {
+   "n": 4,
+   "share": 0.1111,
+   "mean_delta_ndcg@10": 0.0024,
+   "contribution": 0.0003
+  },
+  "extracted/unsupported": {
+   "n": 3,
+   "share": 0.0833,
+   "mean_delta_ndcg@10": -0.0027,
+   "contribution": -0.0002
+  },
+  "no_intention/not_attempted": {
+   "n": 3,
+   "share": 0.0833,
+   "mean_delta_ndcg@10": 0.0,
+   "contribution": 0.0
+  }
+ },
+ "ig:rule/index:sbert+align=0": {
+  "extracted/disabled": {
+   "n": 33,
+   "share": 0.9167,
+   "mean_delta_ndcg@10": 0.0148,
+   "contribution": 0.0136
+  },
+  "no_intention/disabled": {
+   "n": 3,
+   "share": 0.0833,
+   "mean_delta_ndcg@10": 0.0,
+   "contribution": 0.0
+  }
+ },
+ "ig:rule/index:sbert+rnorm=minmax": {
+  "extracted/grounded": {
+   "n": 26,
+   "share": 0.7222,
+   "mean_delta_ndcg@10": 0.0523,
+   "contribution": 0.0378
+  },
+  "extracted/insufficient": {
+   "n": 4,
+   "share": 0.1111,
+   "mean_delta_ndcg@10": 0.0024,
+   "contribution": 0.0003
+  },
+  "extracted/unsupported": {
+   "n": 3,
+   "share": 0.0833,
+   "mean_delta_ndcg@10": -0.0027,
+   "contribution": -0.0002
+  },
+  "no_intention/not_attempted": {
+   "n": 3,
+   "share": 0.0833,
+   "mean_delta_ndcg@10": 0.0,
+   "contribution": 0.0
+  }
+ }
+}

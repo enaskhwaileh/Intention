@@ -1,0 +1,4 @@
+System,interpreter (median / p95 ms),context_matching (median / p95 ms),embed_query (median / p95 ms),vector_search (median / p95 ms),grounder (median / p95 ms),profiler (median / p95 ms),aligner (median / p95 ms),ranking (median / p95 ms),total (median / p95 ms)
+ctx:bm25,–,5.5 / 7,–,–,–,–,–,–,5.6 / 7
+ig:rule/index:bm25,0.1 / 1,4.5 / 9,–,–,0.2 / 0,39.0 / 50,158.4 / 316,0.1 / 0,215.0 / 343
+ig:gold/gold:bm25,0.1 / 0,4.2 / 6,–,–,0.1 / 0,39.4 / 50,152.7 / 529,0.1 / 0,196.7 / 558

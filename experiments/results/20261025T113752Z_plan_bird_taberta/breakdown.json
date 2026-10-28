@@ -1,0 +1,68 @@
+{
+ "ig:rule/index:taberta": {
+  "no_intention/not_attempted": {
+   "n": 1128,
+   "share": 0.7358,
+   "mean_delta_ndcg@10": 0.0048,
+   "contribution": 0.0036
+  },
+  "extracted/insufficient": {
+   "n": 310,
+   "share": 0.2022,
+   "mean_delta_ndcg@10": 0.0004,
+   "contribution": 0.0001
+  },
+  "extracted/grounded": {
+   "n": 75,
+   "share": 0.0489,
+   "mean_delta_ndcg@10": 0.0351,
+   "contribution": 0.0017
+  },
+  "extracted/unsupported": {
+   "n": 20,
+   "share": 0.013,
+   "mean_delta_ndcg@10": -0.0213,
+   "contribution": -0.0003
+  }
+ },
+ "ig:rule/index:taberta+align=0": {
+  "no_intention/disabled": {
+   "n": 1128,
+   "share": 0.7358,
+   "mean_delta_ndcg@10": 0.0048,
+   "contribution": 0.0036
+  },
+  "extracted/disabled": {
+   "n": 405,
+   "share": 0.2642,
+   "mean_delta_ndcg@10": 0.0026,
+   "contribution": 0.0007
+  }
+ },
+ "ig:rule/index:taberta+rnorm=minmax": {
+  "no_intention/not_attempted": {
+   "n": 1128,
+   "share": 0.7358,
+   "mean_delta_ndcg@10": 0.0048,
+   "contribution": 0.0036
+  },
+  "extracted/insufficient": {
+   "n": 310,
+   "share": 0.2022,
+   "mean_delta_ndcg@10": 0.0004,
+   "contribution": 0.0001
+  },
+  "extracted/grounded": {
+   "n": 75,
+   "share": 0.0489,
+   "mean_delta_ndcg@10": 0.0286,
+   "contribution": 0.0014
+  },
+  "extracted/unsupported": {
+   "n": 20,
+   "share": 0.013,
+   "mean_delta_ndcg@10": -0.0213,
+   "contribution": -0.0003
+  }
+ }
+}

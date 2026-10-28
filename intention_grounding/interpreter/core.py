@@ -52,7 +52,7 @@ def validate_extraction(z, u, vocabulary):
         raise ExtractionError("EMPTY_CONTEXT_QUERY")
     expression = z["intention_expression"]
     if expression is not None and not _contains(u, expression):
-        raise ExtractionError("EXPRESSION_NOT_IN_INPUT")
+        raise ExtractionError(f"EXPRESSION_NOT_IN_INPUT: {expression!r} is not a contiguous phrase of the input; copy one phrase exactly")
     ids = set()
     for field_name, labels in (("arguments", vocabulary["argument_labels"]), ("scope", vocabulary["scope_labels"])):
         entries = z[field_name]
@@ -65,12 +65,17 @@ def validate_extraction(z, u, vocabulary):
                 raise ExtractionError("DUPLICATE_OR_INVALID_ID")
             ids.add(entry["id"])
             if entry["label"] not in labels:
-                raise ExtractionError("UNKNOWN_LABEL")
+                other = "scope" if field_name == "arguments" else "arguments"
+                other_labels = vocabulary["scope_labels"] if field_name == "arguments" else vocabulary["argument_labels"]
+                hint = (f"; it is a {other} label: move entry {entry.get('id')} to \"{other}\"" if entry["label"] in other_labels
+                        else f"; use one of {sorted(labels)}")
+                raise ExtractionError(f"UNKNOWN_LABEL: {entry['label']!r} is not allowed in \"{field_name}\"{hint}")
             if not isinstance(entry["value"], str) or not entry["value"].strip():
                 raise ExtractionError("EMPTY_VALUE")
             spans = entry["spans"]
             if not isinstance(spans, list) or not spans or not all(_contains(u, s) for s in spans):
-                raise ExtractionError("SPAN_NOT_IN_INPUT")
+                bad = next((s for s in (spans or []) if not _contains(u, s)), None)
+                raise ExtractionError(f"SPAN_NOT_IN_INPUT: span {bad!r} of entry {entry.get('id')} is not copied from the input")
     if expression is None and z["arguments"]:
         # Arguments without an intention expression are kept only as context.
         pass
@@ -103,7 +108,9 @@ def interpret(u, provider, vocabulary, *, input_id="input"):
         try:
             z = validate_extraction(parse_json_object(raw), u, vocabulary)
             break
-        except (ValueError, ExtractionError) as exc:
+        except (ValueError, ExtractionError, TypeError, KeyError, AttributeError) as exc:
+            if not isinstance(exc, (ValueError, ExtractionError)):  # malformed object of an unexpected shape
+                exc = ExtractionError(f"MALFORMED_EXTRACTION:{type(exc).__name__}: follow the JSON schema exactly")
             if repairs >= getattr(provider, "max_repairs", 0):
                 result.failure = "INVALID_EXTRACTION:" + str(exc)
                 result.elapsed_ms = round((time.perf_counter() - start) * 1000, 3)

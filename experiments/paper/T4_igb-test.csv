@@ -1,0 +1,38 @@
+Method,Family,nDCG@10,MRR,Useful@1,Topical-only@1 ↓,Swap acc.
+BM25,retrieval (context only),0.828,0.917,0.850,0.100,0.871
+TF-IDF,retrieval (context only),0.775,0.765,0.600,0.300,0.862
+SBERT all-MiniLM-L6-v2,retrieval (context only),0.690,0.814,0.700,0.150,0.824
+e5-base-v2,retrieval (context only),0.778,0.950,0.900,0.000,0.875
+bge-base-en-v1.5,retrieval (context only),0.808,0.975,0.950,0.000,0.871
+multilingual-e5-large-instruct,retrieval (context only),0.813,0.931,0.900,0.050,0.860
+stella_en_400M_v5,retrieval (context only),0.827,0.950,0.900,0.000,0.850
+TABERTA (PC),retrieval (context only),0.612,0.722,0.650,0.100,0.795
+Hybrid BM25 + MiniLM,retrieval (context only),0.845,0.950,0.900,0.050,0.860
+Cross-encoder rerank (bge-reranker-v2-m3) over BM25,reranking,0.859 (+0.040),1.000 (+0.083),1.000 (+0.150),0.000,0.901
+LLM listwise rerank (Qwen2.5-14B-Instruct) over BM25,reranking,0.862 (+0.046),1.000 (+0.083),1.000 (+0.150),0.000,0.879
+LLM rerank + IG verdicts (Qwen2.5-14B-Instruct) over BM25,combination,0.832 (+0.014),0.935 (+0.018),0.900 (+0.050),0.000,0.882
+LLM rerank + gold IG verdicts (Qwen2.5-14B-Instruct) over BM25,combination (oracle),0.839 (+0.021),0.967 (+0.050),0.950 (+0.100),0.000,0.882
+LLM listwise rerank (Qwen2.5-32B-Instruct) over BM25,reranking,0.873 (+0.060),0.975 (+0.058),0.950 (+0.100),0.000,0.882
+LLM rerank + IG verdicts (Qwen2.5-32B-Instruct) over BM25,combination,0.842 (+0.030),0.960 (+0.043),0.950 (+0.100),0.000,0.882
+LLM rerank + gold IG verdicts (Qwen2.5-32B-Instruct) over BM25,combination (oracle),0.851 (+0.038),0.963 (+0.046),0.950 (+0.100),0.000,0.882
+Query rewrite only (rule q_u) over BM25,control,0.824 (-0.004),0.892 (-0.025),0.800 (-0.050),0.100,0.850
+Query rewrite only (Qwen2.5-14B-Instruct q_u) over BM25,control,0.825 (-0.003),0.892 (-0.025),0.800 (-0.050),0.150,0.871
+Query rewrite only (Qwen2.5-32B-Instruct q_u) over BM25,control,0.829 (+0.001),0.917 (+0.000),0.850 (+0.000),0.150,0.871
+IG rule over BM25,ours,0.825 (-0.003),0.900 (-0.017),0.800 (-0.050),0.050,0.882
+IG Qwen2.5-14B-Instruct over BM25,ours,0.831 (+0.002),0.925 (+0.008),0.850 (+0.000),0.050,0.882
+IG Qwen2.5-32B-Instruct over BM25,ours,0.836 (+0.007),0.950 (+0.033),0.900 (+0.050),0.050,0.879
+IG gold over BM25,ours (oracle),0.861 (+0.031),0.975 (+0.058),0.950 (+0.100),0.000,0.882
+Cross-encoder rerank (bge-reranker-v2-m3) over SBERT all-MiniLM-L6-v2,reranking,0.825 (+0.128),1.000 (+0.186),1.000 (+0.300),0.000,0.890
+LLM listwise rerank (Qwen2.5-14B-Instruct) over SBERT all-MiniLM-L6-v2,reranking,0.809 (+0.119),0.975 (+0.161),0.950 (+0.250),0.050,0.890
+LLM rerank + IG verdicts (Qwen2.5-14B-Instruct) over SBERT all-MiniLM-L6-v2,combination,0.784 (+0.093),0.960 (+0.146),0.950 (+0.250),0.000,0.942
+LLM rerank + gold IG verdicts (Qwen2.5-14B-Instruct) over SBERT all-MiniLM-L6-v2,combination (oracle),0.792 (+0.099),0.958 (+0.144),0.950 (+0.250),0.000,0.942
+LLM listwise rerank (Qwen2.5-32B-Instruct) over SBERT all-MiniLM-L6-v2,reranking,0.823 (+0.130),1.000 (+0.186),1.000 (+0.300),0.000,0.892
+LLM rerank + IG verdicts (Qwen2.5-32B-Instruct) over SBERT all-MiniLM-L6-v2,combination,0.788 (+0.096),0.960 (+0.146),0.950 (+0.250),0.000,0.930
+LLM rerank + gold IG verdicts (Qwen2.5-32B-Instruct) over SBERT all-MiniLM-L6-v2,combination (oracle),0.802 (+0.109),0.958 (+0.144),0.950 (+0.250),0.000,0.942
+Query rewrite only (rule q_u) over SBERT all-MiniLM-L6-v2,control,0.642 (-0.043),0.615 (-0.200),0.400 (-0.300),0.300,0.842
+Query rewrite only (Qwen2.5-14B-Instruct q_u) over SBERT all-MiniLM-L6-v2,control,0.654 (-0.032),0.734 (-0.080),0.600 (-0.100),0.250,0.829
+Query rewrite only (Qwen2.5-32B-Instruct q_u) over SBERT all-MiniLM-L6-v2,control,0.654 (-0.032),0.734 (-0.080),0.600 (-0.100),0.250,0.826
+IG rule over SBERT all-MiniLM-L6-v2,ours,0.737 (+0.047),0.867 (+0.052),0.750 (+0.050),0.100,0.900
+IG Qwen2.5-14B-Instruct over SBERT all-MiniLM-L6-v2,ours,0.743 (+0.053),0.917 (+0.102),0.850 (+0.150),0.050,0.905
+IG Qwen2.5-32B-Instruct over SBERT all-MiniLM-L6-v2,ours,0.740 (+0.050),0.910 (+0.096),0.850 (+0.150),0.050,0.896
+IG gold over SBERT all-MiniLM-L6-v2,ours (oracle),0.769 (+0.078),0.917 (+0.102),0.850 (+0.150),0.000,0.916
