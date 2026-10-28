@@ -108,3 +108,31 @@ class MetricTests(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class RetryTests(unittest.TestCase):
+    def test_rate_limit_is_retried_not_failed(self):
+        import io
+        import urllib.error
+        from unittest import mock
+        from intention_grounding import llm
+        calls = {"n": 0}
+
+        class Resp(io.BytesIO):
+            def __enter__(self):
+                return self
+
+            def __exit__(self, *a):
+                return False
+
+        def fake_urlopen(req, timeout=None):
+            calls["n"] += 1
+            if calls["n"] <= 2:
+                raise urllib.error.HTTPError(req.full_url, 429, "rate limited", {"retry-after": "0"}, None)
+            return Resp(json.dumps({"choices": [{"message": {"content": "{\"ok\": true}"}}], "model": "m"}).encode())
+
+        client = ChatClient(model="m", cache_dir=None, api_key="k")
+        with mock.patch.object(llm.urllib.request, "urlopen", fake_urlopen), mock.patch.object(llm.time, "sleep", lambda s: None):
+            raw, rec = client.complete_json([{"role": "user", "content": "x"}], prompt_version="v")
+        self.assertEqual(json.loads(raw), {"ok": True})
+        self.assertEqual(calls["n"], 3)

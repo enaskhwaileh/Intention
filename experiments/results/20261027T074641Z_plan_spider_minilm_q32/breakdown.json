@@ -1,0 +1,154 @@
+{
+ "ig:llm/llm:sbert": {
+  "failure/not_attempted": {
+   "n": 626,
+   "share": 0.2916,
+   "mean_delta_ndcg@10": 0.0,
+   "contribution": 0.0
+  },
+  "extracted/failure": {
+   "n": 523,
+   "share": 0.2436,
+   "mean_delta_ndcg@10": 0.0011,
+   "contribution": 0.0003
+  },
+  "extracted/unsupported": {
+   "n": 409,
+   "share": 0.1905,
+   "mean_delta_ndcg@10": -0.0064,
+   "contribution": -0.0012
+  },
+  "no_intention/not_attempted": {
+   "n": 331,
+   "share": 0.1542,
+   "mean_delta_ndcg@10": -0.0043,
+   "contribution": -0.0007
+  },
+  "extracted/insufficient": {
+   "n": 148,
+   "share": 0.0689,
+   "mean_delta_ndcg@10": -0.0008,
+   "contribution": -0.0001
+  },
+  "extracted/grounded": {
+   "n": 93,
+   "share": 0.0433,
+   "mean_delta_ndcg@10": -0.0015,
+   "contribution": -0.0001
+  },
+  "extracted/ambiguous": {
+   "n": 17,
+   "share": 0.0079,
+   "mean_delta_ndcg@10": 0.0294,
+   "contribution": 0.0002
+  }
+ },
+ "ig:llm/llm:sbert+repair=1": {
+  "extracted/unsupported": {
+   "n": 646,
+   "share": 0.3009,
+   "mean_delta_ndcg@10": -0.003,
+   "contribution": -0.0009
+  },
+  "no_intention/not_attempted": {
+   "n": 462,
+   "share": 0.2152,
+   "mean_delta_ndcg@10": -0.0013,
+   "contribution": -0.0003
+  },
+  "extracted/failure": {
+   "n": 440,
+   "share": 0.2049,
+   "mean_delta_ndcg@10": 0.0065,
+   "contribution": 0.0013
+  },
+  "extracted/insufficient": {
+   "n": 373,
+   "share": 0.1737,
+   "mean_delta_ndcg@10": -0.0095,
+   "contribution": -0.0016
+  },
+  "extracted/grounded": {
+   "n": 131,
+   "share": 0.061,
+   "mean_delta_ndcg@10": -0.0063,
+   "contribution": -0.0004
+  },
+  "failure/not_attempted": {
+   "n": 67,
+   "share": 0.0312,
+   "mean_delta_ndcg@10": 0.0,
+   "contribution": 0.0
+  },
+  "extracted/ambiguous": {
+   "n": 28,
+   "share": 0.013,
+   "mean_delta_ndcg@10": 0.0128,
+   "contribution": 0.0002
+  }
+ },
+ "ig:llm/llm:sbert+repair=1+align=0": {
+  "extracted/disabled": {
+   "n": 1618,
+   "share": 0.7536,
+   "mean_delta_ndcg@10": -0.0017,
+   "contribution": -0.0013
+  },
+  "no_intention/disabled": {
+   "n": 462,
+   "share": 0.2152,
+   "mean_delta_ndcg@10": -0.0013,
+   "contribution": -0.0003
+  },
+  "failure/disabled": {
+   "n": 67,
+   "share": 0.0312,
+   "mean_delta_ndcg@10": 0.0,
+   "contribution": 0.0
+  }
+ },
+ "ig:llm/llm:sbert+repair=1+rnorm=minmax": {
+  "extracted/unsupported": {
+   "n": 646,
+   "share": 0.3009,
+   "mean_delta_ndcg@10": -0.003,
+   "contribution": -0.0009
+  },
+  "no_intention/not_attempted": {
+   "n": 462,
+   "share": 0.2152,
+   "mean_delta_ndcg@10": -0.0013,
+   "contribution": -0.0003
+  },
+  "extracted/failure": {
+   "n": 440,
+   "share": 0.2049,
+   "mean_delta_ndcg@10": 0.0065,
+   "contribution": 0.0013
+  },
+  "extracted/insufficient": {
+   "n": 373,
+   "share": 0.1737,
+   "mean_delta_ndcg@10": -0.0095,
+   "contribution": -0.0016
+  },
+  "extracted/grounded": {
+   "n": 131,
+   "share": 0.061,
+   "mean_delta_ndcg@10": 0.0097,
+   "contribution": 0.0006
+  },
+  "failure/not_attempted": {
+   "n": 67,
+   "share": 0.0312,
+   "mean_delta_ndcg@10": 0.0,
+   "contribution": 0.0
+  },
+  "extracted/ambiguous": {
+   "n": 28,
+   "share": 0.013,
+   "mean_delta_ndcg@10": 0.0128,
+   "contribution": 0.0002
+  }
+ }
+}

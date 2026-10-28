@@ -1,0 +1,254 @@
+[
+ {
+  "system": "ig:llm/llm:bm25+repair=1+align=0",
+  "baseline": "ctx:bm25",
+  "metric": "ndcg@10",
+  "n": 36,
+  "mean_diff": 0.009,
+  "p_value": 0.027,
+  "ci95": [
+   0.0019,
+   0.0188
+  ],
+  "wins": 8,
+  "losses": 3
+ },
+ {
+  "system": "ig:llm/llm:bm25+repair=1+align=0",
+  "baseline": "ctx:bm25",
+  "metric": "mrr",
+  "n": 35,
+  "mean_diff": 0.0,
+  "p_value": 1.0,
+  "ci95": [
+   0.0,
+   0.0
+  ],
+  "wins": 0,
+  "losses": 0
+ },
+ {
+  "system": "ig:llm/llm:bm25+repair=1+align=0",
+  "baseline": "ctx:bm25",
+  "metric": "useful@1",
+  "n": 35,
+  "mean_diff": 0.0,
+  "p_value": 1.0,
+  "ci95": [
+   0.0,
+   0.0
+  ],
+  "wins": 0,
+  "losses": 0
+ },
+ {
+  "system": "ig:llm/llm:bm25",
+  "baseline": "ctx:bm25",
+  "metric": "ndcg@10",
+  "n": 36,
+  "mean_diff": 0.0045,
+  "p_value": 0.7079,
+  "ci95": [
+   -0.0176,
+   0.0274
+  ],
+  "wins": 8,
+  "losses": 7
+ },
+ {
+  "system": "ig:llm/llm:bm25",
+  "baseline": "ctx:bm25",
+  "metric": "mrr",
+  "n": 35,
+  "mean_diff": -0.0214,
+  "p_value": 1.0,
+  "ci95": [
+   -0.0643,
+   0.0
+  ],
+  "wins": 0,
+  "losses": 1
+ },
+ {
+  "system": "ig:llm/llm:bm25",
+  "baseline": "ctx:bm25",
+  "metric": "useful@1",
+  "n": 35,
+  "mean_diff": -0.0286,
+  "p_value": 1.0,
+  "ci95": [
+   -0.0857,
+   0.0
+  ],
+  "wins": 0,
+  "losses": 1
+ },
+ {
+  "system": "ig:llm/index:bm25+repair=1",
+  "baseline": "ctx:bm25",
+  "metric": "ndcg@10",
+  "n": 36,
+  "mean_diff": 0.0146,
+  "p_value": 0.2602,
+  "ci95": [
+   -0.0097,
+   0.0378
+  ],
+  "wins": 14,
+  "losses": 7
+ },
+ {
+  "system": "ig:llm/index:bm25+repair=1",
+  "baseline": "ctx:bm25",
+  "metric": "mrr",
+  "n": 35,
+  "mean_diff": -0.0024,
+  "p_value": 1.0,
+  "ci95": [
+   -0.0595,
+   0.0429
+  ],
+  "wins": 2,
+  "losses": 1
+ },
+ {
+  "system": "ig:llm/index:bm25+repair=1",
+  "baseline": "ctx:bm25",
+  "metric": "useful@1",
+  "n": 35,
+  "mean_diff": 0.0,
+  "p_value": 1.0,
+  "ci95": [
+   -0.0857,
+   0.0857
+  ],
+  "wins": 1,
+  "losses": 1
+ },
+ {
+  "system": "ig:gold/llm:bm25+repair=1",
+  "baseline": "ctx:bm25",
+  "metric": "ndcg@10",
+  "n": 36,
+  "mean_diff": 0.0218,
+  "p_value": 0.0998,
+  "ci95": [
+   -0.0022,
+   0.0478
+  ],
+  "wins": 19,
+  "losses": 10
+ },
+ {
+  "system": "ig:gold/llm:bm25+repair=1",
+  "baseline": "ctx:bm25",
+  "metric": "mrr",
+  "n": 35,
+  "mean_diff": -0.0262,
+  "p_value": 0.503,
+  "ci95": [
+   -0.0905,
+   0.0286
+  ],
+  "wins": 1,
+  "losses": 3
+ },
+ {
+  "system": "ig:gold/llm:bm25+repair=1",
+  "baseline": "ctx:bm25",
+  "metric": "useful@1",
+  "n": 35,
+  "mean_diff": -0.0286,
+  "p_value": 1.0,
+  "ci95": [
+   -0.1429,
+   0.0571
+  ],
+  "wins": 1,
+  "losses": 2
+ },
+ {
+  "system": "ig:llm/llm:bm25+repair=1",
+  "baseline": "ctx:bm25",
+  "metric": "ndcg@10",
+  "n": 36,
+  "mean_diff": 0.0155,
+  "p_value": 0.238,
+  "ci95": [
+   -0.0095,
+   0.0399
+  ],
+  "wins": 14,
+  "losses": 8
+ },
+ {
+  "system": "ig:llm/llm:bm25+repair=1",
+  "baseline": "ctx:bm25",
+  "metric": "mrr",
+  "n": 35,
+  "mean_diff": -0.0071,
+  "p_value": 1.0,
+  "ci95": [
+   -0.0643,
+   0.0429
+  ],
+  "wins": 1,
+  "losses": 1
+ },
+ {
+  "system": "ig:llm/llm:bm25+repair=1",
+  "baseline": "ctx:bm25",
+  "metric": "useful@1",
+  "n": 35,
+  "mean_diff": 0.0,
+  "p_value": 1.0,
+  "ci95": [
+   -0.0857,
+   0.0857
+  ],
+  "wins": 1,
+  "losses": 1
+ },
+ {
+  "system": "ig:llm/llm:bm25+repair=1+rnorm=minmax",
+  "baseline": "ctx:bm25",
+  "metric": "ndcg@10",
+  "n": 36,
+  "mean_diff": 0.0284,
+  "p_value": 0.0001,
+  "ci95": [
+   0.0137,
+   0.0459
+  ],
+  "wins": 15,
+  "losses": 7
+ },
+ {
+  "system": "ig:llm/llm:bm25+repair=1+rnorm=minmax",
+  "baseline": "ctx:bm25",
+  "metric": "mrr",
+  "n": 35,
+  "mean_diff": 0.0143,
+  "p_value": 1.0,
+  "ci95": [
+   0.0,
+   0.0429
+  ],
+  "wins": 1,
+  "losses": 0
+ },
+ {
+  "system": "ig:llm/llm:bm25+repair=1+rnorm=minmax",
+  "baseline": "ctx:bm25",
+  "metric": "useful@1",
+  "n": 35,
+  "mean_diff": 0.0286,
+  "p_value": 1.0,
+  "ci95": [
+   0.0,
+   0.0857
+  ],
+  "wins": 1,
+  "losses": 0
+ }
+]

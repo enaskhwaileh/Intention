@@ -1,0 +1,303 @@
+{
+ "environment": {
+  "python": "3.11.17",
+  "platform": "Linux-5.15.0-151-generic-x86_64-with-glibc2.35",
+  "processor": "x86_64",
+  "il_version": "1.0.0",
+  "il_sha256": "e357f3fba0c4440127d177177e4af8dcc967c1c17253a602fa8e7c9ba310dd68",
+  "corpus_id": "igbench-v1",
+  "tables": 3300,
+  "benchmark_sha256": "408d1b15e2ee2c0370320ab2398fda9a4cdc24128b8c86b3bdb93508128451ef",
+  "label_status": "draft_author_labels_unreviewed",
+  "benchmark": "igbench-v1",
+  "index": {
+   "bm25": {
+    "build_ms": 52.85,
+    "cache_hit": true,
+    "dense": null
+   }
+  },
+  "warm": false
+ },
+ "systems": [
+  {
+   "system": "ctx:bm25",
+   "queries": 36,
+   "ndcg@10": 0.7683,
+   "ndcg@10|intention": 0.7789,
+   "p@5": 0.4857,
+   "p@5|intention": 0.4688,
+   "p@10": 0.3229,
+   "p@10|intention": 0.3187,
+   "r@1": 0.3065,
+   "r@1|intention": 0.329,
+   "r@5": 0.7114,
+   "r@5|intention": 0.7209,
+   "r@10": 0.8509,
+   "r@10|intention": 0.8673,
+   "mrr": 0.8952,
+   "mrr|intention": 0.9167,
+   "useful@1": 0.8,
+   "useful@1|intention": 0.8438,
+   "topical_only@1": 0.1429,
+   "topical_only@1|intention": 0.125,
+   "swap_accuracy": 0.8035,
+   "by_operation": {
+    "aggregate": {
+     "n": 3,
+     "ndcg@10": 0.9387,
+     "r@5": 0.9048
+    },
+    "compare": {
+     "n": 10,
+     "ndcg@10": 0.804,
+     "r@5": 0.7814
+    },
+    "explain": {
+     "n": 7,
+     "ndcg@10": 0.775,
+     "r@5": 0.619
+    },
+    "monitor": {
+     "n": 5,
+     "ndcg@10": 0.6681,
+     "r@5": 0.725
+    },
+    "predict": {
+     "n": 8,
+     "ndcg@10": 0.7732,
+     "r@5": 0.6706
+    }
+   },
+   "timing": {
+    "context_matching_ms": {
+     "mean": 5.0,
+     "median": 4.885,
+     "p95": 7.308,
+     "max": 15.565
+    },
+    "total_ms": {
+     "mean": 5.11,
+     "median": 4.996,
+     "p95": 7.456,
+     "max": 15.707
+    }
+   },
+   "wall_seconds": 0.184
+  },
+  {
+   "system": "ig:gold/gold:bm25",
+   "queries": 36,
+   "ndcg@10": 0.7963,
+   "ndcg@10|intention": 0.8095,
+   "p@5": 0.5371,
+   "p@5|intention": 0.525,
+   "p@10": 0.3343,
+   "p@10|intention": 0.3312,
+   "r@1": 0.3113,
+   "r@1|intention": 0.3342,
+   "r@5": 0.7811,
+   "r@5|intention": 0.7972,
+   "r@10": 0.8823,
+   "r@10|intention": 0.9016,
+   "mrr": 0.8786,
+   "mrr|intention": 0.8984,
+   "useful@1": 0.7714,
+   "useful@1|intention": 0.8125,
+   "topical_only@1": 0.1429,
+   "topical_only@1|intention": 0.125,
+   "swap_accuracy": 0.8602,
+   "by_operation": {
+    "aggregate": {
+     "n": 3,
+     "ndcg@10": 0.9636,
+     "r@5": 0.9048
+    },
+    "compare": {
+     "n": 10,
+     "ndcg@10": 0.8548,
+     "r@5": 0.8406
+    },
+    "explain": {
+     "n": 7,
+     "ndcg@10": 0.8265,
+     "r@5": 0.769
+    },
+    "monitor": {
+     "n": 5,
+     "ndcg@10": 0.7275,
+     "r@5": 0.85
+    },
+    "predict": {
+     "n": 8,
+     "ndcg@10": 0.7408,
+     "r@5": 0.6998
+    }
+   },
+   "rq3_argument_f1": 1.0,
+   "rq3_binding_accuracy": 1.0,
+   "rq3_extraction_valid": 1.0,
+   "rq3_family": 1.0,
+   "rq3_grounding_status": 1.0,
+   "rq3_intention_presence": 1.0,
+   "rq3_scope_f1": 1.0,
+   "rq3_variant": 1.0,
+   "fallback_rate": 0.0,
+   "assessment_precision": 0.4974,
+   "assessment_recall": 0.7886,
+   "violated_but_useful": 8,
+   "timing": {
+    "interpreter_ms": {
+     "mean": 0.077,
+     "median": 0.069,
+     "p95": 0.128,
+     "max": 0.162
+    },
+    "context_matching_ms": {
+     "mean": 4.4,
+     "median": 4.258,
+     "p95": 6.928,
+     "max": 8.263
+    },
+    "grounder_ms": {
+     "mean": 0.131,
+     "median": 0.126,
+     "p95": 0.181,
+     "max": 0.409
+    },
+    "profiler_ms": {
+     "mean": 39.387,
+     "median": 40.149,
+     "p95": 76.151,
+     "max": 99.939
+    },
+    "aligner_ms": {
+     "mean": 931.685,
+     "median": 318.322,
+     "p95": 3774.421,
+     "max": 4541.594
+    },
+    "ranking_ms": {
+     "mean": 0.072,
+     "median": 0.067,
+     "p95": 0.115,
+     "max": 0.131
+    },
+    "total_ms": {
+     "mean": 976.904,
+     "median": 376.569,
+     "p95": 3810.876,
+     "max": 4588.408
+    }
+   },
+   "wall_seconds": 35.198
+  },
+  {
+   "system": "ig:rule/index:bm25",
+   "queries": 36,
+   "ndcg@10": 0.7883,
+   "ndcg@10|intention": 0.8008,
+   "p@5": 0.5314,
+   "p@5|intention": 0.5188,
+   "p@10": 0.3314,
+   "p@10|intention": 0.3281,
+   "r@1": 0.3208,
+   "r@1|intention": 0.3446,
+   "r@5": 0.7816,
+   "r@5|intention": 0.7978,
+   "r@10": 0.8749,
+   "r@10|intention": 0.8935,
+   "mrr": 0.9095,
+   "mrr|intention": 0.9323,
+   "useful@1": 0.8286,
+   "useful@1|intention": 0.875,
+   "topical_only@1": 0.1143,
+   "topical_only@1|intention": 0.0938,
+   "swap_accuracy": 0.843,
+   "by_operation": {
+    "aggregate": {
+     "n": 3,
+     "ndcg@10": 0.9639,
+     "r@5": 0.9048
+    },
+    "compare": {
+     "n": 10,
+     "ndcg@10": 0.8313,
+     "r@5": 0.8406
+    },
+    "explain": {
+     "n": 7,
+     "ndcg@10": 0.8067,
+     "r@5": 0.7238
+    },
+    "monitor": {
+     "n": 5,
+     "ndcg@10": 0.6987,
+     "r@5": 0.85
+    },
+    "predict": {
+     "n": 8,
+     "ndcg@10": 0.7705,
+     "r@5": 0.7415
+    }
+   },
+   "rq3_argument_f1": 0.8248,
+   "rq3_binding_accuracy": 0.6875,
+   "rq3_extraction_valid": 1.0,
+   "rq3_family": 0.8125,
+   "rq3_grounding_status": 0.8333,
+   "rq3_intention_presence": 1.0,
+   "rq3_scope_f1": 0.9697,
+   "rq3_variant": 0.8125,
+   "fallback_rate": 0.1875,
+   "assessment_precision": 0.4819,
+   "assessment_recall": 0.7843,
+   "violated_but_useful": 1,
+   "timing": {
+    "interpreter_ms": {
+     "mean": 0.357,
+     "median": 0.149,
+     "p95": 0.626,
+     "max": 5.562
+    },
+    "context_matching_ms": {
+     "mean": 6.263,
+     "median": 4.7,
+     "p95": 8.795,
+     "max": 62.973
+    },
+    "grounder_ms": {
+     "mean": 0.21,
+     "median": 0.192,
+     "p95": 0.279,
+     "max": 1.002
+    },
+    "profiler_ms": {
+     "mean": 32.681,
+     "median": 39.027,
+     "p95": 53.436,
+     "max": 107.195
+    },
+    "aligner_ms": {
+     "mean": 841.56,
+     "median": 123.104,
+     "p95": 3629.184,
+     "max": 6137.056
+    },
+    "ranking_ms": {
+     "mean": 0.076,
+     "median": 0.066,
+     "p95": 0.146,
+     "max": 0.252
+    },
+    "total_ms": {
+     "mean": 882.444,
+     "median": 178.204,
+     "p95": 3680.621,
+     "max": 6185.071
+    }
+   },
+   "wall_seconds": 31.793
+  }
+ ]
+}

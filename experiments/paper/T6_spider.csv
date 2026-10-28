@@ -1,0 +1,60 @@
+Matcher,System,outcome,questions,share,mean Δ nDCG@10,contribution
+BM25,ig:rule/index:bm25+rnorm=minmax,no_intention/not_attempted,1812,84%,+0.048,+0.0402
+BM25,ig:rule/index:bm25+rnorm=minmax,extracted/insufficient,241,11%,+0.003,+0.0003
+BM25,ig:rule/index:bm25+rnorm=minmax,extracted/grounded,85,4%,+0.037,+0.0015
+BM25,ig:rule/index:bm25+rnorm=minmax,extracted/unsupported,9,0%,+0.000,+0.0000
+BM25,ig:llm/llm:bm25+repair=1+rnorm=minmax [q14],extracted/unsupported,894,42%,+0.019,+0.0080
+BM25,ig:llm/llm:bm25+repair=1+rnorm=minmax [q14],extracted/failure,495,23%,+0.032,+0.0073
+BM25,ig:llm/llm:bm25+repair=1+rnorm=minmax [q14],extracted/grounded,229,11%,+0.012,+0.0013
+BM25,ig:llm/llm:bm25+repair=1+rnorm=minmax [q14],extracted/insufficient,208,10%,+0.011,+0.0010
+BM25,ig:llm/llm:bm25+repair=1+rnorm=minmax [q14],failure/not_attempted,168,8%,+0.000,+0.0000
+BM25,ig:llm/llm:bm25+repair=1+rnorm=minmax [q14],no_intention/not_attempted,153,7%,+0.035,+0.0025
+BM25,ig:llm/llm:bm25+repair=1+rnorm=minmax [q32],extracted/unsupported,646,30%,+0.027,+0.0081
+BM25,ig:llm/llm:bm25+repair=1+rnorm=minmax [q32],no_intention/not_attempted,462,22%,+0.031,+0.0066
+BM25,ig:llm/llm:bm25+repair=1+rnorm=minmax [q32],extracted/failure,440,20%,+0.029,+0.0059
+BM25,ig:llm/llm:bm25+repair=1+rnorm=minmax [q32],extracted/insufficient,373,17%,+0.016,+0.0028
+BM25,ig:llm/llm:bm25+repair=1+rnorm=minmax [q32],extracted/grounded,131,6%,+0.037,+0.0022
+BM25,ig:llm/llm:bm25+repair=1+rnorm=minmax [q32],failure/not_attempted,67,3%,+0.000,+0.0000
+BM25,ig:llm/llm:bm25+repair=1+rnorm=minmax [q32],extracted/ambiguous,28,1%,+0.025,+0.0003
+SBERT all-MiniLM-L6-v2,ig:rule/index:sbert+rnorm=minmax,no_intention/not_attempted,1812,84%,+0.003,+0.0023
+SBERT all-MiniLM-L6-v2,ig:rule/index:sbert+rnorm=minmax,extracted/insufficient,241,11%,+0.018,+0.0020
+SBERT all-MiniLM-L6-v2,ig:rule/index:sbert+rnorm=minmax,extracted/grounded,85,4%,+0.015,+0.0006
+SBERT all-MiniLM-L6-v2,ig:rule/index:sbert+rnorm=minmax,extracted/unsupported,9,0%,-0.014,-0.0001
+SBERT all-MiniLM-L6-v2,ig:llm/llm:sbert+repair=1+rnorm=minmax [q14],extracted/unsupported,894,42%,-0.006,-0.0025
+SBERT all-MiniLM-L6-v2,ig:llm/llm:sbert+repair=1+rnorm=minmax [q14],extracted/failure,495,23%,+0.001,+0.0002
+SBERT all-MiniLM-L6-v2,ig:llm/llm:sbert+repair=1+rnorm=minmax [q14],extracted/grounded,229,11%,-0.002,-0.0002
+SBERT all-MiniLM-L6-v2,ig:llm/llm:sbert+repair=1+rnorm=minmax [q14],extracted/insufficient,208,10%,+0.004,+0.0004
+SBERT all-MiniLM-L6-v2,ig:llm/llm:sbert+repair=1+rnorm=minmax [q14],failure/not_attempted,168,8%,+0.000,+0.0000
+SBERT all-MiniLM-L6-v2,ig:llm/llm:sbert+repair=1+rnorm=minmax [q14],no_intention/not_attempted,153,7%,+0.006,+0.0005
+SBERT all-MiniLM-L6-v2,ig:llm/llm:sbert+repair=1+rnorm=minmax [q32],extracted/unsupported,646,30%,-0.003,-0.0009
+SBERT all-MiniLM-L6-v2,ig:llm/llm:sbert+repair=1+rnorm=minmax [q32],no_intention/not_attempted,462,22%,-0.001,-0.0003
+SBERT all-MiniLM-L6-v2,ig:llm/llm:sbert+repair=1+rnorm=minmax [q32],extracted/failure,440,20%,+0.006,+0.0013
+SBERT all-MiniLM-L6-v2,ig:llm/llm:sbert+repair=1+rnorm=minmax [q32],extracted/insufficient,373,17%,-0.009,-0.0016
+SBERT all-MiniLM-L6-v2,ig:llm/llm:sbert+repair=1+rnorm=minmax [q32],extracted/grounded,131,6%,+0.010,+0.0006
+SBERT all-MiniLM-L6-v2,ig:llm/llm:sbert+repair=1+rnorm=minmax [q32],failure/not_attempted,67,3%,+0.000,+0.0000
+SBERT all-MiniLM-L6-v2,ig:llm/llm:sbert+repair=1+rnorm=minmax [q32],extracted/ambiguous,28,1%,+0.013,+0.0002
+multilingual-e5-large-instruct,ig:rule/index:sbert+rnorm=minmax,no_intention/not_attempted,1812,84%,+0.003,+0.0022
+multilingual-e5-large-instruct,ig:rule/index:sbert+rnorm=minmax,extracted/insufficient,241,11%,-0.003,-0.0003
+multilingual-e5-large-instruct,ig:rule/index:sbert+rnorm=minmax,extracted/grounded,85,4%,-0.006,-0.0002
+multilingual-e5-large-instruct,ig:rule/index:sbert+rnorm=minmax,extracted/unsupported,9,0%,-0.017,-0.0001
+stella_en_400M_v5,ig:rule/index:sbert+rnorm=minmax,no_intention/not_attempted,1812,84%,-0.001,-0.0011
+stella_en_400M_v5,ig:rule/index:sbert+rnorm=minmax,extracted/insufficient,241,11%,-0.006,-0.0007
+stella_en_400M_v5,ig:rule/index:sbert+rnorm=minmax,extracted/grounded,85,4%,-0.008,-0.0003
+stella_en_400M_v5,ig:rule/index:sbert+rnorm=minmax,extracted/unsupported,9,0%,+0.019,+0.0001
+TABERTA (PC),ig:rule/index:taberta+rnorm=minmax,no_intention/not_attempted,1812,84%,-0.002,-0.0014
+TABERTA (PC),ig:rule/index:taberta+rnorm=minmax,extracted/insufficient,241,11%,+0.011,+0.0012
+TABERTA (PC),ig:rule/index:taberta+rnorm=minmax,extracted/grounded,85,4%,+0.020,+0.0008
+TABERTA (PC),ig:rule/index:taberta+rnorm=minmax,extracted/unsupported,9,0%,-0.027,-0.0001
+TABERTA (PC),ig:llm/llm:taberta+repair=1+rnorm=minmax [q14],extracted/unsupported,894,42%,+0.011,+0.0047
+TABERTA (PC),ig:llm/llm:taberta+repair=1+rnorm=minmax [q14],extracted/failure,495,23%,-0.004,-0.0009
+TABERTA (PC),ig:llm/llm:taberta+repair=1+rnorm=minmax [q14],extracted/grounded,229,11%,+0.035,+0.0037
+TABERTA (PC),ig:llm/llm:taberta+repair=1+rnorm=minmax [q14],extracted/insufficient,208,10%,+0.009,+0.0009
+TABERTA (PC),ig:llm/llm:taberta+repair=1+rnorm=minmax [q14],failure/not_attempted,168,8%,+0.000,+0.0000
+TABERTA (PC),ig:llm/llm:taberta+repair=1+rnorm=minmax [q14],no_intention/not_attempted,153,7%,-0.012,-0.0009
+TABERTA (PC),ig:llm/llm:taberta+repair=1+rnorm=minmax [q32],extracted/unsupported,646,30%,+0.019,+0.0057
+TABERTA (PC),ig:llm/llm:taberta+repair=1+rnorm=minmax [q32],no_intention/not_attempted,462,22%,+0.005,+0.0010
+TABERTA (PC),ig:llm/llm:taberta+repair=1+rnorm=minmax [q32],extracted/failure,440,20%,+0.003,+0.0006
+TABERTA (PC),ig:llm/llm:taberta+repair=1+rnorm=minmax [q32],extracted/insufficient,373,17%,+0.007,+0.0012
+TABERTA (PC),ig:llm/llm:taberta+repair=1+rnorm=minmax [q32],extracted/grounded,131,6%,+0.012,+0.0007
+TABERTA (PC),ig:llm/llm:taberta+repair=1+rnorm=minmax [q32],failure/not_attempted,67,3%,+0.000,+0.0000
+TABERTA (PC),ig:llm/llm:taberta+repair=1+rnorm=minmax [q32],extracted/ambiguous,28,1%,+0.053,+0.0007

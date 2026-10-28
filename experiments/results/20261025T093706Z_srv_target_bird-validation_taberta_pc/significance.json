@@ -1,0 +1,86 @@
+[
+ {
+  "system": "ig:rule/index:taberta+rnorm=minmax",
+  "baseline": "ctx:taberta",
+  "metric": "ndcg@10",
+  "n": 1533,
+  "mean_diff": 0.0048,
+  "p_value": 0.0643,
+  "ci95": [
+   -0.0002,
+   0.0097
+  ],
+  "wins": 318,
+  "losses": 270
+ },
+ {
+  "system": "ig:rule/index:taberta+rnorm=minmax",
+  "baseline": "ctx:taberta",
+  "metric": "mrr",
+  "n": 1533,
+  "mean_diff": 0.0048,
+  "p_value": 0.2538,
+  "ci95": [
+   -0.0034,
+   0.0134
+  ],
+  "wins": 128,
+  "losses": 103
+ },
+ {
+  "system": "ig:rule/index:taberta+rnorm=minmax",
+  "baseline": "ctx:taberta",
+  "metric": "useful@1",
+  "n": 1533,
+  "mean_diff": 0.0065,
+  "p_value": 0.4541,
+  "ci95": [
+   -0.0078,
+   0.0222
+  ],
+  "wins": 77,
+  "losses": 67
+ },
+ {
+  "system": "ig:rule/index:taberta",
+  "baseline": "ctx:taberta",
+  "metric": "ndcg@10",
+  "n": 1533,
+  "mean_diff": 0.0051,
+  "p_value": 0.053,
+  "ci95": [
+   0.0001,
+   0.0102
+  ],
+  "wins": 320,
+  "losses": 269
+ },
+ {
+  "system": "ig:rule/index:taberta",
+  "baseline": "ctx:taberta",
+  "metric": "mrr",
+  "n": 1533,
+  "mean_diff": 0.005,
+  "p_value": 0.2469,
+  "ci95": [
+   -0.0031,
+   0.0134
+  ],
+  "wins": 128,
+  "losses": 103
+ },
+ {
+  "system": "ig:rule/index:taberta",
+  "baseline": "ctx:taberta",
+  "metric": "useful@1",
+  "n": 1533,
+  "mean_diff": 0.0072,
+  "p_value": 0.4056,
+  "ci95": [
+   -0.0072,
+   0.0228
+  ],
+  "wins": 78,
+  "losses": 67
+ }
+]

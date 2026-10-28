@@ -1,0 +1,506 @@
+[
+ {
+  "system": "ig:gold/gold:bm25+alpha=1.0",
+  "baseline": "ctx:bm25",
+  "metric": "ndcg@10",
+  "n": 36,
+  "mean_diff": -0.0327,
+  "p_value": 0.286,
+  "ci95": [
+   -0.0944,
+   0.0183
+  ],
+  "wins": 12,
+  "losses": 18
+ },
+ {
+  "system": "ig:gold/gold:bm25+alpha=1.0",
+  "baseline": "ctx:bm25",
+  "metric": "mrr",
+  "n": 35,
+  "mean_diff": 0.0054,
+  "p_value": 0.9347,
+  "ci95": [
+   -0.0837,
+   0.0857
+  ],
+  "wins": 3,
+  "losses": 2
+ },
+ {
+  "system": "ig:gold/gold:bm25+alpha=1.0",
+  "baseline": "ctx:bm25",
+  "metric": "useful@1",
+  "n": 35,
+  "mean_diff": 0.0286,
+  "p_value": 1.0,
+  "ci95": [
+   -0.1143,
+   0.1429
+  ],
+  "wins": 3,
+  "losses": 2
+ },
+ {
+  "system": "ig:gold/gold:bm25+comb=linear",
+  "baseline": "ctx:bm25",
+  "metric": "ndcg@10",
+  "n": 36,
+  "mean_diff": -0.0058,
+  "p_value": 0.8914,
+  "ci95": [
+   -0.0605,
+   0.0366
+  ],
+  "wins": 14,
+  "losses": 13
+ },
+ {
+  "system": "ig:gold/gold:bm25+comb=linear",
+  "baseline": "ctx:bm25",
+  "metric": "mrr",
+  "n": 35,
+  "mean_diff": 0.0067,
+  "p_value": 0.9347,
+  "ci95": [
+   -0.08,
+   0.0857
+  ],
+  "wins": 3,
+  "losses": 2
+ },
+ {
+  "system": "ig:gold/gold:bm25+comb=linear",
+  "baseline": "ctx:bm25",
+  "metric": "useful@1",
+  "n": 35,
+  "mean_diff": 0.0286,
+  "p_value": 1.0,
+  "ci95": [
+   -0.1143,
+   0.1429
+  ],
+  "wins": 3,
+  "losses": 2
+ },
+ {
+  "system": "ig:gold/gold:bm25+k=100",
+  "baseline": "ctx:bm25",
+  "metric": "ndcg@10",
+  "n": 36,
+  "mean_diff": 0.0272,
+  "p_value": 0.0469,
+  "ci95": [
+   0.0025,
+   0.0535
+  ],
+  "wins": 21,
+  "losses": 8
+ },
+ {
+  "system": "ig:gold/gold:bm25+k=100",
+  "baseline": "ctx:bm25",
+  "metric": "mrr",
+  "n": 35,
+  "mean_diff": -0.0167,
+  "p_value": 0.7505,
+  "ci95": [
+   -0.081,
+   0.0381
+  ],
+  "wins": 2,
+  "losses": 2
+ },
+ {
+  "system": "ig:gold/gold:bm25+k=100",
+  "baseline": "ctx:bm25",
+  "metric": "useful@1",
+  "n": 35,
+  "mean_diff": -0.0286,
+  "p_value": 1.0,
+  "ci95": [
+   -0.1429,
+   0.0571
+  ],
+  "wins": 1,
+  "losses": 2
+ },
+ {
+  "system": "ig:gold/index:bm25",
+  "baseline": "ctx:bm25",
+  "metric": "ndcg@10",
+  "n": 36,
+  "mean_diff": 0.0272,
+  "p_value": 0.0469,
+  "ci95": [
+   0.0025,
+   0.0535
+  ],
+  "wins": 21,
+  "losses": 8
+ },
+ {
+  "system": "ig:gold/index:bm25",
+  "baseline": "ctx:bm25",
+  "metric": "mrr",
+  "n": 35,
+  "mean_diff": -0.0167,
+  "p_value": 0.7505,
+  "ci95": [
+   -0.081,
+   0.0381
+  ],
+  "wins": 2,
+  "losses": 2
+ },
+ {
+  "system": "ig:gold/index:bm25",
+  "baseline": "ctx:bm25",
+  "metric": "useful@1",
+  "n": 35,
+  "mean_diff": -0.0286,
+  "p_value": 1.0,
+  "ci95": [
+   -0.1429,
+   0.0571
+  ],
+  "wins": 1,
+  "losses": 2
+ },
+ {
+  "system": "ig:gold/gold:bm25+k=20",
+  "baseline": "ctx:bm25",
+  "metric": "ndcg@10",
+  "n": 36,
+  "mean_diff": 0.0249,
+  "p_value": 0.0652,
+  "ci95": [
+   0.0007,
+   0.0511
+  ],
+  "wins": 21,
+  "losses": 8
+ },
+ {
+  "system": "ig:gold/gold:bm25+k=20",
+  "baseline": "ctx:bm25",
+  "metric": "mrr",
+  "n": 35,
+  "mean_diff": -0.0167,
+  "p_value": 0.7505,
+  "ci95": [
+   -0.081,
+   0.0381
+  ],
+  "wins": 2,
+  "losses": 2
+ },
+ {
+  "system": "ig:gold/gold:bm25+k=20",
+  "baseline": "ctx:bm25",
+  "metric": "useful@1",
+  "n": 35,
+  "mean_diff": -0.0286,
+  "p_value": 1.0,
+  "ci95": [
+   -0.1429,
+   0.0571
+  ],
+  "wins": 1,
+  "losses": 2
+ },
+ {
+  "system": "ig:gold/gold:bm25+comb=lexicographic",
+  "baseline": "ctx:bm25",
+  "metric": "ndcg@10",
+  "n": 36,
+  "mean_diff": -0.0792,
+  "p_value": 0.0105,
+  "ci95": [
+   -0.1448,
+   -0.02
+  ],
+  "wins": 9,
+  "losses": 23
+ },
+ {
+  "system": "ig:gold/gold:bm25+comb=lexicographic",
+  "baseline": "ctx:bm25",
+  "metric": "mrr",
+  "n": 35,
+  "mean_diff": -0.0946,
+  "p_value": 0.1299,
+  "ci95": [
+   -0.213,
+   0.0143
+  ],
+  "wins": 3,
+  "losses": 9
+ },
+ {
+  "system": "ig:gold/gold:bm25+comb=lexicographic",
+  "baseline": "ctx:bm25",
+  "metric": "useful@1",
+  "n": 35,
+  "mean_diff": -0.1143,
+  "p_value": 0.3478,
+  "ci95": [
+   -0.2857,
+   0.0571
+  ],
+  "wins": 3,
+  "losses": 7
+ },
+ {
+  "system": "ig:gold/gold:bm25+alpha=0.75",
+  "baseline": "ctx:bm25",
+  "metric": "ndcg@10",
+  "n": 36,
+  "mean_diff": -0.0058,
+  "p_value": 0.897,
+  "ci95": [
+   -0.059,
+   0.0347
+  ],
+  "wins": 16,
+  "losses": 13
+ },
+ {
+  "system": "ig:gold/gold:bm25+alpha=0.75",
+  "baseline": "ctx:bm25",
+  "metric": "mrr",
+  "n": 35,
+  "mean_diff": -0.0077,
+  "p_value": 1.0,
+  "ci95": [
+   -0.0899,
+   0.0571
+  ],
+  "wins": 3,
+  "losses": 2
+ },
+ {
+  "system": "ig:gold/gold:bm25+alpha=0.75",
+  "baseline": "ctx:bm25",
+  "metric": "useful@1",
+  "n": 35,
+  "mean_diff": 0.0,
+  "p_value": 1.0,
+  "ci95": [
+   -0.1143,
+   0.1143
+  ],
+  "wins": 2,
+  "losses": 2
+ },
+ {
+  "system": "ig:gold/gold:bm25+soft=0",
+  "baseline": "ctx:bm25",
+  "metric": "ndcg@10",
+  "n": 36,
+  "mean_diff": 0.0312,
+  "p_value": 0.0227,
+  "ci95": [
+   0.0072,
+   0.0569
+  ],
+  "wins": 23,
+  "losses": 7
+ },
+ {
+  "system": "ig:gold/gold:bm25+soft=0",
+  "baseline": "ctx:bm25",
+  "metric": "mrr",
+  "n": 35,
+  "mean_diff": -0.0024,
+  "p_value": 1.0,
+  "ci95": [
+   -0.0595,
+   0.0429
+  ],
+  "wins": 2,
+  "losses": 1
+ },
+ {
+  "system": "ig:gold/gold:bm25+soft=0",
+  "baseline": "ctx:bm25",
+  "metric": "useful@1",
+  "n": 35,
+  "mean_diff": 0.0,
+  "p_value": 1.0,
+  "ci95": [
+   -0.0857,
+   0.0857
+  ],
+  "wins": 1,
+  "losses": 1
+ },
+ {
+  "system": "ig:gold/gold:bm25+alpha=0.25",
+  "baseline": "ctx:bm25",
+  "metric": "ndcg@10",
+  "n": 36,
+  "mean_diff": 0.033,
+  "p_value": 0.0019,
+  "ci95": [
+   0.0139,
+   0.0533
+  ],
+  "wins": 22,
+  "losses": 7
+ },
+ {
+  "system": "ig:gold/gold:bm25+alpha=0.25",
+  "baseline": "ctx:bm25",
+  "metric": "mrr",
+  "n": 35,
+  "mean_diff": -0.0095,
+  "p_value": 1.0,
+  "ci95": [
+   -0.0667,
+   0.0429
+  ],
+  "wins": 2,
+  "losses": 2
+ },
+ {
+  "system": "ig:gold/gold:bm25+alpha=0.25",
+  "baseline": "ctx:bm25",
+  "metric": "useful@1",
+  "n": 35,
+  "mean_diff": -0.0286,
+  "p_value": 1.0,
+  "ci95": [
+   -0.1429,
+   0.0571
+  ],
+  "wins": 1,
+  "losses": 2
+ },
+ {
+  "system": "ig:gold/gold:bm25",
+  "baseline": "ctx:bm25",
+  "metric": "ndcg@10",
+  "n": 36,
+  "mean_diff": 0.0272,
+  "p_value": 0.0469,
+  "ci95": [
+   0.0025,
+   0.0535
+  ],
+  "wins": 21,
+  "losses": 8
+ },
+ {
+  "system": "ig:gold/gold:bm25",
+  "baseline": "ctx:bm25",
+  "metric": "mrr",
+  "n": 35,
+  "mean_diff": -0.0167,
+  "p_value": 0.7505,
+  "ci95": [
+   -0.081,
+   0.0381
+  ],
+  "wins": 2,
+  "losses": 2
+ },
+ {
+  "system": "ig:gold/gold:bm25",
+  "baseline": "ctx:bm25",
+  "metric": "useful@1",
+  "n": 35,
+  "mean_diff": -0.0286,
+  "p_value": 1.0,
+  "ci95": [
+   -0.1429,
+   0.0571
+  ],
+  "wins": 1,
+  "losses": 2
+ },
+ {
+  "system": "ig:gold/gold:bm25+bind=0.7",
+  "baseline": "ctx:bm25",
+  "metric": "ndcg@10",
+  "n": 36,
+  "mean_diff": 0.0272,
+  "p_value": 0.0355,
+  "ci95": [
+   0.004,
+   0.051
+  ],
+  "wins": 22,
+  "losses": 8
+ },
+ {
+  "system": "ig:gold/gold:bm25+bind=0.7",
+  "baseline": "ctx:bm25",
+  "metric": "mrr",
+  "n": 35,
+  "mean_diff": -0.0167,
+  "p_value": 0.7505,
+  "ci95": [
+   -0.081,
+   0.0381
+  ],
+  "wins": 2,
+  "losses": 2
+ },
+ {
+  "system": "ig:gold/gold:bm25+bind=0.7",
+  "baseline": "ctx:bm25",
+  "metric": "useful@1",
+  "n": 35,
+  "mean_diff": -0.0286,
+  "p_value": 1.0,
+  "ci95": [
+   -0.1429,
+   0.0571
+  ],
+  "wins": 1,
+  "losses": 2
+ },
+ {
+  "system": "ig:rule/gold:bm25",
+  "baseline": "ctx:bm25",
+  "metric": "ndcg@10",
+  "n": 36,
+  "mean_diff": 0.012,
+  "p_value": 0.1346,
+  "ci95": [
+   -0.003,
+   0.0275
+  ],
+  "wins": 14,
+  "losses": 7
+ },
+ {
+  "system": "ig:rule/gold:bm25",
+  "baseline": "ctx:bm25",
+  "metric": "mrr",
+  "n": 35,
+  "mean_diff": 0.0032,
+  "p_value": 1.0,
+  "ci95": [
+   -0.0333,
+   0.0429
+  ],
+  "wins": 1,
+  "losses": 1
+ },
+ {
+  "system": "ig:rule/gold:bm25",
+  "baseline": "ctx:bm25",
+  "metric": "useful@1",
+  "n": 35,
+  "mean_diff": 0.0286,
+  "p_value": 1.0,
+  "ci95": [
+   0.0,
+   0.0857
+  ],
+  "wins": 1,
+  "losses": 0
+ }
+]

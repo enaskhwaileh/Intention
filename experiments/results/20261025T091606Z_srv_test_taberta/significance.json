@@ -1,0 +1,170 @@
+[
+ {
+  "system": "ig:rule/index:taberta+rnorm=minmax",
+  "baseline": "ctx:taberta",
+  "metric": "ndcg@10",
+  "n": 21,
+  "mean_diff": 0.0014,
+  "p_value": 1.0,
+  "ci95": [
+   0.0,
+   0.0041
+  ],
+  "wins": 1,
+  "losses": 0
+ },
+ {
+  "system": "ig:rule/index:taberta+rnorm=minmax",
+  "baseline": "ctx:taberta",
+  "metric": "mrr",
+  "n": 20,
+  "mean_diff": 0.0,
+  "p_value": 1.0,
+  "ci95": [
+   0.0,
+   0.0
+  ],
+  "wins": 0,
+  "losses": 0
+ },
+ {
+  "system": "ig:rule/index:taberta+rnorm=minmax",
+  "baseline": "ctx:taberta",
+  "metric": "useful@1",
+  "n": 20,
+  "mean_diff": 0.0,
+  "p_value": 1.0,
+  "ci95": [
+   0.0,
+   0.0
+  ],
+  "wins": 0,
+  "losses": 0
+ },
+ {
+  "system": "ig:gold/gold:taberta+rnorm=minmax",
+  "baseline": "ctx:taberta",
+  "metric": "ndcg@10",
+  "n": 21,
+  "mean_diff": 0.0,
+  "p_value": 1.0,
+  "ci95": [
+   0.0,
+   0.0
+  ],
+  "wins": 0,
+  "losses": 0
+ },
+ {
+  "system": "ig:gold/gold:taberta+rnorm=minmax",
+  "baseline": "ctx:taberta",
+  "metric": "mrr",
+  "n": 20,
+  "mean_diff": 0.0,
+  "p_value": 1.0,
+  "ci95": [
+   0.0,
+   0.0
+  ],
+  "wins": 0,
+  "losses": 0
+ },
+ {
+  "system": "ig:gold/gold:taberta+rnorm=minmax",
+  "baseline": "ctx:taberta",
+  "metric": "useful@1",
+  "n": 20,
+  "mean_diff": 0.0,
+  "p_value": 1.0,
+  "ci95": [
+   0.0,
+   0.0
+  ],
+  "wins": 0,
+  "losses": 0
+ },
+ {
+  "system": "ig:gold/gold:taberta",
+  "baseline": "ctx:taberta",
+  "metric": "ndcg@10",
+  "n": 21,
+  "mean_diff": 0.0,
+  "p_value": 1.0,
+  "ci95": [
+   0.0,
+   0.0
+  ],
+  "wins": 0,
+  "losses": 0
+ },
+ {
+  "system": "ig:gold/gold:taberta",
+  "baseline": "ctx:taberta",
+  "metric": "mrr",
+  "n": 20,
+  "mean_diff": 0.0,
+  "p_value": 1.0,
+  "ci95": [
+   0.0,
+   0.0
+  ],
+  "wins": 0,
+  "losses": 0
+ },
+ {
+  "system": "ig:gold/gold:taberta",
+  "baseline": "ctx:taberta",
+  "metric": "useful@1",
+  "n": 20,
+  "mean_diff": 0.0,
+  "p_value": 1.0,
+  "ci95": [
+   0.0,
+   0.0
+  ],
+  "wins": 0,
+  "losses": 0
+ },
+ {
+  "system": "ig:rule/index:taberta",
+  "baseline": "ctx:taberta",
+  "metric": "ndcg@10",
+  "n": 21,
+  "mean_diff": 0.0,
+  "p_value": 1.0,
+  "ci95": [
+   0.0,
+   0.0
+  ],
+  "wins": 0,
+  "losses": 0
+ },
+ {
+  "system": "ig:rule/index:taberta",
+  "baseline": "ctx:taberta",
+  "metric": "mrr",
+  "n": 20,
+  "mean_diff": 0.0,
+  "p_value": 1.0,
+  "ci95": [
+   0.0,
+   0.0
+  ],
+  "wins": 0,
+  "losses": 0
+ },
+ {
+  "system": "ig:rule/index:taberta",
+  "baseline": "ctx:taberta",
+  "metric": "useful@1",
+  "n": 20,
+  "mean_diff": 0.0,
+  "p_value": 1.0,
+  "ci95": [
+   0.0,
+   0.0
+  ],
+  "wins": 0,
+  "losses": 0
+ }
+]

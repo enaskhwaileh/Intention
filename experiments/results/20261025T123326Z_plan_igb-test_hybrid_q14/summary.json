@@ -1,0 +1,565 @@
+{
+ "environment": {
+  "python": "3.11.17",
+  "platform": "Linux-5.15.0-151-generic-x86_64-with-glibc2.35",
+  "processor": "x86_64",
+  "il_version": "1.0.0",
+  "il_sha256": "e357f3fba0c4440127d177177e4af8dcc967c1c17253a602fa8e7c9ba310dd68",
+  "corpus_id": "igbench-v1",
+  "tables": 3300,
+  "benchmark_sha256": "49c74c038397f1d3564be19518161f0981e366fb1c516a42e5fb31dafed03157",
+  "label_status": "draft_author_labels_unreviewed",
+  "benchmark": "igbench-v1-test",
+  "index": {
+   "hybrid": {
+    "build_ms": 9692.858,
+    "cache_hit": true,
+    "dense": {
+     "chunks": 7938,
+     "embedded": 0,
+     "reused": 7938,
+     "deleted": 0,
+     "embed_ms": 0.0,
+     "sync_ms": 946.924,
+     "backend": "chroma",
+     "collection": "ig--transformers-all-MiniLM-L6-v2-79f2d7284f",
+     "encoder": "sbert",
+     "model": "sentence-transformers/all-MiniLM-L6-v2",
+     "device": "cuda",
+     "dim": 384,
+     "max_tokens": 256,
+     "query_prefix": "",
+     "passage_prefix": ""
+    }
+   }
+  },
+  "warm": false
+ },
+ "systems": [
+  {
+   "system": "ctx:hybrid",
+   "queries": 21,
+   "ndcg@10": 0.8446,
+   "ndcg@10|intention": 0.8385,
+   "p@5": 0.56,
+   "p@5|intention": 0.5474,
+   "p@10": 0.335,
+   "p@10|intention": 0.3316,
+   "r@1": 0.4241,
+   "r@1|intention": 0.4333,
+   "r@5": 0.8331,
+   "r@5|intention": 0.8244,
+   "r@10": 0.9075,
+   "r@10|intention": 0.9027,
+   "mrr": 0.95,
+   "mrr|intention": 0.9474,
+   "useful@1": 0.9,
+   "useful@1|intention": 0.8947,
+   "topical_only@1": 0.05,
+   "topical_only@1|intention": 0.0526,
+   "swap_accuracy": 0.8598,
+   "by_operation": {
+    "compare": {
+     "n": 8,
+     "ndcg@10": 0.8473,
+     "r@5": 0.7864
+    },
+    "explain": {
+     "n": 3,
+     "ndcg@10": 0.7629,
+     "r@5": 0.7333
+    },
+    "monitor": {
+     "n": 5,
+     "ndcg@10": 0.8087,
+     "r@5": 0.9167
+    },
+    "predict": {
+     "n": 4,
+     "ndcg@10": 0.9183,
+     "r@5": 0.8438
+    }
+   },
+   "timing": {
+    "context_matching_ms": {
+     "mean": 103.95,
+     "median": 84.834,
+     "p95": 90.987,
+     "max": 492.061
+    },
+    "embed_query_ms": {
+     "mean": 24.032,
+     "median": 10.813,
+     "p95": 15.855,
+     "max": 284.139
+    },
+    "vector_search_ms": {
+     "mean": 72.422,
+     "median": 65.355,
+     "p95": 71.621,
+     "max": 196.604
+    },
+    "total_ms": {
+     "mean": 104.092,
+     "median": 84.99,
+     "p95": 91.149,
+     "max": 492.215
+    }
+   },
+   "wall_seconds": 2.186
+  },
+  {
+   "system": "ig:llm/llm:hybrid",
+   "queries": 21,
+   "ndcg@10": 0.8192,
+   "ndcg@10|intention": 0.8263,
+   "p@5": 0.54,
+   "p@5|intention": 0.5368,
+   "p@10": 0.335,
+   "p@10|intention": 0.3368,
+   "r@1": 0.3616,
+   "r@1|intention": 0.3807,
+   "r@5": 0.8119,
+   "r@5|intention": 0.8152,
+   "r@10": 0.913,
+   "r@10|intention": 0.9216,
+   "mrr": 0.9,
+   "mrr|intention": 0.9211,
+   "useful@1": 0.8,
+   "useful@1|intention": 0.8421,
+   "topical_only@1": 0.1,
+   "topical_only@1|intention": 0.0526,
+   "swap_accuracy": 0.879,
+   "by_operation": {
+    "compare": {
+     "n": 8,
+     "ndcg@10": 0.793,
+     "r@5": 0.8149
+    },
+    "explain": {
+     "n": 3,
+     "ndcg@10": 0.7825,
+     "r@5": 0.65
+    },
+    "monitor": {
+     "n": 5,
+     "ndcg@10": 0.8204,
+     "r@5": 0.9167
+    },
+    "predict": {
+     "n": 4,
+     "ndcg@10": 0.9062,
+     "r@5": 0.8125
+    }
+   },
+   "rq3_argument_f1": 0.7745,
+   "rq3_binding_accuracy": 0.5877,
+   "rq3_extraction_valid": 0.8571,
+   "rq3_family": 0.6842,
+   "rq3_grounding_status": 0.7143,
+   "rq3_intention_presence": 0.8571,
+   "rq3_scope_f1": 0.9804,
+   "rq3_variant": 0.6842,
+   "fallback_rate": 0.3158,
+   "assessment_precision": 0.5938,
+   "assessment_recall": 0.7755,
+   "violated_but_useful": 2,
+   "timing": {
+    "interpreter_ms": {
+     "mean": 4.574,
+     "median": 4.678,
+     "p95": 6.132,
+     "max": 6.92
+    },
+    "context_matching_ms": {
+     "mean": 84.933,
+     "median": 85.339,
+     "p95": 89.468,
+     "max": 95.024
+    },
+    "embed_query_ms": {
+     "mean": 12.355,
+     "median": 11.786,
+     "p95": 17.506,
+     "max": 20.214
+    },
+    "vector_search_ms": {
+     "mean": 65.858,
+     "median": 65.423,
+     "p95": 68.759,
+     "max": 69.235
+    },
+    "grounder_ms": {
+     "mean": 2.102,
+     "median": 1.081,
+     "p95": 6.196,
+     "max": 6.24
+    },
+    "profiler_ms": {
+     "mean": 14.741,
+     "median": 18.406,
+     "p95": 28.91,
+     "max": 31.364
+    },
+    "aligner_ms": {
+     "mean": 196.919,
+     "median": 93.924,
+     "p95": 555.458,
+     "max": 1348.798
+    },
+    "ranking_ms": {
+     "mean": 0.209,
+     "median": 0.105,
+     "p95": 0.438,
+     "max": 0.991
+    },
+    "total_ms": {
+     "mean": 219.302,
+     "median": 128.204,
+     "p95": 579.608,
+     "max": 1379.574
+    }
+   },
+   "wall_seconds": 4.823
+  },
+  {
+   "system": "ig:llm/llm:hybrid+repair=1",
+   "queries": 21,
+   "ndcg@10": 0.8217,
+   "ndcg@10|intention": 0.8289,
+   "p@5": 0.55,
+   "p@5|intention": 0.5474,
+   "p@10": 0.34,
+   "p@10|intention": 0.3421,
+   "r@1": 0.3325,
+   "r@1|intention": 0.35,
+   "r@5": 0.8202,
+   "r@5|intention": 0.8239,
+   "r@10": 0.9213,
+   "r@10|intention": 0.9303,
+   "mrr": 0.925,
+   "mrr|intention": 0.9474,
+   "useful@1": 0.85,
+   "useful@1|intention": 0.8947,
+   "topical_only@1": 0.05,
+   "topical_only@1|intention": 0.0,
+   "swap_accuracy": 0.8822,
+   "by_operation": {
+    "compare": {
+     "n": 8,
+     "ndcg@10": 0.8215,
+     "r@5": 0.8387
+    },
+    "explain": {
+     "n": 3,
+     "ndcg@10": 0.7825,
+     "r@5": 0.65
+    },
+    "monitor": {
+     "n": 5,
+     "ndcg@10": 0.7846,
+     "r@5": 0.9167
+    },
+    "predict": {
+     "n": 4,
+     "ndcg@10": 0.9062,
+     "r@5": 0.8125
+    }
+   },
+   "rq3_argument_f1": 0.7883,
+   "rq3_binding_accuracy": 0.7807,
+   "rq3_extraction_valid": 1.0,
+   "rq3_family": 0.8947,
+   "rq3_grounding_status": 0.9048,
+   "rq3_intention_presence": 1.0,
+   "rq3_scope_f1": 0.9333,
+   "rq3_variant": 0.8947,
+   "fallback_rate": 0.1053,
+   "assessment_precision": 0.5921,
+   "assessment_recall": 0.6923,
+   "violated_but_useful": 3,
+   "timing": {
+    "interpreter_ms": {
+     "mean": 2.182,
+     "median": 1.866,
+     "p95": 3.7,
+     "max": 4.08
+    },
+    "context_matching_ms": {
+     "mean": 81.79,
+     "median": 82.083,
+     "p95": 96.113,
+     "max": 98.229
+    },
+    "embed_query_ms": {
+     "mean": 7.494,
+     "median": 7.498,
+     "p95": 8.974,
+     "max": 9.272
+    },
+    "vector_search_ms": {
+     "mean": 64.416,
+     "median": 64.595,
+     "p95": 76.968,
+     "max": 78.984
+    },
+    "grounder_ms": {
+     "mean": 1.9,
+     "median": 1.317,
+     "p95": 4.215,
+     "max": 4.467
+    },
+    "profiler_ms": {
+     "mean": 55.956,
+     "median": 27.277,
+     "p95": 42.249,
+     "max": 400.688
+    },
+    "aligner_ms": {
+     "mean": 324.797,
+     "median": 157.476,
+     "p95": 915.984,
+     "max": 1248.725
+    },
+    "ranking_ms": {
+     "mean": 0.138,
+     "median": 0.125,
+     "p95": 0.214,
+     "max": 0.257
+    },
+    "total_ms": {
+     "mean": 386.064,
+     "median": 230.89,
+     "p95": 948.242,
+     "max": 1570.77
+    }
+   },
+   "wall_seconds": 6.006
+  },
+  {
+   "system": "ig:llm/llm:hybrid+repair=1+rnorm=minmax",
+   "queries": 21,
+   "ndcg@10": 0.8621,
+   "ndcg@10|intention": 0.8715,
+   "p@5": 0.54,
+   "p@5|intention": 0.5368,
+   "p@10": 0.345,
+   "p@10|intention": 0.3474,
+   "r@1": 0.4325,
+   "r@1|intention": 0.4552,
+   "r@5": 0.8102,
+   "r@5|intention": 0.8134,
+   "r@10": 0.9259,
+   "r@10|intention": 0.9351,
+   "mrr": 0.975,
+   "mrr|intention": 1.0,
+   "useful@1": 0.95,
+   "useful@1|intention": 1.0,
+   "topical_only@1": 0.05,
+   "topical_only@1|intention": 0.0,
+   "swap_accuracy": 0.8822,
+   "by_operation": {
+    "compare": {
+     "n": 8,
+     "ndcg@10": 0.8669,
+     "r@5": 0.8102
+    },
+    "explain": {
+     "n": 3,
+     "ndcg@10": 0.8011,
+     "r@5": 0.65
+    },
+    "monitor": {
+     "n": 5,
+     "ndcg@10": 0.8543,
+     "r@5": 0.9167
+    },
+    "predict": {
+     "n": 4,
+     "ndcg@10": 0.9166,
+     "r@5": 0.8125
+    }
+   },
+   "rq3_argument_f1": 0.7883,
+   "rq3_binding_accuracy": 0.7807,
+   "rq3_extraction_valid": 1.0,
+   "rq3_family": 0.8947,
+   "rq3_grounding_status": 0.9048,
+   "rq3_intention_presence": 1.0,
+   "rq3_scope_f1": 0.9333,
+   "rq3_variant": 0.8947,
+   "fallback_rate": 0.1053,
+   "assessment_precision": 0.5921,
+   "assessment_recall": 0.6923,
+   "violated_but_useful": 3,
+   "timing": {
+    "interpreter_ms": {
+     "mean": 5.453,
+     "median": 4.424,
+     "p95": 10.359,
+     "max": 13.756
+    },
+    "context_matching_ms": {
+     "mean": 105.731,
+     "median": 103.084,
+     "p95": 118.706,
+     "max": 133.698
+    },
+    "embed_query_ms": {
+     "mean": 10.723,
+     "median": 9.839,
+     "p95": 17.403,
+     "max": 19.401
+    },
+    "vector_search_ms": {
+     "mean": 81.719,
+     "median": 80.116,
+     "p95": 94.701,
+     "max": 104.67
+    },
+    "grounder_ms": {
+     "mean": 2.453,
+     "median": 1.724,
+     "p95": 4.296,
+     "max": 8.987
+    },
+    "profiler_ms": {
+     "mean": 29.625,
+     "median": 32.726,
+     "p95": 49.586,
+     "max": 58.468
+    },
+    "aligner_ms": {
+     "mean": 336.459,
+     "median": 214.427,
+     "p95": 1002.03,
+     "max": 1374.274
+    },
+    "ranking_ms": {
+     "mean": 0.191,
+     "median": 0.185,
+     "p95": 0.235,
+     "max": 0.525
+    },
+    "total_ms": {
+     "mean": 375.624,
+     "median": 275.893,
+     "p95": 1041.576,
+     "max": 1425.387
+    }
+   },
+   "wall_seconds": 5.925
+  },
+  {
+   "system": "ig:llm/llm:hybrid+repair=1+align=0",
+   "queries": 21,
+   "ndcg@10": 0.8346,
+   "ndcg@10|intention": 0.8425,
+   "p@5": 0.54,
+   "p@5|intention": 0.5368,
+   "p@10": 0.335,
+   "p@10|intention": 0.3368,
+   "r@1": 0.4116,
+   "r@1|intention": 0.4333,
+   "r@5": 0.8106,
+   "r@5|intention": 0.8138,
+   "r@10": 0.905,
+   "r@10|intention": 0.9132,
+   "mrr": 0.9167,
+   "mrr|intention": 0.9386,
+   "useful@1": 0.85,
+   "useful@1|intention": 0.8947,
+   "topical_only@1": 0.1,
+   "topical_only@1|intention": 0.0526,
+   "swap_accuracy": 0.8598,
+   "by_operation": {
+    "compare": {
+     "n": 8,
+     "ndcg@10": 0.8256,
+     "r@5": 0.7864
+    },
+    "explain": {
+     "n": 3,
+     "ndcg@10": 0.8021,
+     "r@5": 0.6667
+    },
+    "monitor": {
+     "n": 5,
+     "ndcg@10": 0.8003,
+     "r@5": 0.9167
+    },
+    "predict": {
+     "n": 4,
+     "ndcg@10": 0.9282,
+     "r@5": 0.8438
+    }
+   },
+   "rq3_argument_f1": 0.7883,
+   "rq3_binding_accuracy": 0.0,
+   "rq3_extraction_valid": 1.0,
+   "rq3_family": 0.0,
+   "rq3_grounding_status": 0.0,
+   "rq3_intention_presence": 1.0,
+   "rq3_scope_f1": 0.9333,
+   "rq3_variant": 0.0,
+   "fallback_rate": 1.0,
+   "timing": {
+    "interpreter_ms": {
+     "mean": 4.452,
+     "median": 3.699,
+     "p95": 7.265,
+     "max": 11.178
+    },
+    "context_matching_ms": {
+     "mean": 91.458,
+     "median": 92.574,
+     "p95": 98.75,
+     "max": 104.901
+    },
+    "embed_query_ms": {
+     "mean": 7.646,
+     "median": 6.527,
+     "p95": 10.361,
+     "max": 16.562
+    },
+    "vector_search_ms": {
+     "mean": 75.987,
+     "median": 78.075,
+     "p95": 81.943,
+     "max": 85.993
+    },
+    "grounder_ms": {
+     "mean": 0.0,
+     "median": 0.0,
+     "p95": 0.0,
+     "max": 0.0
+    },
+    "profiler_ms": {
+     "mean": 0,
+     "median": 0,
+     "p95": 0,
+     "max": 0
+    },
+    "aligner_ms": {
+     "mean": 0,
+     "median": 0,
+     "p95": 0,
+     "max": 0
+    },
+    "ranking_ms": {
+     "mean": 0.964,
+     "median": 0.788,
+     "p95": 1.232,
+     "max": 2.994
+    },
+    "total_ms": {
+     "mean": 5.525,
+     "median": 4.913,
+     "p95": 8.184,
+     "max": 14.182
+    }
+   },
+   "wall_seconds": 2.434
+  }
+ ]
+}

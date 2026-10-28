@@ -1,0 +1,254 @@
+[
+ {
+  "system": "ig:llm/llm:bm25+repair=1+align=0",
+  "baseline": "ctx:bm25",
+  "metric": "ndcg@10",
+  "n": 21,
+  "mean_diff": -0.0034,
+  "p_value": 0.8279,
+  "ci95": [
+   -0.038,
+   0.0279
+  ],
+  "wins": 4,
+  "losses": 4
+ },
+ {
+  "system": "ig:llm/llm:bm25+repair=1+align=0",
+  "baseline": "ctx:bm25",
+  "metric": "mrr",
+  "n": 20,
+  "mean_diff": -0.025,
+  "p_value": 1.0,
+  "ci95": [
+   -0.1,
+   0.05
+  ],
+  "wins": 1,
+  "losses": 2
+ },
+ {
+  "system": "ig:llm/llm:bm25+repair=1+align=0",
+  "baseline": "ctx:bm25",
+  "metric": "useful@1",
+  "n": 20,
+  "mean_diff": -0.05,
+  "p_value": 1.0,
+  "ci95": [
+   -0.2,
+   0.1
+  ],
+  "wins": 1,
+  "losses": 2
+ },
+ {
+  "system": "ig:llm/llm:bm25",
+  "baseline": "ctx:bm25",
+  "metric": "ndcg@10",
+  "n": 21,
+  "mean_diff": -0.0199,
+  "p_value": 0.3767,
+  "ci95": [
+   -0.0615,
+   0.0152
+  ],
+  "wins": 7,
+  "losses": 7
+ },
+ {
+  "system": "ig:llm/llm:bm25",
+  "baseline": "ctx:bm25",
+  "metric": "mrr",
+  "n": 20,
+  "mean_diff": -0.05,
+  "p_value": 0.6258,
+  "ci95": [
+   -0.15,
+   0.05
+  ],
+  "wins": 1,
+  "losses": 3
+ },
+ {
+  "system": "ig:llm/llm:bm25",
+  "baseline": "ctx:bm25",
+  "metric": "useful@1",
+  "n": 20,
+  "mean_diff": -0.1,
+  "p_value": 0.6258,
+  "ci95": [
+   -0.3,
+   0.1
+  ],
+  "wins": 1,
+  "losses": 3
+ },
+ {
+  "system": "ig:llm/index:bm25+repair=1",
+  "baseline": "ctx:bm25",
+  "metric": "ndcg@10",
+  "n": 21,
+  "mean_diff": -0.0075,
+  "p_value": 0.7835,
+  "ci95": [
+   -0.0598,
+   0.0403
+  ],
+  "wins": 10,
+  "losses": 6
+ },
+ {
+  "system": "ig:llm/index:bm25+repair=1",
+  "baseline": "ctx:bm25",
+  "metric": "mrr",
+  "n": 20,
+  "mean_diff": -0.0167,
+  "p_value": 1.0,
+  "ci95": [
+   -0.15,
+   0.125
+  ],
+  "wins": 3,
+  "losses": 4
+ },
+ {
+  "system": "ig:llm/index:bm25+repair=1",
+  "baseline": "ctx:bm25",
+  "metric": "useful@1",
+  "n": 20,
+  "mean_diff": -0.05,
+  "p_value": 1.0,
+  "ci95": [
+   -0.3,
+   0.2
+  ],
+  "wins": 3,
+  "losses": 4
+ },
+ {
+  "system": "ig:gold/llm:bm25+repair=1",
+  "baseline": "ctx:bm25",
+  "metric": "ndcg@10",
+  "n": 21,
+  "mean_diff": 0.0254,
+  "p_value": 0.2768,
+  "ci95": [
+   -0.0186,
+   0.0653
+  ],
+  "wins": 11,
+  "losses": 5
+ },
+ {
+  "system": "ig:gold/llm:bm25+repair=1",
+  "baseline": "ctx:bm25",
+  "metric": "mrr",
+  "n": 20,
+  "mean_diff": 0.0583,
+  "p_value": 0.498,
+  "ci95": [
+   -0.0417,
+   0.175
+  ],
+  "wins": 3,
+  "losses": 1
+ },
+ {
+  "system": "ig:gold/llm:bm25+repair=1",
+  "baseline": "ctx:bm25",
+  "metric": "useful@1",
+  "n": 20,
+  "mean_diff": 0.1,
+  "p_value": 0.6247,
+  "ci95": [
+   -0.1,
+   0.3
+  ],
+  "wins": 3,
+  "losses": 1
+ },
+ {
+  "system": "ig:llm/llm:bm25+repair=1",
+  "baseline": "ctx:bm25",
+  "metric": "ndcg@10",
+  "n": 21,
+  "mean_diff": 0.0024,
+  "p_value": 0.928,
+  "ci95": [
+   -0.048,
+   0.0454
+  ],
+  "wins": 10,
+  "losses": 6
+ },
+ {
+  "system": "ig:llm/llm:bm25+repair=1",
+  "baseline": "ctx:bm25",
+  "metric": "mrr",
+  "n": 20,
+  "mean_diff": 0.0083,
+  "p_value": 1.0,
+  "ci95": [
+   -0.125,
+   0.1417
+  ],
+  "wins": 3,
+  "losses": 3
+ },
+ {
+  "system": "ig:llm/llm:bm25+repair=1",
+  "baseline": "ctx:bm25",
+  "metric": "useful@1",
+  "n": 20,
+  "mean_diff": 0.0,
+  "p_value": 1.0,
+  "ci95": [
+   -0.25,
+   0.25
+  ],
+  "wins": 3,
+  "losses": 3
+ },
+ {
+  "system": "ig:llm/llm:bm25+repair=1+rnorm=minmax",
+  "baseline": "ctx:bm25",
+  "metric": "ndcg@10",
+  "n": 21,
+  "mean_diff": 0.0023,
+  "p_value": 0.9232,
+  "ci95": [
+   -0.046,
+   0.0445
+  ],
+  "wins": 10,
+  "losses": 6
+ },
+ {
+  "system": "ig:llm/llm:bm25+repair=1+rnorm=minmax",
+  "baseline": "ctx:bm25",
+  "metric": "mrr",
+  "n": 20,
+  "mean_diff": 0.0083,
+  "p_value": 1.0,
+  "ci95": [
+   -0.125,
+   0.1417
+  ],
+  "wins": 3,
+  "losses": 3
+ },
+ {
+  "system": "ig:llm/llm:bm25+repair=1+rnorm=minmax",
+  "baseline": "ctx:bm25",
+  "metric": "useful@1",
+  "n": 20,
+  "mean_diff": 0.0,
+  "p_value": 1.0,
+  "ci95": [
+   -0.25,
+   0.25
+  ],
+  "wins": 3,
+  "losses": 3
+ }
+]

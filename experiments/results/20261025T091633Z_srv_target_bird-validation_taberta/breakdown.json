@@ -1,0 +1,54 @@
+{
+ "ig:rule/index:taberta": {
+  "no_intention/not_attempted": {
+   "n": 1128,
+   "share": 0.7358,
+   "mean_delta_ndcg@10": 0.001,
+   "contribution": 0.0007
+  },
+  "extracted/insufficient": {
+   "n": 310,
+   "share": 0.2022,
+   "mean_delta_ndcg@10": 0.0121,
+   "contribution": 0.0024
+  },
+  "extracted/grounded": {
+   "n": 75,
+   "share": 0.0489,
+   "mean_delta_ndcg@10": 0.2233,
+   "contribution": 0.0109
+  },
+  "extracted/unsupported": {
+   "n": 20,
+   "share": 0.013,
+   "mean_delta_ndcg@10": 0.0034,
+   "contribution": 0.0
+  }
+ },
+ "ig:rule/index:taberta+rnorm=minmax": {
+  "no_intention/not_attempted": {
+   "n": 1128,
+   "share": 0.7358,
+   "mean_delta_ndcg@10": 0.001,
+   "contribution": 0.0007
+  },
+  "extracted/insufficient": {
+   "n": 310,
+   "share": 0.2022,
+   "mean_delta_ndcg@10": 0.0121,
+   "contribution": 0.0024
+  },
+  "extracted/grounded": {
+   "n": 75,
+   "share": 0.0489,
+   "mean_delta_ndcg@10": 0.1057,
+   "contribution": 0.0052
+  },
+  "extracted/unsupported": {
+   "n": 20,
+   "share": 0.013,
+   "mean_delta_ndcg@10": 0.0034,
+   "contribution": 0.0
+  }
+ }
+}

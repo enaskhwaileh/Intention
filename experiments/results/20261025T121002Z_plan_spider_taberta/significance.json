@@ -1,0 +1,128 @@
+[
+ {
+  "system": "ig:rule/index:taberta+align=0",
+  "baseline": "ctx:taberta",
+  "metric": "ndcg@10",
+  "n": 2147,
+  "mean_diff": -0.0002,
+  "p_value": 0.9493,
+  "ci95": [
+   -0.005,
+   0.0047
+  ],
+  "wins": 374,
+  "losses": 373
+ },
+ {
+  "system": "ig:rule/index:taberta+align=0",
+  "baseline": "ctx:taberta",
+  "metric": "mrr",
+  "n": 2147,
+  "mean_diff": -0.0013,
+  "p_value": 0.7342,
+  "ci95": [
+   -0.0082,
+   0.0055
+  ],
+  "wins": 237,
+  "losses": 240
+ },
+ {
+  "system": "ig:rule/index:taberta+align=0",
+  "baseline": "ctx:taberta",
+  "metric": "useful@1",
+  "n": 2147,
+  "mean_diff": 0.0,
+  "p_value": 1.0,
+  "ci95": [
+   -0.0126,
+   0.0121
+  ],
+  "wins": 91,
+  "losses": 91
+ },
+ {
+  "system": "ig:rule/index:taberta+rnorm=minmax",
+  "baseline": "ctx:taberta",
+  "metric": "ndcg@10",
+  "n": 2147,
+  "mean_diff": 0.0005,
+  "p_value": 0.848,
+  "ci95": [
+   -0.0045,
+   0.0054
+  ],
+  "wins": 379,
+  "losses": 370
+ },
+ {
+  "system": "ig:rule/index:taberta+rnorm=minmax",
+  "baseline": "ctx:taberta",
+  "metric": "mrr",
+  "n": 2147,
+  "mean_diff": -0.0002,
+  "p_value": 0.9561,
+  "ci95": [
+   -0.0071,
+   0.0065
+  ],
+  "wins": 240,
+  "losses": 237
+ },
+ {
+  "system": "ig:rule/index:taberta+rnorm=minmax",
+  "baseline": "ctx:taberta",
+  "metric": "useful@1",
+  "n": 2147,
+  "mean_diff": 0.0019,
+  "p_value": 0.831,
+  "ci95": [
+   -0.0107,
+   0.014
+  ],
+  "wins": 92,
+  "losses": 88
+ },
+ {
+  "system": "ig:rule/index:taberta",
+  "baseline": "ctx:taberta",
+  "metric": "ndcg@10",
+  "n": 2147,
+  "mean_diff": 0.0005,
+  "p_value": 0.8508,
+  "ci95": [
+   -0.0046,
+   0.0054
+  ],
+  "wins": 380,
+  "losses": 376
+ },
+ {
+  "system": "ig:rule/index:taberta",
+  "baseline": "ctx:taberta",
+  "metric": "mrr",
+  "n": 2147,
+  "mean_diff": -0.0001,
+  "p_value": 0.9867,
+  "ci95": [
+   -0.007,
+   0.0068
+  ],
+  "wins": 241,
+  "losses": 237
+ },
+ {
+  "system": "ig:rule/index:taberta",
+  "baseline": "ctx:taberta",
+  "metric": "useful@1",
+  "n": 2147,
+  "mean_diff": 0.0019,
+  "p_value": 0.8298,
+  "ci95": [
+   -0.0107,
+   0.014
+  ],
+  "wins": 93,
+  "losses": 89
+ }
+]

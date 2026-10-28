@@ -51,3 +51,22 @@ class DenseContextTests(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class TabertaTests(unittest.TestCase):
+    def test_taberta_serialization_and_index(self):
+        import tempfile
+        from pathlib import Path
+        from intention_grounding import corpus
+        from intention_grounding.context import ContextMatcher, taberta_chunks
+        from intention_grounding.embedding import HashEncoder
+        from intention_grounding.target_import import import_dataset
+        out = Path(tempfile.mkdtemp()); fx = Path(__file__).parent / "fixtures" / "target"
+        import_dataset("mock", corpus_path=str(fx / "corpus.jsonl"), queries_path=str(fx / "queries.jsonl"),
+                       out_corpus=out / "c", out_bench=out / "b.json")
+        m = corpus.load_manifest(out / "c" / "manifest.json")
+        text = taberta_chunks(m["tables"][0])[0]
+        self.assertTrue(text.startswith("[DB]school [TABLE]students [SCHEMA]student_id,name,major,grade [ROWS]0,S0,math,86|"))
+        self.assertEqual(text.count("|"), 9)  # 10 rows
+        cm = ContextMatcher(m, "taberta", encoder=HashEncoder(), vector_store="numpy", vector_root=out / "v")
+        self.assertEqual(cm.retrieve("grade of students by major", 1)[0][0][0], "school/students")

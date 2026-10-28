@@ -40,3 +40,6 @@ intention_grounding/.env
 
 # failed launcher attempts
 experiments/run_*attempt*.txt
+
+# paper drafts stay local until publication
+docs/paper/

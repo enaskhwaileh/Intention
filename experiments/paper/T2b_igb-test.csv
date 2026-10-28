@@ -1,0 +1,21 @@
+Retriever,System,Swap acc.,nDCG@10
+BM25,retriever alone,0.871,0.828
+BM25,cross-encoder rerank,0.901,0.859
+BM25,IG rule,0.882,0.825
+BM25,IG gold,0.882,0.861
+BM25,LLM rerank (Qwen2.5-14B-Instruct),0.879,0.862
+BM25,IG Qwen2.5-14B-Instruct,0.882,0.831
+BM25,LLM rerank + IG verdicts (Qwen2.5-14B-Instruct),0.882,0.832
+BM25,LLM rerank (Qwen2.5-32B-Instruct),0.882,0.873
+BM25,IG Qwen2.5-32B-Instruct,0.879,0.836
+BM25,LLM rerank + IG verdicts (Qwen2.5-32B-Instruct),0.882,0.842
+SBERT all-MiniLM-L6-v2,retriever alone,0.824,0.690
+SBERT all-MiniLM-L6-v2,cross-encoder rerank,0.890,0.825
+SBERT all-MiniLM-L6-v2,IG rule,0.900,0.737
+SBERT all-MiniLM-L6-v2,IG gold,0.916,0.769
+SBERT all-MiniLM-L6-v2,LLM rerank (Qwen2.5-14B-Instruct),0.890,0.809
+SBERT all-MiniLM-L6-v2,IG Qwen2.5-14B-Instruct,0.905,0.743
+SBERT all-MiniLM-L6-v2,LLM rerank + IG verdicts (Qwen2.5-14B-Instruct),0.942,0.784
+SBERT all-MiniLM-L6-v2,LLM rerank (Qwen2.5-32B-Instruct),0.892,0.823
+SBERT all-MiniLM-L6-v2,IG Qwen2.5-32B-Instruct,0.896,0.740
+SBERT all-MiniLM-L6-v2,LLM rerank + IG verdicts (Qwen2.5-32B-Instruct),0.930,0.788

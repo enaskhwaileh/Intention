@@ -34,7 +34,7 @@ def combine_product(r, a, lam=0.5):
 class Pipeline:
     def __init__(self, manifest, *, library=None, interpreter, resolver, matcher=None, context_method="bm25",
                  k_candidates=50, k_out=10, alpha=0.5, combination="product", use_soft=True, r_norm="none",
-                 binding_threshold=0.5, profile_cache=PROFILE_CACHE):
+                 binding_threshold=0.5, profile_cache=PROFILE_CACHE, align=True):
         self.manifest = manifest
         self.tables = {t["table_id"]: t for t in manifest["tables"]}
         self.library = library or il.load()
@@ -44,6 +44,7 @@ class Pipeline:
         self.combination, self.use_soft, self.binding_threshold = combination, use_soft, binding_threshold
         self.r_norm = r_norm  # "none": matcher score as is; "minmax": rescaled over the candidate list before F
         self.profile_cache = profile_cache
+        self.align = align  # False: query-rewrite control (context matching on q_u only, no grounding/alignment)
 
     def config(self):
         return {"il_version": il.version(self.library), "il_sha256": self.library["_sha256"],
@@ -65,6 +66,8 @@ class Pipeline:
         candidates, timing["context_matching_ms"] = self.matcher.retrieve(q, self.k_candidates)
         timing.update(getattr(self.matcher, "last_timing", {}) or {})
         # 3. Grounder
+        if grounding is None and not self.align:
+            grounding = {"status": "disabled", "elapsed_ms": 0.0, "g_u": None, "psi_u": [], "diagnostics": []}
         if grounding is None:
             grounding = ground(interpretation, self.library, self.resolver)
         timing["grounder_ms"] = grounding["elapsed_ms"]

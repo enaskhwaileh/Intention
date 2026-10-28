@@ -1,0 +1,128 @@
+[
+ {
+  "system": "ig:rule/index:bm25+align=0",
+  "baseline": "ctx:bm25",
+  "metric": "ndcg@10",
+  "n": 2147,
+  "mean_diff": 0.0421,
+  "p_value": 0.0001,
+  "ci95": [
+   0.0374,
+   0.0467
+  ],
+  "wins": 587,
+  "losses": 21
+ },
+ {
+  "system": "ig:rule/index:bm25+align=0",
+  "baseline": "ctx:bm25",
+  "metric": "mrr",
+  "n": 2147,
+  "mean_diff": 0.0537,
+  "p_value": 0.0001,
+  "ci95": [
+   0.0471,
+   0.0602
+  ],
+  "wins": 347,
+  "losses": 8
+ },
+ {
+  "system": "ig:rule/index:bm25+align=0",
+  "baseline": "ctx:bm25",
+  "metric": "useful@1",
+  "n": 2147,
+  "mean_diff": 0.0838,
+  "p_value": 0.0001,
+  "ci95": [
+   0.0722,
+   0.0959
+  ],
+  "wins": 185,
+  "losses": 5
+ },
+ {
+  "system": "ig:rule/index:bm25+rnorm=minmax",
+  "baseline": "ctx:bm25",
+  "metric": "ndcg@10",
+  "n": 2147,
+  "mean_diff": 0.042,
+  "p_value": 0.0001,
+  "ci95": [
+   0.0374,
+   0.0466
+  ],
+  "wins": 588,
+  "losses": 24
+ },
+ {
+  "system": "ig:rule/index:bm25+rnorm=minmax",
+  "baseline": "ctx:bm25",
+  "metric": "mrr",
+  "n": 2147,
+  "mean_diff": 0.0539,
+  "p_value": 0.0001,
+  "ci95": [
+   0.0475,
+   0.0604
+  ],
+  "wins": 347,
+  "losses": 8
+ },
+ {
+  "system": "ig:rule/index:bm25+rnorm=minmax",
+  "baseline": "ctx:bm25",
+  "metric": "useful@1",
+  "n": 2147,
+  "mean_diff": 0.0843,
+  "p_value": 0.0001,
+  "ci95": [
+   0.0727,
+   0.0964
+  ],
+  "wins": 186,
+  "losses": 5
+ },
+ {
+  "system": "ig:rule/index:bm25",
+  "baseline": "ctx:bm25",
+  "metric": "ndcg@10",
+  "n": 2147,
+  "mean_diff": 0.042,
+  "p_value": 0.0001,
+  "ci95": [
+   0.0374,
+   0.0466
+  ],
+  "wins": 588,
+  "losses": 25
+ },
+ {
+  "system": "ig:rule/index:bm25",
+  "baseline": "ctx:bm25",
+  "metric": "mrr",
+  "n": 2147,
+  "mean_diff": 0.0539,
+  "p_value": 0.0001,
+  "ci95": [
+   0.0475,
+   0.0604
+  ],
+  "wins": 347,
+  "losses": 8
+ },
+ {
+  "system": "ig:rule/index:bm25",
+  "baseline": "ctx:bm25",
+  "metric": "useful@1",
+  "n": 2147,
+  "mean_diff": 0.0843,
+  "p_value": 0.0001,
+  "ci95": [
+   0.0727,
+   0.0964
+  ],
+  "wins": 186,
+  "losses": 5
+ }
+]

@@ -1,0 +1,170 @@
+[
+ {
+  "system": "ig:llm/llm:taberta+repair=1",
+  "baseline": "ctx:taberta",
+  "metric": "ndcg@10",
+  "n": 36,
+  "mean_diff": 0.1149,
+  "p_value": 0.0011,
+  "ci95": [
+   0.0488,
+   0.1825
+  ],
+  "wins": 23,
+  "losses": 8
+ },
+ {
+  "system": "ig:llm/llm:taberta+repair=1",
+  "baseline": "ctx:taberta",
+  "metric": "mrr",
+  "n": 35,
+  "mean_diff": 0.21,
+  "p_value": 0.0001,
+  "ci95": [
+   0.1074,
+   0.3198
+  ],
+  "wins": 15,
+  "losses": 1
+ },
+ {
+  "system": "ig:llm/llm:taberta+repair=1",
+  "baseline": "ctx:taberta",
+  "metric": "useful@1",
+  "n": 35,
+  "mean_diff": 0.2857,
+  "p_value": 0.002,
+  "ci95": [
+   0.1429,
+   0.4571
+  ],
+  "wins": 10,
+  "losses": 0
+ },
+ {
+  "system": "ig:llm/llm:taberta+repair=1+align=0",
+  "baseline": "ctx:taberta",
+  "metric": "ndcg@10",
+  "n": 36,
+  "mean_diff": 0.0144,
+  "p_value": 0.1921,
+  "ci95": [
+   -0.007,
+   0.0334
+  ],
+  "wins": 18,
+  "losses": 8
+ },
+ {
+  "system": "ig:llm/llm:taberta+repair=1+align=0",
+  "baseline": "ctx:taberta",
+  "metric": "mrr",
+  "n": 35,
+  "mean_diff": -0.0151,
+  "p_value": 0.4829,
+  "ci95": [
+   -0.0535,
+   0.0132
+  ],
+  "wins": 7,
+  "losses": 5
+ },
+ {
+  "system": "ig:llm/llm:taberta+repair=1+align=0",
+  "baseline": "ctx:taberta",
+  "metric": "useful@1",
+  "n": 35,
+  "mean_diff": -0.0286,
+  "p_value": 1.0,
+  "ci95": [
+   -0.0857,
+   0.0
+  ],
+  "wins": 0,
+  "losses": 1
+ },
+ {
+  "system": "ig:llm/llm:taberta+repair=1+rnorm=minmax",
+  "baseline": "ctx:taberta",
+  "metric": "ndcg@10",
+  "n": 36,
+  "mean_diff": 0.0714,
+  "p_value": 0.0001,
+  "ci95": [
+   0.0399,
+   0.105
+  ],
+  "wins": 25,
+  "losses": 4
+ },
+ {
+  "system": "ig:llm/llm:taberta+repair=1+rnorm=minmax",
+  "baseline": "ctx:taberta",
+  "metric": "mrr",
+  "n": 35,
+  "mean_diff": 0.1329,
+  "p_value": 0.0002,
+  "ci95": [
+   0.0601,
+   0.2218
+  ],
+  "wins": 14,
+  "losses": 0
+ },
+ {
+  "system": "ig:llm/llm:taberta+repair=1+rnorm=minmax",
+  "baseline": "ctx:taberta",
+  "metric": "useful@1",
+  "n": 35,
+  "mean_diff": 0.2,
+  "p_value": 0.0148,
+  "ci95": [
+   0.0857,
+   0.3429
+  ],
+  "wins": 7,
+  "losses": 0
+ },
+ {
+  "system": "ig:llm/llm:taberta",
+  "baseline": "ctx:taberta",
+  "metric": "ndcg@10",
+  "n": 36,
+  "mean_diff": 0.0939,
+  "p_value": 0.0059,
+  "ci95": [
+   0.034,
+   0.1606
+  ],
+  "wins": 18,
+  "losses": 6
+ },
+ {
+  "system": "ig:llm/llm:taberta",
+  "baseline": "ctx:taberta",
+  "metric": "mrr",
+  "n": 35,
+  "mean_diff": 0.1878,
+  "p_value": 0.0002,
+  "ci95": [
+   0.0885,
+   0.294
+  ],
+  "wins": 13,
+  "losses": 1
+ },
+ {
+  "system": "ig:llm/llm:taberta",
+  "baseline": "ctx:taberta",
+  "metric": "useful@1",
+  "n": 35,
+  "mean_diff": 0.2571,
+  "p_value": 0.0042,
+  "ci95": [
+   0.1143,
+   0.4
+  ],
+  "wins": 9,
+  "losses": 0
+ }
+]

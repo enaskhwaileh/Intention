@@ -1,0 +1,86 @@
+[
+ {
+  "system": "ig:rule/index:bm25",
+  "baseline": "ctx:bm25",
+  "metric": "ndcg@10",
+  "n": 36,
+  "mean_diff": 0.0195,
+  "p_value": 0.0686,
+  "ci95": [
+   -0.0,
+   0.0411
+  ],
+  "wins": 16,
+  "losses": 8
+ },
+ {
+  "system": "ig:rule/index:bm25",
+  "baseline": "ctx:bm25",
+  "metric": "mrr",
+  "n": 35,
+  "mean_diff": 0.0143,
+  "p_value": 0.7507,
+  "ci95": [
+   -0.0095,
+   0.0524
+  ],
+  "wins": 2,
+  "losses": 1
+ },
+ {
+  "system": "ig:rule/index:bm25",
+  "baseline": "ctx:bm25",
+  "metric": "useful@1",
+  "n": 35,
+  "mean_diff": 0.0286,
+  "p_value": 1.0,
+  "ci95": [
+   0.0,
+   0.0857
+  ],
+  "wins": 1,
+  "losses": 0
+ },
+ {
+  "system": "ig:gold/gold:bm25",
+  "baseline": "ctx:bm25",
+  "metric": "ndcg@10",
+  "n": 36,
+  "mean_diff": 0.0272,
+  "p_value": 0.0469,
+  "ci95": [
+   0.0025,
+   0.0535
+  ],
+  "wins": 21,
+  "losses": 8
+ },
+ {
+  "system": "ig:gold/gold:bm25",
+  "baseline": "ctx:bm25",
+  "metric": "mrr",
+  "n": 35,
+  "mean_diff": -0.0167,
+  "p_value": 0.7505,
+  "ci95": [
+   -0.081,
+   0.0381
+  ],
+  "wins": 2,
+  "losses": 2
+ },
+ {
+  "system": "ig:gold/gold:bm25",
+  "baseline": "ctx:bm25",
+  "metric": "useful@1",
+  "n": 35,
+  "mean_diff": -0.0286,
+  "p_value": 1.0,
+  "ci95": [
+   -0.1429,
+   0.0571
+  ],
+  "wins": 1,
+  "losses": 2
+ }
+]
